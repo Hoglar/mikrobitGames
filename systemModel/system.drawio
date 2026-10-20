@@ -1,0 +1,68 @@
+<mxfile host="65bd71144e">
+    <diagram id="EAPON9WKkhnvlvLm9HGg" name="Page-1">
+        <mxGraphModel dx="1056" dy="752" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="-189iX27UmAOybmQ4O32-37" edge="1" parent="1" source="-189iX27UmAOybmQ4O32-32" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;" target="-189iX27UmAOybmQ4O32-36" value="&lt;br&gt;&lt;span&gt;Sender &lt;/span&gt;&lt;span&gt;forespørsler &lt;/span&gt;&lt;span&gt;om &lt;/span&gt;&lt;span&gt;highscores,&lt;/span&gt;&lt;div&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;brukerautentisering&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span&gt;og &lt;/span&gt;&lt;span&gt;AI-samtaler &lt;/span&gt;&lt;span&gt;[HTTPS/JSON]&lt;/span&gt;&lt;br&gt;&lt;br&gt;&lt;/div&gt;">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-32" parent="1" style="html=1;whiteSpace=wrap;" value="Webapplication&lt;div&gt;Frontend/spill&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;Kjører &lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;spillet, &lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;håndterer &lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;brukerinteraksjon &lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;og &lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;presenterer &lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;informasjon &lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;fra &lt;/span&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;backend.&lt;/span&gt;&amp;nbsp;&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="140" width="190" x="250" y="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-34" edge="1" parent="1" source="-189iX27UmAOybmQ4O32-33" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;" target="-189iX27UmAOybmQ4O32-32">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-48" connectable="0" parent="-189iX27UmAOybmQ4O32-34" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="&lt;span&gt;Sender &lt;/span&gt;&lt;span&gt;kontrollinput &lt;/span&gt;&lt;span&gt;og &lt;/span&gt;&lt;span&gt;sensordata,&amp;nbsp;&lt;/span&gt;&lt;div&gt;&lt;span&gt;og &lt;/span&gt;&lt;span&gt;mottar &lt;/span&gt;&lt;span&gt;tilbakemeldinger &lt;/span&gt;&lt;span&gt;fra &lt;/span&gt;&lt;span&gt;spillet &lt;/span&gt;&lt;span&gt;[USB]&lt;/span&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+                    <mxGeometry relative="1" x="0.0167" y="-1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-33" parent="1" style="html=1;whiteSpace=wrap;" value="Micro:bit&lt;div&gt;kontroller&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Sender og mottar data fra webapplikasjonen.&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="130" width="190" x="250" y="400" as="geometry"/>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-45" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;recursiveResize=0;container=1;collapsible=0;width=160;" value="Spill system" vertex="1">
+                    <mxGeometry height="480" width="930" x="200" y="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-36" parent="-189iX27UmAOybmQ4O32-45" style="html=1;whiteSpace=wrap;" value="Backend API&lt;div&gt;REST API&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Håndterer spilldata, brukerautentisering og kommunikasjon mellom webapplikasjonen, databasen og AI-tjenesten&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="130" width="210" x="540" y="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-38" parent="-189iX27UmAOybmQ4O32-45" style="html=1;whiteSpace=wrap;" value="Database&lt;div&gt;Highscores&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Lagrer og bruker- og spilldata.&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="90" width="190" x="280" y="320" as="geometry"/>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-39" edge="1" parent="-189iX27UmAOybmQ4O32-45" source="-189iX27UmAOybmQ4O32-36" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;" target="-189iX27UmAOybmQ4O32-38">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-42" connectable="0" parent="-189iX27UmAOybmQ4O32-39" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="&lt;span&gt;Leser &lt;/span&gt;&lt;span&gt;og &lt;/span&gt;&lt;span&gt;skriver &lt;/span&gt;&lt;span&gt;bruker- &lt;/span&gt;&lt;span&gt;og &lt;/span&gt;&lt;span&gt;spilldata&lt;/span&gt;" vertex="1">
+                    <mxGeometry relative="1" x="-0.0391" y="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-51" edge="1" parent="-189iX27UmAOybmQ4O32-45" source="-189iX27UmAOybmQ4O32-40" style="edgeStyle=none;html=1;" target="-189iX27UmAOybmQ4O32-38">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-52" connectable="0" parent="-189iX27UmAOybmQ4O32-51" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Leser highscore-data gjennom&lt;div&gt;&amp;nbsp; egne databasespørringer.&lt;/div&gt;" vertex="1">
+                    <mxGeometry relative="1" x="-0.0222" y="-1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-40" parent="-189iX27UmAOybmQ4O32-45" style="html=1;whiteSpace=wrap;" value="AI tjeneste&lt;div&gt;Local AI&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Tilbyr enkel samtalefunksjonalitet om spillernes highscores.&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="90" width="190" x="650" y="320" as="geometry"/>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-41" edge="1" parent="-189iX27UmAOybmQ4O32-45" source="-189iX27UmAOybmQ4O32-36" style="edgeStyle=none;html=1;startArrow=classic;startFill=1;" target="-189iX27UmAOybmQ4O32-40">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-44" connectable="0" parent="-189iX27UmAOybmQ4O32-41" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Kall" vertex="1">
+                    <mxGeometry relative="1" x="0.0332" y="3" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="-189iX27UmAOybmQ4O32-49" connectable="0" parent="-189iX27UmAOybmQ4O32-41" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Sender spillerforespørsler og&amp;nbsp;&lt;div&gt;mottar AI-genererte svar.&lt;/div&gt;" vertex="1">
+                    <mxGeometry relative="1" x="0.0418" y="3" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
