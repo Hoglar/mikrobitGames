@@ -1,3 +1,3 @@
 # Krav, modeller og testplan
 
-Utarbeid requirements.md med funksjonelle krav og kvalitetskrav, og test-plan.md med testtilfeller, forventede resultater og verifikasjonsmetode. Disse dokumentene er ikke ferdigstilt ennå. Modeller lagres under [models/](models/README.md). Referer til relevante felles kontrakter fremfor å kopiere dem.
+Utarbeid requirements.md med funksjonelle krav og kvalitetskrav. En foreløpig [testplan](test-plan.md) beskriver tilkoblede maskinvaretester, skip-regler og benchmarks; den må tilpasses implementeringen. Modeller lagres under [models/](models/README.md). Referer til relevante felles kontrakter fremfor å kopiere dem.
