@@ -36,4 +36,4 @@ Chosen option: **Periodic full snapshots for sensor input.** The micro:bit will 
 
 ## Protocol Documentation
 
-The proposed protocol and firmware responsibilities are documented in [micro:bit Serial Protocol](../../docs/microbit-serial-protocol.md). The game-facing browser API and JSON handling are documented in [Web-Page Developer Interface](../../docs/web-page-developer-interface.md).
+The proposed protocol and firmware responsibilities are documented in [micro:bit Serial Protocol](../contracts/microbit-webapp/microbit-serial-protocol.md). The game-facing browser API and JSON handling are documented in [Web-Page Developer Interface](../contracts/microbit-webapp/web-page-developer-interface.md).
