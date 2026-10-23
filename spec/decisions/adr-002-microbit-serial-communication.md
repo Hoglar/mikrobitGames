@@ -4,7 +4,7 @@
 
 The micro:bit sensors will provide input to multiple games running on a web page. The page will use a shared browser-side adapter to receive sensor data, maintain the current sensor state, expose a consistent interface to each game, and send output commands back to the micro:bit.
 
-This decision defines the sensor update strategy and the default serial message format. The bidirectional protocol uses JSON messages over the serial connection, with the micro:bit sending sensor snapshots and the page sending commands for supported built-in outputs. The possible compact text fallback for commands is documented separately in ADR-004. The protocol should keep inputs responsive, be straightforward to parse and debug, and provide a consistent current state for the browser adapter and games.
+This decision defines the sensor update strategy and overall serial framing. The micro:bit sends JSON sensor snapshots; after a `HELLO|1` handshake, the page sends `text-v1` commands for supported built-in outputs. The command encoding is recorded in ADR-004. The protocol should keep inputs responsive, be straightforward to parse and debug, and provide a consistent current state for the browser adapter and games.
 
 ## Decision Drivers
 
@@ -15,15 +15,15 @@ This decision defines the sensor update strategy and the default serial message 
 
 ## Considered Options
 
-Sensor delivery options use JSON messages, with one JSON object per line to provide message boundaries over the serial stream. Web-to-micro:bit output commands and their results use the same framing.
+Sensor delivery uses newline-delimited JSON snapshots. Web-to-micro:bit commands and their results use newline-delimited `text-v1` lines; the page starts each connection with the fixed `HELLO|1` line.
 
-* **Periodic full snapshots:** Send all current sensor readings together in one JSON object at a fixed transmission interval.
+* **Periodic full snapshots:** Send the selected game-input readings together in one JSON object at a fixed transmission interval.
 * **Per-sensor change events:** Send an event for an individual sensor only when its value changes. The browser adapter must combine events into the current sensor state.
 * **Hybrid updates:** Send per-sensor change events and periodically send a full snapshot to initialize or resynchronize the browser adapter.
 
 ## Decision Outcome
 
-Chosen option: **Periodic full snapshots for sensor input.** The micro:bit will send all current sensor readings together as one JSON object per line at a fixed transmission interval. Web-to-micro:bit output uses individual JSON command messages with correlated results by default. This keeps browser-side sensor state management simple and gives games a coherent view of current inputs. The interval will be selected and validated during implementation to balance responsiveness and message volume.
+Chosen option: **Periodic full snapshots for sensor input.** The micro:bit will send the selected game-input readings together in a compact JSON object per line at a fixed transmission interval. Snapshots use short keys and omit handshake metadata, derived values, and compass readings. Web-to-micro:bit output uses `text-v1` command lines with correlated text results. This keeps browser-side sensor state management simple and gives games a coherent view of current inputs. The interval will be selected and validated during implementation to balance responsiveness and message volume.
 
 ### Consequences
 
@@ -36,4 +36,4 @@ Chosen option: **Periodic full snapshots for sensor input.** The micro:bit will 
 
 ## Protocol Documentation
 
-The protocol and firmware responsibilities are documented in [micro:bit Serial Protocol](../contracts/microbit-webapp/microbit-serial-protocol.md). The game-facing browser API is documented in [Web-Page Developer Interface](../contracts/microbit-webapp/web-page-developer-interface.md). The command-encoding fallback is recorded in [ADR-004](adr-004-microbit-command-encoding.md).
+The protocol and firmware responsibilities are documented in [micro:bit Serial Protocol](../contracts/microbit-webapp/microbit-serial-protocol.md). The game-facing browser API is documented in [Web-Page Developer Interface](../contracts/microbit-webapp/web-page-developer-interface.md). The fixed text command encoding is recorded in [ADR-004](adr-004-microbit-command-encoding.md).

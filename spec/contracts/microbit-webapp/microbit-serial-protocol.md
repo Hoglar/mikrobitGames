@@ -5,77 +5,54 @@ This document proposes the micro:bit firmware side of the serial protocol: sendi
 ## Example Snapshot
 
 ```json
-{
-  "type": "sensorSnapshot",
-  "protocolVersion": 1,
-  "sequence": 1842,
-  "uptimeMs": 92100,
-  "board": "microbit-v2",
-  "sensors": {
-    "buttons": {
-      "a": false,
-      "b": true
-    },
-    "accelerometer": {
-      "xMg": 12,
-      "yMg": -34,
-      "zMg": 998,
-      "strengthMg": 999,
-      "gesture": "left"
-    },
-    "compass": {
-      "headingDegrees": 271,
-      "xNanoTesla": 18000,
-      "yNanoTesla": -7000,
-      "zNanoTesla": 42000,
-      "fieldStrengthNanoTesla": 46500
-    },
-    "temperatureC": 23,
-    "lightLevel": 80,
-    "microphone": {
-      "soundLevel": 12,
-      "soundEvent": "quiet"
-    },
-    "touch": {
-      "logoPressed": false
-    }
-  }
-}
+{"n":1842,"a":0,"b":1,"x":12,"y":-34,"z":998,"t":23,"l":80,"m":12,"q":0}
 ```
 
 ## Field Guidance
 
-- `protocolVersion` identifies the schema version so the browser adapter can handle incompatible changes.
-- `sequence` increments for each snapshot, helping detect skipped messages.
-- `uptimeMs` is elapsed time since the micro:bit started; it avoids relying on synchronized clocks.
-- `board` identifies the board generation, such as `microbit-v1` or `microbit-v2`.
-- `sensors` contains the latest readings. Include only fields supported by the detected board/API; do not send placeholder fields for hardware the board does not have.
-- Accelerometer axes and strength use milligravity (`mg`). Compass heading is in degrees; raw magnetic-field axes and magnitude are in nanotesla. Temperature is the micro:bit's internal temperature estimate in degrees Celsius, not ambient air temperature. Light and sound levels use the API scale (commonly 0–255).
-- `gesture` is a value recognized from accelerometer data, not a separate sensor. Common gestures include `up`, `down`, `left`, `right`, `face_up`, `face_down`, `freefall`, `3g`, `6g`, `8g`, and `shake`.
-- For external sensors connected to pins, define a separate extension schema rather than treating the pins themselves as built-in sensors.
+The handshake's `deviceInfo` carries `protocolVersion`, board identity, and capabilities. Snapshots omit repeated metadata, the `type` field, and a `sensors` wrapper. After handshake, every JSON line without a `type` field is a complete snapshot. Serialize snapshots as compact JSON without spaces or pretty-printing.
+
+| Key | Reading | Encoding |
+|---|---|---|
+| `n` | Snapshot sequence | Integer incremented per snapshot; resets on device reboot. |
+| `a`, `b` | Button A/B | `0` released, `1` pressed. |
+| `x`, `y`, `z` | Accelerometer axes | Signed integer in milligravity (`mg`). |
+| `t` | Board temperature estimate | Integer in degrees Celsius; not ambient air temperature. |
+| `l` | Light level | Integer in the micro:bit API's range (typically 0–255). |
+| `m` | Microphone sound level (V2 only) | Integer in the micro:bit API's range (typically 0–255). |
+| `q` | Touch logo (V2 only) | `0` not touched, `1` touched. |
+
+Transmit only keys supported by the board; omit unavailable keys rather than sending `null`. The browser uses `deviceInfo` capabilities to map omitted V2 readings to `null` in the public game state.
+
+The snapshot deliberately omits compass readings, acceleration strength, recognized gestures, and sound-event labels. Compass is excluded from this input contract; acceleration strength can be calculated from `x`, `y`, and `z`, gestures can be derived from the accelerometer stream, and sound-event labels can be derived from `m` if needed. The browser records its own receive timestamp; `n` remains for detecting skipped snapshots.
 
 ## Board Differences
 
-Both generations have buttons A/B, an accelerometer, a compass, an LED display that can be used to sense light, and an internal temperature reading. Micro:bit V2 adds the built-in microphone and touch-sensitive logo. The built-in micro:bit has no gyroscope, so there is no gyroscope reading in this schema. Exact API availability can depend on firmware; confirm it for the implementation target.
+Both generations provide buttons A/B, an accelerometer, LED-based light sensing, and an internal temperature reading. Micro:bit V2 adds the built-in microphone and touch-sensitive logo. Although the board has a compass, this protocol intentionally omits it because it is unlikely to be a game input and requires calibration. Neither generation has a built-in gyroscope. Confirm reading availability against the target firmware.
 
 ## Tilt Gesture Semantics
 
-Tilt gestures are derived from the accelerometer, not a separate physical sensor. The firmware reports the latest recognized native gesture (for example `up`, `down`, `left`, `right`, `face_up`, `face_down`, or `shake`) as part of each snapshot. These are coarse classifications; the raw axes are also sent so the web adapter can calculate smooth tilt controls. Gesture names and axis orientation must be interpreted consistently by the web adapter.
+Tilt and gestures are derived from the raw accelerometer axes by the browser adapter; they are not transmitted as separate fields. The adapter can calculate normalized tilt and acceleration strength locally. Gesture classification, especially time-dependent gestures such as shake, depends on the received sample rate, so define and test its thresholds in the webapp.
 
 ## Message Framing and Startup
 
-Use newline-delimited messages in both directions. `deviceInfo` and `sensorSnapshot` are always JSON objects followed by `\n`. Commands and their results use JSON by default (`commandEncoding: "json-v1"`); in the compact `text-v1` fallback, both commands and results use the text grammar below. The firmware and web adapter must buffer until a complete line is available because a serial read may contain a partial message or several messages.
+Use newline-delimited messages in both directions. `deviceInfo` is typed JSON; each subsequent sensor snapshot is compact JSON without a `type` field. Web-to-micro:bit commands use `C|...` lines and command results use `R|...` lines, both in the fixed ASCII `text-v1` grammar. This prefix distinction lets the browser identify a result line without parsing it as JSON; snapshot lines begin with `{`. Every line ends with `\n`. After opening the serial port, the web page sends `HELLO|1\n`. The firmware and web adapter must buffer until a complete line is available because a serial read may contain a partial message or several messages.
 
-On startup or connection, the micro:bit sends a `deviceInfo` message so the page can discover board-specific capabilities:
+On each connection, the web page initiates the handshake with:
+
+```text
+HELLO|1
+```
+
+The micro:bit validates the bootstrap version and responds with `deviceInfo` so the page can verify the protocol version and discover board-specific capabilities:
 
 ```json
 {
   "type": "deviceInfo",
   "protocolVersion": 1,
-  "commandEncoding": "json-v1",
   "board": "microbit-v2",
   "capabilities": {
-    "sensors": ["buttons", "accelerometer", "compass", "temperature", "light", "microphone", "logoTouch"],
+    "sensors": ["buttons", "accelerometer", "temperature", "light", "microphone", "logoTouch"],
     "outputs": {
       "ledDisplay": ["showText", "showImage", "clear"],
       "speaker": ["playTone", "playMelody", "playBuiltInSound", "stop"],
@@ -85,92 +62,60 @@ On startup or connection, the micro:bit sends a `deviceInfo` message so the page
 }
 ```
 
-`commandEncoding` identifies the web-to-micro:bit command and result syntax. Use `json-v1` by default; use `text-v1` only when the chosen firmware cannot parse JSON commands reliably or measurements show a real resource problem. If this field is absent in an older `deviceInfo`, the browser assumes `json-v1`; `text-v1` must always be advertised explicitly. Sensor snapshots and `deviceInfo` remain JSON in either mode. A V1 reports only supported capabilities (for example, no built-in microphone, logo touch, or speaker). The firmware then sends periodic `sensorSnapshot` messages as shown above. Snapshot interval is configurable/implementation-defined, and sequence numbers increase for each snapshot.
+The firmware starts periodic snapshots only after accepting `HELLO|1`; the web app considers the protocol ready only after receiving and validating `deviceInfo`. Ignore output commands received before the handshake completes. For an unsupported bootstrap version, reply with the plain-text line `ERR|UNSUPPORTED_VERSION` and do not start snapshots.
+
+Protocol version 1 fixes `text-v1` as the command and result grammar. A future syntax change must update the protocol version and handshake contract. The game-facing API remains independent of the wire format. Sensor snapshots and `deviceInfo` remain JSON. A V1 reports only supported capabilities (for example, no built-in microphone, logo touch, or speaker). After the handshake, the firmware sends periodic snapshots as shown above. Snapshot interval is configurable/implementation-defined, and `n` increases for each snapshot.
 
 ## Web-to-micro:bit Commands
 
-Every command has a `commandId` so the firmware can acknowledge or reject it. The examples below define the built-in outputs only and use the default JSON command encoding (`json-v1`).
+Every command has a decimal `commandId` so the firmware can acknowledge or reject it. Commands use the fixed `text-v1` encoding and cover the built-in outputs only.
 
 ### LED display (V1 and V2)
 
 Show scrolling text:
 
-```json
-{
-  "type": "command",
-  "protocolVersion": 1,
-  "commandId": "web-101",
-  "target": "ledDisplay",
-  "action": "showText",
-  "text": "READY"
-}
+```text
+C|1|101|D|TEXT|READY
 ```
 
 Show a 5-by-5 image, where each pixel brightness is an integer from 0 (off) to 9 (bright):
 
-```json
-{
-  "type": "command",
-  "protocolVersion": 1,
-  "commandId": "web-102",
-  "target": "ledDisplay",
-  "action": "showImage",
-  "pixels": [[0,0,9,0,0],[0,9,0,9,0],[9,0,0,0,9],[0,9,0,9,0],[0,0,9,0,0]]
-}
+```text
+C|1|102|D|IMAGE|0090009090900090909000900
 ```
 
-Clear the display with `"target":"ledDisplay"` and `"action":"clear"`.
+Clear the display with `C|1|<commandId>|D|CLEAR`.
 
 ### Built-in speaker (V2 only)
 
 Play one tone:
 
-```json
-{
-  "type": "command",
-  "protocolVersion": 1,
-  "commandId": "web-103",
-  "target": "speaker",
-  "action": "playTone",
-  "frequencyHz": 440,
-  "durationMs": 250,
-  "volume": 128
-}
+```text
+C|1|103|S|TONE|440|250|128
 ```
 
-A `playMelody` command can carry an array of `{ "frequencyHz": ..., "durationMs": ... }` notes and an optional volume (0–255). `playBuiltInSound` takes a `name` advertised in `capabilities.outputs.builtInSounds` (for example, `happy` or `hello`):
+A `MELODY` command carries volume (0–255) and comma-separated `frequencyHz:durationMs` note pairs. `SOUND` takes a built-in sound name advertised in `capabilities.outputs.builtInSounds` (for example, `happy` or `hello`):
 
-```json
-{
-  "type": "command",
-  "protocolVersion": 1,
-  "commandId": "web-104",
-  "target": "speaker",
-  "action": "playBuiltInSound",
-  "name": "happy"
-}
+```text
+C|1|104|S|SOUND|happy
 ```
 
-`stop` stops active playback. Commands targeting a capability the board does not advertise are rejected as unsupported.
+Stop active playback with `C|1|<commandId>|S|STOP`. Commands targeting a capability the board does not advertise are rejected as unsupported.
 
 ## Command Responses and Firmware Behavior
 
-With `json-v1`, the micro:bit replies to each command with a JSON result message. `status: "ok"` means the command was accepted and applied or started; it does not mean a scroll or sound has finished playing.
+The micro:bit replies to every command with a text result line matching its command ID. Results intentionally remain text rather than JSON: the `R|` prefix makes them easy to distinguish from compact JSON snapshot lines (which begin with `{`) and avoids JSON response parsing/extra bytes. `OK` means the command was accepted and applied or started; it does not mean a scroll or sound has finished playing.
 
-```json
-{
-  "type": "commandResult",
-  "protocolVersion": 1,
-  "commandId": "web-103",
-  "status": "ok"
-}
+```text
+R|1|103|OK
+R|1|105|ERR|UNSUPPORTED_OUTPUT
 ```
 
-For invalid or unsupported `json-v1` commands, use `"status":"error"` and an `errorCode` such as `invalid_command`, `invalid_argument`, or `unsupported_output`. The firmware should validate message type, protocol version, action, ranges, and capabilities before acting; malformed input must not stop sensor reporting. Keep sensor snapshots flowing while processing commands, and avoid blocking display/audio playback where the selected firmware API allows it.
+For invalid commands, use `R|1|<commandId>|ERR|<ERROR_CODE>` when the ID can be recovered. Validate command version, action, ranges, text characters, and board capabilities before acting; malformed input must not stop sensor reporting. Keep snapshots flowing while processing commands, and avoid blocking display/audio playback where the selected firmware API allows it.
 
-## Fallback Command Encoding: `text-v1`
+## `text-v1` Command Grammar
 
-Use this format only if the selected micro:bit runtime lacks a usable JSON parser or target-device measurements show that JSON command parsing is unreliable or too costly. It is an alternative to the JSON commands above, not a second format used simultaneously. This fallback avoids parsing JSON commands but does not remove the need to generate JSON `deviceInfo` and sensor snapshots. `deviceInfo.commandEncoding` must be `text-v1` so the browser selects the matching encoder and result parser. `deviceInfo`, sensor snapshots, and their schemas remain JSON.
+All web-to-micro:bit commands and command results use this grammar; there is no JSON-command mode. This avoids firmware JSON command parsing while keeping JSON `deviceInfo` and sensor snapshots unchanged. The firmware still needs to generate those JSON messages.
 
 Each command is one ASCII line with fields separated by `|`:
 
@@ -193,7 +138,7 @@ R|1|42|OK
 R|1|45|ERR|UNSUPPORTED_OUTPUT
 ```
 
-The receiver must reject malformed lines, unsupported versions/actions, invalid ranges, and commands for unavailable outputs without stopping snapshot reporting. Define a maximum line length and maximum melody length in the implementation. The browser API remains unchanged; only its transport encoder and result parser vary by `commandEncoding`.
+`CLEAR` and `STOP` carry no arguments. The receiver must reject malformed lines, unsupported versions/actions, invalid ranges, and commands for unavailable outputs without stopping snapshot reporting. Define a maximum line length and maximum melody length in the implementation. The game-facing browser API remains unchanged; the adapter always uses `text-v1` for commands and results.
 
 ## Built-in Output Scope
 
