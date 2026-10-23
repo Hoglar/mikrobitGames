@@ -13,6 +13,7 @@ This decision defines how sensor readings are sent from the micro:bit to the web
 * Provide a consistent current sensor state to all games.
 * Keep the browser adapter independent of individual games.
 
+
 ## Considered Options
 
 All options use JSON messages, with one JSON object per line to provide message boundaries over the serial stream.
