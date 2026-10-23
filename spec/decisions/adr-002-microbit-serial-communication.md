@@ -4,7 +4,7 @@
 
 The micro:bit sensors will provide input to multiple games running on a web page. The page will use a shared browser-side adapter to receive sensor data, maintain the current sensor state, expose a consistent interface to each game, and send output commands back to the micro:bit.
 
-This decision defines the sensor update strategy. The bidirectional protocol uses JSON messages over the serial connection, with the micro:bit sending sensor snapshots and the page sending commands for supported built-in outputs. It should keep inputs responsive, be straightforward to parse and debug, and provide a consistent current state for the browser adapter and games.
+This decision defines the sensor update strategy and the default serial message format. The bidirectional protocol uses JSON messages over the serial connection, with the micro:bit sending sensor snapshots and the page sending commands for supported built-in outputs. The possible compact text fallback for commands is documented separately in ADR-004. The protocol should keep inputs responsive, be straightforward to parse and debug, and provide a consistent current state for the browser adapter and games.
 
 ## Decision Drivers
 
@@ -23,7 +23,7 @@ Sensor delivery options use JSON messages, with one JSON object per line to prov
 
 ## Decision Outcome
 
-Chosen option: **Periodic full snapshots for sensor input.** The micro:bit will send all current sensor readings together as one JSON object per line at a fixed transmission interval. Web-to-micro:bit output uses individual JSON command messages with correlated results. This keeps browser-side sensor state management simple and gives games a coherent view of current inputs. The interval will be selected and validated during implementation to balance responsiveness and message volume.
+Chosen option: **Periodic full snapshots for sensor input.** The micro:bit will send all current sensor readings together as one JSON object per line at a fixed transmission interval. Web-to-micro:bit output uses individual JSON command messages with correlated results by default. This keeps browser-side sensor state management simple and gives games a coherent view of current inputs. The interval will be selected and validated during implementation to balance responsiveness and message volume.
 
 ### Consequences
 
@@ -36,4 +36,4 @@ Chosen option: **Periodic full snapshots for sensor input.** The micro:bit will 
 
 ## Protocol Documentation
 
-The proposed protocol and firmware responsibilities are documented in [micro:bit Serial Protocol](../contracts/microbit-webapp/microbit-serial-protocol.md). The game-facing browser API and JSON handling are documented in [Web-Page Developer Interface](../contracts/microbit-webapp/web-page-developer-interface.md).
+The protocol and firmware responsibilities are documented in [micro:bit Serial Protocol](../contracts/microbit-webapp/microbit-serial-protocol.md). The game-facing browser API is documented in [Web-Page Developer Interface](../contracts/microbit-webapp/web-page-developer-interface.md). The command-encoding fallback is recorded in [ADR-004](adr-004-microbit-command-encoding.md).

@@ -17,7 +17,7 @@ The library is not implemented yet, so test tooling and numerical performance ta
 
 | ID | Test | Expected result |
 |---|---|---|
-| GI-01 | Parse valid `deviceInfo` and `sensorSnapshot` fixtures | Valid messages are accepted only for supported protocol versions and known message types. Board identity and capabilities are exposed to callers. |
+| GI-01 | Parse valid `deviceInfo` and `sensorSnapshot` fixtures | Valid messages are accepted only for supported protocol versions and known message types. Board identity and capabilities are exposed to callers; absent `commandEncoding` defaults to `json-v1`, while `text-v1` is used only when advertised. |
 | GI-02 | Stream framing | Parse a message split at every possible byte boundary, several messages in one read, CRLF, and a partial final line. Parse only complete newline-terminated lines; retain incomplete data for the next read. |
 | GI-03 | Invalid input resilience | Malformed JSON, empty lines, unknown types, invalid field types/ranges, and unsupported versions produce a protocol error/diagnostic without crashing or corrupting the last valid state. Enforce and test a documented maximum line size. |
 | GI-04 | Snapshot state and sequence | A valid full snapshot replaces current values; increasing sequence is accepted; gaps are observable for diagnostics; duplicates/older snapshots follow a documented policy. A later full snapshot restores current state. |
@@ -27,8 +27,8 @@ The library is not implemented yet, so test tooling and numerical performance ta
 | GI-08 | Button and gesture events | Press/release state is retained; one-shot events are emitted according to documented edge rules. Repeated snapshots do not repeatedly emit the same gesture; a gesture can be emitted again after the documented re-arm condition. |
 | GI-09 | Subscribers | Every active subscriber receives state updates in order. Unsubscribing prevents later callbacks; duplicate subscriptions, callback exceptions, and cleanup do not affect other games. |
 | GI-10 | Disconnect and reconnect | Connection state transitions are correct; stale buttons/tilt are reset or marked unavailable; pending commands reject; a new `deviceInfo` and snapshot initialize state after reconnect. |
-| GI-11 | Command serialization | Display and speaker API calls encode valid newline-delimited commands with unique command IDs and valid argument bounds. Unsupported capabilities fail before sending or surface the protocol error. |
-| GI-12 | Command results | Matching successful results resolve the right promise; error results reject with typed errors; unknown IDs are ignored/reported; timeout and disconnect reject pending calls. Out-of-order results do not resolve the wrong command. |
+| GI-11 | Command serialization | Display and speaker API calls encode valid newline-delimited commands for the selected `commandEncoding` (`json-v1` or `text-v1`), with unique command IDs and valid argument bounds. Unsupported capabilities fail before sending or surface the protocol error. |
+| GI-12 | Command results | Matching successful JSON or text results resolve the right promise; error results reject with typed errors; unknown IDs are ignored/reported; timeout and disconnect reject pending calls. Out-of-order results do not resolve the wrong command. |
 | GI-13 | Write behavior | Concurrent game calls are serialized safely; each command is written once and a partial write/error is handled without silently losing or duplicating a command. |
 | GI-14 | Capability-dependent API | Display methods are available on V1/V2; speaker methods require the advertised speaker capability; built-in sounds are limited to names advertised by the device. |
 | GI-15 | Hardware smoke test | With a connected board, verify one button change, one tilt change, snapshot delivery, display output, and (on V2) speaker output via the library API. Skip V2-only checks on boards without those capabilities. |

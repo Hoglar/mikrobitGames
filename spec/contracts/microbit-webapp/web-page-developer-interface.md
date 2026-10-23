@@ -67,12 +67,12 @@ The adapter owns the serial connection and is the only component that reads or w
 
 1. Request a connection in response to an explicit user action, then read newline-terminated UTF-8 messages. Browser serial support and permissions are browser-dependent.
 2. Buffer partial reads and split at newline boundaries; a read can contain part of a JSON object or several complete objects.
-3. Parse each complete line as JSON, validate `protocolVersion` and `type`, and handle `deviceInfo`, `sensorSnapshot`, and `commandResult` messages. Ignore or report malformed/unknown messages without crashing games.
+3. Parse each complete line according to the advertised command encoding: `deviceInfo` and `sensorSnapshot` are JSON; command results are JSON `commandResult` messages in `json-v1` or `R|...` lines in `text-v1`. Validate versions/types and report malformed/unknown lines without crashing games.
 4. Treat each valid full snapshot as authoritative current state. Use `sequence` to notice skipped snapshots for diagnostics; a later full snapshot resynchronizes state.
 5. Normalize fields and units, update the shared input state, and notify subscribers. Never let an individual game mutate adapter-owned sensor state.
-6. Serialize outgoing commands as one JSON object per line and correlate `commandResult` messages by `commandId` with the pending Promise.
+6. Read `deviceInfo.commandEncoding` and serialize commands/results using the advertised encoding; default to `json-v1` if the field is absent, and use `text-v1` only when explicitly advertised. Correlate responses by `commandId` with the pending Promise; sensor snapshots and `deviceInfo` remain JSON in either mode.
 
-A `deviceInfo` message supplies the board generation and supported sensor/output capabilities. The facade should expose capabilities so the UI can hide or disable unsupported features (for example, speaker controls on V1).
+A `deviceInfo` message supplies the board generation, supported sensor/output capabilities, and `commandEncoding`. The facade should expose capabilities so the UI can hide or disable unsupported features (for example, speaker controls on V1). The wire encoding is an adapter detail; games continue using the same output methods.
 
 ## Output Commands
 
@@ -82,7 +82,7 @@ The game API maps friendly methods to the protocol commands described in [the mi
 - `outputs.speaker.playTone(...)`, `playMelody(...)`, `playBuiltInSound(name)`, and `stop()` require the built-in V2 speaker. Built-in sound names are advertised by the device. Calls on boards without the requested capability should reject with a clear unsupported-capability error rather than silently doing nothing.
 - The built-in micro:bit has no rumble motor. GPIO-connected motors or speakers require extra hardware and are not exposed by the built-in output API.
 
-Each command resolves only after a successful `commandResult`; an error result rejects with a typed error including its protocol error code. The adapter should handle timeouts and reject pending commands if the serial connection closes.
+Each command resolves only after a successful result in the selected encoding; an error result rejects with a typed error including its protocol error code. The adapter should handle timeouts and reject pending commands if the serial connection closes.
 
 ## Input Validation and Errors
 

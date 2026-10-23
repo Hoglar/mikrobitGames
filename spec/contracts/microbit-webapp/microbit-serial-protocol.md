@@ -64,7 +64,7 @@ Tilt gestures are derived from the accelerometer, not a separate physical sensor
 
 ## Message Framing and Startup
 
-Use newline-delimited JSON in both directions: each message is one JSON object followed by `\n`. The firmware must buffer incoming bytes until a full line is available; one serial read may contain a partial message or several messages. The web adapter uses the same rule for incoming micro:bit messages.
+Use newline-delimited messages in both directions. `deviceInfo` and `sensorSnapshot` are always JSON objects followed by `\n`. Commands and their results use JSON by default (`commandEncoding: "json-v1"`); in the compact `text-v1` fallback, both commands and results use the text grammar below. The firmware and web adapter must buffer until a complete line is available because a serial read may contain a partial message or several messages.
 
 On startup or connection, the micro:bit sends a `deviceInfo` message so the page can discover board-specific capabilities:
 
@@ -72,6 +72,7 @@ On startup or connection, the micro:bit sends a `deviceInfo` message so the page
 {
   "type": "deviceInfo",
   "protocolVersion": 1,
+  "commandEncoding": "json-v1",
   "board": "microbit-v2",
   "capabilities": {
     "sensors": ["buttons", "accelerometer", "compass", "temperature", "light", "microphone", "logoTouch"],
@@ -84,11 +85,11 @@ On startup or connection, the micro:bit sends a `deviceInfo` message so the page
 }
 ```
 
-A V1 reports only supported capabilities (for example, no built-in microphone, logo touch, or speaker). The firmware then sends periodic `sensorSnapshot` messages as shown above. Snapshot interval is configurable/implementation-defined, and sequence numbers increase for each snapshot.
+`commandEncoding` identifies the web-to-micro:bit command and result syntax. Use `json-v1` by default; use `text-v1` only when the chosen firmware cannot parse JSON commands reliably or measurements show a real resource problem. If this field is absent in an older `deviceInfo`, the browser assumes `json-v1`; `text-v1` must always be advertised explicitly. Sensor snapshots and `deviceInfo` remain JSON in either mode. A V1 reports only supported capabilities (for example, no built-in microphone, logo touch, or speaker). The firmware then sends periodic `sensorSnapshot` messages as shown above. Snapshot interval is configurable/implementation-defined, and sequence numbers increase for each snapshot.
 
 ## Web-to-micro:bit Commands
 
-Every command has a `commandId` so the firmware can acknowledge or reject it. The examples below define the built-in outputs only.
+Every command has a `commandId` so the firmware can acknowledge or reject it. The examples below define the built-in outputs only and use the default JSON command encoding (`json-v1`).
 
 ### LED display (V1 and V2)
 
@@ -154,7 +155,7 @@ A `playMelody` command can carry an array of `{ "frequencyHz": ..., "durationMs"
 
 ## Command Responses and Firmware Behavior
 
-The micro:bit replies to each command with a result message. `status: "ok"` means the command was accepted and applied or started; it does not mean a scroll or sound has finished playing.
+With `json-v1`, the micro:bit replies to each command with a JSON result message. `status: "ok"` means the command was accepted and applied or started; it does not mean a scroll or sound has finished playing.
 
 ```json
 {
@@ -165,7 +166,34 @@ The micro:bit replies to each command with a result message. `status: "ok"` mean
 }
 ```
 
-For invalid or unsupported commands, use `"status":"error"` and an `errorCode` such as `invalid_command`, `invalid_argument`, or `unsupported_output`. The firmware should validate message type, protocol version, action, ranges, and capabilities before acting; malformed input must not stop sensor reporting. Keep sensor snapshots flowing while processing commands, and avoid blocking display/audio playback where the selected firmware API allows it.
+For invalid or unsupported `json-v1` commands, use `"status":"error"` and an `errorCode` such as `invalid_command`, `invalid_argument`, or `unsupported_output`. The firmware should validate message type, protocol version, action, ranges, and capabilities before acting; malformed input must not stop sensor reporting. Keep sensor snapshots flowing while processing commands, and avoid blocking display/audio playback where the selected firmware API allows it.
+
+## Fallback Command Encoding: `text-v1`
+
+Use this format only if the selected micro:bit runtime lacks a usable JSON parser or target-device measurements show that JSON command parsing is unreliable or too costly. It is an alternative to the JSON commands above, not a second format used simultaneously. This fallback avoids parsing JSON commands but does not remove the need to generate JSON `deviceInfo` and sensor snapshots. `deviceInfo.commandEncoding` must be `text-v1` so the browser selects the matching encoder and result parser. `deviceInfo`, sensor snapshots, and their schemas remain JSON.
+
+Each command is one ASCII line with fields separated by `|`:
+
+```text
+C|1|42|D|TEXT|READY
+C|1|43|D|IMAGE|<25 brightness digits, row-major, each 0-9>
+C|1|44|D|CLEAR
+C|1|45|S|TONE|440|250|128
+C|1|46|S|MELODY|128|440:200,660:300
+C|1|47|S|SOUND|happy
+C|1|48|S|STOP
+```
+
+Field order is `C|version|commandId|target|action|arguments`. `D` means LED display and `S` means speaker. `commandId` is a decimal integer unique among outstanding commands. `TEXT` accepts only supported printable display characters; the text must not contain `|`, carriage return, or newline. If arbitrary text is needed, define and test an escaping or length-prefixed encoding before enabling it. `IMAGE` carries exactly 25 brightness digits in row-major order. `TONE` arguments are frequency in Hz, duration in ms, and volume 0–255. `MELODY` carries volume followed by comma-separated `frequencyHz:durationMs` notes. `SOUND` names must be advertised by the device.
+
+Results are one line, matching the request ID:
+
+```text
+R|1|42|OK
+R|1|45|ERR|UNSUPPORTED_OUTPUT
+```
+
+The receiver must reject malformed lines, unsupported versions/actions, invalid ranges, and commands for unavailable outputs without stopping snapshot reporting. Define a maximum line length and maximum melody length in the implementation. The browser API remains unchanged; only its transport encoder and result parser vary by `commandEncoding`.
 
 ## Built-in Output Scope
 
