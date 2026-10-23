@@ -1,16 +1,18 @@
-# Forslag til prosjektstruktur
+# Prosjektstruktur
 
-**Status:** Forslag til gjennomgang i gruppen. Ikke godkjent eller etablert.
+**Status:** Ferdig og vedtatt av gruppen. Mappestrukturen er etablert lokalt.
+
+**Dato:** 2026-10-23.
 
 **Arbeidspakke:** [WBS 1.7 – Definere repository- og prosjektstruktur](https://github.com/Hoglar/mikrobitGames/issues/22).
 
-Dokumentet beskriver foreslått organisering av kildekode, krav, modeller, tester og dokumentasjon. Gruppen gjennomgår forslaget før mappene etableres og eksisterende filer flyttes. Mappetrærne nedenfor viser ønsket struktur, ikke dagens innhold.
+Dokumentet beskriver vedtatt organisering av kildekode, krav, modeller, tester og dokumentasjon etter gruppens gjennomgang. Backend API, database og AI-tjeneste er samlet i én backend-modul. Dokumentet er ferdig; ferdigstilling av de enkelte systemdelene følger egne arbeidspakker.
 
 ## 1. Organisering og ansvar
 
-Prosjektet organiseres som ett **monorepo med fem delprosjekter**, tilsvarende systemdelene i C4-modellen. Dette samler kontrakter og dokumentasjon og gjør det mulig å endre et grensesnitt og berørte systemdeler i samme endring.
+Prosjektet organiseres som ett **monorepo med tre delprosjekter**: Micro:bit, webapp og backend. Backend samler API, database og AI-tjeneste som interne deler. C4-modellens ansvarsdeling beholdes; mappeinndelingen bestemmer ikke antall kjørende tjenester. Dette samler kontrakter og dokumentasjon og gjør det mulig å endre et grensesnitt og berørte systemdeler i samme endring.
 
-Separate repositoryer ville gitt mer uavhengig administrasjon, men også mer koordinering av kontrakter, versjoner og dokumentasjon. For denne skoleoppgaven med fem gruppemedlemmer foreslås derfor ett repository.
+Separate repositoryer ville gitt mer uavhengig administrasjon, men også mer koordinering av kontrakter, versjoner og dokumentasjon. For denne skoleoppgaven med fem gruppemedlemmer er derfor ett repository valgt.
 
 Hvert delprosjekt samler egne krav, modeller, implementasjon og tester. Gruppen bruker felles regler for plassering og dokumentasjon, mens hver del kan velge teknologi, testverktøy, arbeidsprosess og intern kodestruktur. Inndelingen krever ikke at hvert gruppemedlem bare arbeider med én del.
 
@@ -18,11 +20,9 @@ Hvert delprosjekt samler egne krav, modeller, implementasjon og tester. Gruppen 
 | --- | --- |
 | `microbit/` | Sensorer, knapper, aktuatorer og enhetens USB-kommunikasjon. |
 | `webapp/` | Spill, launcher, dashboard, felles Web Serial-adapter og kommunikasjon med backend. |
-| `backend/` | REST API, autentisering, spilldata og kommunikasjon med database og AI-tjeneste. |
-| `database/` | Databasestruktur, databaseendringer, testdata og tilgangsrettigheter. |
-| `ai-service/` | Lokal AI, håndtering av spillerforespørsler og kontrollert lesetilgang til highscore-data. |
+| `backend/` | Samlet ansvar for REST API, autentisering, spilldata, database og lokal AI. Internt deles implementasjonen i `api/`, `database/` og `ai-service/`. |
 
-## 2. Foreslått mappestruktur
+## 2. Mappestruktur
 
 ```text
 mikrobitGames/
@@ -30,19 +30,27 @@ mikrobitGames/
 ├── microbit/
 ├── webapp/
 ├── backend/
-├── database/
-├── ai-service/
-├── spec/
-│   ├── system/
-│   │   ├── requirements.md
+│   ├── api/src/
+│   ├── database/
+│   │   ├── migrations/
+│   │   └── seeds/
+│   ├── ai-service/src/
+│   ├── spec/
 │   │   ├── models/
-│   │   └── verification-plan.md
+│   │   └── contracts/
+│   │       ├── backend-database/
+│   │       ├── backend-ai/
+│   │       └── ai-database/
+│   ├── tests/
+│   │   ├── unit/
+│   │   └── integration/
+│   ├── verification/
+│   └── results/
+├── spec/
+│   ├── system/models/
 │   ├── contracts/
 │   │   ├── microbit-webapp/
-│   │   ├── webapp-backend/
-│   │   ├── backend-database/
-│   │   ├── backend-ai/
-│   │   └── ai-database/
+│   │   └── webapp-backend/
 │   └── decisions/
 ├── tests/
 │   ├── integration/
@@ -55,17 +63,17 @@ mikrobitGames/
     └── presentation/
 ```
 
-Treet angir hvor materialet skal ligge. Kravdokumenter, kontrakter og testplaner fylles ut i sine respektive arbeidspakker. Etablering av strukturen betyr ikke at disse leveransene er ferdige.
+README-filer forklarer formålet med mappene og er utelatt fra treet over. Kravdokumenter, kontrakter og testplaner fylles ut i sine respektive arbeidspakker; det er ikke opprettet tomme dokumenter som kan forveksles med ferdige leveranser.
 
-### Struktur i hvert delprosjekt
+### Felles utgangspunkt for delprosjektene
+
+Micro:bit og webapp bruker følgende struktur:
 
 ```text
 <delprosjekt>/
 ├── README.md
 ├── spec/
-│   ├── requirements.md
-│   ├── models/
-│   └── test-plan.md
+│   └── models/
 ├── src/
 ├── tests/
 ├── verification/
@@ -75,15 +83,14 @@ Treet angir hvor materialet skal ligge. Kravdokumenter, kontrakter og testplaner
 | Plassering | Innhold |
 | --- | --- |
 | `README.md` | Ansvar, lenker til relevante kontrakter og etter hvert instruksjoner for oppsett, kjøring og testing. |
-| `spec/requirements.md` | Funksjonelle krav og relevante kvalitetskrav for delen. |
+| `spec/` | Krav i `requirements.md` og planlagte tester med forventede resultater i `test-plan.md`, når disse utarbeides. |
 | `spec/models/` | Komponentmodeller, datamodeller og andre designmodeller som brukes som grunnlag for utviklingen. |
-| `spec/test-plan.md` | Planlagte tester, forventede resultater og hvordan krav og modeller skal verifiseres. |
 | `src/` | Implementasjonen, organisert etter ansvar og valgt teknologi. |
 | `tests/` | Kjørbare tester av delens funksjonalitet og interne komponenter. |
 | `verification/` | Eventuelle skript for modelluttrekk, modellsammenligning og benchmarks. |
 | `results/` | Utvalgte testresultater, målinger og uttrekk fra implementasjonen som dokumenterer verifiseringen. |
 
-Databasedelen bruker `migrations/` og `seeds/` i stedet for `src/` til henholdsvis databaseendringer og testdata. Datamodellen ligger under `database/spec/models/`.
+Backend følger samme prinsipp, men har implementasjonen i `api/src/`, `ai-service/src/` og `database/`. Databaseendringer ligger i `database/migrations/` og syntetiske testdata i `database/seeds/`. Backend har ett felles `spec/`, `tests/`, `verification/` og `results/`, med underinndeling etter ansvar ved behov. Datamodellen ligger under `backend/spec/models/`.
 
 Spill og den felles Micro:bit-adapteren tilhører webappen. Detaljert oppdeling av kildekoden bestemmes ved utvikling av hver del. Verktøybestemte plasseringer beskrives i delens README dersom de avviker fra utgangspunktet.
 
@@ -91,7 +98,7 @@ Spill og den felles Micro:bit-adapteren tilhører webappen. Detaljert oppdeling 
 
 **Systemnivå:** Overordnet C4-modell, krav som gjelder hele systemet og samlet verifikasjonsplan lagres under `spec/system/`. Modeller for én systemdel lagres hos den aktuelle delen.
 
-**Kommunikasjonskontrakter:** Hvert av de fem grensesnittene har én autoritativ beskrivelse under `spec/contracts/`. Her lagres også tilhørende meldingsskjemaer og eksempler når disse defineres. Delprosjektene lenker til kontraktene fremfor å vedlikeholde kopier. Endringer gjennomgås av dem som arbeider på begge sider av grensesnittet.
+**Kommunikasjonskontrakter:** Grensesnittene Micro:bit–webapp og webapp–backend beskrives under rotens `spec/contracts/`. De interne grensesnittene API–database, API–AI og AI–database beskrives under `backend/spec/contracts/`, med navn som følger de eksisterende arbeidspakkene. Hvert grensesnitt har én autoritativ beskrivelse. Tilhørende meldingsskjemaer og eksempler lagres sammen med kontrakten når de defineres. Delprosjektene lenker til kontraktene fremfor å vedlikeholde kopier. Endringer gjennomgås av dem som arbeider på begge sider av grensesnittet.
 
 Selve meldingsformatene, API-endepunktene og databasetilgangen defineres i WBS 1.2–1.6. Denne strukturbeslutningen endrer ingen API-er eller kommunikasjonsformater.
 
@@ -104,7 +111,8 @@ Selve meldingsformatene, API-endepunktene og databasetilgangen defineres i WBS 1
 ### Plassering av tester
 
 - Enhetstester og integrasjonstester mellom interne komponenter ligger i delprosjektets `tests/`.
-- Tester mellom systemdelene ligger i rotens `tests/integration/`, gruppert etter grensesnitt ved behov.
+- Tester mellom API, database og AI ligger i `backend/tests/integration/`. Backendens enhetstester ligger i `backend/tests/unit/`.
+- Tester mellom Micro:bit, webapp og backend ligger i rotens `tests/integration/`, gruppert etter grensesnitt ved behov.
 - Samlede brukerforløp ligger i rotens `tests/e2e/`.
 - Tester som krever fysisk Micro:bit får dokumenterte steg og forventede resultater når automatisering ikke er praktisk. Lokale maskinvaretester beskrives i delens testplan; tester på tvers av systemet beskrives i den felles verifikasjonsplanen.
 
@@ -136,7 +144,7 @@ Selve FoM-en velges i verifikasjonsarbeidet. Strukturen krever ikke en egen FoM 
 
 - Bruk engelske mappe- og filnavn med små bokstaver og bindestrek, for eksempel `ai-service` og `test-plan.md`. Behold standardnavn som `README.md` og navn som kreves av verktøy.
 - Skriv ny forklarende dokumentasjon på norsk. Eksisterende engelsk dokumentasjon kan beholdes.
-- Gi krav stabile identifikatorer: `MB-001`, `WEB-001`, `BE-001`, `DB-001`, `AI-001` og `SYS-001`, med videre nummerering innenfor hver del. Ikke gjenbruk identifikatorer for slettede krav.
+- Gi krav stabile identifikatorer: `MB-001`, `WEB-001`, `BE-001`, `DB-001`, `AI-001` og `SYS-001`, med videre nummerering innenfor hvert ansvarsområde. Backend beholder prefiksene `BE`, `DB` og `AI` selv om disse områdene ligger i samme modul. Ikke gjenbruk identifikatorer for slettede krav.
 - Testbeskrivelser refererer til relevante krav og ved behov kontrakter og modeller. Unngå å kopiere kravteksten inn i flere dokumenter.
 - Bruk relative lenker mellom filer i repositoryet og lenker til relevante GitHub-issues for arbeidsoppgaver.
 - Navngi ADR-er som `adr-001-beskrivende-navn.md`. Nummeret identifiserer beslutningen, mens dokumentet angir status.
@@ -146,42 +154,36 @@ Selve FoM-en velges i verifikasjonsarbeidet. Strukturen krever ikke en egen FoM 
 
 Hoved-README skal være inngangen til prosjektet og lenke til delprosjektene, felles spesifikasjoner og dette dokumentet. Presentasjon og demonstrasjonsbeskrivelse samles i `docs/presentation/`; store videofiler kan refereres med lenke.
 
-## 6. Etablering etter gruppens gjennomgang
+## 6. Gjennomført etablering
 
-Følgende arbeid gjennomføres etter at gruppen har godkjent forslaget:
+Gruppen har gjennomgått forslaget og valgt å samle Backend API, database og AI i én modul. Strukturen er etablert med forklarende README-filer, og eksisterende filer er flyttet som følger:
 
-1. Opprett de fem delprosjektene og fellesområdene fra mappetreet med korte README-filer som forklarer formålet. Git lagrer ikke tomme mapper. Opprett detaljerte undermapper når de får innhold, og unngå tomme dokumenter som kan forveksles med ferdige spesifikasjoner.
-2. Flytt eksisterende filer etter tabellen nedenfor. Behold innhold og beslutningsstatus ved flytting; godkjenning av strukturen godkjenner ikke automatisk andre arkitekturvalg.
-3. Opprett ADR-003 med begrunnelse for monorepo, delprosjekter og skillet mellom lokalt og felles materiale. Bruk eksisterende ADR-mal og registrer gruppens beslutning.
-4. Oppdater hoved-README, delprosjektenes README-filer og interne referanser til nye plasseringer. Fjern `systemModel/` når filene er flyttet og mappen er tom.
-5. Kontroller at filer er bevart, lenker virker og alle materialtypene i issue 1.7 har en entydig plass.
-
-| Dagens plassering | Foreslått plassering |
+| Tidligere plassering | Nåværende plassering |
 | --- | --- |
 | `systemModel/c4ContainerDiagram.drawio` | `spec/system/models/c4-container.drawio` |
 | `systemModel/c4ComponentMicroBit.drawio` | `microbit/spec/models/c4-component.drawio` |
 | `spec/decisions/adr-direkte-datatilgang-for-AI.md` | `spec/decisions/adr-001-direkte-datatilgang-for-ai.md` |
 | `spec/decisions/microbit-serial-communication-adr.md` | `spec/decisions/adr-002-microbit-serial-communication.md` |
-| `spec/decisions/adr-template.md` | Beholdes på samme sted. |
+| `spec/decisions/adr-template.md` | Beholdt på samme sted. |
 
-Micro:bit-komponentdiagrammet er tomt ved utarbeidelse av forslaget. Det flyttes som eksisterende plassholder og merkes som ikke påbegynt i delens README; det regnes ikke som en ferdig modell. AI-beslutningen får identifikatoren ADR-001, som issuene allerede refererer til.
+Diagrammenes og de eksisterende ADR-enes innhold er bevart. Micro:bit-komponentdiagrammet er fortsatt en tom plassholder og er merket som ikke påbegynt i delens README. Godkjenningen av strukturen endrer ikke beslutningsstatusen til andre ADR-er.
+
+Valget er dokumentert i [ADR-003](../spec/decisions/adr-003-repository-structure.md). Den tidligere `systemModel/`-mappen er fjernet etter flyttingen. Hoved-README lenker til delprosjektene, fellesområdene og dette dokumentet.
 
 ## 7. Dekning av akseptansekriteriene i WBS 1.7
 
-Alle punktene nedenfor er foreslått eller planlagt. Tabellen innebærer ikke at gruppen allerede har godkjent dem.
+| Akseptansekriterium | Dekning og status |
+| --- | --- |
+| Vurdere og velge repository-struktur. | Ferdig: monorepo er valgt og begrunnet i del 1 og ADR-003. |
+| Definere mappeinndeling for hoveddelene. | Ferdig: tre delprosjekter og fellesområder er beskrevet og etablert. |
+| Definere plassering av krav, modeller og kontrakter. | Ferdig: del 2–3 og README-filene beskriver plasseringene. |
+| Definere organisering av enhets- og integrasjonstester. | Ferdig: del 4 skiller mellom interne backend-tester og tester på tvers av hoveddelene. |
+| Definere plassering av FoM-målinger og testresultater. | Ferdig: del 4 og opprettede resultatmapper. |
+| Definere navngivnings- og organiseringsregler. | Ferdig: del 5. |
+| Etablere mappestrukturen i GitHub-repositoryet. | Etablert lokalt; endringene må committes og pushes før dette punktet er fullført på GitHub. |
+| Dokumentere strukturen og gjennomgå den med gruppen. | Ferdig: gruppens gjennomgang og beslutning er bekreftet 2026-10-23 og innarbeidet her. |
+| Dokumentere vesentlige arkitekturvalg i ADR ved behov. | Ferdig: ADR-003 dokumenterer den vedtatte strukturen. |
 
-| Akseptansekriterium | Hvor det besvares | Gjenstående før lukking |
-| --- | --- | --- |
-| Vurdere og velge repository-struktur. | Del 1: monorepo og vurdering av separate repositoryer. | Gruppen vedtar valget. |
-| Definere mappeinndeling for hoveddelene. | Del 1–2: fem delprosjekter og fellesområder. | Gruppen godkjenner inndelingen. |
-| Definere plassering av krav, modeller og kontrakter. | Del 2–3. | Gruppen godkjenner plasseringene. |
-| Definere organisering av enhets- og integrasjonstester. | Del 4. | Gruppen godkjenner skillet mellom lokale og felles tester. |
-| Definere plassering av FoM-målinger og testresultater. | Del 4. | Gruppen godkjenner plassering og dokumentasjonskrav. |
-| Definere navngivnings- og organiseringsregler. | Del 5. | Gruppen godkjenner reglene. |
-| Etablere mappestrukturen i GitHub-repositoryet. | Fremgangsmåte i del 6. | Opprett, flytt, kontroller og få endringene inn i GitHub-repositoryet. |
-| Dokumentere strukturen og gjennomgå den med gruppen. | Dette dokumentet. | Registrer gjennomgang og avtalte justeringer i issuen. |
-| Dokumentere vesentlige arkitekturvalg i ADR ved behov. | ADR-003 planlagt i del 6. | Skriv og godkjenn ADR-en om repository-struktur. |
-
-Issuen kan lukkes når gruppen har gjennomgått og godkjent strukturen, den er etablert i repositoryet, og README, ADR og dette dokumentet samsvarer med faktisk struktur. Filplasseringer og interne lenker skal være kontrollert.
+Dokumentet og den lokale strukturen er ferdige. Ved publisering av endringene kan issue 1.7 oppdateres og lukkes. Dette dokumentet innebærer ikke at endringene allerede er publisert eller at GitHub-issuen er lukket.
 
 Valg av rammeverk, konkret FoM, detaljert testdesign og ferdigstilling av øvrige krav og modeller hører til de tilhørende arbeidspakkene og er ikke nødvendig for å fullføre WBS 1.7.
