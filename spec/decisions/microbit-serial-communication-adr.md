@@ -13,7 +13,6 @@ This decision defines how sensor readings are sent from the micro:bit to the web
 * Provide a consistent current sensor state to all games.
 * Keep the browser adapter independent of individual games.
 
-
 ## Considered Options
 
 All options use JSON messages, with one JSON object per line to provide message boundaries over the serial stream.
@@ -34,3 +33,7 @@ Chosen option: **Periodic full snapshots.** The micro:bit will send all current 
 * Bad, because unchanged readings are retransmitted, increasing message volume compared with change-only events.
 * Bad, because responsiveness depends on the chosen transmission interval; the interval must be tested with the games.
 * The message schema must define stable field names, units, and how unavailable or invalid readings are represented. The adapter will parse complete newline-terminated messages rather than assuming each serial read contains exactly one message.
+
+## Sensor Data Structure
+
+A proposed example payload, field guidance, and hardware-availability notes are documented in [micro:bit Sensor Data Format](../../docs/microbit-sensor-data-format.md).
