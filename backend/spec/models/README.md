@@ -6,3 +6,4 @@ Designmodeller som styrer utviklingen av denne delen. Datamodellen og komponentm
 - [ER-diagram for databasen](database-er.drawio): redigerbar oversikt over tabeller, datatyper, nøkler, kardinalitet og slettingsregler. Bygger på datamodellen og brukes videre i WBS 5.1.
 - [Maskinlesbar modellfasit](database-schema.json): felter, nøkler og AI-visninger for den avgrensede, automatiserte modellkontrollen beskrevet i [testplanen](../test-plan.md).
 - [AI-komponentdiagram](ai-components.drawio) og [maskinlesbar komponentmodell](ai-components.json): ansvar og avhengigheter i den ferdigstilte spesifikasjonen for [AI-modulen, WBS 6.1](../ai-module.md).
+- [Backend-komponenter og drift](backend-components.drawio) og [maskinlesbar komponentmodell](backend-components.json): ferdigstilt modell for [WBS 4.1](../backend-module.md), inkludert publisering fra hjemmemaskinen.

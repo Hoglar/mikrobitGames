@@ -6,5 +6,6 @@
 - [ADR-004: Micro:bit command encoding](adr-004-microbit-command-encoding.md) (Accepted).
 - [ADR-005: PostgreSQL](adr-005-postgresql.md) (godkjent av prosjekteier).
 - [ADR-006: Lokal modellkjøring bak AI-tjenestens adapter](adr-006-local-ai-runtime.md) (Godkjent).
+- [ADR-007: Backend API og nettside på hjemmemaskinen](adr-007-backend-web-hosting.md) (Godkjent; 1.3 er fortsatt forslag).
 
 Bruk [ADR-malen](adr-template.md) for nye beslutninger. Eksisterende beslutningsinnhold og statuser er bevart ved flytting.

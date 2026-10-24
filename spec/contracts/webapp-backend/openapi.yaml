@@ -1,0 +1,1329 @@
+openapi: 3.1.0
+info: {title: mikrobitGames – Webapp / Backend API, version: 0.1.0-draft, description: 'Forslag fra WBS
+    4.1 til kontrakt 1.3. Avventer avklaring hos ansvarlig for 1.3; godkjenning av 4.1 godkjenner ikke denne filen. Ingen implementasjon. Se contract.md for sesjoner, omforsøk, CSRF og frontendforløp.
+    JSON-objekter har eksplisitte felt; ukjente query-parametere avvises. Alle POST-kall krever JSON,
+    X-MBG-Request: 1 og verifisert Origin/Referer. Ingen CORS-tilgang til andre origins. UTF-8, UUID og
+    UTC. Maksimal body 16 KiB.'}
+servers:
+- {url: /api/v1, description: Samme HTTPS-adresse som nettsiden på hjemmemaskinen. Domene velges ved publisering.}
+security: []
+tags:
+- {name: Konto}
+- {name: Spill og rekorder}
+- {name: AI}
+- {name: Drift}
+paths:
+  /auth/register:
+    post:
+      operationId: registerPlayer
+      tags:
+      - Konto
+      summary: Opprett konto uten automatisk innlogging
+      description: Opprett konto uten automatisk innlogging
+      security: []
+      responses:
+        '201':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Player'}
+              example: {id: 11111111-1111-4111-8111-111111111111, username: Ada, created_at: '2026-10-01T12:00:00Z'}
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/WriteUnavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '413': {$ref: '#/components/responses/TooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedType'}
+        '409': {$ref: '#/components/responses/UsernameTaken'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+      parameters:
+      - {$ref: '#/components/parameters/BrowserRequest'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/Credentials'}
+            example: {username: Ada, password: eksempelpassord123}
+  /auth/login:
+    post:
+      operationId: login
+      tags:
+      - Konto
+      summary: Logg inn og opprett sesjon
+      description: Logg inn og opprett sesjon
+      security: []
+      responses:
+        '200':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+            Set-Cookie:
+              description: '__Host-mbg_session; Secure; HttpOnly; SameSite=Lax; Path=/; ingen Domain.
+                Max-Age følger gjenværende sesjonstid. Ved utlogging/sletting/passordendring: Max-Age=0.
+                Token eksponeres ikke i JSON.'
+              schema: {type: string}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Session'}
+              example:
+                player: {id: 11111111-1111-4111-8111-111111111111, username: Ada, created_at: '2026-10-01T12:00:00Z'}
+                expires_at: '2026-10-05T12:00:00Z'
+                absolute_expires_at: '2026-11-01T12:00:00Z'
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/WriteUnavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '413': {$ref: '#/components/responses/TooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedType'}
+        '401': {$ref: '#/components/responses/InvalidCredentials'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+      parameters:
+      - {$ref: '#/components/parameters/BrowserRequest'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/Credentials'}
+            example: {username: Ada, password: eksempelpassord123}
+  /auth/session:
+    get:
+      operationId: getSession
+      tags:
+      - Konto
+      summary: Hent gyldig sesjon uten å fornye
+      description: Hent gyldig sesjon uten å fornye
+      security:
+      - {sessionCookie: []}
+      responses:
+        '200':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Session'}
+              example:
+                player: {id: 11111111-1111-4111-8111-111111111111, username: Ada, created_at: '2026-10-01T12:00:00Z'}
+                expires_at: '2026-10-05T12:00:00Z'
+                absolute_expires_at: '2026-11-01T12:00:00Z'
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '401': {$ref: '#/components/responses/AuthRequired'}
+  /auth/renew:
+    post:
+      operationId: renewSession
+      tags:
+      - Konto
+      summary: Forny gyldig sesjon innen absolutt utløp
+      description: Før spillstart og omtrent hvert femte minutt under aktiv spilling. expires_at=min(nå+72
+        timer, absolutt utløp etter 30 døgn). En utløpt sesjon gjenopplives aldri.
+      security:
+      - {sessionCookie: []}
+      responses:
+        '200':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+            Set-Cookie:
+              description: '__Host-mbg_session; Secure; HttpOnly; SameSite=Lax; Path=/; ingen Domain.
+                Max-Age følger gjenværende sesjonstid. Ved utlogging/sletting/passordendring: Max-Age=0.
+                Token eksponeres ikke i JSON.'
+              schema: {type: string}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Session'}
+              example:
+                player: {id: 11111111-1111-4111-8111-111111111111, username: Ada, created_at: '2026-10-01T12:00:00Z'}
+                expires_at: '2026-10-05T12:00:00Z'
+                absolute_expires_at: '2026-11-01T12:00:00Z'
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/WriteUnavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '401': {$ref: '#/components/responses/AuthRequired'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '413': {$ref: '#/components/responses/TooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedType'}
+      parameters:
+      - {$ref: '#/components/parameters/BrowserRequest'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/EmptyRequest'}
+            example: {}
+  /auth/logout:
+    post:
+      operationId: logout
+      tags:
+      - Konto
+      summary: Avslutt aktuell sesjon
+      description: Avslutt aktuell sesjon
+      security:
+      - {}
+      - {sessionCookie: []}
+      responses:
+        '204':
+          description: Sesjon og cookie fjernet. Også 204 når sesjonen allerede er borte.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+            Set-Cookie:
+              description: '__Host-mbg_session; Secure; HttpOnly; SameSite=Lax; Path=/; ingen Domain.
+                Max-Age følger gjenværende sesjonstid. Ved utlogging/sletting/passordendring: Max-Age=0.
+                Token eksponeres ikke i JSON.'
+              schema: {type: string}
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/WriteUnavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '413': {$ref: '#/components/responses/TooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedType'}
+      parameters:
+      - {$ref: '#/components/parameters/BrowserRequest'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/EmptyRequest'}
+            example: {}
+  /account/password:
+    post:
+      operationId: changePassword
+      tags:
+      - Konto
+      summary: Endre passord og avslutt alle sesjoner
+      description: Endre passord og avslutt alle sesjoner
+      security:
+      - {sessionCookie: []}
+      responses:
+        '204':
+          description: Passord endret og alle sesjoner avsluttet. Ny innlogging kreves.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+            Set-Cookie:
+              description: '__Host-mbg_session; Secure; HttpOnly; SameSite=Lax; Path=/; ingen Domain.
+                Max-Age følger gjenværende sesjonstid. Ved utlogging/sletting/passordendring: Max-Age=0.
+                Token eksponeres ikke i JSON.'
+              schema: {type: string}
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/WriteUnavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '401': {$ref: '#/components/responses/AuthRequired'}
+        '403': {$ref: '#/components/responses/PasswordForbidden'}
+        '413': {$ref: '#/components/responses/TooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedType'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+      parameters:
+      - {$ref: '#/components/parameters/BrowserRequest'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PasswordChange'}
+            example: {current_password: eksempelpassord123, new_password: et-nytt-passord123}
+  /account/delete:
+    post:
+      operationId: deleteAccount
+      tags:
+      - Konto
+      summary: Slett egen konto og rekordhistorikk
+      description: Slett egen konto og rekordhistorikk
+      security:
+      - {sessionCookie: []}
+      responses:
+        '204':
+          description: Konto, alle sesjoner og alle egne rekorder slettet atomisk.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+            Set-Cookie:
+              description: '__Host-mbg_session; Secure; HttpOnly; SameSite=Lax; Path=/; ingen Domain.
+                Max-Age følger gjenværende sesjonstid. Ved utlogging/sletting/passordendring: Max-Age=0.
+                Token eksponeres ikke i JSON.'
+              schema: {type: string}
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/WriteUnavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '401': {$ref: '#/components/responses/AuthRequired'}
+        '403': {$ref: '#/components/responses/PasswordForbidden'}
+        '413': {$ref: '#/components/responses/TooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedType'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+      parameters:
+      - {$ref: '#/components/parameters/BrowserRequest'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PasswordConfirmation'}
+            example: {current_password: eksempelpassord123}
+  /games:
+    get:
+      operationId: listGames
+      tags:
+      - Spill og rekorder
+      summary: List spill
+      description: Aktive spill som standard. Sortert på navn og ID. page er nullbasert.
+      security: []
+      responses:
+        '200':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/GamePage'}
+              example:
+                page: 0
+                page_size: 30
+                total: 1
+                items:
+                - {id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, name: Poengjakt, score_unit: points, ranking_direction: higher_is_better,
+                  min_value: 0, max_value: 100000, is_active: true}
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+      parameters:
+      - {$ref: '#/components/parameters/Page'}
+      - {$ref: '#/components/parameters/PageSize'}
+      - name: include_inactive
+        in: query
+        schema: {type: boolean, default: false}
+  /games/{game_id}:
+    get:
+      operationId: getGame
+      tags:
+      - Spill og rekorder
+      summary: Hent spill og resultatregler
+      description: Inaktive spill kan også leses. Enheter og grenser er fastsatt per spill.
+      security: []
+      responses:
+        '200':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Game'}
+              example: {id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, name: Poengjakt, score_unit: points,
+                ranking_direction: higher_is_better, min_value: 0, max_value: 100000, is_active: true}
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '404': {$ref: '#/components/responses/NotFound'}
+      parameters:
+      - {$ref: '#/components/parameters/GameId'}
+  /games/{game_id}/leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags:
+      - Spill og rekorder
+      summary: Hent offentlig toppliste
+      description: Én beste rekord per spiller. Konkurranserangering 1,1,3 beregnes før sideinndeling;
+        spiller-ID bryter sorteringslikhet uten å endre delt plassering. Antall og rader leses konsistent.
+      security: []
+      responses:
+        '200':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/LeaderboardPage'}
+              example:
+                game: {id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, name: Poengjakt, score_unit: points,
+                  ranking_direction: higher_is_better, min_value: 0, max_value: 100000, is_active: true}
+                page: 0
+                page_size: 30
+                total: 1
+                items:
+                - rank: 1
+                  player: {id: 11111111-1111-4111-8111-111111111111, username: Ada, created_at: '2026-10-01T12:00:00Z'}
+                  record: {id: 10000000-0000-4000-8000-000000000002, player_id: 11111111-1111-4111-8111-111111111111,
+                    game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 120, created_at: '2026-10-02T12:00:00Z'}
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '404': {$ref: '#/components/responses/NotFound'}
+      parameters:
+      - {$ref: '#/components/parameters/GameId'}
+      - {$ref: '#/components/parameters/Page'}
+      - {$ref: '#/components/parameters/PageSize'}
+  /games/{game_id}/results:
+    post:
+      operationId: submitResult
+      tags:
+      - Spill og rekorder
+      summary: Send resultat for innlogget spiller
+      description: Spilleridentitet og registreringstid settes av backend. Kun nye personlige rekorder
+        lagres. Samme spiller/spill/verdi kan gjentas etter ukjent utfall uten duplikat; returutfallet
+        kan endres når bedre rekorder kommer imellom.
+      security:
+      - {sessionCookie: []}
+      responses:
+        '201':
+          description: Første eller strengt bedre personlig rekord er bekreftet lagret.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - {$ref: '#/components/schemas/ResultResponse'}
+                - properties:
+                    outcome: {const: created}
+              example:
+                outcome: created
+                record: {id: 10000000-0000-4000-8000-000000000002, player_id: 11111111-1111-4111-8111-111111111111,
+                  game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 120, created_at: '2026-10-02T12:00:00Z'}
+                current_record: {id: 10000000-0000-4000-8000-000000000002, player_id: 11111111-1111-4111-8111-111111111111,
+                  game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 120, created_at: '2026-10-02T12:00:00Z'}
+        '200':
+          description: Ingen ny rekordrad.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - {$ref: '#/components/schemas/ResultResponse'}
+                - properties:
+                    outcome: {enum: [already_recorded, not_improved]}
+              examples:
+                alreadyRecorded:
+                  value:
+                    outcome: already_recorded
+                    record: {id: 10000000-0000-4000-8000-000000000001, player_id: 11111111-1111-4111-8111-111111111111,
+                      game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 100, created_at: '2026-10-01T12:00:00Z'}
+                    current_record: {id: 10000000-0000-4000-8000-000000000002, player_id: 11111111-1111-4111-8111-111111111111,
+                      game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 120, created_at: '2026-10-02T12:00:00Z'}
+                notImproved:
+                  value:
+                    outcome: not_improved
+                    record: null
+                    current_record: {id: 10000000-0000-4000-8000-000000000002, player_id: 11111111-1111-4111-8111-111111111111,
+                      game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 120, created_at: '2026-10-02T12:00:00Z'}
+        '400': {$ref: '#/components/responses/InvalidResult'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/WriteUnavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '401': {$ref: '#/components/responses/AuthRequired'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '413': {$ref: '#/components/responses/TooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedType'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/GameInactive'}
+      parameters:
+      - {$ref: '#/components/parameters/GameId'}
+      - {$ref: '#/components/parameters/BrowserRequest'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ResultRequest'}
+            example: {value: 120}
+  /players/{player_id}:
+    get:
+      operationId: getPlayer
+      tags:
+      - Spill og rekorder
+      summary: Hent offentlig spillerprofil
+      description: Hent offentlig spillerprofil
+      security: []
+      responses:
+        '200':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Player'}
+              example: {id: 11111111-1111-4111-8111-111111111111, username: Ada, created_at: '2026-10-01T12:00:00Z'}
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '404': {$ref: '#/components/responses/NotFound'}
+      parameters:
+      - {$ref: '#/components/parameters/PlayerId'}
+  /players/{player_id}/records:
+    get:
+      operationId: getPlayerRecords
+      tags:
+      - Spill og rekorder
+      summary: Hent gjeldende personlige rekorder på tvers av spill
+      description: Én beste rekord per spill, også inaktive spill. Sortert på spillnavn og spill-ID.
+      security: []
+      responses:
+        '200':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PlayerRecordPage'}
+              example:
+                player: {id: 11111111-1111-4111-8111-111111111111, username: Ada, created_at: '2026-10-01T12:00:00Z'}
+                page: 0
+                page_size: 30
+                total: 1
+                items:
+                - game: {id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, name: Poengjakt, score_unit: points,
+                    ranking_direction: higher_is_better, min_value: 0, max_value: 100000, is_active: true}
+                  record: {id: 10000000-0000-4000-8000-000000000002, player_id: 11111111-1111-4111-8111-111111111111,
+                    game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 120, created_at: '2026-10-02T12:00:00Z'}
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '404': {$ref: '#/components/responses/NotFound'}
+      parameters:
+      - {$ref: '#/components/parameters/PlayerId'}
+      - {$ref: '#/components/parameters/Page'}
+      - {$ref: '#/components/parameters/PageSize'}
+  /players/{player_id}/games/{game_id}/records:
+    get:
+      operationId: getRecordHistory
+      tags:
+      - Spill og rekorder
+      summary: Hent offentlig rekordhistorikk
+      description: Alle lagrede personlige rekorder, ikke alle forsøk. Sortert stigende på created_at
+        og id. Kjent spiller/spill uten historikk gir tom items-liste.
+      security: []
+      responses:
+        '200':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/HistoryPage'}
+              example:
+                player: {id: 11111111-1111-4111-8111-111111111111, username: Ada, created_at: '2026-10-01T12:00:00Z'}
+                game: {id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, name: Poengjakt, score_unit: points,
+                  ranking_direction: higher_is_better, min_value: 0, max_value: 100000, is_active: true}
+                page: 0
+                page_size: 30
+                total: 2
+                items:
+                - {id: 10000000-0000-4000-8000-000000000001, player_id: 11111111-1111-4111-8111-111111111111,
+                  game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 100, created_at: '2026-10-01T12:00:00Z'}
+                - {id: 10000000-0000-4000-8000-000000000002, player_id: 11111111-1111-4111-8111-111111111111,
+                  game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 120, created_at: '2026-10-02T12:00:00Z'}
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '404': {$ref: '#/components/responses/NotFound'}
+      parameters:
+      - {$ref: '#/components/parameters/PlayerId'}
+      - {$ref: '#/components/parameters/GameId'}
+      - {$ref: '#/components/parameters/Page'}
+      - {$ref: '#/components/parameters/PageSize'}
+  /ai/questions:
+    post:
+      operationId: askAI
+      tags:
+      - AI
+      summary: Still ett selvstendig spørsmål om tillatte data
+      description: Backend lager request_id og henter player_id fra sesjonen. Ingen samtalehistorikk.
+        game_id er valgfri kontekst; spørsmål på tvers av spill er tillatt. Ukjent oppgitt game_id gir
+        400. no_data og cannot_answer er også HTTP 200. Maks 60 sekunder til fullstendig svar fra AI-tjenesten;
+        ingen automatiske omforsøk.
+      security:
+      - {sessionCookie: []}
+      responses:
+        '200':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AIAnswer'}
+              example: {request_id: 99999999-9999-4999-8999-999999999999, status: ok, answer: Ada har
+                  forbedret rekorden i Poengjakt fra 100 til 120 poeng.}
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/AIUnavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+        '401': {$ref: '#/components/responses/AuthRequired'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '413': {$ref: '#/components/responses/TooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedType'}
+        '502': {$ref: '#/components/responses/InvalidAIResponse'}
+        '504': {$ref: '#/components/responses/AITimeout'}
+      parameters:
+      - {$ref: '#/components/parameters/BrowserRequest'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/AIQuestion'}
+            example: {question: 'Hvordan har jeg utviklet meg i Poengjakt?', game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa}
+  /health:
+    get:
+      operationId: getHealth
+      tags:
+      - Drift
+      summary: Kontroller at API og database er klare
+      description: Avgrenset readiness-kontroll av API og nødvendig databaseadgang. Ingen passord, maskininfo
+        eller modellstatus. AI-nedetid gjør ikke denne kontrollen mislykket.
+      security: []
+      responses:
+        '200':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema: {type: string, format: uuid}
+            Cache-Control:
+              schema: {type: string, const: no-store}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Health'}
+              example: {status: ok}
+        '400': {$ref: '#/components/responses/InvalidRequest'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+        default: {$ref: '#/components/responses/UnexpectedError'}
+components:
+  securitySchemes:
+    sessionCookie: {type: apiKey, in: cookie, name: __Host-mbg_session, description: 'Settes av backend
+        ved innlogging og fornyelse. Secure, HttpOnly, SameSite=Lax, Path=/, uten Domain. Ikke et token
+        som JavaScript skal lese.'}
+  parameters:
+    GameId:
+      name: game_id
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    PlayerId:
+      name: player_id
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+    Page:
+      name: page
+      in: query
+      schema: {type: integer, minimum: 0, default: 0}
+    PageSize:
+      name: page_size
+      in: query
+      schema: {type: integer, minimum: 1, maximum: 100, default: 30}
+    BrowserRequest:
+      name: X-MBG-Request
+      in: header
+      required: true
+      description: CSRF-kontroll i tillegg til eksakt Origin/Referer-kontroll. Verdien er ikke en hemmelighet.
+      schema: {type: string, const: '1'}
+  schemas:
+    Player:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - username
+      - created_at
+      properties:
+        id: {type: string, format: uuid}
+        username: {type: string, minLength: 3, maxLength: 32, pattern: '^[A-Za-z0-9_-]+$'}
+        created_at: {type: string, format: date-time, pattern: Z$, description: UTC fra serveren.}
+    Game:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - name
+      - score_unit
+      - ranking_direction
+      - min_value
+      - max_value
+      - is_active
+      properties:
+        id: {type: string, format: uuid}
+        name: {type: string, minLength: 1, maxLength: 100}
+        score_unit: {type: string, minLength: 1, maxLength: 32}
+        ranking_direction: {type: string, enum: [higher_is_better, lower_is_better]}
+        min_value: {type: integer, minimum: 0, maximum: 9007199254740991}
+        max_value: {type: integer, minimum: 0, maximum: 9007199254740991}
+        is_active: {type: boolean}
+    Record:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - player_id
+      - game_id
+      - value
+      - created_at
+      properties:
+        id: {type: string, format: uuid}
+        player_id: {type: string, format: uuid}
+        game_id: {type: string, format: uuid}
+        value: {type: integer, minimum: 0, maximum: 9007199254740991}
+        created_at: {type: string, format: date-time, pattern: Z$, description: UTC fra serveren.}
+    Session:
+      type: object
+      additionalProperties: false
+      required:
+      - player
+      - expires_at
+      - absolute_expires_at
+      properties:
+        player: {$ref: '#/components/schemas/Player'}
+        expires_at: {type: string, format: date-time, pattern: Z$, description: UTC fra serveren.}
+        absolute_expires_at: {type: string, format: date-time, pattern: Z$, description: UTC fra serveren.}
+    Credentials:
+      type: object
+      additionalProperties: false
+      required:
+      - username
+      - password
+      properties:
+        username: {type: string, minLength: 3, maxLength: 32, pattern: '^[A-Za-z0-9_-]+$'}
+        password: {type: string, minLength: 12, maxLength: 128, writeOnly: true, description: Unicode-kodepunkter.
+            Ingen trimming eller normalisering.}
+    PasswordChange:
+      type: object
+      additionalProperties: false
+      required:
+      - current_password
+      - new_password
+      properties:
+        current_password: {type: string, minLength: 1, maxLength: 128, writeOnly: true}
+        new_password: {type: string, minLength: 12, maxLength: 128, writeOnly: true, description: Unicode-kodepunkter.
+            Ingen trimming eller normalisering.}
+    PasswordConfirmation:
+      type: object
+      additionalProperties: false
+      required:
+      - current_password
+      properties:
+        current_password: {type: string, minLength: 1, maxLength: 128, writeOnly: true}
+    EmptyRequest:
+      type: object
+      additionalProperties: false
+      required: []
+      properties: {}
+    ResultRequest:
+      type: object
+      additionalProperties: false
+      required:
+      - value
+      properties:
+        value: {type: integer, minimum: 0, maximum: 9007199254740991}
+    LeaderboardEntry:
+      type: object
+      additionalProperties: false
+      required:
+      - rank
+      - player
+      - record
+      properties:
+        rank: {type: integer, minimum: 1}
+        player: {$ref: '#/components/schemas/Player'}
+        record: {$ref: '#/components/schemas/Record'}
+    GameRecord:
+      type: object
+      additionalProperties: false
+      required:
+      - game
+      - record
+      properties:
+        game: {$ref: '#/components/schemas/Game'}
+        record: {$ref: '#/components/schemas/Record'}
+    AIQuestion:
+      type: object
+      additionalProperties: false
+      required:
+      - question
+      properties:
+        question: {type: string, minLength: 1, maxLength: 1000, pattern: \S, description: Trimmes før
+            videresending. Maksgrensen gjelder innsendt tekst; bare blanktegn avvises.}
+        game_id: {type: [string, 'null'], format: uuid, description: 'Valgfri kontekst, ingen tilgangsgrense.'}
+    AIAnswer:
+      type: object
+      additionalProperties: false
+      required:
+      - request_id
+      - status
+      - answer
+      properties:
+        request_id: {type: string, format: uuid}
+        status: {type: string, enum: [ok, no_data, cannot_answer]}
+        answer: {type: string, minLength: 1, maxLength: 4000, description: Ren norsk tekst. Må ikke tolkes
+            som HTML.}
+    Health:
+      type: object
+      additionalProperties: false
+      required:
+      - status
+      properties:
+        status: {type: string, const: ok}
+    Error:
+      type: object
+      additionalProperties: false
+      required:
+      - request_id
+      - error
+      properties:
+        request_id: {type: string, format: uuid}
+        error:
+          type: object
+          additionalProperties: false
+          required:
+          - code
+          - message
+          properties:
+            code: {type: string, enum: [INVALID_REQUEST, INVALID_RESULT, AUTH_REQUIRED, INVALID_CREDENTIALS,
+                FORBIDDEN, CURRENT_PASSWORD_INCORRECT, NOT_FOUND, METHOD_NOT_ALLOWED, USERNAME_TAKEN,
+                GAME_INACTIVE, REQUEST_TOO_LARGE, UNSUPPORTED_MEDIA_TYPE, RATE_LIMITED, INTERNAL_ERROR,
+                SERVICE_UNAVAILABLE, OUTCOME_UNKNOWN, AI_BUSY, AI_UNAVAILABLE, AI_TIMEOUT, INVALID_AI_RESPONSE]}
+            message: {type: string, minLength: 1, description: Trygg tekst til brukeren; klienten bruker
+                code for logikk.}
+    GamePage:
+      type: object
+      additionalProperties: false
+      required:
+      - page
+      - page_size
+      - total
+      - items
+      properties:
+        page: {type: integer, minimum: 0}
+        page_size: {type: integer, minimum: 1, maximum: 100}
+        total: {type: integer, minimum: 0}
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/Game'}
+    LeaderboardPage:
+      type: object
+      additionalProperties: false
+      required:
+      - game
+      - page
+      - page_size
+      - total
+      - items
+      properties:
+        game: {$ref: '#/components/schemas/Game'}
+        page: {type: integer, minimum: 0}
+        page_size: {type: integer, minimum: 1, maximum: 100}
+        total: {type: integer, minimum: 0}
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/LeaderboardEntry'}
+    PlayerRecordPage:
+      type: object
+      additionalProperties: false
+      required:
+      - player
+      - page
+      - page_size
+      - total
+      - items
+      properties:
+        player: {$ref: '#/components/schemas/Player'}
+        page: {type: integer, minimum: 0}
+        page_size: {type: integer, minimum: 1, maximum: 100}
+        total: {type: integer, minimum: 0}
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/GameRecord'}
+    HistoryPage:
+      type: object
+      additionalProperties: false
+      required:
+      - player
+      - game
+      - page
+      - page_size
+      - total
+      - items
+      properties:
+        player: {$ref: '#/components/schemas/Player'}
+        game: {$ref: '#/components/schemas/Game'}
+        page: {type: integer, minimum: 0}
+        page_size: {type: integer, minimum: 1, maximum: 100}
+        total: {type: integer, minimum: 0}
+        items:
+          type: array
+          items: {$ref: '#/components/schemas/Record'}
+    ResultResponse:
+      oneOf:
+      - type: object
+        additionalProperties: false
+        required:
+        - outcome
+        - record
+        - current_record
+        properties:
+          outcome: {type: string, enum: [created, already_recorded]}
+          record: {$ref: '#/components/schemas/Record'}
+          current_record: {$ref: '#/components/schemas/Record'}
+      - type: object
+        additionalProperties: false
+        required:
+        - outcome
+        - record
+        - current_record
+        properties:
+          outcome: {type: string, const: not_improved}
+          record: {type: 'null'}
+          current_record: {$ref: '#/components/schemas/Record'}
+  responses:
+    InvalidRequest:
+      description: Ugyldig forespørsel; ingen handling utført.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [INVALID_REQUEST]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: INVALID_REQUEST, message: Ugyldig forespørsel; ingen handling utført.}
+    InvalidResult:
+      description: Ugyldig forespørsel eller resultat utenfor spillets grenser.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [INVALID_REQUEST, INVALID_RESULT]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: INVALID_REQUEST, message: Ugyldig forespørsel eller resultat utenfor spillets
+                grenser.}
+    AuthRequired:
+      description: Logg inn for å fortsette.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [AUTH_REQUIRED]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: AUTH_REQUIRED, message: Logg inn for å fortsette.}
+    InvalidCredentials:
+      description: Feil brukernavn eller passord.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [INVALID_CREDENTIALS]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: INVALID_CREDENTIALS, message: Feil brukernavn eller passord.}
+    Forbidden:
+      description: Forespørselen er ikke tillatt.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [FORBIDDEN]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: FORBIDDEN, message: Forespørselen er ikke tillatt.}
+    PasswordForbidden:
+      description: Forespørselen er ikke tillatt eller passordbekreftelsen er feil.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [FORBIDDEN, CURRENT_PASSWORD_INCORRECT]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: FORBIDDEN, message: Forespørselen er ikke tillatt eller passordbekreftelsen
+                er feil.}
+    NotFound:
+      description: Spill eller spiller finnes ikke.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [NOT_FOUND]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: NOT_FOUND, message: Spill eller spiller finnes ikke.}
+    UsernameTaken:
+      description: Brukernavnet er opptatt.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [USERNAME_TAKEN]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: USERNAME_TAKEN, message: Brukernavnet er opptatt.}
+    GameInactive:
+      description: Spillet tar ikke imot nye resultater.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [GAME_INACTIVE]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: GAME_INACTIVE, message: Spillet tar ikke imot nye resultater.}
+    TooLarge:
+      description: Forespørselen er større enn 16 KiB.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [REQUEST_TOO_LARGE]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: REQUEST_TOO_LARGE, message: Forespørselen er større enn 16 KiB.}
+    UnsupportedType:
+      description: 'Bruk Content-Type: application/json.'
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [UNSUPPORTED_MEDIA_TYPE]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: UNSUPPORTED_MEDIA_TYPE, message: 'Bruk Content-Type: application/json.'}
+    RateLimited:
+      description: For mange forsøk. Prøv igjen etter Retry-After.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+        Retry-After:
+          description: Antall hele sekunder før nytt forsøk.
+          schema: {type: integer, minimum: 1}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [RATE_LIMITED]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: RATE_LIMITED, message: For mange forsøk. Prøv igjen etter Retry-After.}
+    InternalError:
+      description: En intern feil oppstod.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [INTERNAL_ERROR]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: INTERNAL_ERROR, message: En intern feil oppstod.}
+    Unavailable:
+      description: Tjenesten er midlertidig utilgjengelig.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [SERVICE_UNAVAILABLE]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: SERVICE_UNAVAILABLE, message: Tjenesten er midlertidig utilgjengelig.}
+    WriteUnavailable:
+      description: Tjenesten er utilgjengelig, eller utfallet av skrivingen er ukjent. Se error.code;
+        ikke gjør et generelt automatisk omforsøk.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [SERVICE_UNAVAILABLE, OUTCOME_UNKNOWN]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: SERVICE_UNAVAILABLE, message: 'Tjenesten er utilgjengelig, eller utfallet av
+                skrivingen er ukjent. Se error.code; ikke gjør et generelt automatisk omforsøk.'}
+    AIUnavailable:
+      description: Databasen eller AI-tjenesten er utilgjengelig, eller AI er opptatt.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [SERVICE_UNAVAILABLE, AI_BUSY, AI_UNAVAILABLE]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: SERVICE_UNAVAILABLE, message: 'Databasen eller AI-tjenesten er utilgjengelig,
+                eller AI er opptatt.'}
+    AITimeout:
+      description: AI svarte ikke innen fristen på 60 sekunder.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [AI_TIMEOUT]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: AI_TIMEOUT, message: AI svarte ikke innen fristen på 60 sekunder.}
+    InvalidAIResponse:
+      description: AI-tjenesten returnerte et ugyldig svar.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema:
+            allOf:
+            - {$ref: '#/components/schemas/Error'}
+            - properties:
+                error:
+                  properties:
+                    code: {enum: [INVALID_AI_RESPONSE]}
+          example:
+            request_id: 99999999-9999-4999-8999-999999999999
+            error: {code: INVALID_AI_RESPONSE, message: AI-tjenesten returnerte et ugyldig svar.}
+    UnexpectedError:
+      description: Andre feil produsert av API-et bruker samme feilkonvolutt, blant annet 405 METHOD_NOT_ALLOWED.
+        Proxy-/nettverksfeil kan mangle JSON.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+          schema: {type: string, format: uuid}
+        Cache-Control:
+          schema: {type: string, const: no-store}
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}

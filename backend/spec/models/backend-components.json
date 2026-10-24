@@ -1,0 +1,29 @@
+{
+  "format_version": 1,
+  "status": "approved",
+  "frontend_contract_status": "proposal_pending_wbs_1_3",
+  "source_documents": ["../backend-module.md", "../../../spec/contracts/webapp-backend/contract.md", "../../../spec/contracts/webapp-backend/openapi.yaml", "../contracts/backend-database/contract.md", "../contracts/backend-ai/contract.md"],
+  "service": "backend-api",
+  "implementation_root": "backend/api/src",
+  "components": {
+    "http_api": {"module": "http_api.py", "responsibility": "Routes, validation, identity dispatch, CSRF, rate limits and contract errors", "depends_on": ["auth_service", "score_service", "ai_gateway", "database"], "external_access": []},
+    "auth_service": {"module": "auth_service.py", "responsibility": "Passwords, sessions and account lifecycle", "depends_on": ["database"], "external_access": []},
+    "score_service": {"module": "score_service.py", "responsibility": "Public game/player data and atomic record operations", "depends_on": ["score_rules", "database"], "external_access": []},
+    "score_rules": {"module": "score_rules.py", "responsibility": "Pure validation, improvement and ranking rules", "depends_on": [], "external_access": []},
+    "database": {"module": "database.py", "responsibility": "PostgreSQL queries, transactions and bounded shared pool", "depends_on": [], "external_access": ["postgresql"]},
+    "ai_gateway": {"module": "ai_gateway.py", "responsibility": "AI contract adapter, timeout and response checks", "depends_on": [], "external_access": ["ai_service"]}
+  },
+  "external_systems": {
+    "webapp": {"calls": "http_api", "base_path": "/api/v1", "contract": "spec/contracts/webapp-backend/openapi.yaml"},
+    "postgresql": {"host": "127.0.0.1", "port": 5432, "database": "mikrobit_games", "role": "backend_app"},
+    "ai_service": {"host": "127.0.0.1", "method": "POST", "path": "/v1/answer", "contract": "backend/spec/contracts/backend-ai/contract.md"}
+  },
+  "dependency_constraints": {"http_api_to_database": "readiness_check_only"},
+  "verification_scope": {
+    "dependency_direction": "caller_to_dependency",
+    "unlisted_component_dependencies": "reject",
+    "shared_schema_and_configuration_code": "excluded_from_graph_but_must_have_no_external_io",
+    "unknown_or_dynamic_dependencies": "manual_review",
+    "runtime_authorization_and_transactions": "verified_by_tests_not_import_graph"
+  }
+}

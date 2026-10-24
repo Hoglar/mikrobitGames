@@ -1,0 +1,144 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="components" name="1 – API-komponenter">
+    <mxGraphModel adaptiveColors="auto" grid="1" gridSize="10" page="1" pageWidth="1160" pageHeight="820">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="&lt;b&gt;Backend API · WBS 4.1&lt;/b&gt;&lt;br&gt;Komponentmodell – godkjent for 4.1; 1.3 er forslag" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;text;fillColor=none;strokeColor=none;align=left;fontSize=20;">
+          <mxGeometry as="geometry" x="40" y="10" width="700" height="60" />
+        </mxCell>
+        <mxCell id="api" value="&lt;b&gt;Backend API&lt;/b&gt; · lokal prosess bak HTTPS-inngangen" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;swimlane;startSize=40;fillColor=#f5f8fc;swimlaneFillColor=#ffffff;strokeColor=#6c8ebf;rounded=0;fontSize=15;">
+          <mxGeometry as="geometry" x="220" y="160" width="620" height="400" />
+        </mxCell>
+        <mxCell id="webapp" value="&lt;b&gt;Webapp&lt;/b&gt;&lt;br&gt;Via /api/v1" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;fillColor=#f5f5f5;strokeColor=#666666;">
+          <mxGeometry as="geometry" x="440" y="70" width="140" height="60" />
+        </mxCell>
+        <mxCell id="http_api" value="&lt;b&gt;http_api&lt;/b&gt;&lt;br&gt;Kontrakt og kontroll" vertex="1" parent="api" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;">
+          <mxGeometry as="geometry" x="220" y="60" width="140" height="60" />
+        </mxCell>
+        <mxCell id="auth_service" value="&lt;b&gt;auth_service&lt;/b&gt;&lt;br&gt;Konto og sesjoner" vertex="1" parent="api" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;">
+          <mxGeometry as="geometry" x="40" y="180" width="140" height="60" />
+        </mxCell>
+        <mxCell id="score_service" value="&lt;b&gt;score_service&lt;/b&gt;&lt;br&gt;Spilldata og rekorder" vertex="1" parent="api" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;">
+          <mxGeometry as="geometry" x="220" y="180" width="140" height="60" />
+        </mxCell>
+        <mxCell id="ai_gateway" value="&lt;b&gt;ai_gateway&lt;/b&gt;&lt;br&gt;AI-kontrakt og frist" vertex="1" parent="api" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;">
+          <mxGeometry as="geometry" x="400" y="180" width="140" height="60" />
+        </mxCell>
+        <mxCell id="database" value="&lt;b&gt;database&lt;/b&gt;&lt;br&gt;Låsing og transaksjoner" vertex="1" parent="api" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;">
+          <mxGeometry as="geometry" x="40" y="300" width="140" height="60" />
+        </mxCell>
+        <mxCell id="score_rules" value="&lt;b&gt;score_rules&lt;/b&gt;&lt;br&gt;Ren resultatlogikk" vertex="1" parent="api" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;fillColor=#e1d5e7;strokeColor=#9673a6;">
+          <mxGeometry as="geometry" x="220" y="300" width="140" height="60" />
+        </mxCell>
+        <mxCell id="postgresql" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;br&gt;backend_app" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;shape=cylinder3;size=12;fillColor=#d5e8d4;strokeColor=#82b366;">
+          <mxGeometry as="geometry" x="260" y="640" width="140" height="80" />
+        </mxCell>
+        <mxCell id="ai_service" value="&lt;b&gt;AI-tjeneste&lt;/b&gt;&lt;br&gt;POST /v1/answer" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;fillColor=#f5f5f5;strokeColor=#666666;">
+          <mxGeometry as="geometry" x="980" y="340" width="140" height="60" />
+        </mxCell>
+        <mxCell id="web_http" source="webapp" target="http_api" value="HTTPS / JSON" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="http_api_auth_service" source="http_api" target="auth_service" value="Innlogging" edge="1" parent="api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="http_api_score_service" source="http_api" target="score_service" value="Spilldata" edge="1" parent="api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="http_api_ai_gateway" source="http_api" target="ai_gateway" value="Spørsmål" edge="1" parent="api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="auth_service_database" source="auth_service" target="database" value="Kontooperasjoner" edge="1" parent="api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="score_service_database" source="score_service" target="database" value="Data" edge="1" parent="api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="score_service_score_rules" source="score_service" target="score_rules" value="Regler" edge="1" parent="api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="http_api_database" source="http_api" target="database" value="Helsesjekk" edge="1" parent="api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;dashed=1;strokeColor=#777777;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="database_postgresql" source="database" target="postgresql" value="PostgreSQL" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="gateway_ai" source="ai_gateway" target="ai_service" value="Lokal HTTP" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="legend" value="Piler viser kall/avhengigheter; svar følger samme vei tilbake. Stiplet pil gjelder bare readiness-kontroll.&lt;br&gt;Spilleridentitet kommer fra sesjonen. Skriving kontrollerer sesjonen på nytt i transaksjonen.&lt;br&gt;Ingen DB-lås eller forbindelse holdes mens AI arbeider." vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;text;fillColor=none;strokeColor=none;align=left;fontSize=13;">
+          <mxGeometry as="geometry" x="40" y="740" width="1080" height="70" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="hosting" name="2 – Internett og hjemmemaskin">
+    <mxGraphModel adaptiveColors="auto" grid="1" gridSize="10" page="1" pageWidth="1220" pageHeight="1060">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="&lt;b&gt;Publisering fra hjemmemaskinen&lt;/b&gt;&lt;br&gt;Plan A · domene og nettverk må avklares" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;text;fillColor=none;strokeColor=none;align=left;fontSize=20;">
+          <mxGeometry as="geometry" x="40" y="10" width="900" height="60" />
+        </mxCell>
+        <mxCell id="browser" value="&lt;b&gt;Spillerens nettleser&lt;/b&gt;&lt;br&gt;Ute på internett" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;fillColor=#f5f5f5;strokeColor=#666666;">
+          <mxGeometry as="geometry" x="440" y="80" width="220" height="70" />
+        </mxCell>
+        <mxCell id="network" value="&lt;b&gt;Vertsnavn / hjemmeruter&lt;/b&gt;&lt;br&gt;DNS + rute til serveren" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;fillColor=#f5f5f5;strokeColor=#666666;">
+          <mxGeometry as="geometry" x="440" y="200" width="220" height="70" />
+        </mxCell>
+        <mxCell id="home" value="&lt;b&gt;Linux-PC hjemme&lt;/b&gt; · Parrot Linux · 16 GB RAM · lokal PostgreSQL og AI" vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;swimlane;startSize=40;fillColor=#f5f8fc;swimlaneFillColor=#ffffff;strokeColor=#6c8ebf;rounded=0;fontSize=15;">
+          <mxGeometry as="geometry" x="40" y="320" width="1140" height="620" />
+        </mxCell>
+        <mxCell id="caddy" value="&lt;b&gt;Caddy&lt;/b&gt;&lt;br&gt;HTTPS · offentlig 443 / 80" vertex="1" parent="home" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;">
+          <mxGeometry as="geometry" x="400" y="60" width="220" height="80" />
+        </mxCell>
+        <mxCell id="webfiles" value="&lt;b&gt;Webappens bygde filer&lt;/b&gt;&lt;br&gt;Samme HTTPS-adresse" vertex="1" parent="home" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;fillColor=#f5f5f5;strokeColor=#666666;">
+          <mxGeometry as="geometry" x="40" y="240" width="220" height="80" />
+        </mxCell>
+        <mxCell id="backend" value="&lt;b&gt;Backend API&lt;/b&gt;&lt;br&gt;127.0.0.1:8000&lt;br&gt;/api/v1" vertex="1" parent="home" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;">
+          <mxGeometry as="geometry" x="400" y="240" width="220" height="80" />
+        </mxCell>
+        <mxCell id="postgres" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;br&gt;127.0.0.1:5432" vertex="1" parent="home" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;shape=cylinder3;size=12;fillColor=#d5e8d4;strokeColor=#82b366;">
+          <mxGeometry as="geometry" x="400" y="420" width="220" height="80" />
+        </mxCell>
+        <mxCell id="ai" value="&lt;b&gt;AI-tjeneste&lt;/b&gt;&lt;br&gt;Lokal port, foreslått 8001" vertex="1" parent="home" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;">
+          <mxGeometry as="geometry" x="760" y="240" width="220" height="80" />
+        </mxCell>
+        <mxCell id="ollama" value="&lt;b&gt;Ollama + Qwen&lt;/b&gt;&lt;br&gt;127.0.0.1:11434" vertex="1" parent="home" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;fillColor=#f5f5f5;strokeColor=#666666;">
+          <mxGeometry as="geometry" x="760" y="420" width="220" height="80" />
+        </mxCell>
+        <mxCell id="boot" value="&lt;b&gt;systemd:&lt;/b&gt; automatisk oppstart, kontrollert prosessrestart og logger.&lt;br&gt;Vedvarende data og konfigurasjon. AI er ikke nødvendig for vanlig spill/rekordlagring." vertex="1" parent="home" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;text;fillColor=none;strokeColor=none;align=left;fontSize=14;">
+          <mxGeometry as="geometry" x="40" y="530" width="1040" height="70" />
+        </mxCell>
+        <mxCell id="internet" source="browser" target="network" value="HTTPS" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="ingress" source="network" target="caddy" value="443 / 80" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="static" source="caddy" target="webfiles" value="Nettside" edge="1" parent="home" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="proxy" source="caddy" target="backend" value="/api/*" edge="1" parent="home" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="backenddb" source="backend" target="postgres" value="backend_app" edge="1" parent="home" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="backendai" source="backend" target="ai" value="Lokal HTTP" edge="1" parent="home" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="aimodel" source="ai" target="ollama" value="Modellkall" edge="1" parent="home" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="aidb" source="ai" target="postgres" value="ai_reader" edge="1" parent="home" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="limits" value="Bare HTTPS-inngangen publiseres. Interne tjenester og Caddys administrasjon er ikke offentlige.&lt;br&gt;CGNAT, DNS og ruterregler må kontrolleres før publisering. PC/nett av = tjenesten nede.&lt;br&gt;Plan B: offentlig HTTPS-tunnel (Tailscale Funnel / Cloudflare Tunnel).&lt;br&gt;Testmål: vanlig funksjon tilbake innen 5 minutter etter at OS og nettverk er klare." vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;text;fillColor=none;strokeColor=none;align=left;fontSize=14;">
+          <mxGeometry as="geometry" x="40" y="960" width="1140" height="90" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
