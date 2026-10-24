@@ -27,7 +27,7 @@ Ett spørsmål behandles selvstendig. Midlertidige modellmeldinger og resultater
 | Komponent | Ansvar |
 | --- | --- |
 | `transport` | Lokal HTTP-inngang `POST /v1/answer`, streng inn- og utvalidering og avtalte HTTP-feil. |
-| `orchestrator` | Styrer ett spørsmål, identitet/spillkontekst, opptattstatus, tidsfrist og forsøksbudsjett. Setter `request_id` selv. |
+| `orchestrator` | Styrer ett spørsmål, identitet/spillkontekst, opptattstatus, tidsfrist og forsøksbudsjett. Bevarer backendens `request_id`; modellen får ikke overstyre den. |
 | `model_client` | Sender avgrenset kontekst til lokal modell og validerer strukturerte modellmeldinger. Har ingen DB-tilkobling. |
 | `read_store` | Eneste DB-adapter. Kjører både faste oppslag og modellens SQL gjennom `query_policy` før parameterbundet lesing som `ai_reader`. Begrenset resultat og opprydding. |
 | `query_policy` | Ren kontroll av parset SQL, objekter og tillatte operasjoner etter 1.6. Ingen nettverk eller databaseforbindelse. |
