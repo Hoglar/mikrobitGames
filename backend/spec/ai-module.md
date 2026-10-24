@@ -77,6 +77,6 @@ Testing inngår i verifiseringen. Ved implementasjon skal et skript trekke ut ko
 
 Automatiske kontroller skal kunne kjøres av gruppen uten AI som dommer. Faste JSON-/SQL-/HTTP-regler og strukturerte resultater kan sammenlignes deterministisk. Fri norsk svartekst vurderes også av gruppen mot fasiten, inkludert eventuelle ekstra påstander. Automatisk kontroll av noen tall alene skal ikke rapporteres som full faktaverifisering.
 
-Svartid og andel faktuelt riktige svar i et fast spørsmålssett er mulige bidrag til prosjektets felles FoM. Ingen egen måleserie vedtas her. Den samlede planen, baseline, kommandoer og grafiske arbeidsflyten avklares etter backendplanleggingen, som avtalt i [implementeringsnotatet](implementation-note.md).
+[Implementeringsplanen](implementation-plan.md) fastsetter felles krav-FoM og modell-FoM, baseline og brukerbestilte runder. Full kontroll inkluderer faktiske modellkall og objektive kontroller av format, status, ID og tidsfrist, samt benchmark. Fri tekstevaluering inngår ikke som en egen poengsatt vurderingsrunde; faktakorrekthet er fortsatt et krav og kan ikke utledes fra formatkontrollene. Ingen AI brukes som dommer. Se [kjøreoversikten](../verification/README.md).
 
 Før kodegenerering i WBS 6.2: velg og versjonsfest HTTP-rammeverk, DB-driver og SQL-parser, konkretiser interne meldingsskjemaer og SQL-tillatelseslisten. Lag kontrollgrunnlaget før AI genererer implementasjonen. Faktisk CPU, GPU-minne og driver kartlegges under oppsett; ingen modell lastes ned som del av 6.1.

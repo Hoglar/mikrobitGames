@@ -136,9 +136,9 @@ Målinger skal også angi enheter og relevant maskinvare eller konfigurasjon. Do
 
 Felles måleplan, baseline, målepunkter og fremgangsdiagram lagres i `results/fom/`. Måleplanen skal beskrive hva som måles, beregningsmåte, målebetingelser og hvordan målingen gjentas. Målepunktene skal knyttes til dato og commit.
 
-Baseline tas som første aktivitet ved implementeringen, før forbedringsiterasjonene starter. Planlegg baseline og minst tre etterfølgende målepunkter, slik at både oppgavens krav om minst tre datapunkter og issuene om måling over tid dekkes. Regresjoner beholdes i historikken.
+Kontrollgrunnlaget klargjøres først. Første komplette, målbare kjøring av implementasjonen er baseline før forbedringsiterasjonene. Oppgaven krever minst tre målepunkter totalt, inkludert baseline. Brukeren bestiller hver utviklingsrunde; regresjoner beholdes. Dette erstatter tidligere intern plan om fire obligatoriske målepunkter.
 
-Selve FoM-en velges i verifikasjonsarbeidet. Strukturen krever ikke en egen FoM for hver del; lokale målinger kan inngå i den felles måleplanen. Felles dokumentasjon lenker til lokale resultater fremfor å kopiere dem.
+For backend er krav-FoM og modell-FoM valgt, med lik vekt til database, API og AI, se [implementeringsplanen](../backend/spec/implementation-plan.md). Det kreves ikke en separat FoM for hver komponent. Felles dokumentasjon lenker til lokale resultater fremfor å kopiere dem.
 
 ## 5. Felles navngivnings- og organiseringsregler
 

@@ -1,5 +1,7 @@
 # Figure of Merit
 
-Lagre felles måleplan, baseline, målepunkter og fremgangsdiagram her. Målemetode og FoM er ikke valgt ennå.
+[Implementeringsplanen](../../backend/spec/implementation-plan.md) fastsetter to felles mål: **krav-FoM** og **modell-FoM**, begge i prosent med lik vekt til database, API og AI. Høyere er bedre. Formler, faste kontrollpunkter og behandling av ufullstendige kjøringer er beskrevet der.
 
-Beskriv beregning, enheter og målebetingelser. Knytt målepunkter til dato og commit. Ta baseline før forbedringsiterasjonene, og registrer minst tre etterfølgende målepunkter etter den avtalte prosjektplanen. Behold også regresjoner. Dette er en struktur for kommende målinger, ikke en gjennomført baseline.
+Her skal komplette målepunkter og to fremgangskurver lagres, med lenker til [råresultatene](../../backend/results/README.md). Registrer baseline før forbedringene og minst tre målepunkter totalt over tid. Brukeren bestemmer hver utviklingsrunde. Behold regresjoner; ufullstendige kjøringer gir rapport, ikke komplett FoM. Endret fasit eller tellemetode krever ny merket serie eller ommåling av tidligere commits.
+
+Knytt hver måling til tidspunkt, kodecommit, kontrollversjon og miljø. Ingen baseline, måleresultater eller kurver er produsert ennå. Se [planlagte kjørekommandoer](../../backend/verification/README.md).

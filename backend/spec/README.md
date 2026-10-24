@@ -7,6 +7,7 @@
 - [WBS 1.6 – kontrakt mellom AI-tjenesten og databasen](contracts/ai-database/contract.md).
 - [Plan for enhetstester og verifisering av backend–database](contracts/backend-database/verification-plan.md).
 - [Arbeidsflyt for iterativ utvikling, tester og FoM](iterative-development.md).
-- [Notat til senere: felles implementering og iterativ utvikling](implementation-note.md).
+- [Felles implementeringsplan: kontrollsett, baseline og brukerbestilte runder](implementation-plan.md).
+- [Enkel kjøreoversikt for testing og verifisering](../verification/README.md).
 
 De felles backend-dokumentene skal referere til dette grunnlaget, fremfor å kopiere de samme kravene og testforventningene.

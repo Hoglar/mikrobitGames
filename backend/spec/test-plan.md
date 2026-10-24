@@ -38,13 +38,13 @@ Første og andre rekord registreres henholdsvis `2026-10-01T12:00:00Z` og `2026-
 
 `CHECK`-begrensninger og rettigheter trekkes ut og gjennomgås mot datamodellen og kontraktene i tillegg til de praktiske forsøkene. Databasetestene bruker reelle forbindelser. Enhetstester for rekordlogikk og SQL-filter tilhører henholdsvis backend- og AI-arbeidet. Selve modellkontrollverktøyet bør enhetstestes med kjente avvik, som feil datatype, manglende fremmednøkkel og en uventet kolonne.
 
-## Deterministisk modellkontroll og FoM-kandidat
+## Deterministisk modellkontroll og bidrag til FoM
 
 [database-schema.json](models/database-schema.json) er den versjonerte forventningen, basert på den avtalte modellen og tilgangskontrakten. Den beskriver felter, nøkler, genererte kolonner og visninger; den er ikke en migrering. Fasiten skal ikke hentes fra de genererte migreringene. `CHECK`-regler, effektive rettigheter og forretningsoppførsel kontrolleres gjennom TDB-03–07 og inngår ikke i tallet nedenfor.
 
 Ved implementasjon henter et skript faktisk struktur fra PostgreSQLs `information_schema` og systemkataloger. Normaliser rekkefølge, automatisk navngitte begrensninger og tilsvarende datatypenavn, for eksempel `int8`/`bigint`. Genererte uttrykk og visningsdefinisjoner sammenlignes strukturelt etter dokumenterte normaliseringsregler. Uavklarte forskjeller rapporteres til gjennomgang.
 
-**Foreslått FoM: antall avtalte modellkontroller med avvik, fra 0 til 20. Lavere er bedre.** Kontrollsettet er fast:
+**DB-diagnose: antall modellkontroller med avvik, fra 0 til 20. Lavere er bedre.** Antall beståtte punkter inngår i felles modell-FoM etter [implementeringsplanen](implementation-plan.md). Kontrollsettet er fast:
 
 - Fire kontroller for hver av fire tabeller: (1) nøyaktig feltsett, typer, NOT NULL og genererte uttrykk; (2) primærnøkkel; (3) fremmednøkler med slettingsregler; (4) øvrige unike nøkler. Det gir 16 kontroller.
 - Én kontroll per AI-visning: nøyaktig kilde og feltprojeksjon, uten ekstra koblinger, filtrering eller endring av verdier. Det gir tre kontroller. Felttypene følger kildekolonnene; JSON-fasitens NOT NULL-krav gjelder grunntabellene.
@@ -52,14 +52,14 @@ Ved implementasjon henter et skript faktisk struktur fra PostgreSQLs `informatio
 
 Hvert kontrollpunkt gir 0 når det samsvarer og 1 ved avvik, uansett antall detaljer i avviksrapporten. Manglende tabeller gir avvik på alle deres fire punkter; manglende visninger gir avvik på sine punkter. Feil ved tilkobling eller ufullstendig uttrekk gir «ikke målbart», aldri null avvik. Uttrekket må kjøres med tilstrekkelige inspeksjonsrettigheter.
 
-Dette er et forslag til prosjektets felles FoM, ikke et krav om en ekstra måleserie. Etabler en reell baseline før forbedringsiterasjonene, gjerne fra en tom testdatabase før første migrering genereres. Oppgaven krever minst tre datapunkter totalt; dagens prosjektplan legger opp til fire. Behold samme kontrollsett, også ved regresjon. Endret fasit eller tellemetode krever at måleserien merkes eller måles om. Ingen måleresultater er fylt ut på forhånd.
+Databasens 20 kontroller utgjør én tredel av felles modell-FoM; API og AI har hver sin tredel. Første komplette måling av den samlede implementasjonen er baseline før retting. Oppgaven krever minst tre målepunkter totalt, styrt av brukeren. Behold samme kontrollsett og også regresjoner. Endret fasit eller tellemetode krever ny merket serie eller ommåling. Ingen måleresultater er fylt ut på forhånd.
 
 Null modellavvik betyr at disse 20 strukturkontrollene samsvarer. Dataintegritet, rettigheter og ytelse vurderes gjennom sine egne tester. Benchmark beholdes uansett valg av FoM.
 
 ## Gjennomføring og rapportering i 5.2
 
-Før kodegenerering gjennomgås fasit og forventede resultater. Generer og kontroller små endringer om gangen. Ved avvik undersøkes årsaken før kode eller spesifikasjon endres; modellkontrollen skal ikke godta implementasjonen bare fordi AI foreslår det.
+Før kodegenerering gjennomgås fasit og forventede resultater. Første implementering av database, API og AI bestilles samlet etter felles plan; senere rettinger bestilles ut fra rapporterte avvik. Ved avvik undersøkes årsaken før kode eller spesifikasjon endres; modellkontrollen skal ikke godta implementasjonen bare fordi AI foreslår det.
 
-Lagre dato, kodecommit, spesifikasjonsversjon, PostgreSQL-versjon, datasett, miljø, kommando og forventet/faktisk resultat. Bruk PASS/FAIL/SKIPPED med begrunnelse. For benchmark dokumenteres også antall målinger, oppvarming, arbeidslast, målegrense og øvrig belastning. Måling av en SQL-spørring alene dokumenterer ikke backendens fulle responstidskrav.
+Lagre dato, kodecommit, spesifikasjonsversjon, PostgreSQL-versjon, datasett, miljø, kommando og forventet/faktisk resultat. Bruk PASS/FAIL/SKIPPED/BLOCKED etter felles plan, med begrunnelse. For benchmark dokumenteres også antall målinger, oppvarming, arbeidslast, målegrense og øvrig belastning. Måling av en SQL-spørring alene dokumenterer ikke backendens fulle responstidskrav.
 
 Kjørbare tester legges under [backend/tests](../tests/README.md), modelluttrekk og benchmarks under [backend/verification](../verification/README.md), og rapporter under [backend/results](../results/README.md). Felles fremgangskurve samordnes under [results/fom](../../results/fom/README.md).

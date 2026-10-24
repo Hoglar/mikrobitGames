@@ -38,7 +38,7 @@ Ytelsesmålene gjelder backendens databaseoperasjoner. De er avtalte mål, ikke 
 | Enhetstester | Kontrollere isolert logikk: ny rekord, rangering, validering og tidsregler. Ingen ekte database nødvendig. |
 | Integrasjonstester | Kontrollere at virkelig backend og PostgreSQL lagrer, leser, oppdaterer og sletter riktig. |
 | Verifisering | Knytte tester og uttrekk av faktisk databaseskjema til krav og datamodell. |
-| FoM | Følge en valgt egenskap over tid med samme målemetode. Forslag: p95-tid for rekordregistrering ved fast last. Endelig felles FoM er ikke valgt. |
+| FoM | Følge utviklingen med samme målemetode. Felles krav-FoM og modell-FoM er valgt i [implementeringsplanen](../../implementation-plan.md); responstid måles fortsatt som benchmark. |
 
 Testfasiten kommer fra kravene. AI kan skrive tester, men forventede resultater skal gjennomgås. [Verifikasjonsplanen](verification-plan.md) beskriver konkrete tester; [arbeidsflyten](../../iterative-development.md) forklarer senere iterativ utvikling.
 

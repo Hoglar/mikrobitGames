@@ -194,7 +194,7 @@ Responstiden måles fra backend ber om databaseoperasjonen, inkludert poolventin
 
 Rapporter krav-ID, dato, kode- og spesifikasjonscommit, PostgreSQL-versjon, maskinvare, konfigurasjon, øvrig serverbelastning, testdata, forventet/faktisk resultat og PASS/FAIL/SKIPPED/BLOCKED med begrunnelse. Endelig ytelse må måles på hjemmemaskinen. Manglende gjennomføring er ikke bestått test.
 
-Kandidater til felles FoM er p95-responstid per operasjon og andel vellykkede operasjoner ved fast last. Sikkerhet og integritet er bestått/ikke bestått-krav. Dette samordnes med [prosjektets FoM](../../../../results/fom/README.md), med baseline og påfølgende målepunkter. FoM er ikke endelig valgt her.
+Felles krav-FoM og modell-FoM er valgt i [implementeringsplanen](../../implementation-plan.md). Responstid og andel vellykkede operasjoner ved fast last rapporteres fortsatt som benchmark. Sikkerhet og integritet er bestått/ikke bestått-krav. Målepunkter og kurver samles under [prosjektets FoM](../../../../results/fom/README.md).
 
 ## 10. Dekning og videre overlevering
 
@@ -203,7 +203,7 @@ Kandidater til felles FoM er p95-responstid per operasjon og andel vellykkede op
 | Data, CRUD og forventet oppførsel | Del 2, 5–7 og datamodellen. |
 | Teknologi, tilkobling, datastruktur og rettigheter | Del 4–8, datamodellen og ADR-005. |
 | Prioriterte og målbare kvalitetskrav | Del 3 og 9. Tekniske startbudsjetter er merket som anbefalinger. |
-| Testmetode, integrasjon, kvalitetsmåling og FoM-kandidater | Del 9 og verifikasjonsplanen. |
+| Testmetode, integrasjon, kvalitetsmåling og FoM | Del 9 og verifikasjonsplanen; felles beregning i implementeringsplanen. |
 | Dokumentasjon og arkitekturbeslutninger | Dette hoveddokumentet med lenkede vedlegg ligger i repositoryets arbeidskopi. |
 | Gjennomgang og godkjenning av leveransen | Prosjekteier har gjennomgått dokumentpakken og erklært WBS 1.4 ferdig 2026-10-23. |
 
