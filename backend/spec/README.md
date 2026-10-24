@@ -1,6 +1,6 @@
 # Krav, modeller og testplan
 
-[Kravoversikten](requirements.md) og [testplanen](test-plan.md) er ferdigstilt for databasedelen under WBS 5.1. API- og AI-delene utarbeides i sine arbeidspakker. Modeller lagres under [models/](models/README.md). Backend samler krav for API, database og AI her, med prefiksene BE, DB og AI. Interne kontrakter ligger under [contracts/](contracts/README.md).
+[Kravoversikten](requirements.md) og [testplanen](test-plan.md) er ferdigstilt for databasedelen under WBS 5.1. [AI-modulens krav, modell og testplan](ai-module.md) er ferdigstilt for WBS 6.1. API-delen utarbeides i WBS 4.1. Modeller lagres under [models/](models/README.md). Backend samler krav for API, database og AI her, med prefiksene BE, DB og AI. Interne kontrakter ligger under [contracts/](contracts/README.md).
 
 - [WBS 1.4 – kort oversikt og kontrakt](contracts/backend-database/README.md).
 - [WBS 1.5 – kort kontrakt mellom API og AI-tjenesten](contracts/backend-ai/contract.md).

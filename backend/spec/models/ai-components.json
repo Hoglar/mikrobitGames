@@ -1,0 +1,26 @@
+{
+  "format_version": 1,
+  "status": "approved",
+  "source_documents": ["../ai-module.md", "../contracts/backend-ai/contract.md", "../contracts/ai-database/contract.md"],
+  "service": "ai-service",
+  "implementation_root": "backend/ai-service/src",
+  "components": {
+    "transport": {"module": "transport.py", "responsibility": "HTTP validation and contract responses", "depends_on": ["orchestrator"], "external_access": []},
+    "orchestrator": {"module": "orchestrator.py", "responsibility": "One request, identity, deadlines and budgets", "depends_on": ["model_client", "read_store"], "external_access": []},
+    "model_client": {"module": "model_client.py", "responsibility": "Local model requests and structured message validation", "depends_on": [], "external_access": ["ollama"]},
+    "read_store": {"module": "read_store.py", "responsibility": "Policy-checked, parameter-bound, bounded database reads", "depends_on": ["query_policy"], "external_access": ["postgresql"]},
+    "query_policy": {"module": "query_policy.py", "responsibility": "Pure validation of complete SQL syntax trees", "depends_on": [], "external_access": []}
+  },
+  "external_systems": {
+    "backend_api": {"calls": "transport", "method": "POST", "path": "/v1/answer", "bind_host": "127.0.0.1"},
+    "ollama": {"method": "POST", "url": "http://127.0.0.1:11434/api/chat", "database_access": false},
+    "postgresql": {"host": "127.0.0.1", "database": "mikrobit_games", "role": "ai_reader", "readable_views": ["ai_read.players", "ai_read.games", "ai_read.records"]}
+  },
+  "verification_scope": {
+    "dependency_direction": "caller_to_dependency",
+    "unlisted_component_dependencies": "reject",
+    "shared_schema_and_configuration_code": "excluded_from_graph_but_must_have_no_external_io",
+    "unknown_or_dynamic_dependencies": "manual_review",
+    "runtime_policy_enforcement": "verified_by_tests_not_import_graph"
+  }
+}
