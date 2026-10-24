@@ -4,6 +4,7 @@ Utarbeid requirements.md med funksjonelle krav og kvalitetskrav, og test-plan.md
 
 - [WBS 1.4 – kort oversikt og kontrakt](contracts/backend-database/README.md).
 - [WBS 1.5 – kort kontrakt mellom API og AI-tjenesten](contracts/backend-ai/contract.md).
+- [WBS 1.6 – kontrakt mellom AI-tjenesten og databasen](contracts/ai-database/contract.md).
 - [Plan for enhetstester og verifisering av backend–database](contracts/backend-database/verification-plan.md).
 - [Arbeidsflyt for iterativ utvikling, tester og FoM](iterative-development.md).
 

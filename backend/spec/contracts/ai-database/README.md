@@ -1,5 +1,3 @@
 # AI–database
 
-Plassering for kontrakten fra [WBS 1.6](https://github.com/Hoglar/mikrobitGames/issues/6). Kontrakten er ikke ferdigstilt.
-
-Lagre grensesnittbeskrivelse, relevante skjemaer og eksempler her. Beskriv forventet oppførsel, feilhåndtering og kriterier for verifisering. Begge sider av grensesnittet bruker samme kontrakt.
+[Kontrakten for WBS 1.6](contract.md) beskriver AI-tjenestens lesetilgang, tillatte data, kontroll av SQL og kriterier for senere verifisering.

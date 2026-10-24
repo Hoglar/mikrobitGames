@@ -1,6 +1,6 @@
 # Direkte databasetilgang for AI-tjenesten
 
-**Status:** Proposed
+**Status:** Accepted – godkjent av prosjekteier som del av WBS 1.6, 2026-10-24.
 
 ## Kontekst
 
@@ -38,3 +38,5 @@ Dette gjør at vi ikke trenger å utvikle egne API-endepunkter for hver type sp�
 **Sikkerhetstiltak:**
 
 AI-tjenesten skal bruke en egen databasebruker med kun lesetilgang til godkjente highscore-data, fortrinnsvis gjennom en begrenset databasevisning (view). Tilgangen skal håndheves av databasen, ikke bare gjennom instruksjoner til AI-modellen.
+
+[Kontrakten i WBS 1.6](../../backend/spec/contracts/ai-database/contract.md) konkretiserer tilgjengelige data, databasevisninger, rettigheter og kontroll av genererte spørringer.

@@ -8,7 +8,7 @@ Samlet modul for API, database og lokal AI.
 
 Krav, modeller, tester, verifikasjonsskript og resultater deles mellom de tre interne delene. Kontrakten mot webappen ligger [felles](../spec/contracts/webapp-backend/README.md); de [interne kontraktene](spec/contracts/README.md) ligger her.
 
-Se [ADR-001](../spec/decisions/adr-001-direkte-datatilgang-for-ai.md) om AI-tilgang (fortsatt Proposed) og [ADR-003](../spec/decisions/adr-003-repository-structure.md) om organiseringen.
+Se [ADR-001](../spec/decisions/adr-001-direkte-datatilgang-for-ai.md) om AI-tilgang og [ADR-003](../spec/decisions/adr-003-repository-structure.md) om organiseringen. Begge beslutningene er godkjent.
 
 - [spec/](spec/README.md): krav, modeller og testplan.
 - [tests/](tests/README.md): lokale tester.

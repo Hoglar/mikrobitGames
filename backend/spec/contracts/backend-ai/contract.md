@@ -10,7 +10,7 @@ En innlogget spiller kan stille frie spørsmål om dataene i databasen, både in
 
 AI-tjenesten skal ha lesetilgang til alle spill, inkludert deaktiverte spill, alle spilleres rekordhistorikk og ikke-sensitive spillerdata som ID, brukernavn og tidspunkt for kontoopprettelse. Passordhash, hele `sessions`-tabellen, innloggingstoken og øvrige autentiseringshemmeligheter er utenfor tilgangen. Den konkrete listen over tillatte databasefelt og håndhevingen fastsettes i 1.6. Tjenesten henter data som trengs for spørsmålet; hele databasen skal ikke automatisk sendes til modellen.
 
-Valg av AI-modell, kjøremiljø og intern organisering tas i [WBS 6.1](https://github.com/Hoglar/mikrobitGames/issues/17). Kontrollert databasetilgang beskrives i [WBS 1.6](../ai-database/README.md), med [ADR-001](../../../../spec/decisions/adr-001-direkte-datatilgang-for-ai.md) som foreløpig grunnlag.
+Valg av AI-modell, kjøremiljø og intern organisering tas i [WBS 6.1](https://github.com/Hoglar/mikrobitGames/issues/17). Kontrollert databasetilgang beskrives i [WBS 1.6](../ai-database/contract.md), med [ADR-001](../../../../spec/decisions/adr-001-direkte-datatilgang-for-ai.md) som grunnlag.
 
 ## Kommunikasjon og ansvar
 
