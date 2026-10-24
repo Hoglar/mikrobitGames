@@ -1,0 +1,88 @@
+{
+  "format_version": 1,
+  "source_documents": [
+    "data-model.md",
+    "../contracts/ai-database/contract.md"
+  ],
+  "all_table_columns_not_null": true,
+  "tables": {
+    "app.players": {
+      "columns": {
+        "id": "uuid",
+        "username": "varchar(32)",
+        "username_key": "varchar(32)",
+        "password_hash": "text",
+        "created_at": "timestamptz"
+      },
+      "generated_columns": {"username_key": "lower(username)"},
+      "primary_key": ["id"],
+      "unique_keys": [["username_key"]],
+      "foreign_keys": []
+    },
+    "app.sessions": {
+      "columns": {
+        "id": "uuid",
+        "token_hash": "bytea",
+        "player_id": "uuid",
+        "created_at": "timestamptz",
+        "renewed_at": "timestamptz",
+        "absolute_expires_at": "timestamptz",
+        "expires_at": "timestamptz"
+      },
+      "generated_columns": {},
+      "primary_key": ["id"],
+      "unique_keys": [["token_hash"]],
+      "foreign_keys": [
+        {"columns": ["player_id"], "references": "app.players", "referenced_columns": ["id"], "on_delete": "CASCADE"}
+      ]
+    },
+    "app.games": {
+      "columns": {
+        "id": "uuid",
+        "name": "varchar(100)",
+        "score_unit": "varchar(32)",
+        "ranking_direction": "varchar(16)",
+        "min_value": "bigint",
+        "max_value": "bigint",
+        "is_active": "boolean"
+      },
+      "generated_columns": {},
+      "primary_key": ["id"],
+      "unique_keys": [],
+      "foreign_keys": []
+    },
+    "app.records": {
+      "columns": {
+        "id": "uuid",
+        "player_id": "uuid",
+        "game_id": "uuid",
+        "value": "bigint",
+        "created_at": "timestamptz"
+      },
+      "generated_columns": {},
+      "primary_key": ["id"],
+      "unique_keys": [["player_id", "game_id", "value"]],
+      "foreign_keys": [
+        {"columns": ["player_id"], "references": "app.players", "referenced_columns": ["id"], "on_delete": "CASCADE"},
+        {"columns": ["game_id"], "references": "app.games", "referenced_columns": ["id"], "on_delete": "RESTRICT"}
+      ]
+    }
+  },
+  "views": {
+    "ai_read.players": {
+      "source": "app.players",
+      "columns": ["id", "username", "username_key", "created_at"],
+      "row_filter": null
+    },
+    "ai_read.games": {
+      "source": "app.games",
+      "columns": ["id", "name", "score_unit", "ranking_direction", "min_value", "max_value", "is_active"],
+      "row_filter": null
+    },
+    "ai_read.records": {
+      "source": "app.records",
+      "columns": ["id", "player_id", "game_id", "value", "created_at"],
+      "row_filter": null
+    }
+  }
+}

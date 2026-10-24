@@ -1,0 +1,271 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram id="database-er" name="Datamodell">
+    <mxGraphModel dx="1320" dy="1180" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1320" pageHeight="1180" math="0" shadow="0" adaptiveColors="auto" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Datamodell · mikrobitGames" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=30;fontStyle=1;;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="1100" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="PostgreSQL / app-skjema · Planlagt struktur fra WBS 1.4–1.6" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=16;fontColor=#596579;;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="1100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="players" value="app.players" style="swimlane;startSize=40;horizontal=1;rounded=0;collapsible=0;container=1;pointerEvents=0;fillColor=#DBEAFE;swimlaneFillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontSize=19;fontStyle=1;fontFamily=Helvetica;fontColor=#243247;align=left;spacingLeft=14;;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="440" height="254" as="geometry" />
+        </mxCell>
+        <mxCell id="players_id" value="id" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#F1F5F9;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="players">
+          <mxGeometry x="0" y="40" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_id__badge" value="PK" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#2563EB;;html=1;" vertex="1" parent="players_id">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_id__datatype" value="uuid" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="players_id">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_username" value="username" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="players">
+          <mxGeometry x="0" y="72" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_username__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#2563EB;;html=1;" vertex="1" parent="players_username">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_username__datatype" value="varchar(32)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="players_username">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_username_key" value="username_key" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="players">
+          <mxGeometry x="0" y="104" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_username_key__badge" value="UQ" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#2563EB;;html=1;" vertex="1" parent="players_username_key">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_username_key__datatype" value="varchar(32)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="players_username_key">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_password_hash" value="password_hash" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="players">
+          <mxGeometry x="0" y="136" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_password_hash__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#2563EB;;html=1;" vertex="1" parent="players_password_hash">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_password_hash__datatype" value="text" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="players_password_hash">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_created_at" value="created_at" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="players">
+          <mxGeometry x="0" y="168" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_created_at__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#2563EB;;html=1;" vertex="1" parent="players_created_at">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_created_at__datatype" value="timestamptz" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="players_created_at">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="players_note" value="UQ: username_key (generert som små bokstaver)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=12;fontColor=#596579;;html=1;" vertex="1" parent="players">
+          <mxGeometry x="12" y="204" width="416" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions" value="app.sessions" style="swimlane;startSize=40;horizontal=1;rounded=0;collapsible=0;container=1;pointerEvents=0;fillColor=#EDE9FE;swimlaneFillColor=#FFFFFF;strokeColor=#7C3AED;strokeWidth=1.5;fontSize=19;fontStyle=1;fontFamily=Helvetica;fontColor=#243247;align=left;spacingLeft=14;;html=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="160" width="440" height="318" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_id" value="id" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#F1F5F9;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="sessions">
+          <mxGeometry x="0" y="40" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_id__badge" value="PK" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#7C3AED;;html=1;" vertex="1" parent="sessions_id">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_id__datatype" value="uuid" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="sessions_id">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_token_hash" value="token_hash" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="sessions">
+          <mxGeometry x="0" y="72" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_token_hash__badge" value="UQ" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#7C3AED;;html=1;" vertex="1" parent="sessions_token_hash">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_token_hash__datatype" value="bytea" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="sessions_token_hash">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_player_id" value="player_id" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="sessions">
+          <mxGeometry x="0" y="104" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_player_id__badge" value="FK" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#7C3AED;;html=1;" vertex="1" parent="sessions_player_id">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_player_id__datatype" value="uuid" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="sessions_player_id">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_created_at" value="created_at" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="sessions">
+          <mxGeometry x="0" y="136" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_created_at__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#7C3AED;;html=1;" vertex="1" parent="sessions_created_at">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_created_at__datatype" value="timestamptz" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="sessions_created_at">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_renewed_at" value="renewed_at" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="sessions">
+          <mxGeometry x="0" y="168" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_renewed_at__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#7C3AED;;html=1;" vertex="1" parent="sessions_renewed_at">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_renewed_at__datatype" value="timestamptz" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="sessions_renewed_at">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_absolute_expires_at" value="absolute_expires_at" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="sessions">
+          <mxGeometry x="0" y="200" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_absolute_expires_at__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#7C3AED;;html=1;" vertex="1" parent="sessions_absolute_expires_at">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_absolute_expires_at__datatype" value="timestamptz" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="sessions_absolute_expires_at">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_expires_at" value="expires_at" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="sessions">
+          <mxGeometry x="0" y="232" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_expires_at__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#7C3AED;;html=1;" vertex="1" parent="sessions_expires_at">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_expires_at__datatype" value="timestamptz" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="sessions_expires_at">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="sessions_note" value="UQ: token_hash" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=12;fontColor=#596579;;html=1;" vertex="1" parent="sessions">
+          <mxGeometry x="12" y="268" width="416" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="games" value="app.games" style="swimlane;startSize=40;horizontal=1;rounded=0;collapsible=0;container=1;pointerEvents=0;fillColor=#DCFCE7;swimlaneFillColor=#FFFFFF;strokeColor=#16803C;strokeWidth=1.5;fontSize=19;fontStyle=1;fontFamily=Helvetica;fontColor=#243247;align=left;spacingLeft=14;;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="640" width="440" height="318" as="geometry" />
+        </mxCell>
+        <mxCell id="games_id" value="id" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#F1F5F9;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="games">
+          <mxGeometry x="0" y="40" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_id__badge" value="PK" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#16803C;;html=1;" vertex="1" parent="games_id">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_id__datatype" value="uuid" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="games_id">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_name" value="name" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="games">
+          <mxGeometry x="0" y="72" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_name__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#16803C;;html=1;" vertex="1" parent="games_name">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_name__datatype" value="varchar(100)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="games_name">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_score_unit" value="score_unit" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="games">
+          <mxGeometry x="0" y="104" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_score_unit__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#16803C;;html=1;" vertex="1" parent="games_score_unit">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_score_unit__datatype" value="varchar(32)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="games_score_unit">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_ranking_direction" value="ranking_direction" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="games">
+          <mxGeometry x="0" y="136" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_ranking_direction__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#16803C;;html=1;" vertex="1" parent="games_ranking_direction">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_ranking_direction__datatype" value="varchar(16)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="games_ranking_direction">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_min_value" value="min_value" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="games">
+          <mxGeometry x="0" y="168" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_min_value__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#16803C;;html=1;" vertex="1" parent="games_min_value">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_min_value__datatype" value="bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="games_min_value">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_max_value" value="max_value" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="games">
+          <mxGeometry x="0" y="200" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_max_value__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#16803C;;html=1;" vertex="1" parent="games_max_value">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_max_value__datatype" value="bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="games_max_value">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_is_active" value="is_active" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="games">
+          <mxGeometry x="0" y="232" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_is_active__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#16803C;;html=1;" vertex="1" parent="games_is_active">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_is_active__datatype" value="boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="games_is_active">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="games_note" value="Rangering: høyest eller lavest resultat er best" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=12;fontColor=#596579;;html=1;" vertex="1" parent="games">
+          <mxGeometry x="12" y="268" width="416" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="records" value="app.records" style="swimlane;startSize=40;horizontal=1;rounded=0;collapsible=0;container=1;pointerEvents=0;fillColor=#FFF3D6;swimlaneFillColor=#FFFFFF;strokeColor=#B7791F;strokeWidth=1.5;fontSize=19;fontStyle=1;fontFamily=Helvetica;fontColor=#243247;align=left;spacingLeft=14;;html=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="640" width="440" height="254" as="geometry" />
+        </mxCell>
+        <mxCell id="records_id" value="id" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#F1F5F9;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="records">
+          <mxGeometry x="0" y="40" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_id__badge" value="PK" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#B7791F;;html=1;" vertex="1" parent="records_id">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_id__datatype" value="uuid" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="records_id">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_player_id" value="player_id" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="records">
+          <mxGeometry x="0" y="72" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_player_id__badge" value="FK" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#B7791F;;html=1;" vertex="1" parent="records_player_id">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_player_id__datatype" value="uuid" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="records_player_id">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_game_id" value="game_id" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="records">
+          <mxGeometry x="0" y="104" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_game_id__badge" value="FK" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#B7791F;;html=1;" vertex="1" parent="records_game_id">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_game_id__datatype" value="uuid" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="records_game_id">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_value" value="value" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="records">
+          <mxGeometry x="0" y="136" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_value__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#B7791F;;html=1;" vertex="1" parent="records_value">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_value__datatype" value="bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="records_value">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_created_at" value="created_at" style="rectangle;strokeColor=#E2E8F0;strokeWidth=0.5;fillColor=#FFFFFF;align=left;verticalAlign=middle;spacingLeft=58;fontSize=14;fontFamily=Helvetica;fontColor=#243247;container=1;pointerEvents=0;;html=1;" vertex="1" parent="records">
+          <mxGeometry x="0" y="168" width="440" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_created_at__badge" value="" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=11;fontStyle=1;fontColor=#B7791F;;html=1;" vertex="1" parent="records_created_at">
+          <mxGeometry x="8" y="0" width="42" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_created_at__datatype" value="timestamptz" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=13;fontColor=#596579;fontFamily=Courier New;;html=1;" vertex="1" parent="records_created_at">
+          <mxGeometry x="280" y="0" width="150" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="records_note" value="UQ: (player_id, game_id, value)&lt;br&gt;Første rekord og alle senere forbedringer beholdes" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=12;fontColor=#596579;;html=1;" vertex="1" parent="records">
+          <mxGeometry x="12" y="204" width="416" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="player_sessions" value="ON DELETE CASCADE" style="edgeStyle=entityRelationEdgeStyle;segment=40;rounded=0;html=1;startArrow=ERmandOne;startSize=16;endArrow=ERzeroToMany;endSize=20;strokeWidth=1.5;strokeColor=#475569;fontFamily=Helvetica;fontSize=11;fontColor=#475569;labelBackgroundColor=default;defaultLabelBackgroundColor=page;" edge="1" source="players_id" target="sessions_player_id" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="player_records" value="ON DELETE CASCADE" style="edgeStyle=entityRelationEdgeStyle;segment=40;rounded=0;html=1;startArrow=ERmandOne;startSize=16;endArrow=ERzeroToMany;endSize=20;strokeWidth=1.5;strokeColor=#475569;fontFamily=Helvetica;fontSize=11;fontColor=#475569;labelBackgroundColor=default;defaultLabelBackgroundColor=page;" edge="1" source="players_id" target="records_player_id" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="game_records" value="ON DELETE RESTRICT" style="edgeStyle=entityRelationEdgeStyle;segment=40;rounded=0;html=1;startArrow=ERmandOne;startSize=16;endArrow=ERzeroToMany;endSize=20;strokeWidth=1.5;strokeColor=#475569;fontFamily=Helvetica;fontSize=11;fontColor=#475569;labelBackgroundColor=default;defaultLabelBackgroundColor=page;" edge="1" source="games_id" target="records_game_id" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" value="&lt;b&gt;Slik leses modellen&lt;/b&gt;&lt;br&gt;PK = primærnøkkel · FK = fremmednøkkel · UQ = unik verdi eller kombinasjon.&lt;br&gt;Alle felt er obligatoriske (NOT NULL). En forelder kan ha 0..* barn; hvert barn har nøyaktig 1 forelder.&lt;br&gt;CASCADE: tilhørende rader slettes med spilleren. RESTRICT: et spill med rekorder kan ikke slettes." style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=14;verticalAlign=top;spacingTop=8;;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1020" width="1160" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="reference" value="Feltregler og tidsgrenser: data-model.md · AI-lesetilgang: kontrakt 1.6 (ai_read-visninger)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=12;fontColor=#596579;;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1130" width="1160" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

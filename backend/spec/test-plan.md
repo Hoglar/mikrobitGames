@@ -1,0 +1,65 @@
+# Testplan for databasedelen – WBS 5.1
+
+**Status:** Plan ferdigstilt for WBS 5.1, 2026-10-24. Ingen tester er implementert eller kjørt. Planen følger [kravoversikten](requirements.md) og supplerer [integrasjonsplanen fra 1.4](contracts/backend-database/verification-plan.md).
+
+## Testing, verifisering og FoM
+
+Testing kjører konkrete kontroller med forventede resultater, for eksempel at en ugyldig fremmednøkkel avvises. Verifisering samler bevis for at implementasjonen følger kravene og modellen, gjennom testing, modelluttrekk og gjennomgang. Testing er dermed en del av verifiseringen; automatisk modellsammenligning kan også utføres som tester.
+
+FoM viser utvikling over tid for et avgrenset mål. Et godt FoM-resultat beviser ikke at alle krav er oppfylt. AI kan hjelpe med testkode og analyse, men forventningene skal komme fra avtalte krav. Kontrollene skal kunne kjøres av gruppen og gi lagrede resultater uten at en AI må avgjøre om de bestod.
+
+## Miljø og fast testgrunnlag
+
+Bruk en isolert PostgreSQL-testdatabase med samme hovedversjon som drift. Bygg den fra migreringene. Oppsettsrollen klargjør og inspiserer; `backend_app` og `ai_reader` brukes til å teste faktisk tilgang. Omstart og gjenoppretting kjøres i en egen testinstans. Hvert scenario starter fra samme datasett, slik at endringer fra én test ikke påvirker neste.
+
+To syntetiske spillere, **Ada** og **Nora**, får hver sin sesjon. Brukernavn lagres med vist bokstavstørrelse; `username_key` skal bli `ada` og `nora`. Hasher er gyldige testverdier; ingen ekte brukere eller hemmeligheter inngår. Seedene får faste UUID-er og versjoneres ved implementasjon.
+
+| Spill | Regel og grenser | Adas rekordhistorikk | Noras rekordhistorikk |
+| --- | --- | --- | --- |
+| Poengjakt | `points`, høyest er best, 0–100 000 | 100, 120 | 110, 115 |
+| Sprint | `milliseconds`, lavest er best, 1–3 600 000 | 60 000, 55 000 | 65 000, 58 000 |
+
+Første og andre rekord registreres henholdsvis `2026-10-01T12:00:00Z` og `2026-10-02T12:00:00Z`. Begge spill er aktive. Sesjonene opprettes på første tidspunkt og fornyes på det andre; `expires_at` er `2026-10-05T12:00:00Z` og absolutt utløp `2026-10-31T12:00:00Z`. Tester av gyldighet bruker styrt klokke.
+
+**Fasit:** To spillere, to sesjoner, to spill og åtte rekordrader. Ada leder begge spill med henholdsvis 120 poeng og 55 000 ms. Historikken inneholder alle åtte rader. Forsøk som ikke forbedrer rekorden inngår i backendtestene, fordi det er backend som håndhever den regelen.
+
+## Testscenarioer
+
+| ID | Kontroll | Forventet resultat |
+| --- | --- | --- |
+| TDB-01 | Opprett database fra migreringer og trekk ut faktisk modell. | Fire tabeller og tre AI-visninger med struktur som i fasiten nedenfor. Oppsett kan gjentas på en ny testdatabase. |
+| TDB-02 | CRUD med `backend_app`: opprett en ny testspiller, les den, oppdater passordhash og slett spilleren. Les også historikk og topplister fra det faste datasettet. | Hvert tillatt trinn lykkes og bekreftes gjennom en separat inspeksjonsforbindelse etter commit. Historikk og rangering stemmer med fasiten. |
+| TDB-03 | Prøv duplikatbrukeren `ADA`, duplisert rekordverdi for samme spiller/spill, manglende fremmednøkler, NULL og ugyldige radlokale feltverdier etter datamodellen. | Hvert ugyldig innslag avvises. Kontroller også tom passordhash, ugyldig rangeringsretning, resultat utenfor heltallsgrensen, feil tokenhash-lengde og ugyldige sesjonstider. Gyldige grenseverdier godtas. |
+| TDB-04 | Slett Ada som `backend_app`. Prøv separat å slette et spill med rekorder som oppsettsrollen. | Ada, hennes sesjon og fire rekordrader slettes samlet. Nora, hennes fire rekorder og begge spill beholdes. Sletting av et spill med rekorder avvises av fremmednøkkelen. |
+| TDB-05 | Kontroller visningsdata og effektive rettigheter direkte som `ai_reader` og `backend_app`, etter rettighetsreglene i 1.4 og 1.6. | AI ser alle tillatte rader og felter, også etter at et spill deaktiveres. Direkte tilgang til grunntabeller, passordhash, sesjoner, skriving, objektoppretting og rollebytte avvises for AI. Backend får bare sine avtalte rettigheter. Test uten å støtte deg på AI-filteret eller `READ ONLY`. |
+| TDB-06 | Gjør flere endringer i én transaksjon og fremprovoser en feil før commit. | Rollback gjenoppretter den opprinnelige tilstanden uten delvise endringer. En tilsvarende vellykket transaksjon blir synlig etter commit. Samtidighet og ukjent commit-utfall testes videre gjennom backend etter 1.4. |
+| TDB-07 | Lagre og bekreft data, start testinstansen på nytt, og test separat sikkerhetskopi/gjenoppretting. | Omstart bevarer de bekreftede dataene. Gjenopprettede data stemmer med kopitidspunktet; gjenopprettede sesjoner fjernes som bestemt i 1.4. Gjenopprettingstid registreres. |
+| TDB-08 | Benchmark faste lese- og skriveoperasjoner med versjonerte testdata. | Rapporter responstid, feil og miljø. Test også AI-spørringenes tids- og resultatgrenser sammen med AI-tjenesten. Full belastningsprofil fra DB-006 gjennomføres ved backend-integrasjon etter VDB-10 i 1.4. |
+
+`CHECK`-begrensninger og rettigheter trekkes ut og gjennomgås mot datamodellen og kontraktene i tillegg til de praktiske forsøkene. Databasetestene bruker reelle forbindelser. Enhetstester for rekordlogikk og SQL-filter tilhører henholdsvis backend- og AI-arbeidet. Selve modellkontrollverktøyet bør enhetstestes med kjente avvik, som feil datatype, manglende fremmednøkkel og en uventet kolonne.
+
+## Deterministisk modellkontroll og FoM-kandidat
+
+[database-schema.json](models/database-schema.json) er den versjonerte forventningen, basert på den avtalte modellen og tilgangskontrakten. Den beskriver felter, nøkler, genererte kolonner og visninger; den er ikke en migrering. Fasiten skal ikke hentes fra de genererte migreringene. `CHECK`-regler, effektive rettigheter og forretningsoppførsel kontrolleres gjennom TDB-03–07 og inngår ikke i tallet nedenfor.
+
+Ved implementasjon henter et skript faktisk struktur fra PostgreSQLs `information_schema` og systemkataloger. Normaliser rekkefølge, automatisk navngitte begrensninger og tilsvarende datatypenavn, for eksempel `int8`/`bigint`. Genererte uttrykk og visningsdefinisjoner sammenlignes strukturelt etter dokumenterte normaliseringsregler. Uavklarte forskjeller rapporteres til gjennomgang.
+
+**Foreslått FoM: antall avtalte modellkontroller med avvik, fra 0 til 20. Lavere er bedre.** Kontrollsettet er fast:
+
+- Fire kontroller for hver av fire tabeller: (1) nøyaktig feltsett, typer, NOT NULL og genererte uttrykk; (2) primærnøkkel; (3) fremmednøkler med slettingsregler; (4) øvrige unike nøkler. Det gir 16 kontroller.
+- Én kontroll per AI-visning: nøyaktig kilde og feltprojeksjon, uten ekstra koblinger, filtrering eller endring av verdier. Det gir tre kontroller. Felttypene følger kildekolonnene; JSON-fasitens NOT NULL-krav gjelder grunntabellene.
+- Én kontroll av tabell- og visningssettet: bare de fire avtalte tabellene i `app` og de tre visningene i `ai_read`. Migreringsverktøyets metatabeller plasseres utenfor disse skjemaene.
+
+Hvert kontrollpunkt gir 0 når det samsvarer og 1 ved avvik, uansett antall detaljer i avviksrapporten. Manglende tabeller gir avvik på alle deres fire punkter; manglende visninger gir avvik på sine punkter. Feil ved tilkobling eller ufullstendig uttrekk gir «ikke målbart», aldri null avvik. Uttrekket må kjøres med tilstrekkelige inspeksjonsrettigheter.
+
+Dette er et forslag til prosjektets felles FoM, ikke et krav om en ekstra måleserie. Etabler en reell baseline før forbedringsiterasjonene, gjerne fra en tom testdatabase før første migrering genereres. Oppgaven krever minst tre datapunkter totalt; dagens prosjektplan legger opp til fire. Behold samme kontrollsett, også ved regresjon. Endret fasit eller tellemetode krever at måleserien merkes eller måles om. Ingen måleresultater er fylt ut på forhånd.
+
+Null modellavvik betyr at disse 20 strukturkontrollene samsvarer. Dataintegritet, rettigheter og ytelse vurderes gjennom sine egne tester. Benchmark beholdes uansett valg av FoM.
+
+## Gjennomføring og rapportering i 5.2
+
+Før kodegenerering gjennomgås fasit og forventede resultater. Generer og kontroller små endringer om gangen. Ved avvik undersøkes årsaken før kode eller spesifikasjon endres; modellkontrollen skal ikke godta implementasjonen bare fordi AI foreslår det.
+
+Lagre dato, kodecommit, spesifikasjonsversjon, PostgreSQL-versjon, datasett, miljø, kommando og forventet/faktisk resultat. Bruk PASS/FAIL/SKIPPED med begrunnelse. For benchmark dokumenteres også antall målinger, oppvarming, arbeidslast, målegrense og øvrig belastning. Måling av en SQL-spørring alene dokumenterer ikke backendens fulle responstidskrav.
+
+Kjørbare tester legges under [backend/tests](../tests/README.md), modelluttrekk og benchmarks under [backend/verification](../verification/README.md), og rapporter under [backend/results](../results/README.md). Felles fremgangskurve samordnes under [results/fom](../../results/fom/README.md).

@@ -4,6 +4,8 @@
 
 ## Felles regler
 
+Se [ER-diagrammet](database-er.drawio) for en visuell oversikt over tabeller og relasjoner. Feltregler og begrensninger er spesifisert nedenfor.
+
 Tabellene ligger i skjema `app`. Alle felt nedenfor er obligatoriske (`NOT NULL`). ID-er bruker `uuid`, genereres av backend og er primærnøkler. Tidspunkter bruker `timestamptz`, settes av serveren og utveksles som UTC. `created_at` på rekorder settes etter låsing og validering, slik at det beskriver registreringen.
 
 Ingen felt for e-post eller alle spillforsøk inngår i første versjon. Ingen tabell lagrer råpassord eller rå sesjonstoken. Datamodellen er autoritativ for felter og begrensninger; kontrakten er autoritativ for operasjonsflyt og tilgangsregler.
