@@ -12,11 +12,11 @@ Krav og design finnes via [leseoversikten](README.md). Trinnene nedenfor organis
 
 | Trinn | Arbeid | Resultat før neste trinn |
 | --- | --- | --- |
-| 1. Klargjør | Lås applikasjonsavhengigheter og PostgreSQL-hovedversjon. Konkretiser SQL-tillatelseslisten innenfor 1.6. Følg de interne grensesnittene i `test-runtime.md`. Klargjør serverklonen, tjenestebrukere og målerettigheter etter kjøreguiden. | Dokumenterte valg og gjentakbart oppsett; ingen funksjonskrav utvides. |
+| 1. Klargjør | Fastsett filplasseringer og Git-unntak etter [reglene for lokale data](../../docs/project-structure.md#versjonskontroll-og-lokale-data) før oppsett. Lås applikasjonsavhengigheter og PostgreSQL-hovedversjon. Konkretiser SQL-tillatelseslisten innenfor 1.6. Følg de interne grensesnittene i `test-runtime.md`. Klargjør serverklonen, tjenestebrukere og målerettigheter etter kjøreguiden. | Dokumenterte valg og gjentakbart oppsett; hemmeligheter og driftsdata holdes utenfor Git. |
 | 2. Database | Lag migreringer, begrensninger, roller, AI-visninger og gjenopprettingsrutine etter datamodellen og 1.4/1.6. | Database kan opprettes på nytt og brukes med tjenestenes egne roller. |
 | 3. API og rekordflyt | Bygg databaseadapter, konto/sesjoner, rekordlogikk og offentlige oppslag. Koble HTTP-rutene til tjenestene etter 1.3 og komponentmodellen. | Vanlig konto- og rekordflyt kan kjøres uten AI, nettside og Micro:bit. |
 | 4. AI og sammenkobling | Bygg SQL-kontroll, leselager, modellklient, styring og intern HTTP-inngang. Koble API-gatewayen til den lokale AI-tjenesten. | Hele backendens avtalte flyt er implementert, med sikkerhets- og ressursgrenser. |
-| 5. Lever for måling | Ferdigstill oppstart, DB-timing og dokumenterte kjørekommandoer. Lagre den samlede kodeversjonen og klargjør samme versjon på Parrot. | Brukeren kan kjøre hele testfasen og lagre første målbare baseline. |
+| 5. Lever for måling | Ferdigstill oppstart, DB-timing og dokumenterte kjørekommandoer. Gjennomgå Git-filoversikt og endringer for hemmeligheter, driftsdata og store genererte filer etter reglene for lokale data. Lagre den samlede kodeversjonen og klargjør samme versjon på Parrot. | Brukeren kan committe leveransen og kjøre hele testfasen for første målbare baseline. |
 
 Oppstart-/syntakskontroller under bygging er ikke egne målepunkter. Den avtalte testfasen og retting ut fra dens resultater følger arbeidsflyten nedenfor; utviklings-AI starter ikke en serie forbedringer på egen hånd. Offentlig publisering og demonstrasjon med frontend/Micro:bit følger ved systemleveransen.
 

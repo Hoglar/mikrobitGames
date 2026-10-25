@@ -22,6 +22,7 @@ Mappen `spec/` samler både spesifikasjon, teknisk design og planer. Dokumentene
 | Databasestruktur | [Datamodell](models/data-model.md) | Teknisk design med felt, relasjoner og begrensninger. ER-diagram og JSON-fasit skal gjengi dette. |
 | Komponenter og tekniske valg | [API](backend-module.md), [AI](ai-module.md), [modeller](models/README.md) og [beslutninger](../../spec/decisions/README.md) | Modulenes komponent-/driftsdeler er design; kravtabellene beskriver ansvar og mål. |
 | Interne funksjoner, modellmeldinger og testtilkobling | [Testgrensesnitt](../verification/test-runtime.md) | Teknisk design for første implementasjon, ikke selvstendige produktkrav. |
+| Hva som kan legges i Git | [Versjonskontroll og lokale data](../../docs/project-structure.md#versjonskontroll-og-lokale-data) | Faste leveransekrav til filplassering, hemmeligheter og kontroll før commit. |
 | Kontrollsett, FoM, baseline og rettingsrunder | [Implementeringsplan](implementation-plan.md) | Arbeidsprosess og målemetode. Modulenes testtabeller utdyper scenarioene. |
 
 Tester avledes fra dette grunnlaget. Ved motstrid mellom kontrakt, modell og test skal avviket avklares eksplisitt; verken kode eller en bestått test avgjør automatisk hva kravet skal være. Endringer føres i kilden og deretter i berørte modeller og tester. Sammendrag lenker til kilden fremfor å innføre alternative regler.

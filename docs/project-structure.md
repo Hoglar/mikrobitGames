@@ -149,10 +149,28 @@ For backend er krav-FoM og modell-FoM valgt, med lik vekt til database, API og A
 - Bruk relative lenker mellom filer i repositoryet og lenker til relevante GitHub-issues for arbeidsoppgaver.
 - Navngi ADR-er som `adr-001-beskrivende-navn.md`. Nummeret identifiserer beslutningen, mens dokumentet angir status.
 - Hold filer og moduler avgrenset etter ansvar, i tråd med SRP.
-- Versjoner utvalgte resultater som underbygger verifisering og FoM. Utelat midlertidige logger, byggartefakter, lokale databaser, modellvekter og hemmeligheter gjennom relevante `.gitignore`-regler når verktøy tas i bruk.
-- Bruk syntetiske testdata i repositoryet. Dokumenter nødvendige konfigurasjonsverdier uten å legge inn passord eller andre hemmeligheter.
+- Følg reglene for versjonskontroll og lokale data nedenfor før tjenester settes opp.
 
 Hoved-README skal være inngangen til prosjektet og lenke til delprosjektene, felles spesifikasjoner og dette dokumentet. Presentasjon og demonstrasjonsbeskrivelse samles i `docs/presentation/`; store videofiler kan refereres med lenke.
+
+### Versjonskontroll og lokale data
+
+Dette er faste leveransekrav for implementasjonen, også når AI skriver koden eller oppsettsfilene.
+
+| Skal versjoneres | Skal holdes utenfor Git |
+| --- | --- |
+| Kildekode, krav, designmodeller og tester | Passord, passordhasher fra ekte kontoer, sesjoner, token og private nøkler |
+| SQL-migreringer og syntetiske test-/demodata | Driftsdatabase, uttrekk av ekte brukerdata og sikkerhetskopier |
+| Avhengighetslister, oppsettsskript og konfigurasjonseksempler med plassholdere | Installerte biblioteker, modellvekter, byggartefakter og maskinspesifikk konfigurasjon |
+| Utvalgte, gjennomgåtte rapporter og FoM-kurver | Løpende logger, råkjøringer og rapporter med hemmeligheter eller ekte brukerdata |
+
+Før oppsett skal implementasjonen dokumentere hvor konfigurasjon, database, modellfiler, logger og sikkerhetskopier lagres. Varige driftsdata og driftshemmeligheter skal ligge utenfor repositoryet, med tilgang begrenset til riktige tjenestebrukere. Hemmeligheter leses fra beskyttet serverkonfigurasjon/miljø; de skal ikke hardkodes i kode, migreringer eller eksempelfiler. Lokale utviklingsverdier kan ligge i ignorerte `.env`-filer. `.env.example` og `.env.*.example` skal bare inneholde plassholdere.
+
+[`.gitignore`](../.gitignore) er et ekstra vern mot vanlige lokale filer. Oppdater reglene når nye verktøy eller filplasseringer innføres, før filene opprettes. Ikke ignorer alle `.sql`-filer eller hele `models/`/`results/`: migreringer, designmodeller og utvalgte resultater skal fortsatt kunne versjoneres. Testdata i repositoryet skal være syntetiske.
+
+Før implementasjonen leveres for commit skal filoversikten og endringene som skal committes gjennomgås (`git status --short`, `git diff --cached --stat` og `git diff --cached`). Kontroller med `git check-ignore -v --no-index <sti>` at representative lokale filer utelates, mens migreringer, eksempelkonfigurasjon og valgte FoM-resultater fortsatt kan legges til. Gjennomgangen skal ikke kopiere hemmeligheter til rapporter eller samtaler.
+
+`.gitignore` oppdager ikke hemmeligheter i kildekode og påvirker ikke allerede sporede filer. Oppdages en sporet sensitiv fil, stopp publisering og avklar opprydding; en ignoreregel alene fjerner ikke filen fra Git-historikken. Eventuelt eksponerte hemmeligheter må erstattes. Ignorering er heller ikke sikkerhetskopiering: driftsdata skal fortsatt sikkerhetskopieres etter databasekontrakten.
 
 ## 6. Gjennomført etablering
 

@@ -6,6 +6,7 @@ Testpakken implementerer ikke backendfunksjonene; den starter og kontrollerer de
 
 ## Oppstart og isolasjon
 
+- Før oppsett skal filplasseringer og tilgang følge [reglene for versjonskontroll og lokale data](../../docs/project-structure.md#versjonskontroll-og-lokale-data). Dokumenter de valgte driftsstiene i oppsettet. Testinstansens midlertidige, syntetiske data holdes adskilt fra driftsdata; eksisterende modellfiler blir liggende utenfor repositoryet.
 - API eksponerer `app` i `backend/api/src/http_api.py`, AI eksponerer `app` i `backend/ai-service/src/transport.py`. Standardkommandoene bruker `python -m uvicorn`, én prosess per tjeneste.
 - Applikasjonsavhengigheter låses i `backend/requirements.txt`. Testavhengigheter ligger i `verification/requirements.txt`.
 - SQL-migreringer ligger i `backend/database/migrations/*.sql` og kjøres i filnavnrekkefølge på en tom database. Testpakken oppretter de to innloggingsrollene `backend_app` og `ai_reader` med forskjellige, tilfeldige testpassord. Migreringene etablerer skjema, visningseier, begrensninger og effektive rettigheter. Bruk gjeldende databasenavn, ikke hardkodet driftsdatabase.
