@@ -1,10 +1,12 @@
 # Backend API – krav, modell og testplan for WBS 4.1
 
-**Status:** Ferdigstilt og godkjent av brukeren for [WBS 4.1 / issue #13](https://github.com/Hoglar/mikrobitGames/issues/13), 2026-10-24. Dokumentasjon; ingen tjenester er implementert, startet eller publisert. Forslaget til frontendkontrakt 1.3 er fortsatt uavklart og eies av den ansvarlige for 1.3.
+**Status:** Ferdigstilt og godkjent av brukeren for [WBS 4.1 / issue #13](https://github.com/Hoglar/mikrobitGames/issues/13), 2026-10-24. Oppdatert arbeidsgrunnlag 2026-10-25: gjeldende 1.3 brukes for backend-implementasjonen etter brukerens beslutning; formell godkjenning eies fortsatt av den ansvarlige for 1.3. Ingen tjenester er implementert, startet eller publisert.
+
+**Dokumentrolle:** Kravtabellen beskriver hva API-et skal oppfylle. Komponent-, teknologi- og driftsdelene beskriver valgt design; testtabellen beskriver hvordan det kontrolleres. Byggerekkefølge og iterasjoner ligger i [implementeringsplanen](implementation-plan.md). Se [leseoversikten](README.md) for autoritative kilder.
 
 ## Ansvar og grensesnitt
 
-Backend binder nettsiden, PostgreSQL og lokal AI sammen. Den håndhever innlogging, kontoendringer og rekordregler, tilbyr offentlige spilldata og formidler AI-spørsmål. Frontendens inngang er [utviklerguiden](../../spec/contracts/webapp-backend/contract.md) med [OpenAPI-kontrakten](../../spec/contracts/webapp-backend/openapi.yaml). Begge er forslag som den ansvarlige for 1.3 gjennomgår og avklarer med frontend. Godkjenningen av 4.1 godkjenner ikke 1.3; endepunkter, meldingsskjemaer og tilhørende kontrakttester må samordnes med den ferdige 1.3 før implementasjon.
+Backend binder nettsiden, PostgreSQL og lokal AI sammen. Den håndhever innlogging, kontoendringer og rekordregler, tilbyr offentlige spilldata og formidler AI-spørsmål. Frontendens inngang er [utviklerguiden](../../spec/contracts/webapp-backend/contract.md) med [OpenAPI-kontrakten](../../spec/contracts/webapp-backend/openapi.yaml). Begge brukes som arbeidsgrunnlag for første backend-implementasjon og kontrakttestene. Den ansvarlige for 1.3 avklarer dem med frontend; eventuelle avtalte endringer samordnes i kontrakt, implementasjon og tester. Godkjenningen av 4.1 ferdigstiller ikke 1.3.
 
 [1.4](contracts/backend-database/contract.md) fastsetter databaseoperasjoner og transaksjoner. [1.5](contracts/backend-ai/contract.md) fastsetter kommunikasjon med AI. [Databasespesifikasjonen](requirements.md) og [AI-modulplanen](ai-module.md) er allerede ferdigstilt. Denne planen konkretiserer HTTP-grensesnittet uten å endre de interne kontraktene.
 
@@ -39,6 +41,8 @@ Sikkerhet og integritet prioriteres foran ytelse. BE-006 og femminuttersmålet e
 Beskyttede ruter henter identiteten gjennom `auth_service`. Skriving kontrollerer sesjonen på nytt inne i den låste transaksjonen etter 1.4; kontrollen ved HTTP-inngangen alene er ikke tilstrekkelig. Offentlige lesinger bruker én SQL-setning for rangering, antall og rader, slik at de får samme snapshot også med `READ COMMITTED`. AI-kall sendes først etter sesjonskontroll, og autentiseringshemmeligheter sendes aldri videre.
 
 Valg i [ADR-007](../../spec/decisions/adr-007-backend-web-hosting.md): Python med FastAPI, PostgreSQL-driver med eksplisitte transaksjoner og en egen HTTP-klient for AI. Bruk samme språk som AI-tjenesten for å begrense antall teknologier. FastAPIs standardvalideringsfeil må tilpasses endelig avtalt feilformat i 1.3; automatisk generert dokumentasjon er et uttrekk av implementasjonen, ikke fasiten. Bibliotekversjoner fastsettes før kodegenerering.
+
+[Interne grensesnitt og oppstart](../verification/test-runtime.md) konkretiserer funksjonene som enhetstestene kaller, tokenrepresentasjon, miljøvariabler og måleinstrumentering. Dette er del av første implementasjons tekniske design; produktoppførselen bestemmes fortsatt av kontraktene.
 
 ## Innlogging og internettsikkerhet
 

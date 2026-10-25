@@ -1,5 +1,7 @@
 """Pure control logic. Never imports the application or opens a database."""
-from collections import Counter
+
+TABLE_ORDER = ('app.players', 'app.sessions', 'app.games', 'app.records')
+VIEW_ORDER = ('ai_read.players', 'ai_read.games', 'ai_read.records')
 
 STATUSES = frozenset({'PASS', 'FAIL', 'SKIPPED', 'BLOCKED'})
 REQUIREMENT_IDS = tuple(f'K{area}-{n}' for area in ('DB', 'API', 'AI') for n in range(1, 5))
@@ -60,7 +62,7 @@ def compare_database(expected, observed):
     Missing objects in an otherwise complete extraction are genuine FAILs.
     """
     ids = [f'MDB-{n}' for n in range(1, 21)]
-    if len(expected['tables']) != 4 or len(expected['views']) != 3:
+    if set(expected['tables']) != set(TABLE_ORDER) or set(expected['views']) != set(VIEW_ORDER):
         raise ValueError('Changing the model requires a new control version')
     blocked = {id: {'status': 'BLOCKED', 'detail': 'Uttrekk mangler eller er ufullstendig.'} for id in ids}
     if not isinstance(observed, dict) or observed.get('extraction_complete') is not True:
@@ -71,14 +73,19 @@ def compare_database(expected, observed):
     def record(number, passed, detail):
         results[f'MDB-{number}'] = {'status': 'PASS' if passed else 'FAIL', 'detail': detail}
     try:
-        for offset, (name, spec) in enumerate(expected['tables'].items()):
+        for offset, name in enumerate(TABLE_ORDER):
+            spec = expected['tables'][name]
             actual = observed['tables'].get(name)
             labels = ('felt/typer/NOT NULL/genererte uttrykk', 'primærnøkkel', 'fremmednøkler', 'unike nøkler')
-            if actual is None:
+            if name not in observed['tables']:
                 for index, label in enumerate(labels, 1):
                     record(offset * 4 + index, False, f'{name}: tabell mangler ({label})')
                 continue
-            # Access every required metadata field, including empty key sets.
+            # Read every field before comparisons: short-circuiting must not hide
+            # an incomplete extraction behind a known type mismatch.
+            for field in ('columns', 'not_null_columns', 'generated_columns',
+                          'primary_key', 'foreign_keys', 'unique_keys'):
+                actual[field]
             checks = [
                 ({k: _type(v) for k, v in actual['columns'].items()} ==
                  {k: _type(v) for k, v in spec['columns'].items()}
@@ -90,7 +97,10 @@ def compare_database(expected, observed):
             ]
             for index, (passed, label) in enumerate(zip(checks, labels), 1):
                 record(offset * 4 + index, passed, f'{name}: {label}')
-        for number, (name, spec) in enumerate(expected['views'].items(), 17):
+        for number, name in enumerate(VIEW_ORDER, 17):
+            spec = expected['views'][name]
+            if name in observed['views'] and not isinstance(observed['views'][name], dict):
+                return blocked
             # Exact structure: extra joins, expressions, filters, etc. cannot disappear.
             record(number, observed['views'].get(name) == spec, f'{name}: nøyaktig kilde og projeksjon')
         record(20, set(observed['tables']) == set(expected['tables']) and

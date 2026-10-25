@@ -1,6 +1,6 @@
 # Datamodell – backend, WBS 1.4
 
-**Status:** Ferdigstilt som del av dokumentasjonsleveransen for WBS 1.4, godkjent av prosjekteier 2026-10-23. Modellen utdyper [kontrakten versjon 1.1](../contracts/backend-database/contract.md), inkludert det reviderte forslaget om sesjonsfornyelse. Modellen er dokumentasjon, ikke en implementert migrering.
+**Status:** Ferdigstilt som del av dokumentasjonsleveransen for WBS 1.4, godkjent av prosjekteier 2026-10-23. Modellen utdyper [kontrakten versjon 1.1](../contracts/backend-database/contract.md), inkludert sesjonsreglene som brukes i første implementasjon. Modellen er teknisk design, ikke en implementert migrering. ER-diagram og maskinlesbar modellfasit skal gjengi denne modellen.
 
 ## Felles regler
 

@@ -1,10 +1,24 @@
 # Felles implementeringsplan: database, API og AI
 
-**Status:** Avtalt arbeidsmåte, 2026-10-24. Dette er en plan; kontrollverktøy og komponenter er ikke implementert, og ingen måleresultater foreligger.
+**Status:** Avtalt arbeidsmåte, 2026-10-24. Planen beskriver hele opplegget. Oppdatert 2026-10-25: testpakken har nå enhetstester, integrasjon, benchmark, modelluttrekk, SSH-kjøring og rapportering. Komponentene og engangsoppsettet på Parrot må fortsatt klargjøres før full måling. Ingen produktbaseline eller FoM-måling foreligger.
 
 Database, backend API og AI-tjeneste implementeres samlet fra modellene. [Frontendkontrakten i 1.3](../../spec/contracts/webapp-backend/README.md) brukes som arbeidsgrunnlag her, selv om den fortsatt er merket forslag. Den andre oppgaveeierens formelle godkjenning endres ikke. Kontrollene trenger ikke ferdig nettside eller Micro:bit; samlet systemdemonstrasjon kommer senere.
 
 Se [kort kjøreoversikt](../verification/README.md) og [arbeidsflyten i draw.io](../../docs/presentation/iterative-development.drawio).
+
+## Byggerekkefølge innenfor første bestilling
+
+Krav og design finnes via [leseoversikten](README.md). Trinnene nedenfor organiserer én samlet leveranse av database, API og AI; de er ikke separate AI-forbedringsrunder eller FoM-punkter.
+
+| Trinn | Arbeid | Resultat før neste trinn |
+| --- | --- | --- |
+| 1. Klargjør | Lås applikasjonsavhengigheter og PostgreSQL-hovedversjon. Konkretiser SQL-tillatelseslisten innenfor 1.6. Følg de interne grensesnittene i `test-runtime.md`. Klargjør serverklonen, tjenestebrukere og målerettigheter etter kjøreguiden. | Dokumenterte valg og gjentakbart oppsett; ingen funksjonskrav utvides. |
+| 2. Database | Lag migreringer, begrensninger, roller, AI-visninger og gjenopprettingsrutine etter datamodellen og 1.4/1.6. | Database kan opprettes på nytt og brukes med tjenestenes egne roller. |
+| 3. API og rekordflyt | Bygg databaseadapter, konto/sesjoner, rekordlogikk og offentlige oppslag. Koble HTTP-rutene til tjenestene etter 1.3 og komponentmodellen. | Vanlig konto- og rekordflyt kan kjøres uten AI, nettside og Micro:bit. |
+| 4. AI og sammenkobling | Bygg SQL-kontroll, leselager, modellklient, styring og intern HTTP-inngang. Koble API-gatewayen til den lokale AI-tjenesten. | Hele backendens avtalte flyt er implementert, med sikkerhets- og ressursgrenser. |
+| 5. Lever for måling | Ferdigstill oppstart, DB-timing og dokumenterte kjørekommandoer. Lagre den samlede kodeversjonen og klargjør samme versjon på Parrot. | Brukeren kan kjøre hele testfasen og lagre første målbare baseline. |
+
+Oppstart-/syntakskontroller under bygging er ikke egne målepunkter. Den avtalte testfasen og retting ut fra dens resultater følger arbeidsflyten nedenfor; utviklings-AI starter ikke en serie forbedringer på egen hånd. Offentlig publisering og demonstrasjon med frontend/Micro:bit følger ved systemleveransen.
 
 ## Arbeidsflyten – du bestemmer hver runde
 
@@ -18,9 +32,9 @@ Oppgaven krever minst **tre målte punkter over tid**, inkludert baseline. Det e
 
 ## Et lite, fast kontrollsett
 
-Testing kjører eksempler med forventede resultater. Verifisering undersøker om krav og modeller er fulgt, blant annet gjennom testing og automatisk modellsammenligning. Benchmark måler eksempelvis svartid. FoM sammenfatter et avgrenset utvalg av resultatene over tid; det er ikke en egen test.
+[Begrepsforklaringen](iterative-development.md) skiller testing, verifisering, benchmark og FoM. Denne planen er autoritativ for kontrollgruppene, beregningen og reglene for måleserien.
 
-Gjenbruk Ada/Nora-datasettet og scenarioene i [DB-testplanen](test-plan.md), [backendplanen](backend-module.md) og [AI-planen](ai-module.md). Før første implementering lager vi en versjonert kontrolliste med konkrete deltester og forventninger for hvert punkt nedenfor. Listen fryses for måleserien. Et punkt består bare når **alle** dets avtalte deltester består; ingen delpoeng.
+Gjenbruk Ada/Nora-datasettet og scenarioene i [DB-testplanen](test-plan.md), [backendplanen](backend-module.md) og [AI-planen](ai-module.md). De kjørbare deltestene og koblingen til kontrollgruppene er beskrevet i [testoversikten](../tests/README.md). Kontrollgrunnlaget gjennomgås før første implementasjon og fryses for måleserien. Et punkt består bare når **alle** dets avtalte deltester består; ingen delpoeng.
 
 ### Kravkontroller: fire punkter per område
 
@@ -77,23 +91,13 @@ Endret fasit, deltestsett, normalisering eller tellemetode krever **ny merket se
 
 ## Enkel kjøring fra denne PC-en mot hjemmeserveren
 
-Første implementeringssteg er kontrollverktøyene med disse **planlagte, ennå ikke kjørbare** kommandoene fra prosjektroten:
+**Kjør hele pakken med `./backend/check`.** [Kjøreguiden](../verification/README.md) eier instruksjonene for oppsett, SSH, kodeversjon, kjøremoduser og rapportvisning. [Testgrensesnittene](../verification/test-runtime.md) beskriver hvordan implementasjonen kobles til testpakken.
 
-| Kommando | Virkning |
-| --- | --- |
-| `./backend/check quick` | Raske kontroller med kontrollerte modelladaptere. Foreløpig rapport, ikke komplett FoM-punkt. |
-| `./backend/check full` | Hele kontrollsettet, virkelig lokal modell og benchmarks. Komplett målepunkt når kjøringen er målbar. |
-| `./backend/check report` | Vis siste tilgjengelige rapport og kurver. Starter ikke tester eller kodeendringer. |
-
-Hjemmeserveren er målmiljø fra starten. Engangsoppsettet omfatter SSH fra denne PC-en, gjerne over privat Tailscale-nettverk, og egen testinstans av PostgreSQL med separate testtjenester, roller og syntetiske data. Omstart, sletting og gjenoppretting skal ikke berøre offentlig drift. Databaseporter eksponeres ikke på internett. Privat testtilgang er uavhengig av offentlig HTTPS.
-
-Kommandoen kontrollerer at serverens kode samsvarer med valgt git-commit, og stopper tydelig ved mismatch eller lokale endringer som gjør versjonen ukjent. Den oppdaterer eller deployer ikke kode i skjul. Konkrete installasjons-/overføringssteg beskrives når verktøyene lages; hemmeligheter og lokale adresser holdes utenfor git.
-
-Målingene utføres på serveren, og rapportene hentes tilbake til denne PC-en. Internettforsinkelse måles separat fra serverens API-/DB- og modellbenchmark. Én kommando gir én kontrollrunde eller rapportvisning; den starter aldri automatisk utviklings-AI eller rettingsrunde.
+Hjemmeserveren er målmiljø. Målingene foregår lokalt der, uavhengig av internettforsinkelsen. Testinstansen skal være isolert fra offentlig drift; omstart, sletting og gjenoppretting skal bare berøre testdata. Testkommandoen endrer ikke kode og starter ikke utviklings-AI.
 
 ## Rapport og ferdigkriterium
 
-Hver kjøring lagrer maskinlesbare råresultater og en kort lesbar rapport under [backend/results](../results/README.md): status per kontroll, forventet/faktisk resultat, modellavvik og benchmark med tid/enhet, feil, antall forsøk og kald/varm modell. Fullførte målepunkter gir to kurver under [results/fom](../../results/fom/README.md).
+Hver kjøring lagrer maskinlesbare råresultater og en kort lesbar rapport under [backend/results](../results/README.md): status per kontroll, forventet/faktisk resultat, modellavvik og benchmark med tid/enhet, feil, antall forsøk og kald/varm modell. Fullførte målepunkter gir to kurver i samme rapportmappe. Rapporter og kurver som skal versjonsfestes til presentasjonen kopieres til [results/fom](../../results/fom/README.md).
 
 Registrer tidspunkt, kodecommit, kontroll-/spesifikasjonsversjon, datasett, kommando, maskinvare, programvareversjoner og nøyaktig modelldigest, runtime og innstillinger. Behold mislykkede og ufullstendige kjøringer; ingen eksempelverdier skal fremstå som faktiske målinger.
 

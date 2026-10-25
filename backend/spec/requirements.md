@@ -1,6 +1,6 @@
 # Krav til databasedelen – WBS 5.1
 
-**Status:** Ferdigstilt for [WBS 5.1 / issue #15](https://github.com/Hoglar/mikrobitGames/issues/15), 2026-10-24. Dette dokumentet dekker databasedelen av backend. Implementasjon og kjørbare tester følger i WBS 5.2.
+**Status:** Ferdigstilt for [WBS 5.1 / issue #15](https://github.com/Hoglar/mikrobitGames/issues/15), 2026-10-24. Dette dokumentet fordeler databasedelens krav og ansvar. Testkode er nå skrevet; databaseimplementasjon og produktmålinger gjenstår. Teknisk struktur eies av datamodellen, og byggerekkefølgen av [implementeringsplanen](implementation-plan.md).
 
 ## Grunnlag og modell
 
@@ -32,6 +32,6 @@ Backend avgjør om et resultat er en ny rekord, kontrollerer spillerens innloggi
 
 ## Overlevering til WBS 5.2
 
-Bruk denne kravoversikten, modellen, kontraktene og testplanens forventede resultater som strukturert input til AI-genereringen. Velg PostgreSQL-hovedversjon og migrerings-/testverktøy før oppsettet etableres; test og drift skal bruke samme hovedversjon. Valgene og kjørekommandoene dokumenteres under [database](../database/README.md).
+Bruk [leseoversikten](README.md) som inngang til implementeringsgrunnlaget. Testpakken og oppstart med SQL-migreringer er konkretisert i [testgrensesnittene](../verification/test-runtime.md). PostgreSQL-hovedversjon fastsettes ved byggestart; test og drift skal bruke samme hovedversjon. Valgene og kjørekommandoene dokumenteres under [database](../database/README.md).
 
 Etabler modellkontroll og en reell baseline før forbedringsiterasjonene. Migreringer lagres under `backend/database/migrations/`, syntetiske data under `backend/database/seeds/`, og resultater under `backend/results/`. [ADR-005](../../spec/decisions/adr-005-postgresql.md) begrunner PostgreSQL; [ADR-001](../../spec/decisions/adr-001-direkte-datatilgang-for-ai.md) begrunner AI-tilgangen.

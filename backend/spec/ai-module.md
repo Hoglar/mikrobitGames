@@ -2,6 +2,8 @@
 
 **Status:** Ferdigstilt og godkjent av brukeren for [WBS 6.1 / issue #17](https://github.com/Hoglar/mikrobitGames/issues/17), 2026-10-24. Ingen implementasjon eller målinger er gjennomført.
 
+**Dokumentrolle:** Kravtabellen fordeler ansvaret fra 1.5/1.6. Komponenter, meldingsflyt og modellvalg er teknisk design; testtabellen beskriver kontrollene. Byggerekkefølge og iterasjoner ligger i [implementeringsplanen](implementation-plan.md). Se [leseoversikten](README.md) for autoritative kilder.
+
 **Kort fortalt:** En lokal modell foreslår lesespørringer og formulerer svar. Tjenestekoden kontrollerer forespørsler, SQL og ressursbruk; PostgreSQL håndhever datatilgangen. Vi velger Ollama med Qwen3-4B-Instruct som første modell å prøve. Brukeren stiller fortsatt frie spørsmål, også på tvers av spill og spillere.
 
 ## Grunnlag og krav
@@ -34,7 +36,7 @@ Ett spørsmål behandles selvstendig. Midlertidige modellmeldinger og resultater
 
 **Normal flyt:** Valider forespørselen → reserver én aktiv plass → kontroller eventuell spill-ID med et fast oppslag → be modellen foreslå relevant SQL → kontroller og kjør SQL → gi resultatet tilbake til modellen → valider og returner svar. Avviste forslag kan korrigeres innenfor samme budsjett. Faste databaseoppslag teller også blant de tre spørringsforsøkene; avviste SQL-forslag teller som forsøk. Maksimalt fire modellkall per spørsmål hindrer ubegrenset korrigering av modellformat. Alle steg deler samme tidsfrist.
 
-Modellen leverer strukturert JSON: enten et spørringsforslag med SQL og separate parametere, eller et svar med status og tekst. Disse interne meldingsskjemaene versjoneres før implementasjonen genereres. SQL er fortsatt upålitelig selv om JSON-formatet er gyldig. Et `ok`-svar om databasedata skal ha et faktisk hentet datagrunnlag; dette alene beviser ikke at tolkningen er riktig.
+Modellen leverer strukturert JSON: enten et spørringsforslag med SQL og separate parametere, eller et svar med status og tekst. De konkrete meldingene og interne funksjonene er definert som teknisk design i [testgrensesnittene](../verification/test-runtime.md), og deles av implementasjonen og testadapteren. SQL er fortsatt upålitelig selv om JSON-formatet er gyldig. Et `ok`-svar om databasedata skal ha et faktisk hentet datagrunnlag; dette alene beviser ikke at tolkningen er riktig.
 
 Modellen får spørsmålet, spiller-ID, eventuell spillkontekst, tillatt databasestruktur og relevante resultater. Store resultater sammenstilles eller avgrenses gjennom nye kontrollerte spørringer innenfor budsjettet. Kontekstoverskridelse skal oppdages; nødvendig datagrunnlag eller sikkerhetsinstruksjoner skal ikke kuttes bort uten varsel. Hvis grunnlaget ikke kan behandles, brukes `cannot_answer`. Teknisk modell- eller databasefeil gir `INTERNAL_ERROR`.
 
@@ -79,4 +81,4 @@ Automatiske kontroller skal kunne kjøres av gruppen uten AI som dommer. Faste J
 
 [Implementeringsplanen](implementation-plan.md) fastsetter felles krav-FoM og modell-FoM, baseline og brukerbestilte runder. Full kontroll inkluderer faktiske modellkall og objektive kontroller av format, status, ID og tidsfrist, samt benchmark. Fri tekstevaluering inngår ikke som en egen poengsatt vurderingsrunde; faktakorrekthet er fortsatt et krav og kan ikke utledes fra formatkontrollene. Ingen AI brukes som dommer. Se [kjøreoversikten](../verification/README.md).
 
-Før kodegenerering i WBS 6.2: velg og versjonsfest HTTP-rammeverk, DB-driver og SQL-parser, konkretiser interne meldingsskjemaer og SQL-tillatelseslisten. Lag kontrollgrunnlaget før AI genererer implementasjonen. Faktisk CPU, GPU-minne og driver kartlegges under oppsett; ingen modell lastes ned som del av 6.1.
+Ved byggestart i WBS 6.2 låses applikasjonens HTTP-/DB-/SQL-parseravhengigheter, og SQL-tillatelseslisten konkretiseres innenfor 1.6. Meldinger, funksjonsgrensesnitt og testkode er nå skrevet; koblingen til den virkelige tjenesten gjenstår. Faktisk CPU, GPU-minne og driver kartlegges under oppsett etter implementeringsplanen; ingen modell er lastet ned som del av 6.1.

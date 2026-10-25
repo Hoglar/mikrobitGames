@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Project-root entry point; also works when invoked from another directory."""
+import os
+import runpy
+from pathlib import Path
+import sys
+
+venv_python = Path(__file__).resolve().parents[1] / '.venv/bin/python'
+if venv_python.exists() and str(Path(sys.prefix).resolve()) != str(venv_python.parent.parent.resolve()):
+    os.execv(str(venv_python), [str(venv_python), str(Path(__file__).resolve()), *sys.argv[1:]])
+
+verification = Path(__file__).resolve().parent / 'verification'
+sys.path.insert(0, str(verification))
+runpy.run_path(str(verification / 'run_checks.py'), run_name='__main__')

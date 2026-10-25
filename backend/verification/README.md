@@ -1,32 +1,105 @@
-# Enkel oversikt: testing, verifisering og FoM
+# Testfasen – én kommando
 
-**Dette er kjøreplanen. Kommandoene nedenfor finnes ikke ennå.** Første steg ved implementering er kontrollverktøyene. Se [full plan](../spec/implementation-plan.md) og [diagram](../../docs/presentation/iterative-development.drawio).
+**Vanlig bruk:** Kjør `./backend/check` fra prosjektroten. Den starter hele den automatiserte backend-testpakken. Du trenger ikke starte database, API, AI eller flere testprogrammer manuelt.
 
-| Hva undersøker vi? | Hvordan? | Hva får du tilbake? |
-| --- | --- | --- |
-| Virker funksjonene og sikkerhetsreglene? | Enhetstester og integrasjonstester med fast fasit. | PASS/FAIL og konkret feil. |
-| Følger koden modellene? | Trekk ut DB-struktur, API-skjemaer og komponentavhengigheter; sammenlign med avtalt modell. | Liste over modellavvik. |
-| Hvor raskt virker det? | Benchmark på serveren, inkludert faktisk lokal AI. | Svartider, feil og målebetingelser. |
-| Blir implementasjonen bedre? | Beregn krav-FoM og modell-FoM fra de faste kontrollene. | To prosentkurver over tid. |
+Testkode og benchmark er skrevet før komponentene. Så lenge migreringer eller tjenester mangler, viser rapporten **BLOCKED**. Det er ikke en bestått test eller en baseline.
 
-Testing er en del av verifisering. Verktøyene avgjør resultatene etter faste regler, uten AI som dommer. Kontrollene av AI-svar dekker format, status og tidsgrenser; de beviser ikke alle påstander i fri tekst.
+## 1. Engangsoppsett på Parrot
 
-## Engangsoppsett
+Commit og push arbeidet på utviklings-PC-en først. Deretter, i terminalen du vanligvis bruker for SSH:
 
-Klargjør privat SSH-tilgang fra denne PC-en til Linux-serveren, eventuelt via Tailscale, og isolerte testtjenester med egen database og syntetiske data. Virkelig modell må være installert for full kjøring. Installasjonssteg og konfigurasjon følger når verktøyene implementeres. Testene trenger ikke gruppens nettside eller Micro:bit.
+```bash
+ssh parrot
+```
 
-## Hver kontrollrunde
+På Parrot:
 
-1. Lagre kodeversjonen i git og klargjør samme versjon på serveren. Kontrollene stopper hvis versjonene ikke stemmer.
-2. Velg én av de planlagte kommandoene fra prosjektroten:
+```bash
+git clone https://github.com/Hoglar/mikrobitGames.git
+cd mikrobitGames
+./backend/check setup
+```
 
-   | Kommando | Når brukes den? |
-   | --- | --- |
-   | `./backend/check quick` | Rask tilbakemelding med modelladaptere; ingen komplett FoM. |
-   | `./backend/check full` | Full kontroll med lokal AI og benchmarks; kan gi nytt målepunkt. |
-   | `./backend/check report` | Vis siste rapport og kurver uten å starte tester. |
+`setup` oppretter `.venv` og installerer testbibliotekene. Når implementasjonen har fått `backend/requirements.txt`, installerer samme kommando også applikasjonens avhengigheter. Kjør `setup` på nytt når avhengighetene endres.
 
-3. Les rapporten som hentes til denne PC-en: bestått, feil eller ikke undersøkt, modellavvik og svartider. Detaljer i [backend/results](../results/README.md), kurver i [results/fom](../../results/fom/README.md).
-4. **Du bestemmer neste steg:** be AI rette konkrete feil, avklar modellen, eller stopp. Ingen automatisk rettingssløyfe.
+Parrot må ha Python 3.10+, støtte for `python3 -m venv`, OpenSSL og PostgreSQL-serververktøyene `initdb`, `pg_ctl`, `pg_dump` og `pg_restore`. Test og drift skal bruke samme PostgreSQL-hovedversjon. `psql` alene er ikke nok. Kommandoen melder tydelig fra hvis noe mangler; den installerer ikke systempakker eller endrer brannmur.
 
-Første komplette måling er baseline før forbedringsrundene. Oppgaven krever minst tre målepunkter totalt. Påviste feil beholdes i tallene; ufullstendige kjøringer lagres med begrunnelse, men gir ikke komplett FoM. Høy FoM overstyrer aldri sikkerhetsfeil.
+Ollama og den avtalte Qwen-modellen må være installert én gang før ekte AI kan testes. Testkjøringen bruker eksisterende modellfiler og starter en egen lokal Ollama-prosess; den laster ikke ned modeller og stopper ikke den vanlige modellserveren. Den finner standardmappen automatisk. Ved annen plassering lager du `backend/check.local.json` på Parrot:
+
+```json
+{
+  "model_directory": "/sti/til/ollama/models",
+  "model": "qwen3:4b-instruct-2507-q4_K_M"
+}
+```
+
+Filen holdes utenfor git. [Oppstartskravene til implementasjonen](test-runtime.md) beskriver miljøvariabler, migreringer og interne testgrensesnitt som AI skal bygge etter. Dette er del av implementeringsgrunnlaget, ikke noe du skal fylle ut for hver testkjøring.
+
+## 2. For hver utviklingsrunde
+
+Lagre implementasjonen i git. Hvis du endret koden på den andre PC-en: push der, og oppdater Parrot-klonen før testing:
+
+```bash
+git pull --ff-only
+./backend/check
+```
+
+**Det er `./backend/check` som kjører hele testfasen.** `git pull` trengs bare for å hente ny kode. Testkommandoen oppdaterer aldri koden selv.
+
+En full kjøring inkluderer en belastningsprofil med **2 minutter oppvarming og 15 minutter måling**, både uten og med AI-belastning, samt samtidige topper og kald/varm AI. Regn med omtrent **40–60 minutter**, avhengig av maskinen og eventuelle tidsavbrudd. Manglende komponenter gir rask BLOCKED-rapport fremfor å vente gjennom benchmarken.
+
+Verktøyet gjør følgende:
+
+1. Kontrollerer testverktøyene og kjører enhetstestene.
+2. Lager en egen, midlertidig PostgreSQL-instans med syntetiske data og kjører prosjektets migreringer.
+3. Starter testversjonene av API, AI og lokal modell på egne loopback-porter, samt en lokal HTTPS-testinngang.
+4. Kjører integrasjon, feilinjeksjon, modelluttrekk og benchmarks. Hver funksjonstest får tilbakestilt datasett.
+5. Lagrer resultater og eventuelle FoM-punkter/kurver, og stopper testprosessene.
+
+Databasens omstart og gjenoppretting berører bare denne testinstansen. Alle forventninger hentes fra spesifikasjonene og testfilene. Ingen utviklings-AI starter eller retter kode under kjøringen.
+
+## 3. Les resultatet
+
+Terminalen viser en oppsummering og stien til rapporten. Du kan alltid hente den frem igjen med:
+
+```bash
+./backend/check report
+```
+
+Rapportmappen under `backend/results/runs/` inneholder:
+
+| Fil | Innhold |
+| --- | --- |
+| `report.md` | Kort oversikt, feil, blokkeringer og benchmarkresultater. |
+| `report.json` | Alle delresultater, råmålinger, commit, kontrollversjon og miljø. |
+| `requirements.svg`, `model.svg` | To fremgangskurver når et komplett FoM-punkt finnes. |
+
+| Status | Betydning |
+| --- | --- |
+| PASS | Utført og forventningen oppfylt. |
+| FAIL | Utført og fant et avvik. |
+| BLOCKED | Kunne ikke utføres/vurderes; rapporten forklarer hva som mangler. |
+| SKIPPED | Utelatt ved hurtigkjøring. |
+
+Returkode 0 betyr at den kjørte pakken bestod, 1 betyr påvist feil, og 2 betyr ufullstendig/blokkert kjøring. Første komplette måling er baseline. Deretter velger **du** om AI skal rette konkrete feil, og kjører samme kommando på neste versjon. Oppgaven krever minst tre målepunkter over tid.
+
+FoM krever full kjøring, målbare kontroller og en ren git-versjon. Feil kan gi et målepunkt, mens manglende målinger ikke kan det. Endret kontrollgrunnlag, modell eller miljø gir en egen kurveserie. Ikke endre testfasiten bare for å få grønt resultat.
+
+Rapportmappene er ignorert av git. Behold kjøringene på maskinen. Til presentasjonen kan utvalgte rapporter/kurver kopieres til `results/fom/` og committes; inkluder også regresjoner. Sikkerhetsfeil blokkerer godkjenning uavhengig av FoM.
+
+## Valgfritt: start alt fra utviklings-PC-en
+
+Etter kloning og `setup` på Parrot lagrer du tilkoblingen én gang fra prosjektmappen på utviklings-PC-en:
+
+```bash
+./backend/check configure --host parrot --repo /home/hoglar/mikrobitGames
+```
+
+Deretter er kommandoen fortsatt **`./backend/check`**. Den bruker SSH, krever samme rene commit og kontrollgrunnlag på begge maskinene, kjører kontrollene på Parrot og henter rapporten tilbake. Windows sin SSH-klient brukes når Windows-konfigurasjonen er tilgjengelig i dette WSL-oppsettet. Ingen databaseport åpnes på internett.
+
+## Kortere kjøringer
+
+- `./backend/check quick`: enhetstester, raske integrasjonstester og modellkontroll. De lange benchmark-/tidsavbruddstestene hoppes over; ingen komplett FoM.
+- `./backend/check selftest`: bare kontroll av selve testverktøyene.
+
+Den automatiserte pakken trenger verken nettsiden eller Micro:bit. Faktisk nettleseroppførsel, offentlig HTTPS/ruting, full maskinoppstart og den samlede Micro:bit-demonstrasjonen verifiseres også ved systemleveransen. Automatiske AI-kontroller måler format, status og tid; fri norsk tekst er ikke fullstendig faktaverifisert av disse testene.

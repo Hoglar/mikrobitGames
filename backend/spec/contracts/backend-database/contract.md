@@ -2,7 +2,7 @@
 
 **Arbeidspakke:** [WBS 1.4 / issue #4](https://github.com/Hoglar/mikrobitGames/issues/4)  
 **Versjon:** 1.1 – ferdigstilt dokumentasjonsleveranse, 2026-10-23.  
-**Status:** Gjennomgått og godkjent av prosjekteier som leveranse for WBS 1.4. Funksjonelle valg og overordnede kvalitetskrav er avklart. Sesjonsforslaget og øvrige tekniske anbefalinger er dokumentert som grunnlag for senere implementasjon. Ingen programvare er implementert eller testet som del av denne leveransen.
+**Status:** Gjennomgått og godkjent av prosjekteier som leveranse for WBS 1.4. Funksjonelle valg og overordnede kvalitetskrav er avklart. Presisering 2026-10-25: sesjonsreglene i del 8 brukes som arbeidsgrunnlag for første backend-implementasjon og tester. Frontendens gjennomføring samordnes gjennom 1.3; formell gruppegodkjenning påstås ikke. Ingen programvare er implementert eller testet som del av denne leveransen.
 
 Les [sammendraget som følger issue #4](README.md) først. Dette dokumentet er den detaljerte spesifikasjonen og kan brukes som oppslagsverk ved implementasjon.
 
@@ -21,7 +21,7 @@ Backend og PostgreSQL skal kjøre på samme Parrot Linux-PC med 16 GB RAM og opp
 - Hvert spill bruker én numerisk resultatverdi med fast enhet. Spillet angir om høyere eller lavere verdi er bedre.
 - Bare personlige rekorder per spiller og spill lagres. Første gyldige resultat blir første rekord; senere resultater må være strengt bedre. Tidligere rekorder beholdes. Like og dårligere resultater lagres ikke.
 - Topplisten inneholder bare gjeldende rekord per spiller. Like resultater gir delt plassering. Teknisk anbefaling er konkurranserangering som 1, 1, 3, med spiller-ID som stabil sekundær sortering.
-- Innloggingssesjoner lagres i databasen. **Revidert forslag:** Tre døgn uten godkjent aktivitet/fornyelse, med automatisk fornyelse ved spillstart og under aktiv spilling. En teknisk anbefalt absolutt grense på 30 døgn krever deretter ny innlogging. Del 8 beskriver fornyelse og bevaring av resultat ved utløp. Utlogging avslutter den aktuelle sesjonen straks.
+- Innloggingssesjoner lagres i databasen. Fornyelse og utløp følger arbeidsgrunnlaget i del 8. Utlogging avslutter den aktuelle sesjonen straks.
 - Passordendring krever gyldig innlogging og gjeldende passord. Alle eksisterende sesjoner avsluttes. Automatisk gjenoppretting av glemt passord inngår ikke i første versjon.
 - Kontosletting krever gyldig innlogging og bekreftelse av passord. Konto, alle sesjoner og all tilhørende rekordhistorikk slettes samlet.
 - Utviklerne administrerer spill. Spill med historikk deaktiveres fremfor å slettes. Spillere kan ikke redigere registrerte rekorder.
@@ -156,19 +156,19 @@ Driftsrollen eier ikke skjema/tabeller, er ikke superbruker og arver ikke migrer
 
 Backend verifiserer spillerens passord mot lagret Argon2id-hash. Sesjonstoken genereres kryptografisk tilfeldig, anbefalt 32 tilfeldige byte. Bare SHA-256-hash av tokenet lagres. Fast hashing er egnet for disse tilfeldige tokenene, ikke for menneskevalgte passord.
 
-### Forslag til fornyelse uten å avbryte spill
+### Fornyelse uten å avbryte spill
 
-Det tidligere forslaget var et fast utløp 72 timer etter innlogging. Det kunne avvise et resultat som ble sendt etter grensen, selv om spilleren startet før den. Følgende erstatter dette som **revidert forslag**, ikke som en allerede implementert eller gruppegodkjent løsning:
+Følgende regler erstatter det tidligere forslaget om fast utløp etter innlogging. De brukes i første backend-implementasjon og testgrunnlaget. Frontendforløpet nedenfor er fortsatt del av forslaget i 1.3; denne presiseringen erklærer ikke løsningen implementert eller gruppegodkjent.
 
 - Webappen ber om fornyelse før spillstart og omtrent hvert femte minutt mens spillet er aktivt og spilleren gir input. En åpen, inaktiv fane eller automatisk henting av offentlige topplister skal ikke holde innloggingen ved like. Nettleseren rapporterer aktivitet; backend bruker alltid sin egen tid og kontrollerer sesjonen.
 - Backend oppdaterer samme sesjon til `expires_at = min(nåtid + 72 timer, absolute_expires_at)`. Dette er forlengelse av en databasesesjon og trenger ikke et separat refresh-token-system. Cookie-levetiden oppdateres til gjenværende varighet.
-- `absolute_expires_at` er anbefalt satt til 30 døgn etter opprinnelig innlogging, slik at en sesjon ikke kan forlenges ubegrenset. Tre og 30 døgn er produkt-/designvalg, ikke tidsgrenser hentet fra en standard. Ved den absolutte grensen kreves passord på nytt.
+- `absolute_expires_at` settes til 30 døgn etter opprinnelig innlogging, slik at en sesjon ikke kan forlenges ubegrenset. Tre og 30 døgn er produkt-/designvalg, ikke tidsgrenser hentet fra en standard. Ved den absolutte grensen kreves passord på nytt.
 - På selve utløpstidspunktet er sesjonen ugyldig. Bare en fortsatt gyldig sesjon kan fornyes. Utlogging, passordendring og kontosletting gjelder umiddelbart og kan ikke omgås av fornyelse.
 - Hvis utløp eller forbindelsesbrudd likevel oppstår under spilling, skal webappen beholde det pågående spillet og resultatet midlertidig. Før innsending kreves ny innlogging som samme spiller. Resultatet flyttes ikke automatisk til en annen konto. Dette brukerforløpet må også inn i webapp–backend-spesifikasjonen; databasekontrakten gir ingen rett til innsending med utløpt sesjon.
 
-Anbefalt opprydding av utløpte sesjoner er daglig. Utlogging sletter bare aktuell sesjon; passordendring og kontosletting fjerner alle. Fornyelsesforslaget bygger på skillet mellom inaktivitetsutløp og absolutt utløp i OWASPs veiledning, men de konkrete intervallene er tilpassede anbefalinger for prosjektet.
+Anbefalt opprydding av utløpte sesjoner er daglig. Utlogging sletter bare aktuell sesjon; passordendring og kontosletting fjerner alle. Fornyelsesreglene bygger på skillet mellom inaktivitetsutløp og absolutt utløp i OWASPs veiledning, men de konkrete intervallene er prosjektets egne valg.
 
-Cookie med `Secure` og `HttpOnly` over HTTPS anbefales mot nettleseren. `SameSite`, CSRF-beskyttelse, CORS og eventuell automatisk innlogging etter registrering må spesifiseres i webapp–backend før implementasjon. De endrer ikke lagringskontrakten. Webappen må håndheve innlogging før spillstart, og backend kontrollerer på nytt ved innsending.
+Cookie-, CSRF-, CORS- og registreringsoppførsel følger gjeldende [arbeidsgrunnlag i 1.3](../../../../spec/contracts/webapp-backend/contract.md). De endrer ikke lagringskontrakten. Webappen må håndheve innlogging før spillstart, og backend kontrollerer på nytt ved innsending.
 
 Sikkerhetskopier oppbevares tilgangsbegrenset, med minst én kopi utenfor den aktuelle harddisken. Ved gjenoppretting slettes alle gjenopprettede sesjoner før tjenesten åpnes, slik at gamle innlogginger ikke blir gyldige igjen. En slettet konto kan fortsatt forekomme i eldre sikkerhetskopier i oppbevaringsperioden; gjenopprettingsrutinen må håndtere slettinger etter kopitidspunktet før offentlig åpning. Dette skal dokumenteres ved driftsoppsett.
 
@@ -207,7 +207,7 @@ Felles krav-FoM og modell-FoM er valgt i [implementeringsplanen](../../implement
 | Dokumentasjon og arkitekturbeslutninger | Dette hoveddokumentet med lenkede vedlegg ligger i repositoryets arbeidskopi. |
 | Gjennomgang og godkjenning av leveransen | Prosjekteier har gjennomgått dokumentpakken og erklært WBS 1.4 ferdig 2026-10-23. |
 
-Ved senere implementasjon konkretiseres de tekniske anbefalingene og sesjonsforslaget, støttet PostgreSQL-hovedversjon og backend-bibliotek velges, og det tilhørende webapp–backend-oppsettet fastsettes. Endringer i forslagene skal oppdatere kontrakt og testforventninger sammen. Dokumentasjonsleveransen for WBS 1.4 er ferdig; commit, publisering og lukking av issue #4 håndteres separat.
+Ved byggestart konkretiseres gjenstående tekniske anbefalinger, og PostgreSQL-hovedversjon og applikasjonsbiblioteker fastsettes etter [implementeringsplanen](../../implementation-plan.md). Sesjonsreglene i del 8 og gjeldende 1.3 brukes som arbeidsgrunnlag. Senere avtalte endringer skal oppdatere kontrakt og testforventninger sammen. Dokumentasjonsleveransen for WBS 1.4 er ferdig; commit, publisering og lukking av issue #4 håndteres separat.
 
 ## 11. Kilder
 

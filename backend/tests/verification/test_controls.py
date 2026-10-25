@@ -128,3 +128,14 @@ class DatabaseModelTests(unittest.TestCase):
             self.assertTrue(all(r['status'] == 'BLOCKED' for r in compare_database(self.expected, snapshot).values()))
         del self.actual['tables']['app.records']['foreign_keys']
         self.assertTrue(all(r['status'] == 'BLOCKED' for r in compare_database(self.expected, self.actual).values()))
+
+    def test_missing_metadata_not_hidden_by_type_failure(self):
+        self.actual['tables']['app.players']['columns']['id'] = 'text'
+        del self.actual['tables']['app.players']['not_null_columns']
+        self.assertTrue(all(r['status'] == 'BLOCKED' for r in compare_database(self.expected, self.actual).values()))
+
+    def test_json_object_order_does_not_change_control_ids(self):
+        self.expected['tables'] = dict(reversed(list(self.expected['tables'].items())))
+        self.expected['views'] = dict(reversed(list(self.expected['views'].items())))
+        self.actual['tables']['app.records']['columns']['value'] = 'text'
+        self.assertEqual(self.failed(), {'MDB-13'})

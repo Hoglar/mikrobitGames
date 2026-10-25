@@ -4,7 +4,7 @@
 
 ## Grunnlag og formål
 
-Planen bruker [kontrakten](contract.md), særlig DB-001–DB-008, og [datamodellen](../../models/data-model.md) som fasit for AI-generert backend-kode og databaseskjema. Før en test implementeres, skal forventet resultat kunne utledes fra spesifikasjonen. Uavklarte regler skal markeres som uavklarte, ikke gis en fasit basert på hva den genererte koden tilfeldigvis gjør. Sesjonstestene nedenfor følger det reviderte fornyelsesforslaget og må oppdateres hvis gruppen velger en annen regel.
+Planen bruker [kontrakten](contract.md), særlig DB-001–DB-008, og [datamodellen](../../models/data-model.md) som fasit for AI-generert backend-kode og databaseskjema. Før en test implementeres, skal forventet resultat kunne utledes fra spesifikasjonen. Uavklarte regler skal markeres som uavklarte, ikke gis en fasit basert på hva den genererte koden tilfeldigvis gjør. Sesjonstestene følger arbeidsgrunnlaget i kontraktens del 8. Senere regelendringer håndteres etter [implementeringsplanen](../../implementation-plan.md).
 
 Det skal kontrolleres både at backend og database kan kommunisere, og at resultatet av kommunikasjonen samsvarer med kontrakten. Vellykket tilkobling alene viser ikke korrekt datalagring, tilgangskontroll eller transaksjonshåndtering.
 
@@ -17,7 +17,7 @@ Enhetstester undersøker avgrenset backend-logikk med faste inndata og forvented
 | UDB-01 | Sammenligne resultat med gjeldende rekord | 120 forbedrer 100 ved høyest-best; 55 000 forbedrer 60 000 ved lavest-best. Lik verdi er ingen forbedring; manglende tidligere rekord håndteres. | DB-002, kontrakt del 2 |
 | UDB-02 | Validering av resultat | Gyldige heltall på grensene aksepteres. Brøker, ugyldig type og verdier utenfor spillets intervall avvises. | DB-001 |
 | UDB-03 | Normalisering av brukernavn | `Spiller_1` og `spiller_1` gir samme navnenøkkel. Ugyldige tegn/lengder avvises. Databasens faktiske unikhetsregel testes separat. | DB-001 |
-| UDB-04 | Sesjonstider med styrt klokke | Godta rett før utløp; avvis på og etter utløp. Fornyelse følger 72-timersregelen og overskrider aldri absolutt grense. Utløpt sesjon kan ikke fornyes. | DB-003, revidert forslag i del 8 |
+| UDB-04 | Sesjonstider med styrt klokke | Godta rett før utløp; avvis på og etter utløp. Fornyelse følger 72-timersregelen og overskrider aldri absolutt grense. Utløpt sesjon kan ikke fornyes. | DB-003, sesjonsregler i del 8 |
 | UDB-05 | Feiloversettelse og beslutning om nytt forsøk | Kjent rollback kan gi et begrenset nytt forsøk; ukjent commit gir ikke blind gjentakelse. Unikhetskonflikt oversettes til konflikt uten lekkasje av spørringsparametere. | DB-005 |
 
 Enhetstester kan bruke en kontrollert klokke og enkle testdobler ved avhengigheter. Testene skal ikke erstatte funksjonen som faktisk undersøkes med en testdobbel. Testdekning alene viser ikke at kravene er oppfylt.
@@ -56,7 +56,7 @@ Faktisk rettighetskontroll skal omfatte rollemedlemskap og tillatelser som arves
 | VDB-12 | Passordendring, feil passordbekreftelse og konkurrerende innlogging | Feil bekreftelse endrer ingenting. Vellykket endring oppdaterer hash og fjerner alle sesjoner samlet; gammel passordkontroll kan ikke gi en ny sesjon etter endringen. | DB-002–DB-003 |
 | VDB-13 | Kontosletting og avbrudd under sletting | Vellykket sletting fjerner konto, sesjoner og rekorder, men ikke spill eller andre spillere. Rollback etterlater ikke delvis slettede data. | DB-001–DB-003 |
 | VDB-14 | Spilladministrasjon og rekordhistorikk | Deaktivert spill avviser nye resultater, men historikken kan leses. Spill med rekorder kan ikke slettes eller få nye rangeringsregler. | DB-001–DB-003 |
-| VDB-15 | Fornyelse før utløp, samtidig fornyelse/utlogging og absolutt grense | Gyldig sesjon forlenges med samme identitet innenfor absolutt grense. Slettet/utløpt sesjon gjenopplives ikke. Oppdatering rulles tilbake ved feil. | DB-002–DB-003, revidert sesjonsforslag |
+| VDB-15 | Fornyelse før utløp, samtidig fornyelse/utlogging og absolutt grense | Gyldig sesjon forlenges med samme identitet innenfor absolutt grense. Slettet/utløpt sesjon gjenopplives ikke. Oppdatering rulles tilbake ved feil. | DB-002–DB-003, sesjonsregler i del 8 |
 
 Ved VDB-04 kontrolleres både backendens returverdi og faktiske rader gjennom en separat inspeksjonsforbindelse etter commit. Testen skal ikke bare bruke samme lese- og skrivekode som kan dele en feil. De konkrete talleksemplene er testfasit og skal ikke beregnes med backendens egen rangeringsfunksjon.
 

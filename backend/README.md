@@ -2,6 +2,8 @@
 
 Samlet modul for API, database og lokal AI.
 
+**Før implementasjon: start i [leseoversikten](spec/README.md).** Den skiller krav, teknisk design og arbeidsplan, og viser hvilke dokumenter som er fasit.
+
 - [api/src/](api/src/README.md): REST API, autentisering og formidling av spilldata og AI-forespørsler.
 - [database/](database/README.md): databaseendringer, testdata og tilgangsrettigheter.
 - [ai-service/src/](ai-service/src/README.md): lokal AI og kontrollert lesetilgang til highscore-data.
@@ -15,4 +17,4 @@ Se [ADR-001](../spec/decisions/adr-001-direkte-datatilgang-for-ai.md) om AI-tilg
 - [verification/](verification/README.md): verifikasjonsverktøy.
 - [results/](results/README.md): dokumenterte resultater.
 
-Teknologi og kommandoer for oppsett, kjøring og testing dokumenteres her når implementasjonen starter. Mappene er etablert, men funksjonaliteten er ikke implementert. Se [felles prosjektstruktur](../docs/project-structure.md).
+Hele den automatiserte testfasen kjøres med `./backend/check` fra prosjektroten. Se [kjøreguiden](verification/README.md) for engangsoppsett på Parrot og hvordan rapportene leses. Testpakken er skrevet; komponentene er ennå ikke implementert, så disse kontrollene vil foreløpig vise BLOCKED. Se også [felles prosjektstruktur](../docs/project-structure.md).

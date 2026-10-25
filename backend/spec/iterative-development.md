@@ -1,6 +1,6 @@
 # Tester, verifisering og FoM i iterativ utvikling
 
-Dette er en kort arbeidsveiledning for senere backend-utvikling. Den bygger på prosjektets issues, [vedtatte prosjektstruktur](../../docs/project-structure.md) og oppgaveteksten for oppgave 2 som ble delt 23. oktober 2026.
+Dette er en begrepsforklaring for gruppen. Den bygger på prosjektets issues, [vedtatte prosjektstruktur](../../docs/project-structure.md) og oppgaveteksten for oppgave 2 som ble delt 23. oktober 2026. Den operative planen vedlikeholdes i [implementeringsplanen](implementation-plan.md).
 
 Oppgaven krever enhetstester og benchmarks, automatisert modelluttrekk og deterministisk verifisering så langt det er mulig, samt en valgt FoM med minst tre datapunkter over tid. Dokumentene våre planlegger dette; de er ikke bevis på gjennomført verifisering. Systemet kan være en liten mock-up, men må vise at interaksjon med mikrokontrolleren fyller en database, og at et nettleserbasert dashboard med Web Serial viser informasjon fra databasen.
 
@@ -20,13 +20,7 @@ Et nyttig tillegg er **validering**: Har vi laget noe som fungerer for brukeren?
 
 ## Den avtalte arbeidsmåten
 
-[Implementeringsplanen](implementation-plan.md) beskriver kontrollsett, vekter, baseline og ansvarsfordeling. [Kjøreoversikten](../verification/README.md) er den korte veiledningen for gruppen.
-
-Først lager vi kontrollgrunnlaget fra kravene og sjekker verktøyene med kjente feil. Deretter bestiller brukeren samlet implementering av database, API og AI. Brukeren lagrer versjonen og starter kontrollene; verktøyene rapporterer uten å endre kode. Brukeren analyserer resultatene og bestemmer om AI skal rette noe, modellen må avklares, eller arbeidet skal stoppe. Ingen automatisk rettingssløyfe.
-
-Vi har valgt krav-FoM og modell-FoM, begge i prosent med lik vekt til database, API og AI. Faste kontrollpunkter og deltester hindrer at prosentene øker bare fordi noen legger til mange enkle tester. Benchmark beholdes som egen dokumentasjon av ytelse. Rask feilrespons skal ikke fremstå som forbedret ytelse.
-
-Første fullstendige, målbare kontrollrunde er baseline før forbedringene. Oppgaven krever minst tre målepunkter totalt; brukeren bestemmer antall runder. Ufullstendige kjøringer lagres med årsak, men gir ikke komplett FoM. Behold også regresjoner. Endret kontrollgrunnlag krever ny serie eller ommåling av tidligere commits. Ingen resultater fylles ut på forhånd.
+[Implementeringsplanen](implementation-plan.md) er fasit for byggerekkefølge, kontrollsett, FoM-vekter, baseline, rapportstatus og brukerbestilte rettingsrunder. [Kjøreguiden](../verification/README.md) beskriver kommandoene og hvordan resultatet leses. Denne begrepsforklaringen vedlikeholder ikke en egen versjon av prosessen.
 
 ## Hvor materialet hører hjemme
 
@@ -36,4 +30,4 @@ Første fullstendige, målbare kontrollrunde er baseline før forbedringene. Opp
 - Resultater: [results](../results/README.md), med dato, commit, krav-ID, metode og forventet/faktisk resultat.
 - Felles FoM-plan og utviklingskurve: [results/fom](../../results/fom/README.md).
 
-WBS 1.4 beskriver kontrakten og hvordan den kan kontrolleres. Kjørbar testkode, faktiske målinger og forbedringsiterasjoner hører til de senere implementeringsarbeidspakkene. Vi planlegger dem nå; vi hevder ikke at de er gjennomført.
+WBS 1.4 beskriver kontrakten og hvordan den kan kontrolleres. Testkode er nå skrevet, mens kjøring mot de faktiske komponentene og forbedringsiterasjonene gjenstår. Dokumentasjon og testkode alene er ikke bevis på at systemet virker.

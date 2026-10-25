@@ -1,5 +1,19 @@
 # Backend-tester
 
-[unit/](unit/README.md) inneholder enhetstester, og [integration/](integration/README.md) tester samspillet mellom API, database og AI. [Databasens testplan](../spec/test-plan.md) dekker WBS 5.1; [AI-modulplanen](../spec/ai-module.md#planlagte-tester-og-forventede-resultater) beskriver testene for WBS 6.1. Testverktøy og kjørekommandoer dokumenteres her når de er valgt. Ingen kjørbare tester er implementert ennå.
+**Kjør hele testfasen med `./backend/check`.** [Kjøreguiden](../verification/README.md) viser engangsoppsett, oppdatering av serverklonen og hvordan rapporten leses. [Testgrensesnittene](../verification/test-runtime.md) er input til implementasjonen.
 
-[Backendplanen](../spec/backend-module.md#planlagte-tester-og-verifisering) beskriver TBE-01–09 for API, integrasjon og drift. Den foreslåtte [OpenAPI-filen](../../spec/contracts/webapp-backend/openapi.yaml) brukes som arbeidsgrunnlag etter [implementeringsplanen](../spec/implementation-plan.md), uavhengig av skjemaet generert fra implementasjonen. Formell godkjenning under 1.3 ligger fortsatt hos oppgaveeieren. Se [enkel kjøreoversikt](../verification/README.md).
+| Del | Hva kontrolleres? |
+| --- | --- |
+| [Enhetstester](unit/) | Rekordregler, innloggingens rene regler, SQL-filter og AI-svarformat. |
+| [Databaseintegrasjon](integration/database_checks.py) | CRUD, begrensninger, kaskader, rollback, faktiske roller, omstart og gjenoppretting. |
+| [API-integrasjon](integration/api_checks.py) | Konto/sesjoner, passord/sletting, rekorder, samtidighet, ukjent commit, offentlige oversikter, input/CSRF og rategrenser. |
+| [AI-integrasjon](integration/ai_checks.py) | Meldinger, tekniske feil, SQL-sikkerhet, budsjetter, samtidighet, historikk, ressursgrenser og isolasjon. |
+| [Benchmark](benchmarks/benchmark_checks.py) | Fast HTTP-/DB-last med og uten AI, topper, ressursbruk og faktisk kald/varm lokal modell. |
+| [Modelluttrekk](../verification/model_checks.py) | PostgreSQL-kataloger, OpenAPI og komponentavhengigheter mot uavhengig fasit. |
+| [Kontrollverktøyenes tester](verification/) | Bevisste modellavvik, manglende målinger, FoM-vekter, reléer, feilinjeksjon og rapportering. |
+
+Testfasiten kommer fra [DB-planen](../spec/test-plan.md), [backendplanen](../spec/backend-module.md) og [AI-planen](../spec/ai-module.md). [OpenAPI 1.3](../../spec/contracts/webapp-backend/openapi.yaml) brukes som avtalt arbeidsgrunnlag; formell godkjenning ligger hos oppgaveeieren.
+
+Kontrollkoblingen er eksplisitt: integrasjon/benchmark har `@check(id, gruppe, ...)`, mens enhetstestene kobles til gruppene i `pipeline.unit_group`. Alle deltester i en gruppe må bestå. Modellpunktene følger 20/4/4-fordelingen i [implementeringsplanen](../spec/implementation-plan.md). Verktøyenes egne tester teller aldri som produktets FoM.
+
+Kontroller av faktiske komponenter kan først bestå når komponentene er implementert. Testpakken er ikke bevis på at database, backend eller AI allerede virker. Offentlig publisering, faktisk nettleser og Micro:bit-demonstrasjon inngår også ved systemleveransen.

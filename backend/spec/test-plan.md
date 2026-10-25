@@ -1,12 +1,10 @@
 # Testplan for databasedelen – WBS 5.1
 
-**Status:** Plan ferdigstilt for WBS 5.1, 2026-10-24. Ingen tester er implementert eller kjørt. Planen følger [kravoversikten](requirements.md) og supplerer [integrasjonsplanen fra 1.4](contracts/backend-database/verification-plan.md).
+**Status:** Plan ferdigstilt for WBS 5.1, 2026-10-24. Oppdatert 2026-10-25: [testkode og modelluttrekk](../tests/README.md) er skrevet; produktkontroller mot den faktiske databasen gjenstår. Planen følger [kravoversikten](requirements.md) og supplerer [integrasjonsplanen fra 1.4](contracts/backend-database/verification-plan.md).
 
 ## Testing, verifisering og FoM
 
-Testing kjører konkrete kontroller med forventede resultater, for eksempel at en ugyldig fremmednøkkel avvises. Verifisering samler bevis for at implementasjonen følger kravene og modellen, gjennom testing, modelluttrekk og gjennomgang. Testing er dermed en del av verifiseringen; automatisk modellsammenligning kan også utføres som tester.
-
-FoM viser utvikling over tid for et avgrenset mål. Et godt FoM-resultat beviser ikke at alle krav er oppfylt. AI kan hjelpe med testkode og analyse, men forventningene skal komme fra avtalte krav. Kontrollene skal kunne kjøres av gruppen og gi lagrede resultater uten at en AI må avgjøre om de bestod.
+Se [begrepsforklaringen](iterative-development.md) for skillet mellom testing, verifisering og FoM. Denne planen eier databasens testscenarioer og de 20 strukturkontrollene. Felles beregning og regler for måleserien eies av [implementeringsplanen](implementation-plan.md).
 
 ## Miljø og fast testgrunnlag
 
@@ -20,6 +18,8 @@ To syntetiske spillere, **Ada** og **Nora**, får hver sin sesjon. Brukernavn la
 | Sprint | `milliseconds`, lavest er best, 1–3 600 000 | 60 000, 55 000 | 65 000, 58 000 |
 
 Første og andre rekord registreres henholdsvis `2026-10-01T12:00:00Z` og `2026-10-02T12:00:00Z`. Begge spill er aktive. Sesjonene opprettes på første tidspunkt og fornyes på det andre; `expires_at` er `2026-10-05T12:00:00Z` og absolutt utløp `2026-10-31T12:00:00Z`. Tester av gyldighet bruker styrt klokke.
+
+Dette er tidseksempelet for styrt klokke. Kjørende integrasjonstester oppretter gyldige sesjoner relativt til testtidspunktet etter [testgrensesnittenes regler for data og tid](../verification/test-runtime.md#data-og-tid), slik at testene også kan kjøres etter eksempeldatoene.
 
 **Fasit:** To spillere, to sesjoner, to spill og åtte rekordrader. Ada leder begge spill med henholdsvis 120 poeng og 55 000 ms. Historikken inneholder alle åtte rader. Forsøk som ikke forbedrer rekorden inngår i backendtestene, fordi det er backend som håndhever den regelen.
 
@@ -52,7 +52,7 @@ Ved implementasjon henter et skript faktisk struktur fra PostgreSQLs `informatio
 
 Hvert kontrollpunkt gir 0 når det samsvarer og 1 ved avvik, uansett antall detaljer i avviksrapporten. Manglende tabeller gir avvik på alle deres fire punkter; manglende visninger gir avvik på sine punkter. Feil ved tilkobling eller ufullstendig uttrekk gir «ikke målbart», aldri null avvik. Uttrekket må kjøres med tilstrekkelige inspeksjonsrettigheter.
 
-Databasens 20 kontroller utgjør én tredel av felles modell-FoM; API og AI har hver sin tredel. Første komplette måling av den samlede implementasjonen er baseline før retting. Oppgaven krever minst tre målepunkter totalt, styrt av brukeren. Behold samme kontrollsett og også regresjoner. Endret fasit eller tellemetode krever ny merket serie eller ommåling. Ingen måleresultater er fylt ut på forhånd.
+Hvordan de 20 kontrollene vektes sammen med API og AI, og hvordan baseline og regelendringer håndteres, er definert i [implementeringsplanen](implementation-plan.md).
 
 Null modellavvik betyr at disse 20 strukturkontrollene samsvarer. Dataintegritet, rettigheter og ytelse vurderes gjennom sine egne tester. Benchmark beholdes uansett valg av FoM.
 

@@ -19,7 +19,7 @@ Spillere oppretter konto selv. Spilling og innsending krever innlogging; topplis
 - **Feil:** Ugyldige data avvises. Flertrinnslagringer gjennomføres samlet eller rulles tilbake. Databasefeil skal aldri rapporteres som vellykket lagring.
 - **Beskyttelse:** Passord lagres som hash. Backend bestemmer spilleridentiteten fra innloggingen.
 
-**Oppdatert sesjonsforslag:** Tre døgn uten godkjent aktivitet/fornyelse. Forny før spillstart og under aktiv spilling. En anbefalt absolutt grense på 30 døgn krever ny innlogging. Utløpte sesjoner kan ikke gjenopplives; webappen skal beholde et resultat midlertidig ved utløp og be samme spiller logge inn før innsending. Dette er et revidert forslag til gjennomgang.
+**Sesjoner:** [Del 8 i kontrakten](contract.md#8-autentisering-og-drift) er fasit for fornyelse, utløp og håndtering under spilling. Reglene brukes i første backend-implementasjon og tester; frontendforløpet samordnes gjennom forslaget i 1.3.
 
 ## Kvalitetskrav
 
