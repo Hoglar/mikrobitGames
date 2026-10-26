@@ -2,38 +2,68 @@
   "formatVersion": 1,
   "protocolVersion": 1,
   "deviceInfo": {
-    "v1": {
-      "type": "deviceInfo",
-      "protocolVersion": 1,
-      "board": "microbit-v1",
-      "snapshotIntervalMs": 20,
-      "capabilities": {
-        "sensors": ["buttons", "accelerometer", "temperature", "light"],
-        "outputs": {
-          "ledDisplay": ["showText", "showImage", "clear"],
-          "speaker": [],
-          "builtInSounds": []
-        }
-      }
-    },
     "v2": {
       "type": "deviceInfo",
       "protocolVersion": 1,
       "board": "microbit-v2",
       "snapshotIntervalMs": 20,
       "capabilities": {
-        "sensors": ["buttons", "accelerometer", "temperature", "light", "microphone", "logoTouch"],
+        "sensors": [
+          "buttons",
+          "accelerometer",
+          "temperature",
+          "light",
+          "microphone",
+          "logoTouch"
+        ],
         "outputs": {
-          "ledDisplay": ["showText", "showImage", "clear"],
-          "speaker": ["playTone", "playMelody", "playBuiltInSound", "stop"],
-          "builtInSounds": ["hello", "happy"]
+          "ledDisplay": [
+            "showText",
+            "showImage",
+            "clear"
+          ],
+          "speaker": [
+            "playTone",
+            "playMelody",
+            "playBuiltInSound",
+            "stop"
+          ],
+          "builtInSounds": [
+            "hello",
+            "happy"
+          ]
         }
       }
     }
   },
+  "deviceInfoCases": [
+    {"id":"v2-valid","base":"v2","accepted":true},
+    {"id":"empty-sound-catalog","base":"v2","set":{"capabilities":{"sensors":["buttons","accelerometer","temperature","light","microphone","logoTouch"],"outputs":{"ledDisplay":["showText","showImage","clear"],"speaker":["playTone","playMelody","playBuiltInSound","stop"],"builtInSounds":[]}}},"accepted":true},
+    {"id":"v1-unsupported","base":"v2","set":{"board":"microbit-v1"},"accepted":false,"errorKind":"connection"},
+    {"id":"unknown-board","base":"v2","set":{"board":"other-board"},"accepted":false,"errorKind":"connection"},
+    {"id":"missing-microphone-capability","base":"v2","set":{"capabilities":{"sensors":["buttons","accelerometer","temperature","light","logoTouch"],"outputs":{"ledDisplay":["showText","showImage","clear"],"speaker":["playTone","playMelody","playBuiltInSound","stop"],"builtInSounds":["hello","happy"]}}},"accepted":false},
+    {"id":"missing-speaker-capability","base":"v2","set":{"capabilities":{"sensors":["buttons","accelerometer","temperature","light","microphone","logoTouch"],"outputs":{"ledDisplay":["showText","showImage","clear"],"speaker":[],"builtInSounds":["hello","happy"]}}},"accepted":false},
+    {"id":"unsupported-protocol","base":"v2","set":{"protocolVersion":2},"accepted":false},
+    {"id":"wrong-snapshot-interval","base":"v2","set":{"snapshotIntervalMs":40},"accepted":false},
+    {"id":"missing-snapshot-interval","base":"v2","omit":["snapshotIntervalMs"],"accepted":false}
+  ],
   "snapshots": {
-    "v1": {"n":0,"u":0,"a":0,"b":0,"ac":0,"bc":0,"x":0,"y":0,"z":-1000,"t":23,"l":80},
-    "v2": {"n":0,"u":0,"a":0,"b":0,"ac":0,"bc":0,"x":0,"y":0,"z":-1000,"t":23,"l":80,"m":12,"q":0,"qc":0}
+    "v2": {
+      "n": 0,
+      "u": 0,
+      "a": 0,
+      "b": 0,
+      "ac": 0,
+      "bc": 0,
+      "x": 0,
+      "y": 0,
+      "z": -1000,
+      "t": 23,
+      "l": 80,
+      "m": 12,
+      "q": 0,
+      "qc": 0
+    }
   },
   "commandCases": [
     {"id":"text","line":"C|1|1|D|TEXT|READY","result":"R|1|1|OK","actionApplied":true},
@@ -43,7 +73,6 @@
     {"id":"melody-rest","line":"C|1|5|S|MELODY|128|440:200,0:100,660:300","result":"R|1|5|OK","actionApplied":true},
     {"id":"sound","line":"C|1|6|S|SOUND|happy","result":"R|1|6|OK","actionApplied":true},
     {"id":"stop","line":"C|1|7|S|STOP","result":"R|1|7|OK","actionApplied":true},
-    {"id":"v1-speaker","board":"v1","line":"C|1|8|S|TONE|440|250|128","result":"R|1|8|ERR|UNSUPPORTED_OUTPUT","actionApplied":false},
     {"id":"version","line":"C|2|9|D|CLEAR","result":"R|1|9|ERR|UNSUPPORTED_VERSION","actionApplied":false},
     {"id":"duplicate","highestId":10,"line":"C|1|10|D|CLEAR","result":"R|1|10|ERR|DUPLICATE_ID","actionApplied":false},
     {"id":"older","highestId":20,"line":"C|1|11|D|CLEAR","result":"R|1|11|ERR|DUPLICATE_ID","actionApplied":false},
@@ -63,12 +92,10 @@
     {"id":"maximum-id","line":"C|1|2147483647|D|CLEAR","result":"R|1|2147483647|OK","actionApplied":true}
   ],
   "snapshotCases": [
-    {"id":"v1-valid","base":"v1","accepted":true},
     {"id":"v2-valid","base":"v2","accepted":true},
     {"id":"unknown-key","base":"v2","set":{"futureReading":123},"accepted":true},
     {"id":"missing-advertised-mic","base":"v2","omit":["m"],"accepted":false},
     {"id":"missing-logo-counter","base":"v2","omit":["qc"],"accepted":false},
-    {"id":"v1-unavailable-key","base":"v1","set":{"m":12},"accepted":false},
     {"id":"null-mic","base":"v2","set":{"m":null},"accepted":false},
     {"id":"boolean-button","base":"v2","set":{"a":true},"accepted":false},
     {"id":"string-temperature","base":"v2","set":{"t":"23"},"accepted":false},
@@ -79,24 +106,9 @@
     {"id":"all-wire-boundaries","base":"v2","set":{"n":4294967295,"u":4294967295,"ac":4294967295,"bc":4294967295,"qc":4294967295,"a":1,"b":1,"q":1,"x":-8192,"y":8192,"z":0,"t":125,"l":255,"m":0},"accepted":true}
   ],
   "sequenceCases": [
-    {
-      "id":"released-after-missed-press","board":"v2",
-      "samples":[{"n":10,"u":200,"ac":7},{"n":12,"u":240,"a":0,"ac":8}],
-      "expectedPresses":[{"index":1,"input":"a","count":1}],
-      "expectedGaps":[{"index":1,"count":1}]
-    },
-    {
-      "id":"multiple-presses","board":"v1",
-      "samples":[{"n":1,"u":20,"ac":2,"bc":1},{"n":2,"u":40,"ac":4,"bc":2}],
-      "expectedPresses":[{"index":1,"input":"a","count":2},{"index":1,"input":"b","count":1}],
-      "expectedGaps":[]
-    },
-    {
-      "id":"modular-wrap","board":"v2",
-      "samples":[{"n":4294967295,"u":4294967290,"ac":4294967295},{"n":0,"u":14,"ac":1}],
-      "expectedPresses":[{"index":1,"input":"a","count":2}],
-      "expectedGaps":[]
-    }
+    {"id":"released-after-missed-press","board":"v2","samples":[{"n":10,"u":200,"ac":7},{"n":12,"u":240,"a":0,"ac":8}],"expectedPresses":[{"index":1,"input":"a","count":1}],"expectedGaps":[{"index":1,"count":1}]},
+    {"id":"multiple-presses","board":"v2","samples":[{"n":1,"u":20,"ac":2,"bc":1},{"n":11,"u":220,"ac":4,"bc":2}],"expectedPresses":[{"index":1,"input":"a","count":2},{"index":1,"input":"b","count":1}],"expectedGaps":[{"index":1,"count":9}]},
+    {"id":"modular-wrap","board":"v2","samples":[{"n":4294967295,"u":4294967290,"ac":4294967295},{"n":5,"u":114,"ac":1}],"expectedPresses":[{"index":1,"input":"a","count":2}],"expectedGaps":[{"index":1,"count":5}]}
   ],
   "tiltCases": [
     {"axisMg":0,"expected":0},

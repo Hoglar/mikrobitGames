@@ -1,3 +1,3 @@
-# Kildekode
+# V2 C++ Firmware Source
 
-Implementasjonen av denne systemdelen. Organiser filer etter ansvar og valgt teknologi. Språk, verktøy og kommandoer for bygging og kjøring dokumenteres i modulens README når de er valgt.
+No firmware source is implemented yet. Follow the [implementation design](../spec/firmware-implementation.md) for the planned `main.cpp`, hardware-independent `core/`, CODAL adapters in `platform/codal/`, and application/task orchestration. The [module README](../README.md) documents build integration and flashing. Keep host tests outside this directory so CODAL source discovery does not compile a test runner into the firmware.

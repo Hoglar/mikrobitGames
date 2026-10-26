@@ -1,6 +1,6 @@
 # Web-Page Developer Interface for micro:bit Inputs and Outputs
 
-This draft defines one framework-independent adapter shared by the page's games. Games use this API; only the adapter reads/writes the [serial protocol](microbit-serial-protocol.md). The API is not implemented yet. The defaults, formulas, lifecycle, and event semantics below are requirements for that implementation.
+This draft defines one framework-independent adapter shared by the page's games, supporting **micro:bit V2 only**. Games use this API; only the adapter reads/writes the [serial protocol](microbit-serial-protocol.md). V1/other board identities reject startup with an unsupported-board connection error; there is no reduced V1 state shape. The API is not implemented yet. The defaults, formulas, lifecycle, and event semantics below are requirements for that implementation.
 
 ## Page and Game Ownership
 
@@ -77,7 +77,7 @@ This example corresponds to the V2 snapshot in the serial contract, using the de
 | `q`, `qc` | Boolean `touch.logoPressed` and counted logo-press events |
 | `n`, `u` | Internal sequence diagnostics and device sample timing |
 
-V1 always has `microphone: null` and `touch: { logoPressed: null }`. V2 has the objects above when input is available. Missing advertised readings invalidate the whole snapshot; they never become unsupported-hardware nulls. No compass or synthetic gyroscope is exposed.
+Every supported connected board has the V2 objects shown above. All wire readings are mandatory; a missing reading invalidates the whole snapshot rather than becoming an unsupported-hardware null. Nulls below represent unavailable connection/input state only. No compass or synthetic gyroscope is exposed.
 
 `connection` is `disconnected`, `connecting`, or `connected`. Only `connected` has `inputAvailable: true`. During startup, recovery, disconnect, or staleness, publish neutral buttons (`false`), neutral tilt (`0`), `accelerometer: null`, `temperatureC: null`, `lightLevel: null`, `microphone: null`, and `touch: { logoPressed: null }`. Retain validated board/capability metadata during recovery; clear it on full disconnect. Games gate actions on `inputAvailable`; neutral values do not imply valid readings. This preserves safe button/tilt access in the example and prevents stuck controls.
 
@@ -101,7 +101,7 @@ Use modular device-time arithmetic from the wire contract. Samples delivered in 
 
 ## Microphone Labels
 
-`soundEvent` is a level classification, `"quiet"` or `"loud"`, not a lossless clap event. On the first V2 snapshot choose loud when `m >= 180`, otherwise quiet. Subsequently switch to loud at `m >= 180`, to quiet at `m <= 120`, and retain the preceding label between thresholds. Session boundaries reset history. V1 has no microphone object. The board can hear its own speaker; no suppression/echo cancellation is provided.
+`soundEvent` is a level classification, `"quiet"` or `"loud"`, not a lossless clap event. On the first snapshot choose loud when `m >= 180`, otherwise quiet. Subsequently switch to loud at `m >= 180`, to quiet at `m <= 120`, and retain the preceding label between thresholds. Session boundaries reset history. The board can hear its own speaker; no suppression/echo cancellation is provided.
 
 ## Connection and Protocol Handling
 
@@ -121,7 +121,7 @@ Expose validated, read-only `microbit.capabilities`; before discovery/full disco
 | `outputs.speaker.playBuiltInSound(name)` | Advertised string name; fixed volume 128 |
 | `outputs.speaker.stop()` | No arguments |
 
-All methods return Promises. Check types, bounds, capabilities, active session, and readiness before enqueueing; no implicit coercion. Wire bounds, melody count/total duration, text alphabet, and exact protocol error codes come from the serial contract. V1 speaker calls reject as capability errors before sending; invalid arguments reject as validation errors. Unadvertised sound names reject before sending.
+All methods return Promises. Check types, bounds, capabilities, active session, and readiness before enqueueing; no implicit coercion. Wire bounds, melody count/total duration, text alphabet, and exact protocol error codes come from the serial contract. Missing mandatory V2 output capabilities fail startup; invalid arguments reject as validation errors. Unadvertised sound names reject before sending, including every name when the advertised list is empty.
 
 Allow one command in flight and at most 16 waiting calls. Write once in FIFO order using wire pacing; assign increasing IDs only at write start. Resolve only on matching `R|1|<id>|OK`; device errors reject with exact uppercase `protocolCode`. Unknown/late/duplicate IDs cannot settle any current call. Errors/queue-full do not repeat commands. Timeout/write failure makes execution unknown, rejects old calls, and triggers recovery; a game must deliberately decide whether to issue another action afterward.
 
@@ -129,6 +129,6 @@ Commands replace active playback on the same target; speaker/display are indepen
 
 ## Verification
 
-The [browser test plan](../../../webapp/spec/test-plan.md) covers state, counted presses, derivation, scheduling, disposal, and recovery. Both sides use the [shared fixtures](fixtures/README.md). Check real browser permissions/cleanup and both board generations before claiming support. Responsiveness thresholds are unverified requirements until recorded measurements meet them.
+The [browser test plan](../../../webapp/spec/game-input-test-plan.md) covers state, counted presses, derivation, scheduling, disposal, and recovery. Both sides use the [shared fixtures](fixtures/README.md). Check real browser permissions/cleanup and supported V2 revisions before claiming support. V1 rejection is a host fixture, not a required hardware run. Responsiveness thresholds are unverified requirements until recorded measurements meet them.
 
 The baseline release budget at the normal 50 Hz rate is p95 at most 5 ms from complete-line receipt to state/event callbacks with one and four subscribers, and p95 at most 100 ms from an instrumented physical button/tilt stimulus to the game callback. At least 20 trials are required for the physical measurement. Approximate manual timing cannot establish a latency pass. A game needing a tighter budget must specify it before testing; it cannot weaken these baseline requirements.

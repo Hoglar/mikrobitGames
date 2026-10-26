@@ -1,6 +1,6 @@
 # Proposed Bidirectional micro:bit Serial Protocol
 
-This is the shared specification for built-in micro:bit inputs and outputs. It is a draft for implementation, not a claim of hardware verification. GPIO-connected hardware is out of scope. The [browser interface](web-page-developer-interface.md) defines the public game API; [shared fixtures](fixtures/README.md) provide conformance examples.
+This is the shared specification for built-in **micro:bit V2** inputs and outputs. V1 boards are outside this release's support; the browser rejects their board identity during startup. Firmware is C++ with the CODAL design in [ADR-008](../../decisions/adr-008-microbit-v2-cpp-codal.md) and the [implementation guide](../../../microbit/spec/firmware-implementation.md). This is a draft, not hardware verification. GPIO-connected hardware is out of scope. The [browser interface](web-page-developer-interface.md) defines the public game API; [shared fixtures](fixtures/README.md) provide conformance examples.
 
 Protocol version 1 is still unimplemented. These additions complete that draft; deployed versions must increment the protocol version for incompatible changes. ADRs [002](../../decisions/adr-002-microbit-serial-communication.md) and [004](../../decisions/adr-004-microbit-command-encoding.md) record the architecture.
 
@@ -24,11 +24,11 @@ Senders terminate lines with LF (byte `0x0A`). Receivers also accept CRLF by rem
 | Browser output queue | At most 16 waiting calls, plus one command awaiting its result |
 | Host write pacing | At most 16 bytes per chunk; chunk starts at least 5 ms apart, including across commands |
 
-These are proposed interoperability requirements and release gates, to be validated on V1 and V2. A firmware that cannot meet them is not conformant; revise the shared draft and tests together before adopting another profile. Do not silently choose different limits in each implementation.
+These are proposed interoperability requirements and release gates, to be validated on supported V2 hardware. A firmware that cannot meet them is not conformant; revise the shared draft and tests together before adopting another profile. Do not silently choose different limits in each implementation.
 
 On overflow, retain at most the incoming limit plus one possible final CR, discard through the next LF, then resume at the next line. Firmware reports `LINE_TOO_LONG` after discarding, correlated if a valid command header/ID was recovered; otherwise it returns `ERR|LINE_TOO_LONG`. The browser reports/discards oversized incoming lines without updating input freshness. Empty lines are ignored and never refresh liveness. Invalid bytes/lines must not execute partial commands or stop snapshots. Runtime control characters must not interrupt firmware execution.
 
-Firmware must drain serial input frequently enough for its runtime's receive buffer, including during output. For example, MicroPython documents a 64-byte RX buffer; host chunking does not replace timely firmware reads. Do not use blocking reads, scrolling, or audio that stall acquisition or input handling. See the runtime [UART](https://microbit-micropython.readthedocs.io/en/v2-docs/uart.html), [display](https://microbit-micropython.readthedocs.io/en/v2-docs/display.html), and [audio](https://microbit-micropython.readthedocs.io/en/v2-docs/audio.html) documentation. Record the selected runtime and firmware revision in verification results.
+Firmware must drain serial input frequently enough for its configured CODAL receive buffers, including during output. The [implementation guide](../../../microbit/spec/firmware-implementation.md) specifies application buffers, task ownership, and overflow handling; the actual runtime capacities must be configured and measured. Host chunking does not replace timely firmware reads. Processor spin waits are prohibited; cooperative waiting in a dedicated worker is allowed only when acquisition and RX service continue. Record the pinned runtime and firmware revision in results. MicroPython buffer/control-character behavior is not an implementation assumption for this C++ firmware.
 
 ## Startup, Sessions, and Recovery
 
@@ -57,7 +57,7 @@ Every valid `HELLO|1`, including one while streaming, is a session barrier. Firm
 }
 ```
 
-`type` and `board` are strings; `protocolVersion` and `snapshotIntervalMs` are integers, not booleans or numeric strings. `capabilities`/`outputs` are objects and each shown capability list is an array of strings. All shown metadata keys are required. Both boards must advertise `buttons`, `accelerometer`, `temperature`, `light`, and all three display actions. V1 uses `board: "microbit-v1"`, omits microphone/logo capabilities, and advertises empty `speaker` and `builtInSounds` arrays. V2 additionally advertises microphone, logo touch, and all four speaker actions. Built-in sound availability depends on firmware; advertise 0–16 unique names matching `[a-z][a-z0-9-]{0,23}`. Advertise only implemented sounds. Unknown capability names are ignored; missing required capabilities, duplicate entries, inconsistent board capabilities, an unknown board, unsupported version, or an interval other than 20 reject startup. Unknown JSON metadata keys are ignored.
+`type` and `board` are strings; `protocolVersion` and `snapshotIntervalMs` are integers, not booleans or numeric strings. `capabilities`/`outputs` are objects and each shown capability list is an array of strings. All shown metadata keys are required. The only supported board identity is `microbit-v2`. It must advertise all six shown sensors, all three display actions, and all four speaker actions. Built-in sound availability depends on firmware; advertise 0–16 unique names matching `[a-z][a-z0-9-]{0,23}`. The example names are illustrative, not a required sound catalog. Advertise only implemented sounds; an empty `builtInSounds` list is legal. Unknown capability names are ignored; missing required capabilities, duplicate entries, an unsupported board (including V1), unsupported version, or an interval other than 20 reject startup. Unknown JSON metadata keys are ignored. Firmware V1 compatibility is not required.
 
 An unsupported numeric bootstrap version returns `ERR|UNSUPPORTED_VERSION`. A malformed `HELLO` returns `ERR|MALFORMED_COMMAND`. Either ends any active session, stops/clears outputs, and returns firmware to waiting for a valid `HELLO`; no snapshots follow until then. Non-HELLO lines before a session are ignored without results. After `deviceInfo` is emitted, commands with recoverable IDs receive results as specified below.
 
@@ -73,7 +73,7 @@ A reset that leaves the USB port open is detected by missing snapshots: rebooted
 {"n":1842,"u":36840,"a":0,"b":1,"ac":7,"bc":3,"x":12,"y":-34,"z":-998,"t":23,"l":80,"m":12,"q":0,"qc":2}
 ```
 
-Snapshots have no `type` or wrapper. An object without `type` is only a snapshot candidate: validate every required field against the advertised board. Booleans, strings, fractions, `null`, and non-finite values are invalid for integer fields. Unknown keys are ignored for forward compatibility; known fields unavailable on the advertised board are invalid.
+Snapshots have no `type` or wrapper. An object without `type` is only a snapshot candidate: validate every required field after discovering a supported V2 board. All fields below are mandatory on every snapshot; there is no game-selected sensor mask. Booleans, strings, fractions, `null`, and non-finite values are invalid for integer fields. Unknown keys are ignored for forward compatibility.
 
 | Key | Required when | Encoding and range |
 |---|---|---|
@@ -84,14 +84,14 @@ Snapshots have no `type` or wrapper. An object without `type` is only a snapshot
 | `x`, `y`, `z` | Always | Signed integer mg in `[-8192, 8192]`; configure an 8g acquisition range |
 | `t` | Always | Integer board temperature estimate in `[-40, 125]` Celsius, not ambient temperature |
 | `l` | Always | Light level normalized by firmware to integer `[0, 255]` |
-| `m` | Microphone advertised | Sound level normalized by firmware to integer `[0, 255]` |
-| `q`, `qc` | Logo touch advertised | Debounced touch state `0`/`1` and unsigned 32-bit cumulative touch-press count |
+| `m` | Always | Sound level normalized by firmware to integer `[0, 255]` |
+| `q`, `qc` | Always | Debounced touch state `0`/`1` and unsigned 32-bit cumulative touch-press count |
 
 All unsigned 32-bit fields wrap modulo `2^32`. Read all accelerometer axes as one acquisition. Wire axes use this project convention: with the LED face viewed upright and USB at the top, lowering the right edge gives positive `x`, lowering the bottom/gold-connector edge gives positive `y`, and lying still with LEDs facing up gives approximately `z = -1000`. Firmware maps runtime coordinates to this convention. There is no compass or gyroscope input.
 
 Debounce digital inputs for 20 ms of stable state before committing either transition; increment a press counter only on a committed released-to-pressed transition. Use runtime/hardware edge tracking or poll at least every 5 ms, independently of snapshot transmission, including while waiting for `HELLO` or skipping failed sensor acquisitions. Pulses stable for at least 25 ms in both states must be counted even when their pressed snapshots are missed. Shorter pulses are not guaranteed. Counters preserve counts, not exact event times, release history, or A-versus-B ordering between snapshots. Never latch current-state fields to simulate missed presses.
 
-An advertised sensor that cannot be read must not be omitted, replaced by `null`, clamped into a valid-looking value, or copied from an old acquisition. Skip the whole snapshot, continue servicing commands, and record a firmware diagnostic outside the protocol stream. Extended failures trigger freshness recovery. Unsupported V2 fields are omitted on V1. Indicator LEDs and external actuators are outside this contract.
+Each acquisition must consult initialized, healthy drivers and use their latest valid measurements. Temperature/light/microphone drivers may update independently of the snapshot interval; documented valid driver caches are allowed and their native update/readiness behavior must be recorded and verified in the firmware binding table. A failed/not-ready read must not be omitted, replaced by `null`, clamped into apparent validity, or hidden by copying the previous encoded snapshot. Skip the whole snapshot, continue commands/digital tracking, and record diagnostics outside the protocol stream. Extended failures trigger freshness recovery. Indicator LEDs and external actuators are outside this contract.
 
 For successive accepted snapshots in one session, compute modular deltas `(new - previous + 2^32) % 2^32`. Accept `n` only when its delta is in `[1, 2^31 - 1]`; ignore duplicate/older sequences without changing state or baselines. Report `deltaN - 1` gaps. A forward snapshot requires `deltaU` in `[1, 2^31 - 1]`; otherwise recover. Press deltas must be in `[0, 2^31 - 1]`; a larger delta invalidates the whole snapshot without updating baselines. Later valid full snapshots restore current values and accumulated press counts. First snapshots after any handshake establish baselines without past actions.
 
@@ -147,4 +147,4 @@ After a result timeout or write failure, stop command writes, reject pending/que
 
 ## Verification
 
-Use the [shared fixtures](fixtures/README.md), [firmware test plan](../../../microbit/spec/test-plan.md), and [browser test plan](../../../webapp/spec/test-plan.md). Measure acquisition cadence, latency, replacement, and recovery on both board generations. Thresholds above are requirements, not measured results; record failures rather than weakening limits after a run.
+Use the [shared fixtures](fixtures/README.md), [firmware test plan](../../../microbit/spec/test-plan.md), and [browser test plan](../../../webapp/spec/game-input-test-plan.md). Measure acquisition cadence, latency, replacement, and recovery on supported V2 revisions. V1 is tested only as an unsupported identity in host fixtures; no V1 hardware run is required. Thresholds above are requirements, not measured results; record failures rather than weakening limits after a run.

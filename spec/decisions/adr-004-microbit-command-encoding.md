@@ -4,7 +4,7 @@
 
 ## Context and Problem Statement
 
-The web page sends commands for the micro:bit's built-in outputs, including the LED display and (on V2) speaker. To prioritize low latency, reliability, and readability—and avoid requiring a JSON command parser in whichever firmware runtime is selected—the command channel uses a small line-oriented text grammar. The runtime and performance measurements remain to be established during implementation.
+The web page sends commands for the supported V2 board's built-in LED display and speaker. To prioritize low latency, reliability, and readability—and avoid a JSON command parser in the C++ firmware—the command channel uses a small line-oriented text grammar. [ADR-008](adr-008-microbit-v2-cpp-codal.md) proposes CODAL; exact build/driver integration and performance measurements remain to be established. V1 is outside this release's support.
 
 This decision applies to web-to-micro:bit output commands and their results. `deviceInfo` and snapshots remain newline-delimited JSON. The page sends `HELLO|1`; firmware emits `deviceInfo` before snapshots, and the adapter waits for both valid info and a first snapshot before sending output commands. A repeated handshake is a session barrier, as defined in ADR-002 and the shared contract.
 
