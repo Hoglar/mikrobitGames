@@ -23,16 +23,23 @@ Sensor delivery uses newline-delimited JSON snapshots. Web-to-micro:bit commands
 
 ## Decision Outcome
 
-Chosen option: **Periodic full snapshots for sensor input.** The micro:bit will send the selected game-input readings together in a compact JSON object per line at a fixed transmission interval. Snapshots use short keys and omit handshake metadata, derived values, and compass readings. Web-to-micro:bit output uses `text-v1` command lines with correlated text results. This keeps browser-side sensor state management simple and gives games a coherent view of current inputs. The interval will be selected and validated during implementation to balance responsiveness and message volume.
+Chosen option: **Periodic full snapshots for sensor input.** The micro:bit sends the selected readings together in compact JSON at the shared protocol's fixed interval. Snapshots use short keys and omit handshake metadata, derived values, and compass readings. They include boot-relative sample time and cumulative debounced press counters as well as current held states. These counters preserve one-shot presses across missing snapshots without introducing a separate event stream. They do not reconstruct release history, exact press times, or ordering between different buttons.
+
+The unimplemented version 1 draft specifies a 20 ms interval over 115200-baud USB serial. These are requirements to validate on both board generations, not measured performance claims. Sensor failure skips the whole snapshot rather than substituting stale readings. The shared contract defines all field ranges, framing bounds, deadlines, and wraparound policies; implementations cannot choose conflicting profiles independently.
+
+Each `HELLO|1` creates a session barrier and cancels active outputs. The browser becomes ready only after validated `deviceInfo` and a first valid snapshot. Missing fresh snapshots triggers bounded recovery and immediate unavailable input, including when USB stays open during a firmware reset. Counter baselines reset at session boundaries, so past presses are not replayed. Device timestamps drive gesture timing; host monotonic time drives freshness.
+
+The page owns one adapter/serial port and gives the active game a disposable facade. Switching games cancels old work and clears outputs while retaining the connection. Web-to-micro:bit output remains `text-v1` with correlated results, as recorded in ADR-004.
 
 ### Consequences
 
 * Good, because each message contains a complete view of the sensor state, so the browser adapter does not need to merge independent sensor events.
 * Good, because the shared adapter can provide the same current-state interface to every game, keeping games independent of the serial protocol.
-* Good, because a subsequent snapshot restores the current state if an earlier message was missed or the connection resumes.
+* Good, because a subsequent snapshot restores current state and cumulative press counts after a missed message within the same session. Session recovery deliberately establishes a fresh baseline instead of replaying historical actions.
 * Bad, because unchanged readings are retransmitted, increasing message volume compared with change-only events.
-* Bad, because responsiveness depends on the chosen transmission interval; the interval must be tested with the games.
-* The message schema must define stable field names, units, and how unavailable or invalid readings are represented. The adapter will parse complete newline-terminated messages rather than assuming each serial read contains exactly one message.
+* Bad, because sampling can still miss transient motions or sounds; digital counters only guarantee debounced press counts. The selected cadence and game latency budgets must be verified on hardware.
+* Bad, because timestamps and press counters increase snapshot size, and unavailable sensors cause full-snapshot loss until recovery.
+* The browser exposes stable null/neutral unavailable state, counted press events, and deterministic tilt/shake/sound derivation. Both implementations use shared conformance fixtures and parse complete lines rather than serial read boundaries.
 
 ## Protocol Documentation
 

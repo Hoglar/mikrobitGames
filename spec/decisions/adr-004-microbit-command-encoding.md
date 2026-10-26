@@ -4,9 +4,9 @@
 
 ## Context and Problem Statement
 
-The web page sends commands for the micro:bit's built-in outputs, including the LED display and (on V2) speaker. To prioritize low latency, reliability, and readability—and avoid depending on a JSON command parser in the chosen micro:bit runtime—the command channel should use a small line-oriented text grammar.
+The web page sends commands for the micro:bit's built-in outputs, including the LED display and (on V2) speaker. To prioritize low latency, reliability, and readability—and avoid requiring a JSON command parser in whichever firmware runtime is selected—the command channel uses a small line-oriented text grammar. The runtime and performance measurements remain to be established during implementation.
 
-This decision applies to web-to-micro:bit output commands and their results. `deviceInfo` and sensor snapshots from the micro:bit remain newline-delimited JSON. The web page sends a fixed `HELLO|1` line after opening the serial port; the micro:bit responds with `deviceInfo` and its protocol version before snapshots and output commands begin.
+This decision applies to web-to-micro:bit output commands and their results. `deviceInfo` and snapshots remain newline-delimited JSON. The page sends `HELLO|1`; firmware emits `deviceInfo` before snapshots, and the adapter waits for both valid info and a first snapshot before sending output commands. A repeated handshake is a session barrier, as defined in ADR-002 and the shared contract.
 
 ## Decision Drivers
 
@@ -28,6 +28,10 @@ Chosen option: **Text commands and text results (`text-v1`).** Each command is a
 
 The browser's game-facing API remains independent of the wire encoding. The detailed `text-v1` grammar is documented in the [micro:bit–webapp serial protocol](../contracts/microbit-webapp/microbit-serial-protocol.md).
 
+That contract owns exact serial settings, ASCII alphabets, argument/line/queue bounds, uppercase error codes, and validation precedence. IDs increase strictly and are never reused within a session; duplicate/older IDs cannot execute an action again. The browser uses paced chunks and one command awaiting a result to bound pressure on small firmware receive buffers. Timeout or partial write means execution is unknown: recovery establishes a new session without automatically retrying actions.
+
+Valid commands replace active output on the same target; display and speaker are independent and have no firmware playback queues. `STOP` and `CLEAR` interrupt active work. Results acknowledge acceptance/start, not completion; nonblocking playback is required to preserve input cadence. The page controls game disposal and output cleanup, rather than allowing a closing game to close the shared port.
+
 ### Consequences
 
 * Good, because the micro:bit parses a small fixed grammar instead of allocating and parsing arbitrary JSON command objects.
@@ -35,5 +39,7 @@ The browser's game-facing API remains independent of the wire encoding. The deta
 * Good, because one fixed command format avoids per-device format negotiation; the protocol version covers future syntax changes.
 * Good, because `R|` result lines are directly distinguishable from `{`-prefixed JSON snapshot lines.
 * Bad, because text fields and variable-length melodies require strict character, length, and range limits.
+* Bad, because paced writes and a single in-flight command limit command throughput; bounded queues reject overload rather than accumulating stale game output.
+* Bad, because acknowledgement timeouts cannot establish whether a side effect happened; automatic retry is intentionally excluded.
 * Bad, because extending the command set requires coordinating parser changes on the micro:bit and browser.
 * Bad, because `deviceInfo` and sensor snapshots still require JSON generation on the micro:bit; this decision removes JSON parsing only from the command path.

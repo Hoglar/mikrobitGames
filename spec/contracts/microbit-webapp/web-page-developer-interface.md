@@ -1,47 +1,64 @@
 # Web-Page Developer Interface for micro:bit Inputs and Outputs
 
-This document proposes the game-facing browser API and explains how a shared adapter handles the bidirectional newline-delimited serial protocol. Games should use this interface rather than parsing serial messages or depending on board-specific details.
+This draft defines one framework-independent adapter shared by the page's games. Games use this API; only the adapter reads/writes the [serial protocol](microbit-serial-protocol.md). The API is not implemented yet. The defaults, formulas, lifecycle, and event semantics below are requirements for that implementation.
 
-## Public API
+## Page and Game Ownership
 
-A framework-independent facade can expose connection lifecycle, current input state, subscriptions, and output commands:
+The page owns `microbit.connect()`, `disconnect()`, connection status, capabilities, and error reporting. Call `connect()` from an explicit user action in a supported secure-context browser. It resolves only after valid `deviceInfo` **and the first valid snapshot**; errors/timeouts release serial resources. A connected call is idempotent; concurrent connecting calls share one operation. Explicit disconnect cancels startup/recovery and prevents automatic reconnection.
+
+Only one game session may be active. `createGameSession()` requires a connected adapter and rejects until any previous game session has finished disposal. Games receive session-bound `inputs`/`outputs`, not ownership of the port. Connection lifetime is independent of game switching.
 
 ```javascript
+// Page connection button:
 await microbit.connect();
+const game = microbit.createGameSession();
 
-const unsubscribeState = microbit.inputs.subscribe((state) => {
+game.inputs.subscribe((state) => {
   player.setTilt(state.tilt.x, state.tilt.y);
   player.setButton("a", state.buttons.aPressed);
+  player.setControlsEnabled(state.inputAvailable);
 });
-
-const unsubscribeGesture = microbit.inputs.onGesture((gesture) => {
+game.inputs.onPress(({ input, count }) => {
+  if (input === "a") player.jump(count);
+});
+game.inputs.onGesture((gesture) => {
   if (gesture === "shake") player.activateAbility();
 });
 
-await microbit.outputs.display.showText("READY");
-await microbit.outputs.speaker.playTone({ frequencyHz: 440, durationMs: 250 });
-await microbit.outputs.speaker.playBuiltInSound("happy");
+await game.outputs.display.showText("READY"); // Accepted/started, not finished.
+if (microbit.capabilities.outputs.speaker.includes("playTone")) {
+  await game.outputs.speaker.playTone({ frequencyHz: 440, durationMs: 250 });
+}
 
-// When the game is closed:
-unsubscribeState();
-unsubscribeGesture();
+// Page launcher, before mounting the next game:
+await game.dispose(); // Unsubscribe, cancel old work, stop sound, clear display.
+// Keep the shared port connected for the next game.
+
+// Page disconnect button or page shutdown:
 await microbit.disconnect();
 ```
 
-The interface names are proposals. `connect()` should resolve only after the `HELLO|1` handshake returns a valid `deviceInfo`; a handshake timeout or unsupported version rejects with a connection/protocol error. A React hook can wrap this facade if the page uses React, while keeping the underlying service independent of the framework.
+`microbit.getState()` returns current read-only state. `microbit.onError(callback)` returns an unsubscribe function. Errors carry `kind`, message, and optional `protocolCode`/`commandId`; kinds include `connection`, `protocol`, `capability`, `validation`, `command`, `timeout`, `queue-full`, and `disposed`. Rejections/error subscriptions must not expose parsing failures as sensor values.
 
-## Game-Facing Input State
+Every `subscribe`, `onPress`, and `onGesture` call returns an unsubscribe function. State subscriptions immediately receive current state, then one callback per accepted snapshot or lifecycle change, in order. Duplicate registrations are independent; callback exceptions are reported without preventing other subscribers. State, nested objects, and capabilities are immutable to callers. Events are not replayed when a subscriber joins.
 
-The adapter converts each `sensorSnapshot` into a stable state shape. Missing hardware-specific readings become `null` in the browser API, even though the micro:bit omits unsupported fields on the wire.
+`dispose()` immediately removes the game's subscriptions, rejects unsent calls, and prevents new calls on its facade with `disposed`. It drains any already-written command, then sends supported speaker `STOP` and display `CLEAR` using the shared writer. An already-written call whose game was disposed rejects locally, but its ID stays reserved until its result is drained or the adapter recovers. Disposal resolves only after cleanup acknowledgements; on cleanup failure it closes the connection and rejects. A later game cannot start until disposal completes. Repeated disposal shares the same operation/result. Commands/events from a disposed game cannot leak into the next one.
+
+Page `disconnect()` disposes an active game, attempts the same output cleanup when ready, and always releases reader, writer, and port even if cleanup fails. It suppresses automatic recovery while closing, rejects on cleanup failure after releasing resources, and is idempotent when already disconnected; concurrent calls share the operation. Abrupt removal/page termination cannot guarantee cleanup; firmware outputs are individually bounded to 10000 ms. Version 1 has no device-side host-liveness heartbeat.
+
+## Public Input State
+
+This example corresponds to the V2 snapshot in the serial contract, using the derivation rules below:
 
 ```javascript
 {
   connection: "connected",
+  inputAvailable: true,
   board: "microbit-v2",
   buttons: { aPressed: false, bPressed: true },
-  tilt: { x: 0.02, y: -0.41 },
+  tilt: { x: 0, y: 0 },
   accelerometer: {
-    xMg: 12, yMg: -34, zMg: 998, strengthMg: 999, gesture: "left"
+    xMg: 12, yMg: -34, zMg: -998, strengthMg: 999, gesture: null
   },
   temperatureC: 23,
   lightLevel: 80,
@@ -50,49 +67,68 @@ The adapter converts each `sensorSnapshot` into a stable state shape. Missing ha
 }
 ```
 
-The adapter maps compact wire keys to the stable game API:
-
-| Wire key | Public field |
+| Wire keys | Public fields or behavior |
 |---|---|
-| `a`, `b` | `buttons.aPressed`, `buttons.bPressed` (wire values `0`/`1` become booleans) |
-| `x`, `y`, `z` | `accelerometer.xMg`, `.yMg`, `.zMg` |
-| `t` | `temperatureC` |
-| `l` | `lightLevel` |
-| `m` | `microphone.soundLevel` (V2 only) |
-| `q` | `touch.logoPressed` (V2 only) |
-| `n` | Internal sequence tracking for dropped-snapshot diagnostics; not required by games |
+| `a`, `b` | Boolean `buttons.aPressed`, `buttons.bPressed` for hold controls |
+| `ac`, `bc` | Adapter baselines and counted `onPress` events for one-shot actions |
+| `x`, `y`, `z` | `accelerometer.xMg`, `.yMg`, `.zMg`; derived tilt/strength/shake |
+| `t`, `l` | `temperatureC`, `lightLevel` |
+| `m` | `microphone.soundLevel`, derived `.soundEvent` |
+| `q`, `qc` | Boolean `touch.logoPressed` and counted logo-press events |
+| `n`, `u` | Internal sequence diagnostics and device sample timing |
 
-The adapter derives normalized `tilt`, `strengthMg`, and gesture classifications from accelerometer samples. It may derive a sound-event label from `microphone.soundLevel` if the game API needs one. The protocol omits compass readings. Unsupported V2-only readings are absent on the wire and become `null` in the public state.
+V1 always has `microphone: null` and `touch: { logoPressed: null }`. V2 has the objects above when input is available. Missing advertised readings invalidate the whole snapshot; they never become unsupported-hardware nulls. No compass or synthetic gyroscope is exposed.
 
-- `tilt.x` and `tilt.y` are normalized to `-1.0` through `1.0`; the adapter defines and documents axis orientation, applies a small dead zone, and may smooth noisy values. Raw accelerometer fields remain available.
-- `buttons` are the latest pressed states. Games may use state for hold controls and detect edges for one-shot actions such as jump.
-- `accelerometer.gesture` is classified by the adapter from the sequence of raw axes using stable game-facing names. It emits `onGesture` on a new recognized gesture rather than on every repeated snapshot. Gestures are coarse; normalized tilt is preferred for continuous movement.
-- V1 reports `microphone` and `touch.logo` as `null`; V2 provides those readings. Compass is intentionally omitted from the game API. Neither built-in board has a gyroscope.
-- `connection` can be `disconnected`, `connecting`, or `connected`. Input state should be reset or marked unavailable when the connection is lost so games do not keep using stale button/tilt values.
+`connection` is `disconnected`, `connecting`, or `connected`. Only `connected` has `inputAvailable: true`. During startup, recovery, disconnect, or staleness, publish neutral buttons (`false`), neutral tilt (`0`), `accelerometer: null`, `temperatureC: null`, `lightLevel: null`, `microphone: null`, and `touch: { logoPressed: null }`. Retain validated board/capability metadata during recovery; clear it on full disconnect. Games gate actions on `inputAvailable`; neutral values do not imply valid readings. This preserves safe button/tilt access in the example and prevents stuck controls.
 
-## Serial Message Handling
+## Counted Press Events
 
-The adapter owns the serial connection and is the only component that reads or writes the serial stream. It should:
+Use `onPress` for one-shot actions instead of relying exclusively on sampled hold-state edges. Emit at most one event per input per accepted snapshot: `{ input: "a" | "b" | "logo", count: positiveInteger }`. `count` is the modular increase in that input's cumulative counter, including presses whose pressed-state snapshots were lost. Update state first, then emit A, B, logo events in that deterministic order, then any gesture event. This is not a claim about physical ordering between inputs.
 
-1. Request a connection in response to an explicit user action, open the serial port, and send the fixed bootstrap line `HELLO|1\n`. Wait for a valid `deviceInfo` before marking the protocol ready or sending output commands. Browser serial support and permissions are browser-dependent.
-2. Buffer partial reads and split at newline boundaries; a read can contain part of a message or several complete messages.
-3. Parse each complete line according to protocol state: expect JSON `deviceInfo` after `HELLO|1`, handle `ERR|UNSUPPORTED_VERSION` during bootstrap, then parse compact JSON snapshot objects (without a `type` field) and text result lines (`R|...`). Validate the snapshot shape and report malformed/unknown lines without crashing games.
-4. Treat each valid full snapshot as authoritative current state. Use the compact `n` counter to notice skipped snapshots for diagnostics; a later full snapshot resynchronizes state.
-5. Normalize fields and units, update the shared input state, and notify subscribers. Never let an individual game mutate adapter-owned sensor state.
-6. Validate the protocol version from `deviceInfo`; serialize commands as ASCII `text-v1` lines and correlate `R|...` results by `commandId` with the pending Promise. Sensor snapshots and `deviceInfo` remain JSON.
+The first snapshot of a connection/recovery establishes baselines without events. Creating a game clears event/gesture history and the public gesture pulse. Its first subsequent valid snapshot establishes event baselines without events; presses between creation and that snapshot are intentionally not replayed. The immediate subscription callback can still expose current hold/tilt state. Duplicate/older/invalid snapshots do not change baselines or emit events. Events across a session boundary/game switch are not replayed. Current-state fields always reflect latest held states; counters cannot reconstruct release events, exact timestamps, or cross-button combinations. The wire contract's debounce/minimum pulse requirements bound which physical presses are guaranteed.
 
-A `deviceInfo` message supplies the protocol version, board generation, and supported sensor/output capabilities. Reject unsupported protocol versions. The facade should expose capabilities so the UI can hide or disable unsupported features (for example, speaker controls on V1). The wire encoding is fixed by the protocol; games continue using the same output methods.
+## Tilt, Strength, and Gesture Rules
 
-## Output Commands
+Wire axes use the orientation in the serial contract. Positive `tilt.x` means right; positive `tilt.y` means down toward the gold-connector edge in screen coordinates. For each axis compute `v = clamp(axisMg / 1000, -1, 1)`, then return `0` if `abs(v) <= 0.05`, otherwise `sign(v) * (abs(v) - 0.05) / 0.95`. Version 1 applies no smoothing. Raw fields are unchanged. `strengthMg = round(sqrt(xMg*xMg + yMg*yMg + zMg*zMg))`, rounding positive halves upward.
 
-The game API maps friendly methods to the protocol commands described in [the micro:bit serial protocol](./microbit-serial-protocol.md):
+The only version 1 gesture name is `"shake"`; directional movement uses tilt. `accelerometer.gesture` is `"shake"` only on a snapshot that emits the event, otherwise `null`. Use device timestamps, never browser callback spacing:
 
-- `outputs.display.showText(text)`, `showImage(pixels)`, and `clear()` are supported by both board generations.
-- `outputs.speaker.playTone(...)`, `playMelody(...)`, `playBuiltInSound(name)`, and `stop()` require the built-in V2 speaker. Built-in sound names are advertised by the device. Calls on boards without the requested capability should reject with a clear unsupported-capability error rather than silently doing nothing.
-- The built-in micro:bit has no rumble motor. GPIO-connected motors or speakers require extra hardware and are not exposed by the built-in output API.
+1. Begin armed after the session's first snapshot. Track the last four consecutive samples. For one axis (`x` or `y` independently), all three successive differences must have magnitude at least 1200 mg and alternating signs. Each adjacent interval is at most 100 ms, and the four samples span at most 300 ms. Matching either axis emits one shake.
+2. After emission, clear the window and disarm. Re-arm only after at least 500 ms since emission **and** 200 ms of continuous quiet samples. Quiet means every successive difference on all three axes has magnitude less than 300 mg. Count quiet time from the first sample of the quiet run. Timers without new samples cannot re-arm or emit events.
+3. Any sequence gap or sample interval over 100 ms clears the window/quiet history and disarms. Require a fresh 200 ms quiet run before arming again, plus any remaining post-shake cooldown. Invalid samples never enter the classifier. Session boundaries clear all gesture history.
 
-Each command resolves only after a matching `R|1|<commandId>|OK` line; an `R|1|<commandId>|ERR|...` line rejects with a typed error including its protocol error code. The adapter should handle timeouts and reject pending commands if the serial connection closes.
+Use modular device-time arithmetic from the wire contract. Samples delivered in one read are processed individually in wire order with their original `u` values. Snapshot sampling cannot guarantee every motion is recognized; digital counters provide the stronger press guarantee only.
 
-## Input Validation and Errors
+## Microphone Labels
 
-Expose connection, parsing, unsupported-capability, command, and timeout errors to the page through rejected Promises and/or an error subscription. Do not pass raw serial parsing errors into games as sensor values. Reset input state on disconnect, and keep transport and protocol errors separate from ordinary sensor readings.
+`soundEvent` is a level classification, `"quiet"` or `"loud"`, not a lossless clap event. On the first V2 snapshot choose loud when `m >= 180`, otherwise quiet. Subsequently switch to loud at `m >= 180`, to quiet at `m <= 120`, and retain the preceding label between thresholds. Session boundaries reset history. V1 has no microphone object. The board can hear its own speaker; no suppression/echo cancellation is provided.
+
+## Connection and Protocol Handling
+
+The adapter owns one reader and one paced writer. It follows the serial contract's bootstrap barrier, validation, 3000 ms startup deadline, 500 ms freshness timeout, one-attempt recovery, sequence/wrap policies, and bounded buffers. Unsupported browser/permission failures reject as connection errors before startup. Recovery retains the active game facade/subscriptions but publishes unavailable input, rejects old calls, and blocks outputs until ready again. Fresh baselines suppress historical events.
+
+Expose validated, read-only `microbit.capabilities`; before discovery/full disconnect it is `null`. Invalid/duplicate/older snapshots preserve last valid state only until its freshness deadline. They cannot keep it alive. Fatal transport failure immediately publishes unavailable input and rejects pending calls.
+
+## Output API and Errors
+
+| Method | Arguments and defaults |
+|---|---|
+| `outputs.display.showText(text)` | String meeting wire alphabet/length limits |
+| `outputs.display.showImage(pixels)` | Flat row-major array of exactly 25 integer brightness values in `[0, 9]` |
+| `outputs.display.clear()` | No arguments |
+| `outputs.speaker.playTone({ frequencyHz, durationMs, volume = 128 })` | Required integer frequency/duration; optional integer volume |
+| `outputs.speaker.playMelody({ notes, volume = 128 })` | Required array of `{ frequencyHz, durationMs }` objects; optional integer volume |
+| `outputs.speaker.playBuiltInSound(name)` | Advertised string name; fixed volume 128 |
+| `outputs.speaker.stop()` | No arguments |
+
+All methods return Promises. Check types, bounds, capabilities, active session, and readiness before enqueueing; no implicit coercion. Wire bounds, melody count/total duration, text alphabet, and exact protocol error codes come from the serial contract. V1 speaker calls reject as capability errors before sending; invalid arguments reject as validation errors. Unadvertised sound names reject before sending.
+
+Allow one command in flight and at most 16 waiting calls. Write once in FIFO order using wire pacing; assign increasing IDs only at write start. Resolve only on matching `R|1|<id>|OK`; device errors reject with exact uppercase `protocolCode`. Unknown/late/duplicate IDs cannot settle any current call. Errors/queue-full do not repeat commands. Timeout/write failure makes execution unknown, rejects old calls, and triggers recovery; a game must deliberately decide whether to issue another action afterward.
+
+Commands replace active playback on the same target; speaker/display are independent. `clear()` cancels scrolling, and `stop()` cancels every speaker mode. An acknowledgement is not completion: `await playTone(...); await playBuiltInSound(...)` can interrupt the tone. Version 1 has no completion-wait API. Use one `playMelody` call for a composed melody.
+
+## Verification
+
+The [browser test plan](../../../webapp/spec/test-plan.md) covers state, counted presses, derivation, scheduling, disposal, and recovery. Both sides use the [shared fixtures](fixtures/README.md). Check real browser permissions/cleanup and both board generations before claiming support. Responsiveness thresholds are unverified requirements until recorded measurements meet them.
+
+The baseline release budget at the normal 50 Hz rate is p95 at most 5 ms from complete-line receipt to state/event callbacks with one and four subscribers, and p95 at most 100 ms from an instrumented physical button/tilt stimulus to the game callback. At least 20 trials are required for the physical measurement. Approximate manual timing cannot establish a latency pass. A game needing a tighter budget must specify it before testing; it cannot weaken these baseline requirements.

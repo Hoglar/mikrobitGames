@@ -1,0 +1,124 @@
+{
+  "formatVersion": 1,
+  "protocolVersion": 1,
+  "deviceInfo": {
+    "v1": {
+      "type": "deviceInfo",
+      "protocolVersion": 1,
+      "board": "microbit-v1",
+      "snapshotIntervalMs": 20,
+      "capabilities": {
+        "sensors": ["buttons", "accelerometer", "temperature", "light"],
+        "outputs": {
+          "ledDisplay": ["showText", "showImage", "clear"],
+          "speaker": [],
+          "builtInSounds": []
+        }
+      }
+    },
+    "v2": {
+      "type": "deviceInfo",
+      "protocolVersion": 1,
+      "board": "microbit-v2",
+      "snapshotIntervalMs": 20,
+      "capabilities": {
+        "sensors": ["buttons", "accelerometer", "temperature", "light", "microphone", "logoTouch"],
+        "outputs": {
+          "ledDisplay": ["showText", "showImage", "clear"],
+          "speaker": ["playTone", "playMelody", "playBuiltInSound", "stop"],
+          "builtInSounds": ["hello", "happy"]
+        }
+      }
+    }
+  },
+  "snapshots": {
+    "v1": {"n":0,"u":0,"a":0,"b":0,"ac":0,"bc":0,"x":0,"y":0,"z":-1000,"t":23,"l":80},
+    "v2": {"n":0,"u":0,"a":0,"b":0,"ac":0,"bc":0,"x":0,"y":0,"z":-1000,"t":23,"l":80,"m":12,"q":0,"qc":0}
+  },
+  "commandCases": [
+    {"id":"text","line":"C|1|1|D|TEXT|READY","result":"R|1|1|OK","actionApplied":true},
+    {"id":"image","line":"C|1|2|D|IMAGE|0090009090900090909000900","result":"R|1|2|OK","actionApplied":true},
+    {"id":"clear","line":"C|1|3|D|CLEAR","result":"R|1|3|OK","actionApplied":true},
+    {"id":"tone","line":"C|1|4|S|TONE|440|250|128","result":"R|1|4|OK","actionApplied":true},
+    {"id":"melody-rest","line":"C|1|5|S|MELODY|128|440:200,0:100,660:300","result":"R|1|5|OK","actionApplied":true},
+    {"id":"sound","line":"C|1|6|S|SOUND|happy","result":"R|1|6|OK","actionApplied":true},
+    {"id":"stop","line":"C|1|7|S|STOP","result":"R|1|7|OK","actionApplied":true},
+    {"id":"v1-speaker","board":"v1","line":"C|1|8|S|TONE|440|250|128","result":"R|1|8|ERR|UNSUPPORTED_OUTPUT","actionApplied":false},
+    {"id":"version","line":"C|2|9|D|CLEAR","result":"R|1|9|ERR|UNSUPPORTED_VERSION","actionApplied":false},
+    {"id":"duplicate","highestId":10,"line":"C|1|10|D|CLEAR","result":"R|1|10|ERR|DUPLICATE_ID","actionApplied":false},
+    {"id":"older","highestId":20,"line":"C|1|11|D|CLEAR","result":"R|1|11|ERR|DUPLICATE_ID","actionApplied":false},
+    {"id":"action","line":"C|1|12|D|FLASH","result":"R|1|12|ERR|UNSUPPORTED_ACTION","actionApplied":false},
+    {"id":"text-alphabet","line":"C|1|13|D|TEXT|READY@","result":"R|1|13|ERR|INVALID_TEXT","actionApplied":false},
+    {"id":"empty-text","line":"C|1|14|D|TEXT|","result":"R|1|14|ERR|OUT_OF_RANGE","actionApplied":false},
+    {"id":"short-image","line":"C|1|15|D|IMAGE|00000","result":"R|1|15|ERR|OUT_OF_RANGE","actionApplied":false},
+    {"id":"image-alphabet","line":"C|1|16|D|IMAGE|009000909090009090900090X","result":"R|1|16|ERR|INVALID_TEXT","actionApplied":false},
+    {"id":"frequency","line":"C|1|17|S|TONE|19|250|128","result":"R|1|17|ERR|OUT_OF_RANGE","actionApplied":false},
+    {"id":"volume","line":"C|1|18|S|TONE|440|250|256","result":"R|1|18|ERR|OUT_OF_RANGE","actionApplied":false},
+    {"id":"duration-syntax","line":"C|1|19|S|TONE|440|0250|128","result":"R|1|19|ERR|MALFORMED_COMMAND","actionApplied":false},
+    {"id":"melody-total","line":"C|1|20|S|MELODY|128|440:6000,660:6000","result":"R|1|20|ERR|OUT_OF_RANGE","actionApplied":false},
+    {"id":"sound-unadvertised","line":"C|1|21|S|SOUND|sad","result":"R|1|21|ERR|UNSUPPORTED_SOUND","actionApplied":false},
+    {"id":"sound-syntax","line":"C|1|22|S|SOUND|HAPPY","result":"R|1|22|ERR|MALFORMED_COMMAND","actionApplied":false},
+    {"id":"trailing-argument","line":"C|1|23|D|CLEAR|","result":"R|1|23|ERR|MALFORMED_COMMAND","actionApplied":false},
+    {"id":"unrecoverable-id","line":"C|1|024|D|CLEAR","result":"ERR|MALFORMED_COMMAND","actionApplied":false},
+    {"id":"maximum-id","line":"C|1|2147483647|D|CLEAR","result":"R|1|2147483647|OK","actionApplied":true}
+  ],
+  "snapshotCases": [
+    {"id":"v1-valid","base":"v1","accepted":true},
+    {"id":"v2-valid","base":"v2","accepted":true},
+    {"id":"unknown-key","base":"v2","set":{"futureReading":123},"accepted":true},
+    {"id":"missing-advertised-mic","base":"v2","omit":["m"],"accepted":false},
+    {"id":"missing-logo-counter","base":"v2","omit":["qc"],"accepted":false},
+    {"id":"v1-unavailable-key","base":"v1","set":{"m":12},"accepted":false},
+    {"id":"null-mic","base":"v2","set":{"m":null},"accepted":false},
+    {"id":"boolean-button","base":"v2","set":{"a":true},"accepted":false},
+    {"id":"string-temperature","base":"v2","set":{"t":"23"},"accepted":false},
+    {"id":"fraction-axis","base":"v2","set":{"x":0.5},"accepted":false},
+    {"id":"light-range","base":"v2","set":{"l":256},"accepted":false},
+    {"id":"axis-range","base":"v2","set":{"z":-8193},"accepted":false},
+    {"id":"sequence-range","base":"v2","set":{"n":4294967296},"accepted":false},
+    {"id":"all-wire-boundaries","base":"v2","set":{"n":4294967295,"u":4294967295,"ac":4294967295,"bc":4294967295,"qc":4294967295,"a":1,"b":1,"q":1,"x":-8192,"y":8192,"z":0,"t":125,"l":255,"m":0},"accepted":true}
+  ],
+  "sequenceCases": [
+    {
+      "id":"released-after-missed-press","board":"v2",
+      "samples":[{"n":10,"u":200,"ac":7},{"n":12,"u":240,"a":0,"ac":8}],
+      "expectedPresses":[{"index":1,"input":"a","count":1}],
+      "expectedGaps":[{"index":1,"count":1}]
+    },
+    {
+      "id":"multiple-presses","board":"v1",
+      "samples":[{"n":1,"u":20,"ac":2,"bc":1},{"n":2,"u":40,"ac":4,"bc":2}],
+      "expectedPresses":[{"index":1,"input":"a","count":2},{"index":1,"input":"b","count":1}],
+      "expectedGaps":[]
+    },
+    {
+      "id":"modular-wrap","board":"v2",
+      "samples":[{"n":4294967295,"u":4294967290,"ac":4294967295},{"n":0,"u":14,"ac":1}],
+      "expectedPresses":[{"index":1,"input":"a","count":2}],
+      "expectedGaps":[]
+    }
+  ],
+  "tiltCases": [
+    {"axisMg":0,"expected":0},
+    {"axisMg":50,"expected":0},
+    {"axisMg":-50,"expected":0},
+    {"axisMg":525,"expected":0.5},
+    {"axisMg":-525,"expected":-0.5},
+    {"axisMg":1000,"expected":1},
+    {"axisMg":-1000,"expected":-1},
+    {"axisMg":8192,"expected":1}
+  ],
+  "shakeCases": [
+    {"id":"alternating-x","samples":[{"n":0,"u":0,"x":0},{"n":1,"u":20,"x":1600},{"n":2,"u":40,"x":0},{"n":3,"u":60,"x":1600}],"emissionIndices":[3]},
+    {"id":"below-threshold","samples":[{"n":0,"u":0,"x":0},{"n":1,"u":20,"x":1199},{"n":2,"u":40,"x":0},{"n":3,"u":60,"x":1199}],"emissionIndices":[]},
+    {"id":"gap-resets-window","samples":[{"n":0,"u":0,"x":0},{"n":1,"u":20,"x":1600},{"n":3,"u":60,"x":0},{"n":4,"u":80,"x":1600}],"emissionIndices":[]},
+    {"id":"timestamp-wrap","samples":[{"n":0,"u":4294967260,"x":0},{"n":1,"u":4294967280,"x":1600},{"n":2,"u":4,"x":0},{"n":3,"u":24,"x":1600}],"emissionIndices":[3]}
+  ],
+  "resultCases": [
+    {"id":"ok","pendingId":42,"line":"R|1|42|OK","settlement":"resolve"},
+    {"id":"error","pendingId":42,"line":"R|1|42|ERR|UNSUPPORTED_OUTPUT","settlement":"reject","protocolCode":"UNSUPPORTED_OUTPUT"},
+    {"id":"late-id","pendingId":43,"line":"R|1|42|OK","settlement":"pending"},
+    {"id":"malformed","pendingId":42,"line":"R|1|42|OK|extra","settlement":"pending"},
+    {"id":"unknown-code","pendingId":42,"line":"R|1|42|ERR|FUTURE_ERROR","settlement":"reject","errorKind":"protocol"}
+  ]
+}
