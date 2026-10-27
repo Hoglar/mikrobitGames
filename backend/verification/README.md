@@ -93,6 +93,8 @@ FoM krever full kjøring, målbare kontroller og en ren git-versjon. Feil kan gi
 
 Rapportmappene er ignorert av git. Behold kjøringene på maskinen. Til presentasjonen kan utvalgte rapporter/kurver kopieres til `results/fom/` og committes; inkluder også regresjoner. Sikkerhetsfeil blokkerer godkjenning uavhengig av FoM.
 
+**Transportretting etter kjøringen `20261027T185538.809129Z`:** Begge samtidighetstestene feilet gjennom testens database-mellomledd, men bestod med direkte forbindelse mot samme backend. Med `TCP_NODELAY` på begge forbindelsene i mellomleddet består de også gjennom den vanlige testveien. Ingen testforventning, produktkode eller tidsgrense er endret. Rapporten fra `e21d82e` beholdes som en komplett historisk måling, med forbehold om transportfeilen i testoppsettet. Endret `control_digest` starter en ny serie. En eventuell forbedring i neste rapport skal derfor ikke tilskrives bedre backend-kode; den lange ytelsesmålingen må gjentas av brukeren.
+
 ## Valgfritt: start alt fra utviklings-PC-en
 
 Etter kloning og `setup` på Parrot lagrer du tilkoblingen én gang fra prosjektmappen på utviklings-PC-en:

@@ -30,7 +30,12 @@ class CommitFaultProxy:
     def pipe(self,client):
         server=None;buffer=b'';insert_seen=False;client_tail=b''
         try:
+            # Forward small PostgreSQL messages immediately on both TCP legs.
+            # Splitting a reply into protocol messages must not add Nagle/delayed
+            # ACK waits while the application is holding transaction row locks.
+            client.setsockopt(socket.IPPROTO_TCP,socket.TCP_NODELAY,1)
             server=socket.create_connection(('127.0.0.1',self.target_port),timeout=3)
+            server.setsockopt(socket.IPPROTO_TCP,socket.TCP_NODELAY,1)
             with self.lock:self.sockets.update((client,server))
             while not self.stop.is_set():
                 ready,_,_=select.select([client,server],[],[],.2)

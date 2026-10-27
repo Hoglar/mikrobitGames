@@ -96,3 +96,15 @@ Avgrenset kontroll etter rettelsen: 72/72 av kontrollverktøyenes egne tester be
 Ingen full testfase, benchmark, modellspørsmål eller ny FoM-rapport er kjørt av agenten. Lastprofil, terskler, kontrollpunkter og FoM-formel er beholdt. Endret test-/målekode gir ny `control_digest` og en separat kurveserie; eldre rapporter skal beholdes.
 
 Det trengs ingen ny sudo-installasjon for denne rettingen. Gjennomgå og commit endringene selv, kontroller at `git status --short` er tom, og kjør deretter `./backend/check` fra prosjektroten. Produktfeil kan gi en målbar baseline; manglende målinger eller en uren arbeidsmappe kan fortsatt blokkere FoM.
+
+## Undersøkelse og retting av samtidighetsfeil etter første komplette måling
+
+Brukerens kjøring `20261027T185538.809129Z` på ren commit `e21d82edc82301c1ef26b4e64a9771780db67291` var komplett målbar: 72 verktøytester, 52 enhetstester og 36 integrasjon-/benchmarkkontroller bestod; fire kontroller feilet. FoM var 83,33 % krav og 100 % modell. Rapporten beholdes uendret, men årsaksundersøkelsen nedenfor viser at den inneholder feilpåvirkning fra testoppsettet.
+
+De to samtidighetsfeilene ble gjenskapt mot en midlertidig database med uendret produktkode og uendrede testforventninger. Gjennom `CommitFaultProxy` kom flere 503 `SERVICE_UNAVAILABLE`; mot direkte databaseforbindelse bestod begge kontrollene. Mellomleddet sendte PostgreSQL-svar videre én protokollmelding av gangen uten `TCP_NODELAY`. Dette la til transportventing mens transaksjonene holdt spillerlåsen. Rettelsen setter `TCP_NODELAY` på forbindelsen mot API-et og forbindelsen mot PostgreSQL. Normal testkjøring bruker fortsatt mellomleddet, og feilinjeksjonen er beholdt.
+
+Etter rettelsen bestod `TBE-05-concurrent-records` og `TBE-05-concurrent-replay` gjennom mellomleddet. Seks tilknyttede kontroller bestod også: `TBE-03-records`, `TBE-03-incomplete`, `TBE-05-retry-conflict`, `TBE-05-atomic-attempt-record`, `TBE-05-unknown-commit` og `TBE-05-revocation-race`. De kontrollerer blant annet at lagring er atomisk, at gjentakelse ikke lager duplikater, at tilbakekalt sesjon avvises og at tapt COMMIT-bekreftelse fortsatt simuleres og håndteres. Kontrollverktøyenes 72 egne tester bestod.
+
+Disse avgrensede funksjonskontrollene brukte reell API/AI-oppstart og PostgreSQL med standard lokal testoppstart under utviklerens Linux-bruker. De testet ikke prosessisolasjon eller ekte AI. Miljøet ble stoppet og de midlertidige databasene fjernet. Ingen full testfase, benchmark, modellspørsmål, commit eller push er utført av agenten i denne runden.
+
+Ingen produktkode, krav, testforventninger, pool-/tidsgrenser eller belastningsprofil er endret. Testinfrastrukturen er rettet; dette gir ny `control_digest` og en separat måleserie. Neste komplette kjøring blir første punkt med korrigert databasetransport, og skal ikke fremstilles som en backend-ytelsesforbedring over `e21d82e`. Ytelsen må måles på nytt. AI-feilen er ikke behandlet i denne runden. Ingen ny sudo-installasjon trengs: gjennomgå og commit, kontroller ren arbeidsmappe, og kjør `./backend/check` selv.
