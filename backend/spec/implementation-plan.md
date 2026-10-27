@@ -22,6 +22,14 @@ Krav og design finnes via [leseoversikten](README.md). Trinnene nedenfor organis
 
 Oppstart-/syntakskontroller under bygging er ikke egne målepunkter. Den avtalte testfasen og retting ut fra dens resultater følger arbeidsflyten nedenfor; utviklings-AI starter ikke en serie forbedringer på egen hånd. Offentlig publisering og demonstrasjon med frontend/Micro:bit følger ved systemleveransen.
 
+## Publisering av webpakken
+
+Frontend leverer ett komplett statisk bygg med både nettside og spill etter [leveransebeskrivelsen](../../webapp/spec/Komponentspesifikasjon_webapplikasjon_forklart.md#samlet-webpakke). Frontendgruppen etablerer `npm ci` og `npm run build` i `webapp/`; resultatet er hele `webapp/dist/`. Bygget knyttes til kildekodens commit.
+
+Backend-/driftsgruppen setter opp Caddy til å servere denne pakken fra en egen publiseringsmappe på Parrot og sende `/api/*` til API-et. Publiseringsstien og én gjentakbar kommando for å legge ut et nytt bygg dokumenteres ved driftsimplementering. Klargjør og kontroller det nye bygget før hele pakken byttes, og behold forrige bygg så en mislykket oppdatering kan rulles tilbake. Et mislykket bygg skal ikke erstatte den fungerende nettsiden.
+
+Når frontend er klar, gjennomføres TWEB-12 sammen med webdelen av TBE-09 mot Caddy. Bekreft at frontend og spillressurser kommer fra samme adresse, at direkte navigasjon/oppdatering virker, og at API-feil fortsatt gir API-svar. Dette er del av systemintegrasjonen; backendens isolerte testfase kan fortsatt kjøres før frontend er ferdig.
+
 ## Arbeidsflyten – du bestemmer hver runde
 
 1. **Lag kontrollgrunnlaget først.** Versjonsfest fasit, syntetiske testdata, deltester, modelluttrekk, normaliseringsregler og FoM-beregning. Lag kjørbare kontroller og kontroller at de oppdager bevisst innførte feil i egne kontrollfixturer. AI kan hjelpe; fasiten utledes fra kravene, ikke fra implementasjonen som skal vurderes. Kontroller uten ferdig komponent er foreløpig blokkert, ikke bestått.

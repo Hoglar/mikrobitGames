@@ -20,3 +20,7 @@ Planen dekker modulansvar, tilkobling og gjenoppretting, meldingsvalidering, inp
 Bibliotek, eksempel, `package.json` og testverktøy er ikke implementert ennå. Npm-kommandoene i planen er planlagte leveranser, ikke kommandoer som kan kjøres i denne utsjekkingen.
 
 Teknologi og kommandoer for oppsett, kjøring og testing dokumenteres her når implementasjonen starter. Mappene er etablert, men funksjonaliteten er ikke implementert. Se [felles prosjektstruktur](../docs/project-structure.md).
+
+## Leveranse til hjemmeserveren
+
+Frontend og alle spill skal bygges som én [samlet webpakke](spec/Komponentspesifikasjon_webapplikasjon_forklart.md#samlet-webpakke). Planlagt byggegrensesnitt er `npm ci` og `npm run build` fra `webapp/`, med hele leveransen i `webapp/dist/`. Byggekommandoen etableres ved implementering. Backend-/driftsgruppen publiserer pakken gjennom Caddy på Parrot; nettleseren henter frontend, spill og ressurser fra samme adresse som API-et. Se [publiseringsplanen](../backend/spec/implementation-plan.md#publisering-av-webpakken).

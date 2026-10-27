@@ -43,7 +43,7 @@ Navigasjon mellom sidene håndteres av en felles router. Backend API er en ekste
 - **Input:** Spillkatalog og `GET /games/{game_id}/leaderboard` fra Backend API; brukerens valg og sideparametere. Offentlig rekordhistorikk kan åpnes for en valgt spiller via `/players/{player_id}/games/{game_id}/records`.
 - **Output:** Navigasjon til valgt spill med spill-ID, eller offentlig visning av plassering, brukernavn, rekordverdi og enhet. Tom toppliste og API-feil vises tydelig. Innlogging kreves først når brukeren vil spille.
 - **Avhengigheter:** Router og Backend API (spillkatalogen hentes fra serveren).
-- **Avgrensning:** Selve spillet kjøres av Spillplattform, ikke Launcher. Backendens `Game.id` kobles til en lokalt registrert spillmodul; navn brukes ikke som nøkkel, og backend sender ikke kjørbar kode. Ukjent modul eller inaktivt spill kan ikke startes. Testlab er en separat lokal oppføring som også virker uten backend. Vis katalogfeil separat fra dette verktøyet.
+- **Avgrensning:** Selve spillet kjøres av Spillplattform, ikke Launcher. Backendens `Game.id` kobles til en spillmodul i webpakken; navn brukes ikke som nøkkel. Spillkatalogens API-svar inneholder metadata; spillkoden lastes fra Caddy som del av webpakken. Ukjent modul eller inaktivt spill kan ikke startes. Testlab er en separat lokal oppføring som også virker uten API-et. Vis katalogfeil separat fra dette verktøyet.
 
 ### 2.5 Spillplattform
 - **Ansvar:** Laste inn og kjøre valgt spill i en felles spillvisning; håndtere oppstart/avslutning; integrere Micro:bit-input; rapportere spillresultat.
@@ -137,6 +137,17 @@ Dette er **bruker-/dataflyt** som supplement til C3-avhengighetene, ikke en erst
 - **Resultater:** Alle avsluttede ordinære spillforsøk er private. Fullførte kan gi offentlig rekord; ufullførte har eventuell delverdi og gir aldri rekord.
 - **Profil og AI:** Kontoens visningsfelt er skrivebeskyttet. AI bruker offentlig rekordhistorikk og ingen samtalehistorikk eller private forsøk.
 - **Teknologivalg:** Frontendrammeverk/router og det interne livsløpsgrensesnittet for vanlige spill velges ved frontendimplementering innenfor disse komponentansvarene. Det endrer ikke HTTP-kontrakten eller det rammeverkuavhengige Micro:bit-biblioteket.
+
+### Samlet webpakke
+
+Alt som kjøres eller vises i frontend skal leveres som **én samlet statisk webpakke**, servert fra Parrot over samme HTTPS-adresse som API-et. Pakken inneholder HTML, CSS, JavaScript, alle spill, Testlab, Micro:bit-biblioteket og nødvendige ressurser som bilder, lyd og fonter. Biblioteker og spillressurser skal følge med i pakken; nettleseren skal ikke være avhengig av eksterne CDN-er eller andre nettsteder for å laste dem. Bygging kan hente låste avhengigheter fra pakkeregisteret.
+
+- **Frontendgruppen eier bygget:** Fra `webapp/` skal `npm ci` etterfulgt av `npm run build` produsere hele leveransen i `webapp/dist/`, med `index.html` som inngang. Kommandoene og låsefilen etableres ved frontendimplementering; de er ikke implementert ennå.
+- **Én pakke kan ha flere filer:** Spill kan lastes ved behov fra filer i samme bygg. Alle filreferanser må fungere når `dist/` publiseres ved roten av nettstedet. API-kall bruker relative `/api/v1`-adresser.
+- **Backend-/driftsgruppen eier publisering:** Hele `dist/` leveres til Caddys publiseringsmappe som én versjon. Caddy serverer filene, og nettleseren kjører frontend og spill. En utviklingsserver er ikke nødvendig i drift.
+- **Versjonering:** Kildekode, byggeskript og låsefil lagres i Git. `dist/` er generert og allerede ignorert. Pakken inneholder bare filer beregnet på offentlig distribusjon; serverhemmeligheter og driftsdata inngår ikke.
+
+Publiseringsrekkefølge og oppdatering beskrives i [implementeringsplanen](../../backend/spec/implementation-plan.md#publisering-av-webpakken). Kontroll av den ferdige pakken er TWEB-12 i [plattformtestplanen](platform-test-plan.md).
 
 ## 7. Instruks til AI-assistert utvikling
 

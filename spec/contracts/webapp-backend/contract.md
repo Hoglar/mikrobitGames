@@ -86,7 +86,7 @@ Ved nettverksfeil, tapt bekreftelse eller `OUTCOME_UNKNOWN` kan samme spiller se
 
 Profilen viser `Player` fra sesjonen og tilbyr passordendring og kontosletting med gjeldende passord. Brukernavn er uforanderlig; ingen andre redigerbare profilfelt eller profiloppdateringsrute inngår. Passordendring og kontosletting avslutter alle sesjoner.
 
-Launcher kobler backendens stabile `Game.id` til en lokalt registrert spillmodul. Backend leverer metadata, ikke kjørbar kode eller moduladresse. Spill som er ukjente for frontend eller inaktive kan ikke startes. Testlab registreres lokalt som et verktøy uten backend-ID eller resultatlagring, og er tilgjengelig også når backend er utilgjengelig.
+Launcher kobler backendens stabile `Game.id` til en spillmodul i den [samlede webpakken](../../../webapp/spec/Komponentspesifikasjon_webapplikasjon_forklart.md#samlet-webpakke). Spillkatalogens API-svar leverer metadata; Caddy på Parrot serverer frontend, spillkode og ressurser fra samme HTTPS-adresse. Spill som er ukjente for frontend eller inaktive kan ikke startes. Testlab registreres lokalt som et verktøy uten backend-ID eller resultatlagring, og er tilgjengelig også når API-et er utilgjengelig.
 
 ## AI-spørsmål
 
