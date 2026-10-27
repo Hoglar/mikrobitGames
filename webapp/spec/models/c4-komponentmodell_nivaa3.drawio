@@ -1,0 +1,194 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="E7EAppVQpZGRy26l2n9H">
+    <mxGraphModel dx="2968" dy="2649" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="OIb666_q8W5nFm19aQrx-4" edge="1" parent="1" source="B5ffPejdYstvTyzY7kfC-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="tnxjoFmZvHlBDLSw9lDT-47">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="270" y="320" />
+              <mxPoint x="270" y="629" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-14" edge="1" parent="1" source="B5ffPejdYstvTyzY7kfC-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="OIb666_q8W5nFm19aQrx-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B5ffPejdYstvTyzY7kfC-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Spillplattform" vertex="1">
+          <mxGeometry height="60" width="120" x="90" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-7" edge="1" parent="1" source="B5ffPejdYstvTyzY7kfC-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;entryX=0.833;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" target="tnxjoFmZvHlBDLSw9lDT-12">
+          <mxGeometry relative="1" x="-0.306" as="geometry">
+            <Array as="points">
+              <mxPoint x="580" y="980" />
+              <mxPoint x="270" y="980" />
+            </Array>
+            <mxPoint x="590" y="1032.0618556701031" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B5ffPejdYstvTyzY7kfC-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="AI Chat" vertex="1">
+          <mxGeometry height="50" width="120" x="540" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="B5ffPejdYstvTyzY7kfC-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Dashboard" vertex="1">
+          <mxGeometry height="40" width="120" x="90" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-18" edge="1" parent="1" source="B5ffPejdYstvTyzY7kfC-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="OIb666_q8W5nFm19aQrx-8">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="215" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B5ffPejdYstvTyzY7kfC-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Launcher" vertex="1">
+          <mxGeometry height="60" width="120" x="60" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-2" edge="1" parent="1" source="B5ffPejdYstvTyzY7kfC-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="tnxjoFmZvHlBDLSw9lDT-12">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="835" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B5ffPejdYstvTyzY7kfC-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Profilbruker" vertex="1">
+          <mxGeometry height="40" width="140" x="280" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-22" edge="1" parent="1" source="B5ffPejdYstvTyzY7kfC-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="OIb666_q8W5nFm19aQrx-8">
+          <mxGeometry relative="1" x="0.0047" as="geometry">
+            <Array as="points">
+              <mxPoint x="230" y="80" />
+              <mxPoint x="230" y="185" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B5ffPejdYstvTyzY7kfC-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Innlogging og registrering" vertex="1">
+          <mxGeometry height="60" width="120" x="90" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="NxR0uZD89qF0kisjF5-K-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Navigasjonsmeny" vertex="1">
+          <mxGeometry height="60" width="190" x="265" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Microbit" vertex="1">
+          <mxGeometry height="60" width="120" x="430" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Backend API" vertex="1">
+          <mxGeometry height="70" width="120" x="170" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-13" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="20" y="70" as="sourcePoint" />
+            <mxPoint x="90" y="70" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-14" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points" />
+            <mxPoint x="20" y="660" as="sourcePoint" />
+            <mxPoint x="20" y="70" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-16" edge="1" parent="1" style="endArrow=block;html=1;rounded=0;defaultLabelBackgroundColor=page;entryX=0.426;entryY=1.037;entryDx=0;entryDy=0;endFill=1;entryPerimeter=0;" target="tnxjoFmZvHlBDLSw9lDT-12" value="">
+          <mxGeometry height="50" relative="1" width="50" x="-0.3424" as="geometry">
+            <Array as="points">
+              <mxPoint x="20" y="940" />
+              <mxPoint x="220" y="940" />
+            </Array>
+            <mxPoint x="20" y="660" as="sourcePoint" />
+            <mxPoint x="169.99999999999977" y="625" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-17" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Henter info om bruker" vertex="1">
+          <mxGeometry height="30" width="140" x="40" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-25" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Henter tidligere spillresultat" vertex="1">
+          <mxGeometry height="30" width="110" x="150" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-27" edge="1" parent="1" source="tnxjoFmZvHlBDLSw9lDT-11" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=block;startFill=1;" target="tnxjoFmZvHlBDLSw9lDT-47" value="">
+          <mxGeometry height="50" relative="1" width="50" x="-0.1565" as="geometry">
+            <Array as="points">
+              <mxPoint x="460" y="820" />
+            </Array>
+            <mxPoint x="495" y="880" as="sourcePoint" />
+            <mxPoint x="490" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-38" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="50" y="320" as="sourcePoint" />
+            <mxPoint x="90" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-39" edge="1" parent="1" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="60" y="840" as="sourcePoint" />
+            <mxPoint x="50" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-41" edge="1" parent="1" style="endArrow=block;html=1;rounded=0;defaultLabelBackgroundColor=page;entryX=-0.011;entryY=0.134;entryDx=0;entryDy=0;entryPerimeter=0;endFill=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="60" y="839.38" as="sourcePoint" />
+            <mxPoint x="170.00000000000006" y="839.3800000000001" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-42" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Sender spillresultat for lagring" vertex="1">
+          <mxGeometry height="30" width="80" x="80" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-28" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Mottar spillinputt og sjekker tilkoblingsstatus" vertex="1">
+          <mxGeometry height="20" width="80" x="310" y="575" as="geometry" />
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-46" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Henter og oppdaterer info om bruker" vertex="1">
+          <mxGeometry height="30" width="60" x="320" y="790" as="geometry" />
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-47" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Microbit kommunikasjon" vertex="1">
+          <mxGeometry height="60" width="120" x="400" y="584" as="geometry" />
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-52" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Kommuniserer fysisk med enhet" vertex="1">
+          <mxGeometry height="30" width="60" x="480" y="840" as="geometry" />
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-58" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Henter offentlig high-score data og sender spørsmål" vertex="1">
+          <mxGeometry height="30" width="80" x="590" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-60" parent="1" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=none;strokeColor=#3333FF;" value="" vertex="1">
+          <mxGeometry height="920" width="920" x="-210" y="-160" as="geometry" />
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-6" edge="1" parent="1" source="B5ffPejdYstvTyzY7kfC-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.417;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;defaultLabelBackgroundColor=page;" target="tnxjoFmZvHlBDLSw9lDT-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Router" vertex="1">
+          <mxGeometry height="60" width="120" x="320" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-9" edge="1" parent="1" source="NxR0uZD89qF0kisjF5-K-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;exitX=0.604;exitY=1.018;exitDx=0;exitDy=0;exitPerimeter=0;" target="OIb666_q8W5nFm19aQrx-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-10" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Ber om sidebytte" vertex="1">
+          <mxGeometry height="30" width="60" x="390" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-11" edge="1" parent="1" source="B5ffPejdYstvTyzY7kfC-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;entryX=0.167;entryY=1.004;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="tnxjoFmZvHlBDLSw9lDT-12">
+          <mxGeometry relative="1" x="0.406" as="geometry">
+            <Array as="points">
+              <mxPoint x="-170" y="190" />
+              <mxPoint x="-170" y="895" />
+              <mxPoint x="190" y="895" />
+            </Array>
+            <mxPoint x="80" y="260" as="sourcePoint" />
+            <mxPoint x="190" y="880" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Henter tilgjengelige spill" vertex="1">
+          <mxGeometry height="30" width="90" x="60" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-15" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="ber router om å åpne dashboard når spil avsluttes" vertex="1">
+          <mxGeometry height="30" width="80" x="290" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-19" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Ber om å åpne valgt spill" vertex="1">
+          <mxGeometry height="30" width="90" x="190" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-23" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Ber om å åpne launcher etter bruker er logget inn" vertex="1">
+          <mxGeometry height="30" width="100" x="230" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="OIb666_q8W5nFm19aQrx-29" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=#6c8ebf;fillColor=#dae8fc;align=center;verticalAlign=middle;rounded=0;" value="Frontend - Webapplikasjon" vertex="1">
+          <mxGeometry height="60" width="215" x="199" y="-240" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
