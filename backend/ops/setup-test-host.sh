@@ -60,7 +60,7 @@ if [[ -f $task_manifest ]]; then
     chown -R mbg-test-model:mbg-test-model "$task_model_dest"
     chmod -R u=rwX,g=rX,o= "$task_model_dest"
     setfacl -R -m "u:$task_user:r-X" /var/lib/mikrobit-games-test
-else
+elif [[ ! -f $task_model_dest/manifests/registry.ollama.ai/library/qwen3/4b-instruct-2507-q4_K_M ]]; then
     echo "MERK: $task_model finnes ikke i $task_model_source. Ekte AI-måling er blokkert til modellen er lastet ned."
 fi
 # No secrets in this machine-local, ignored file. Preserve unrelated local settings.

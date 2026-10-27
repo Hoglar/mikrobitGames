@@ -89,6 +89,8 @@ Returkode 0 betyr at den kjørte pakken bestod, 1 betyr påvist feil, og 2 betyr
 
 FoM krever full kjøring, målbare kontroller og en ren git-versjon. Feil kan gi et målepunkt, mens manglende målinger ikke kan det. Endret kontrollgrunnlag, modell eller miljø gir en egen kurveserie. Ikke endre testfasiten bare for å få grønt resultat.
 
+**Målerevisjon etter kjøringen `20261027T175640.430159Z`:** Sesjonstestens tidsintervaller er rettet til kontraktens sekunder, og rategrensetesten bruker et skjemagyldig feil passord. Forventede svar og produktkrav er beholdt. PSS-måleren håndterer prosesser som avsluttes under avlesning med avgrensede nye forsøk og rådiagnostikk; se [målemetoden](test-runtime.md#benchmark-og-gjenoppretting). Last, tidsgrenser, minnegrense og FoM-formel er uendret. Endringene gir ny `control_digest` og dermed en separat måleserie innen kontrollversjon 2. Behold tidligere rapporter; de skal ikke skrives om eller blandes inn i den nye kurven.
+
 Rapportmappene er ignorert av git. Behold kjøringene på maskinen. Til presentasjonen kan utvalgte rapporter/kurver kopieres til `results/fom/` og committes; inkluder også regresjoner. Sikkerhetsfeil blokkerer godkjenning uavhengig av FoM.
 
 ## Valgfritt: start alt fra utviklings-PC-en

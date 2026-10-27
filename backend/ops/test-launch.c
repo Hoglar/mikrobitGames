@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     if (model && argc != 2) fail("no model arguments permitted");
     if (checking && argc > 3) fail("one check mode permitted");
     const char *check_mode = argc == 3 ? argv[2] : "full";
-    if (checking && strcmp(check_mode,"full") && strcmp(check_mode,"quick") && strcmp(check_mode,"selftest") && strcmp(check_mode,"report")) fail("unsupported check mode");
+    if (checking && strcmp(check_mode,"full") && strcmp(check_mode,"quick") && strcmp(check_mode,"selftest") && strcmp(check_mode,"report") && strcmp(check_mode,"startup")) fail("unsupported check mode");
     if (api || ai) {
         char *end;
         long port = strtol(argv[2], &end, 10);
@@ -86,12 +86,14 @@ int main(int argc, char **argv) {
     } else if (prctl(PR_SET_NO_NEW_PRIVS,1L,0L,0L,0L)) fail("cannot restrict privilege changes");
     if (chdir(MBG_REPO)) fail("checkout inaccessible");
     if (checking) {
-        execl(MBG_REPO "/.venv/bin/python", "python", MBG_REPO "/backend/ops/test-runner.py", check_mode, (char*)NULL);
+        /* CPython uses argv[0] to discover pyvenv.cfg. A bare "python" here
+         * selects /usr through PATH even though exec opens the venv binary. */
+        execl(MBG_REPO "/.venv/bin/python", MBG_REPO "/.venv/bin/python", MBG_REPO "/backend/ops/test-runner.py", check_mode, (char*)NULL);
     } else if (model) {
         setenv("OLLAMA_NO_CLOUD","1",1);
         execl("/usr/local/bin/ollama","ollama","serve",(char*)NULL);
     } else {
-        execl(MBG_REPO "/.venv/bin/python","python","-m","uvicorn",api ? "http_api:app" : "transport:app",
+        execl(MBG_REPO "/.venv/bin/python",MBG_REPO "/.venv/bin/python","-m","uvicorn",api ? "http_api:app" : "transport:app",
             "--app-dir",api ? MBG_REPO "/backend/api/src" : MBG_REPO "/backend/ai-service/src",
             "--host","127.0.0.1","--port",argv[2],"--no-proxy-headers","--no-access-log",(char*)NULL);
     }

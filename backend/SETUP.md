@@ -36,7 +36,7 @@ Dette engangsstegget laster ned den navngitte modellen til testlageret gjennom e
 
 Dette oppretter `mbg-test-api`, `mbg-test-ai` og `mbg-test-model`, gir dem lesetilgang til nødvendig kode/biblioteker og installerer en avgrenset, root-eid startfil i `/usr/local/libexec/mbg-test-launch`. Startfilen kan bare brukes av den navngitte utvikleren; den slipper root før Python/Ollama starter. Testlederen beholder kun `CAP_SYS_PTRACE` (lese PSS for tjenester med andre brukere) og `CAP_KILL` (stoppe sine testprosesser). Disse rettighetene arves ikke av database eller tjenester. Tjenestene har ingen slike rettigheter. Dette er lokal testinfrastruktur og gir testlederen innsyn i andre prosesser på maskinen; bruk den bare på den avtalte utviklingsmaskinen.
 
-`backend/check` har et lite oppstartstillegg for den lokale `isolated_launcher`-innstillingen. Selve kontrollpakken, testsettet, forventningene og FoM-beregningen er uendret. Uten denne konfigurasjonen brukes den opprinnelige oppstarten. Oppsettet kopierer bare den avtalte modellen fra eksisterende Ollama-lager til `/var/lib/mikrobit-games-test/models/` og kontrollerer SHA-256; originalen beholdes. Dersom modellen mangler, meldes blokkeringen i stedet for å bytte modell.
+`backend/check` har et lite oppstartstillegg for den lokale `isolated_launcher`-innstillingen. Oppstartstillegget endrer ikke testsettet, forventningene eller FoM-beregningen. Uten denne konfigurasjonen brukes den opprinnelige oppstarten. Oppsettet kopierer bare den avtalte modellen fra eksisterende Ollama-lager til `/var/lib/mikrobit-games-test/models/` og kontrollerer SHA-256; originalen beholdes. Dersom modellen mangler, meldes blokkeringen i stedet for å bytte modell.
 
 Når engangsoppsettet er ferdig, gjennomgå og commit endringene selv. Kjør deretter fra prosjektroten på Parrot:
 
@@ -49,9 +49,9 @@ Full kjøring tar omtrent 40–60 minutter. En ren Git-versjon er nødvendig for
 
 Offentlig HTTPS, webpakke, DNS, brannmur og oppstart etter full maskinreboot ferdigstilles ved senere systemleveranse. Ingen offentlige porter skal åpnes av dette oppsettet.
 
-## Kjent motstrid i grunnlaget
+## Avklart feil i testdata
 
-`Credentials.password` i OpenAPI krever minst 12 kodepunkter også ved innlogging. `TBE-07-rate-limit` bruker `wrong` (5 kodepunkter) og forventer 401. Implementasjonen følger kontrakten og gir 400 for dette inputet. Testen er beholdt, og avviket må avklares før en senere rettingsbestilling. Ingen testforventning er endret for å skjule dette.
+`Credentials.password` i OpenAPI krever minst 12 kodepunkter også ved innlogging. `TBE-07-rate-limit` brukte `wrong` (5 kodepunkter) og forventet 401, mens kontrakten krever 400 for dette inputet. Etter brukerens rettingsbestilling bruker testen `WrongPassword123!`, som er gyldig input, men feil passord. Forventningen er fortsatt ti svar med 401 og deretter 429. API-kontrakten og implementasjonen er uendret.
 
 ## Utført klargjøring og kontroll
 
@@ -61,6 +61,38 @@ Brukeren har kjørt engangsoppsettet og modellklargjøringen. Modellmanifestet f
 
 Oppstartskontrollen brukte en separat tom PostgreSQL-instans i en midlertidig mappe, nye roller og prosjektets migrering. API og AI startet på loopback, begge leverte OpenAPI, API-ets DB-avhengige helsesjekk ga 200, og AI-rollen kunne koble til den avtalte spillvisningen. Kontrollen brukte samme lokale bruker til tjenesteoppstart; faktisk prosessisolasjon og PSS-måling gjenstår i brukerens testfase. Alle midlertidige prosesser ble stoppet og databasen fjernet. Modellens nedlastingsprosess er også stoppet.
 
-Python-syntaks/import, shell-syntaks, C-kompilering med advarsler som feil, avhengighetskonsistens og Git-unntak er kontrollert. `backend/tests/` og innholdet i `backend/verification/` er uendret. Ingen enhetstester, integrasjonstester, modellkontroller eller benchmarks er kjørt, ingen baseline/rapport er produsert, og ingen commit/push er gjort.
+Ved første leveranse ble Python-syntaks/import, shell-syntaks, C-kompilering med advarsler som feil, avhengighetskonsistens og Git-unntak kontrollert. `backend/tests/` og innholdet i `backend/verification/` var da uendret. Agenten hadde ikke kjørt enhetstester, integrasjonstester, modellkontroller eller benchmarks, produsert baseline/rapport eller gjort commit/push. Senere kontroller og rettinger beskrives nedenfor.
 
 Den installerte testlederens privilegieoppstart er også kontrollert med `/usr/local/libexec/mbg-test-launch check report`. Den startet som forventet og meldte at ingen rapport finnes (returkode 2); denne kommandoen kjørte ingen tester.
+
+## Oppstartsretting etter første brukerutførte kjøring
+
+Kjøringen `20261027T174958.751158Z` på commit `5b41984244483b8fec6e2f85f3d847754ff2923d` ble blokkert ved API-/AI-oppstart og feilet i oppryddingen. Rapporten beholdes. Den er ikke et komplett FoM-punkt.
+
+Årsaken er gjenskapt: C-startprogrammet åpnet venv-Python, men sendte `python` som `argv[0]`. Python valgte da `/usr` som miljø og fant ikke FastAPI. Testlederen ble dessuten startet på nytt av `backend/check` for å komme inn i `.venv`; dette mistet rettighetene til måling og opprydding etter at arv av rettigheter var slått av.
+
+Startprogrammet bruker nå absolutt venv-sti også i `argv[0]`. Testlederen avviser feil miljø eller manglende målerettigheter tidlig. Installer den endrede binærfilen med `sudo bash backend/ops/setup-test-host.sh hoglar`. Modellen lastes ikke ned igjen.
+
+En kort oppstartskontroll av de faktiske tjenestebrukerne kjøres med:
+
+```bash
+/usr/local/libexec/mbg-test-launch check startup
+```
+
+Den bruker samme isolerte miljø og startkommandoer som testpakken, kontrollerer prosessbrukere, manglende privilegier hos tjenestene, PSS-lesing, helsesjekk og metadata, og stopper alle prosessene. Den kjører ingen produktkontroller, inferens eller benchmarks og lager ingen FoM-rapport. Første komplette testfase kjøres fortsatt av brukeren med `./backend/check` etter egen commit.
+
+Etter at brukeren installerte rettelsen, bestod denne oppstartskontrollen: API, AI og Ollama kjørte med hver sin avtalte bruker og uten ekstra prosessrettigheter; testlederen kunne lese PSS for API og PostgreSQL; helsesjekk, OpenAPI og modelloversikt svarte. Alle prosessene ble stoppet og den midlertidige databasen fjernet. Ingen ny full testkjøring eller FoM-måling er utført.
+
+## Retting av måleoppsett og testdata etter andre kjøring
+
+Brukerens kjøring `20261027T175640.430159Z` fikk 34 PASS, 5 FAIL og 1 BLOCKED i integrasjon/benchmark. Arbeidsmappen var ikke ren, og benchmarken manglet én PSS-verdi. Rapporten beholdes uendret. Denne rettingsrunden omfatter testdata og måleoppsett; samtidighetsfeil, ytelse og ekte AI-svar er fortsatt urettet.
+
+- `TBE-02-renew-expiry` bruker nå sekunder i SQL-intervallene. PostgreSQL i `Europe/Oslo` viser at den tidligere 30-døgnsperioden blir 2 595 600 sekunder over vintertid og 2 588 400 over sommertid. Kontraktens intervall er alltid 2 592 000 sekunder. Databasens begrensninger og testens forventninger er beholdt.
+- `TBE-07-rate-limit` bruker et feil passord som oppfyller skjemaet, som beskrevet ovenfor. Det endrer ikke forventede statuskoder eller rategrensen.
+- PSS-måleren lager ikke lenger en kortlivet SQL-forbindelse før avlesningen. Ved endret prosessliste eller avsluttet underprosess forsøkes hele avlesningen på nytt, høyst tre ganger. Alle forsøk lagres med PID-er, delmålinger og feildiagnostikk. Manglende tilgang eller fortsatt ustabil måling gir fremdeles BLOCKED. Den gamle rapporten mangler PID/errno; prosesskappløpet er en identifisert svakhet i målekoden, men kan ikke bevises som årsaken til akkurat den historiske manglende verdien.
+
+Avgrenset kontroll etter rettelsen: 72/72 av kontrollverktøyenes egne tester bestod, inkludert ni nye målerkontroller. De to berørte API-scenarioene bestod mot en separat midlertidig PostgreSQL-instans og virkelige tjenester. Denne funksjonskontrollen brukte utviklerens bruker og ingen ekte modell. Oppstartskontrollen ble separat kjørt med de faktiske tjenestebrukerne; samlet PSS for API og PostgreSQL-familien, prosessrettigheter, metadata og opprydding bestod. Alle midlertidige tjenester og databaser ble stoppet og fjernet.
+
+Ingen full testfase, benchmark, modellspørsmål eller ny FoM-rapport er kjørt av agenten. Lastprofil, terskler, kontrollpunkter og FoM-formel er beholdt. Endret test-/målekode gir ny `control_digest` og en separat kurveserie; eldre rapporter skal beholdes.
+
+Det trengs ingen ny sudo-installasjon for denne rettingen. Gjennomgå og commit endringene selv, kontroller at `git status --short` er tom, og kjør deretter `./backend/check` fra prosjektroten. Produktfeil kan gi en målbar baseline; manglende målinger eller en uren arbeidsmappe kan fortsatt blokkere FoM.

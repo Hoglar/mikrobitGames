@@ -48,6 +48,8 @@ Under feiltester svarer et kontrollert HTTP-relé med avtalte meldinger. Ved vir
 
 Funksjonstestene bruker Ada/Nora, to spill, åtte fullførte forsøk og åtte historiske rekorder fra DB-planen. Rekorddatoene er faste. Sesjonene opprettes relativt til testkjøringens UTC-klokke slik at innlogging fungerer på vilkårlig testdato; tidspunktet registreres. Eksakte utløpsgrenser testes separat med styrt klokke i enhetstestene.
 
+Sesjonsdata som flyttes i SQL bruker intervaller i sekunder, i samsvar med kontrakt 1.4. Kalenderintervaller som `interval '29 days'` gir en annen varighet over sommer-/vintertid. Innloggingstester av feil passord bruker et feil passord som oppfyller OpenAPI-skjemaets lengdekrav; ellers testes ugyldig input (400), ikke ugyldige innloggingsopplysninger (401) og påfølgende rategrense (429).
+
 Testtoken sendes som tekst i cookie; `token_hash` beregnes som SHA-256 av cookieverdien kodet som UTF-8. Dette gjør den tidligere generelle tokenbeskrivelsen entydig for testadapteren. Ingen ekte passord eller brukere inngår.
 
 ## Interne funksjoner for enhetstestene
@@ -69,6 +71,8 @@ Testtoken sendes som tekst i cookie; `token_hash` beregnes som SHA-256 av cookie
 API må ved `MBG_TEST_METRICS=1` sende `Server-Timing: db;dur=<millisekunder>` for toppliste, sesjonsoppslag og resultatregistrering. Målegrensen er fra backend ber om DB-operasjonen, inkludert poolventing, til resultat/commit er klart. HTTP-tid måles uavhengig i testklienten. Manglende DB-måling gir BLOCKED, ikke en antatt DB-tid. Instrumenteringen gjennomgås sammen med databaseadapteren.
 
 Benchmarkdata: 1 000 spillere, 10 spill og 10 000 historiske rekorder og 10 000 tilhørende fullførte forsøk. Last: 30 aktive spillere, 6 operasjoner/s med 60/20/20-fordeling, 120 s oppvarming og 900 s måling per fase. Deretter ti topper med 30 samtidige kall per operasjonstype. Forsinket utsending, feil, råtider, PSS, CPU-ticks og forbindelser beholdes. Målingen foregår på serveren; SSH/internett inngår ikke i HTTP-/DB-tiden.
+
+PSS og CPU-ticks leses fra `/proc` for API, PostgreSQL-hovedprosessen og alle dens direkte barn. Prosesslisten leses uten en forutgående SQL-inspeksjonsforbindelse. Hvis en underprosess avsluttes, prosesslisten endres eller et PID gjenbrukes under lesingen, forsøkes hele målingen på nytt, høyst tre forsøk med 10 ms mellomrom. Prosessidentitet kontrolleres med starttid fra `/proc/PID/stat`. Dette er en sekvensiell måling med kontroll av prosesslisten, ikke et atomisk øyeblikksbilde fra kjernen. Hvert forsøk beholder tidsvindu, PID-er, delmålinger og eventuell feil/errno i `process_measurement_attempts`. Rettighetsfeil, manglende hovedprosesser, ugyldige felt eller uttømte forsøk gir fortsatt manglende måling og BLOCKED. Ingen prosess utelates og ingen tidligere verdi gjenbrukes. SQL-inspeksjon av forbindelser skjer etter prosessmålingen.
 
 `backend/database/restore.sh <backupfil>` skal gjenopprette til databasen i `MBG_ADMIN_DSN` og fjerne gjenopprettede sesjoner. Testpakken lager kopien og en separat tom måldatabase, kjører den virkelige gjenopprettingsrutinen og sammenligner data etterpå. Rutinen implementeres i databasearbeidet, ikke erstattes av en testdobbel.
 

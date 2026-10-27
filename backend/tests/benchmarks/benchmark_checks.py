@@ -8,6 +8,7 @@ import threading
 import time
 from check_registry import check
 from harness import ADA, POINTS, MODEL, request, Blocked, attempt_payload
+from process_metrics import process_metrics
 
 
 def percentile(values, fraction=.95):
@@ -77,30 +78,11 @@ def workload(e,seconds,offset=0):
 
 
 def resources(e):
-    pids={e.processes['api'].pid} if e.processes.get('api') and e.processes['api'].poll() is None else set()
-    readable=bool(pids)
-    # Exclude our short-lived inspection connection: it closes before /proc is read.
-    activity=e.rows('SELECT pid, pid=pg_backend_pid() FROM pg_stat_activity WHERE datname=current_database()')
-    probe_pids={pid for pid,is_probe in activity if is_probe}
-    db_pids=[pid for pid,is_probe in activity if not is_probe]
-    pids.update(db_pids)
-    try:
-        master=int((e.work/'pg/postmaster.pid').read_text().splitlines()[0])
-        pids.add(master)
-        pids.update(map(int,Path(f'/proc/{master}/task/{master}/children').read_text().split()))
-    except (OSError,ValueError):readable=False
-    pids.difference_update(probe_pids)
-    pss=0;cpu_ticks=0
-    for pid in pids:
-        try:
-            text=Path(f'/proc/{pid}/smaps_rollup').read_text()
-            pss+=int(re.search(r'^Pss:\s+(\d+)',text,re.M).group(1))*1024
-            fields=Path(f'/proc/{pid}/stat').read_text().rsplit(')',1)[1].split()
-            cpu_ticks+=int(fields[11])+int(fields[12])
-        except (OSError,AttributeError):readable=False
+    # Enumerate PostgreSQL's children directly; opening an inspection connection
+    # first creates another short-lived process while /proc is being sampled.
+    measured=process_metrics(e.processes.get('api'), e.work/'pg/postmaster.pid')
     roles=e.rows("SELECT usename,count(*),count(*) FILTER (WHERE xact_start IS NOT NULL) FROM pg_stat_activity WHERE usename IN ('backend_app','ai_reader') GROUP BY usename")
-    return {'at':time.monotonic(),'process_pss_bytes':pss if readable else None,
-            'cpu_ticks':cpu_ticks,'roles':{name:{'connections':n,'transactions':tx} for name,n,tx in roles}}
+    return {**measured,'roles':{name:{'connections':n,'transactions':tx} for name,n,tx in roles}}
 
 
 @check('BENCH-HTTP-DB','BENCH',('db','api'),slow=True)

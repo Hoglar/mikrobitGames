@@ -75,10 +75,11 @@ def renew(e):
     renewed=status(e.api('POST','/auth/renew',{},ADA),200)
     assert renewed['player']['id']==ADA
     assert renewed['absolute_expires_at']==original['absolute_expires_at']
-    e.rows("UPDATE app.sessions SET created_at=now()-interval '29 days', renewed_at=now()-interval '1 day', absolute_expires_at=now()+interval '1 day', expires_at=now()+interval '1 day' WHERE player_id=%s",(ADA,))
+    # Contract 1.4 defines elapsed seconds; calendar days change length at DST.
+    e.rows("UPDATE app.sessions SET created_at=now()-interval '2505600 seconds', renewed_at=now()-interval '86400 seconds', absolute_expires_at=now()+interval '86400 seconds', expires_at=now()+interval '86400 seconds' WHERE player_id=%s",(ADA,))
     renewed=status(e.api('POST','/auth/renew',{},ADA),200)
     assert renewed['expires_at']==renewed['absolute_expires_at']
-    e.rows("UPDATE app.sessions SET created_at=now()-interval '5 days',renewed_at=now()-interval '4 days',absolute_expires_at=now()+interval '25 days',expires_at=now()-interval '1 day' WHERE player_id=%s",(ADA,))
+    e.rows("UPDATE app.sessions SET created_at=now()-interval '432000 seconds',renewed_at=now()-interval '345600 seconds',absolute_expires_at=now()+interval '2160000 seconds',expires_at=now()-interval '86400 seconds' WHERE player_id=%s",(ADA,))
     status(e.api('POST','/auth/renew',{},ADA),401,'AUTH_REQUIRED')
     status(e.api('POST',f'/games/{POINTS}/results',attempt_payload(130),ADA),401,'AUTH_REQUIRED')
     assert e.scalar('SELECT max(value) FROM app.records WHERE player_id=%s AND game_id=%s',(ADA,POINTS))==120
@@ -312,9 +313,11 @@ def bad_input(e):
 
 @check('TBE-07-rate-limit','KAPI-4',('db','api'))
 def rate_limit(e):
+    # Syntactically valid, incorrect credentials reach password verification.
+    # Credentials.password requires 12+ code points, including on login.
     for _ in range(10):
-        status(e.api('POST','/auth/login',{'username':'Ada','password':'wrong'}),401,'INVALID_CREDENTIALS')
-    response=e.api('POST','/auth/login',{'username':'Ada','password':'wrong'})
+        status(e.api('POST','/auth/login',{'username':'Ada','password':'WrongPassword123!'}),401,'INVALID_CREDENTIALS')
+    response=e.api('POST','/auth/login',{'username':'Ada','password':'WrongPassword123!'})
     status(response,429,'RATE_LIMITED')
     assert int(response[1]['retry-after'])>=1
 
