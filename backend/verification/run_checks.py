@@ -14,7 +14,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'backend/tests'))
-from controls import REQUIREMENT_IDS, MODEL_IDS, aggregate, fom
+from controls import CONTROL_VERSION, MODEL_COUNTS, REQUIREMENT_IDS, MODEL_IDS, aggregate, fom
 
 RUNS = ROOT / 'backend/results/runs'
 
@@ -124,7 +124,8 @@ def main(argv=None):
     config=json.loads(CONFIG.read_text()) if CONFIG.exists() else {}
     commit=git('rev-parse','HEAD');state=git('status','--porcelain');digest=control_digest()
     now=datetime.now(timezone.utc)
-    report={'format_version':2,'mode':args.mode,'timestamp':now.isoformat(),
+    report={'format_version':2,'control_version':CONTROL_VERSION,'model_counts':MODEL_COUNTS,
+            'mode':args.mode,'timestamp':now.isoformat(),
             'code_commit':commit,'working_tree_dirty':None if state is None else bool(state),
             'control_digest':digest,'python':platform.python_version(),'machine':platform.node(),
             'tool_tests':[],'product_tests':[],'integration_tests':[],'models':{},'measurements':{},

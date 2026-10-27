@@ -5,7 +5,7 @@ import json
 import re
 from pathlib import Path
 from harness import ROOT, Blocked, request
-from controls import compare_database
+from controls import DB_MODEL_IDS, compare_database
 
 
 def plain_view(definition):
@@ -179,7 +179,7 @@ def run_models(e):
     schema=json.loads((ROOT/'backend/spec/models/database-schema.json').read_text())
     if e and e.db_ready:
         try:results.update(compare_database(schema,database_snapshot(e)))
-        except Exception as exc:results.update({f'MDB-{n}':{'status':'BLOCKED','detail':type(exc).__name__+' ved uttrekk'} for n in range(1,21)})
+        except Exception as exc:results.update({id:{'status':'BLOCKED','detail':type(exc).__name__+' ved uttrekk'} for id in DB_MODEL_IDS})
     else:results.update(compare_database(schema,None))
     if e and e.api_ready:
         try:

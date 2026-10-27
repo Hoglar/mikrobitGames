@@ -1,11 +1,14 @@
 """Pure control logic. Never imports the application or opens a database."""
 
-TABLE_ORDER = ('app.players', 'app.sessions', 'app.games', 'app.records')
+CONTROL_VERSION = 2  # API 0.2.0, database model format 2; never reuse the v1 series.
+TABLE_ORDER = ('app.players', 'app.sessions', 'app.games', 'app.records', 'app.attempts')
 VIEW_ORDER = ('ai_read.players', 'ai_read.games', 'ai_read.records')
+MODEL_COUNTS = (24, 4, 4)
+DB_MODEL_IDS = tuple(f'MDB-{n}' for n in range(1, MODEL_COUNTS[0] + 1))
 
 STATUSES = frozenset({'PASS', 'FAIL', 'SKIPPED', 'BLOCKED'})
 REQUIREMENT_IDS = tuple(f'K{area}-{n}' for area in ('DB', 'API', 'AI') for n in range(1, 5))
-MODEL_IDS = tuple(f'M{area}-{n}' for area, total in (('DB', 20), ('API', 4), ('AI', 4)) for n in range(1, total + 1))
+MODEL_IDS = tuple(f'M{area}-{n}' for area, total in zip(('DB', 'API', 'AI'), MODEL_COUNTS) for n in range(1, total + 1))
 
 
 def aggregate(statuses):
@@ -35,7 +38,7 @@ def fom(results, *, full):
             for area, total in zip(('DB', 'API', 'AI'), counts)
         )
     return {'requirements_percent': score('K', (4, 4, 4)),
-            'model_percent': score('M', (20, 4, 4))}
+            'model_percent': score('M', MODEL_COUNTS)}
 
 
 def _type(value):
@@ -58,12 +61,16 @@ def _foreign_keys(values):
 def compare_database(expected, observed):
     """Compare a NORMALIZED snapshot, not SQL/migrations. Extractor is separate.
 
-    None or malformed extraction is BLOCKED, not twenty passing checks.
+    None or malformed extraction is BLOCKED, not twenty-four passing checks.
     Missing objects in an otherwise complete extraction are genuine FAILs.
     """
-    ids = [f'MDB-{n}' for n in range(1, 21)]
-    if set(expected['tables']) != set(TABLE_ORDER) or set(expected['views']) != set(VIEW_ORDER):
+    ids = DB_MODEL_IDS
+    if (expected.get('format_version') != 2 or
+            set(expected['tables']) != set(TABLE_ORDER) or set(expected['views']) != set(VIEW_ORDER)):
         raise ValueError('Changing the model requires a new control version')
+    for spec in expected['tables'].values():
+        if not set(spec['not_null_columns']) <= set(spec['columns']):
+            raise ValueError('NOT NULL expectation names an unknown column')
     blocked = {id: {'status': 'BLOCKED', 'detail': 'Uttrekk mangler eller er ufullstendig.'} for id in ids}
     if not isinstance(observed, dict) or observed.get('extraction_complete') is not True:
         return blocked
@@ -89,7 +96,7 @@ def compare_database(expected, observed):
             checks = [
                 ({k: _type(v) for k, v in actual['columns'].items()} ==
                  {k: _type(v) for k, v in spec['columns'].items()}
-                 and set(actual['not_null_columns']) == set(spec['columns'])
+                 and set(actual['not_null_columns']) == set(spec['not_null_columns'])
                  and actual['generated_columns'] == spec['generated_columns']),
                 actual['primary_key'] == spec['primary_key'],
                 _foreign_keys(actual['foreign_keys']) == _foreign_keys(spec['foreign_keys']),
@@ -97,13 +104,13 @@ def compare_database(expected, observed):
             ]
             for index, (passed, label) in enumerate(zip(checks, labels), 1):
                 record(offset * 4 + index, passed, f'{name}: {label}')
-        for number, name in enumerate(VIEW_ORDER, 17):
+        for number, name in enumerate(VIEW_ORDER, 21):
             spec = expected['views'][name]
             if name in observed['views'] and not isinstance(observed['views'][name], dict):
                 return blocked
             # Exact structure: extra joins, expressions, filters, etc. cannot disappear.
             record(number, observed['views'].get(name) == spec, f'{name}: nøyaktig kilde og projeksjon')
-        record(20, set(observed['tables']) == set(expected['tables']) and
+        record(24, set(observed['tables']) == set(expected['tables']) and
                set(observed['views']) == set(expected['views']), 'Nøyaktig tabell- og visningssett')
     except (KeyError, TypeError, AttributeError, ValueError):
         return blocked

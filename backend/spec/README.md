@@ -1,6 +1,6 @@
 # Start her: grunnlaget for backend-implementeringen
 
-**Status 2026-10-27:** Krav og modeller er samordnet for API 0.2.0 og databasekontrakt 1.2. Eksisterende kjørbar testkode gjelder tidligere rekordmodell og må tilpasses etter [endringsoversikten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester). Database, API og AI er ennå ikke implementert, og ingen produktbaseline er målt. Første implementasjon bestilles av brukeren; oppsett på Parrot inngår i klargjøringen.
+**Status 2026-10-27:** Krav og modeller er samordnet for API 0.2.0 og databasekontrakt 1.2. Kjørbar testkode er tilpasset revisjonen; se [endringsoversikten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester). Database, API og AI er ennå ikke implementert, og ingen produktbaseline er målt. Første implementasjon bestilles av brukeren; oppsett på Parrot inngår i klargjøringen.
 
 Mappen `spec/` samler både spesifikasjon, teknisk design og planer. Dokumentenes rolle, ikke mappenavnet, avgjør hvordan de skal brukes. Denne siden er en leseveiledning; den definerer ingen nye funksjonskrav.
 
@@ -34,4 +34,4 @@ Tester avledes fra dette grunnlaget. Ved motstrid mellom kontrakt, modell og tes
 - **Internt design:** Funksjonsnavn, modellmeldinger og oppstartsgrensesnitt i `test-runtime.md` er eksplisitte designvalg som implementasjonen og testene deler. De utvider ikke funksjonsomfanget.
 - **Klargjøres ved byggestart:** Applikasjonens bibliotekversjoner, PostgreSQL-hovedversjon, SQL-tillatelseslisten innenfor 1.6 og tjenestebrukere/målerettigheter på Parrot. Modellens faktiske egnethet må måles. Domene og offentlig nettverkstilgang avklares før publisering.
 
-Denne revisjonen utvider resultatlagringen og den private lesetilgangen. Benchmarkmål beholdes, mens modellkontrollsettet må versjoneres på nytt før måling. Historiske notater og korte sammendrag beholdes som lenker og forklaringer, ikke parallelle planer.
+Denne revisjonen utvider resultatlagringen og den private lesetilgangen. Benchmarkmål beholdes; kontrollversjon 2 bruker 24/4/4 modellpunkter og starter en egen måleserie. Historiske notater og korte sammendrag beholdes som lenker og forklaringer, ikke parallelle planer.

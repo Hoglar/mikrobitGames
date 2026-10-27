@@ -8,6 +8,7 @@ from pathlib import Path
 def report_text(report):
     lines=['# Testresultat','',f"Tid: {report['timestamp']}",f"Kode: `{report.get('code_commit') or 'ukjent'}`",
            f"Modus: {report['mode']} · Python: {report.get('python','ukjent')}",
+           f"Kontrollversjon: {report.get('control_version', 'eldre')} · Modellkontroller DB/API/AI: {report.get('model_counts', 'ikke oppgitt')}",
            f"Endret arbeidsmappe: {report.get('working_tree_dirty')}", '']
     for title,key in (('Kontrollverktøy','tool_tests'),('Enhetstester','product_tests'),('Integrasjon og benchmark','integration_tests')):
         lines.append(f"- {title}: {dict(Counter(r['status'] for r in report.get(key,[])))}")
@@ -31,7 +32,8 @@ def report_text(report):
     if metrics:
         lines.extend(['','## Benchmark',''])
         for phase,data in metrics.get('http_db',{}).items():
-            lines.extend([f'### {phase}','','| Operasjon | Antall | Feil | HTTP p95 ms | DB p95 ms |','| --- | --- | --- | --- | --- |'])
+            lines.extend([f'### {phase}','',f"Startdata: {data.get('fixture_counts', 'ikke oppgitt')}. Etter belastning: {data.get('final_counts', 'ikke oppgitt')}.",
+                          '', '| Operasjon | Antall | Feil | HTTP p95 ms | DB p95 ms |','| --- | --- | --- | --- | --- |'])
             for op,row in data['summary'].items():
                 lines.append(f"| {op} | {row['count']} | {row['errors']} | {row['http_p95_ms']} | {row['db_p95_ms']} |")
         if 'ai' in metrics:
@@ -45,7 +47,8 @@ def report_text(report):
 def series_key(report):
     # Model/hardware/control changes must not silently join an earlier curve.
     environment={k:v for k,v in report.get('environment',{}).items() if k!='fixture_clock'}
-    return (report.get('control_digest'),json.dumps(environment,sort_keys=True,default=str),report.get('machine'))
+    return (report.get('control_version'),report.get('control_digest'),
+            json.dumps(environment,sort_keys=True,default=str),report.get('machine'))
 
 
 def write_curves(folder, runs, current):

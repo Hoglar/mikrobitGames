@@ -1,6 +1,6 @@
 # Felles implementeringsplan: database, API og AI
 
-**Revisjon 2026-10-27:** Privat forsøkshistorikk inngår i første implementasjon. Modellkontrollsettet er nå planlagt som 24/4/4; eksisterende kjørbare verktøy er fortsatt 20/4/4 og må tilpasses før måling. Se [tilpasningslisten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester).
+**Revisjon 2026-10-27:** Privat forsøkshistorikk inngår i første implementasjon. Kjørbar testkode er tilpasset privat forsøkshistorikk og API 0.2.0. Kontrollversjon 2 bruker 24/4/4 modellpunkter; målinger blandes ikke med tidligere kontrollversjon. Produktimplementasjon og baseline gjenstår. Se [endringsoversikten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester).
 
 **Tidligere status:** Avtalt arbeidsmåte, 2026-10-24. Planen beskriver hele opplegget. Oppdatert 2026-10-25: testpakken har nå enhetstester, integrasjon, benchmark, modelluttrekk, SSH-kjøring og rapportering. Komponentene og engangsoppsettet på Parrot må fortsatt klargjøres før full måling. Ingen produktbaseline eller FoM-måling foreligger.
 

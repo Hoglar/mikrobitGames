@@ -18,7 +18,7 @@ import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
-from uuid import UUID
+from uuid import UUID, uuid4
 
 ROOT = Path(__file__).resolve().parents[2]
 ADA = '11111111-1111-4111-8111-111111111111'
@@ -27,6 +27,22 @@ POINTS = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'
 SPRINT = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'
 PASSWORD = 'SyntheticPassword123!'
 MODEL = 'qwen3:4b-instruct-2507-q4_K_M'
+
+
+def attempt_payload(value, status='completed', attempt_id=None):
+    """A new play gets a fresh ID; callers retain this body when retrying."""
+    return {'attempt_id': attempt_id or str(uuid4()), 'status': status, 'value': value}
+
+
+def history_fixtures(history):
+    """Public records and their private originating attempts, with stable seed IDs."""
+    from datetime import datetime, timezone, timedelta
+    records = [(str(UUID(int=i+10000)), player, game, value,
+                datetime(2026, 10, 1, 12, tzinfo=timezone.utc)+timedelta(days=day))
+               for i, (player, game, value, day) in enumerate(history)]
+    attempts = [(player, str(UUID(int=i+20000)), game, 'completed', value, created, 'created', record_id)
+                for i, (record_id, player, game, value, created) in enumerate(records)]
+    return records, attempts
 
 
 class Blocked(Exception):
@@ -274,7 +290,7 @@ class Environment:
         password_hash = PasswordHasher().hash(PASSWORD)
         with self.connect() as conn:
             with conn.transaction():
-                conn.execute('TRUNCATE app.records, app.sessions, app.players, app.games CASCADE')
+                conn.execute('TRUNCATE app.attempts, app.records, app.sessions, app.players, app.games CASCADE')
                 games = [(POINTS, 'Poengjakt', 'points', 'higher_is_better', 0, 100000, True),
                          (SPRINT, 'Sprint', 'milliseconds', 'lower_is_better', 1, 3600000, True)]
                 if large:
@@ -297,10 +313,12 @@ class Environment:
                 else:
                     history = [(ADA, POINTS,100,0),(ADA,POINTS,120,1),(NORA,POINTS,110,0),(NORA,POINTS,115,1),
                                (ADA,SPRINT,60000,0),(ADA,SPRINT,55000,1),(NORA,SPRINT,65000,0),(NORA,SPRINT,58000,1)]
-                conn.cursor().executemany('INSERT INTO app.records(id,player_id,game_id,value,created_at) VALUES (%s,%s,%s,%s,%s)',
-                    [(str(UUID(int=i+10000)), p, g, v, datetime(2026,10,1,tzinfo=timezone.utc)+timedelta(days=day))
-                     for i,(p,g,v,day) in enumerate(history)])
+                records, attempts = history_fixtures(history)
+                conn.cursor().executemany('INSERT INTO app.records(id,player_id,game_id,value,created_at) VALUES (%s,%s,%s,%s,%s)', records)
+                conn.cursor().executemany('INSERT INTO app.attempts(player_id,id,game_id,status,value,created_at,record_outcome,record_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)', attempts)
         self.games, self.players = games, players
+        self.fixture_counts = {'players':len(players), 'games':len(games),
+                               'records':len(records), 'attempts':len(attempts)}
 
     def stop_service(self, name):
         process = self.processes.pop(name, None)

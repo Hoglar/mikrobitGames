@@ -42,6 +42,8 @@ Alle stier nedenfor har prefikset `/api/v1`. «Innlogging» betyr en gyldig sesj
 
 ## Innlogging og spilling
 
+Launcher viser spillenes offentlige topplister og valgt spillers rekordhistorikk også uten innlogging. Et sesjonsoppslag som gir 401 betyr utlogget tilstand; det skal ikke blokkere offentlige visninger. Dashboard med egne forsøk krever innlogging.
+
 Nettleseren håndterer cookien `__Host-mbg_session`, med `Secure`, `HttpOnly`, `SameSite=Lax`, `Path=/` og uten `Domain`. Bruk `credentials: "same-origin"` i `fetch`. Sesjonstoken skal ikke lagres i JavaScript eller `localStorage`.
 
 Alle POST-kall krever `X-MBG-Request: 1`, også registrering og innlogging. Backend kontrollerer i tillegg at `Origin`, eller opprinnelsen i `Referer` når `Origin` mangler, er nøyaktig den konfigurerte nettsideadressen. Ugyldig, `null` eller ukjent opprinnelse avvises med 403. Frontend setter ikke disse nettleserstyrte headerne selv. Ingen generell CORS-tilgang åpnes. Dette er CSRF-beskyttelse; den konstante headerverdien er ingen hemmelighet eller autentisering. Se [OWASPs veiledning](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html) og [MDNs cookie-regler](https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/Cookies).

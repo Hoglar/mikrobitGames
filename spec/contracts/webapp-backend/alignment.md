@@ -1,6 +1,6 @@
 # Samordning av webapp og backend
 
-**Dato:** 2026-10-27. **Grunnlag:** Gjennomgang av eksisterende spesifikasjoner og brukerens eksplisitte valg i denne samtalen. Arbeidet gjelder kontrakter, spesifikasjoner, modeller og testplaner; tjenester og kjørbare produkttester er ikke implementert i denne revisjonen.
+**Dato:** 2026-10-27. **Grunnlag:** Gjennomgang av eksisterende spesifikasjoner og brukerens eksplisitte valg. Den opprinnelige samordningen gjaldt kontrakter, spesifikasjoner, modeller og testplaner. Oppfølgingen tilpasser eksisterende testkode og verifiseringsverktøy. Tjenestene er ennå ikke implementert; ingen produktbaseline er målt.
 
 ## Konflikter og løsninger
 
@@ -17,7 +17,8 @@ Tabellen beskriver motstridene som fantes før samordningen. Lenker peker til do
 | AI-grunnlag | Webapp begrenset AI til highscore-lister; backend tillot offentlig rekordhistorikk og sammenligninger på tvers av spill. | AI bruker offentlige rekorder og rekordhistorikk, uten private forsøk, heller ikke egne. [AI–DB-kontrakt](../../../backend/spec/contracts/ai-database/contract.md). |
 | Chat og sesjon | «Samtale» kunne tolkes som AI-hukommelse; webappen manglet de konkrete sesjons-/fornyelsesreglene. | Selvstendige spørsmål uten samtalehistorikk. Sesjonsoppslag, fornyelse før ordinært spill og ved aktiv spilling, og samme eier ved ny innlogging. [Frontendguide](contract.md). |
 | Katalog og Testlab | Backend leverte spillmetadata uten modulkobling; generelle innloggings-/startkrav stemte ikke med lokalt Testlab uten backend. | Lokalt register kobler stabile backend-ID-er til spillmoduler. Testlab er et lokalt verktøy uten backend-ID, konto eller resultatlagring. [Webapp](../../../webapp/spec/Komponentspesifikasjon_webapplikasjon_forklart.md), [Testlab](../../../webapp/spec/games/microbit-testlab/specification.md). |
-| Modell og testgrunnlag | Fire tabeller, alle felt NOT NULL og 20 DB-kontroller kunne ikke beskrive private forsøk med nullable felt. | Fem tabeller, eksplisitt nullbarhet per tabell og planlagt 24-kontrollsett. Eksisterende verktøy må tilpasses før produktmåling. [Datamodell](../../../backend/spec/models/data-model.md), [DB-testplan](../../../backend/spec/test-plan.md). |
+| Modell og testgrunnlag | Fire tabeller, alle felt NOT NULL og 20 DB-kontroller kunne ikke beskrive private forsøk med nullable felt. | Fem tabeller, eksplisitt nullbarhet per tabell og 24 DB-kontroller i kontrollversjon 2. Testverktøyene er tilpasset. [Datamodell](../../../backend/spec/models/data-model.md), [DB-testplan](../../../backend/spec/test-plan.md). |
+| Offentlig visning | API-et tilbød offentlig lesing, men webappen beskrev bare beskyttet Dashboard. | Launcher viser topplister og valgt spillers offentlige rekordhistorikk uten innlogging. Dashboard beholder privat historikk. [Webapp §2.3–2.4](../../../webapp/spec/Komponentspesifikasjon_webapplikasjon_forklart.md), TWEB-11. |
 
 ## Revisjoner og kompatibilitet
 
@@ -34,17 +35,18 @@ Nettbrudd og utløpt sesjon bevarer forsøket midlertidig i frontendminnet med o
 
 ## Tilpasning av eksisterende kjørbare tester
 
-Disse endringene er **planlagt, ikke utført i testkoden**. Produktbaseline/FoM kan ikke rapporteres for denne revisjonen før de er gjennomført. Dokumentasjonsvalidering av YAML/JSON/XML er et eget kontrollnivå.
+Backendens test-/kontrollkode er **oppdatert** som kontrollversjon 2. Kontrollverktøyenes egne tester dekker kjente modellavvik, kontraktskjemaer, testdata, belastningsforespørsler og rapportering. De er ikke produktbevis. Produktkontroller og benchmark krever implementerte tjenester og testoppsett; uten dem rapporteres BLOCKED og ingen FoM. Frontendtestene nedenfor er fortsatt planlagte.
 
-| Eksisterende del | Nødvendig tilpasning før implementasjonen verifiseres |
+| Del | Utført tilpasning / gjenstående frontendarbeid |
 | --- | --- |
-| `backend/tests/integration/api_checks.py` | Send forsøks-ID og status; skill 201/200 fra rekordutfall. Dekk ulike forsøk med lik verdi, replay etter bedre rekord/deaktivering, konflikt, ufullført/null, eierfiltrert liste/detalj, sideinndeling og kontosletting av begge historikkene. |
-| `backend/tests/integration/database_checks.py` | Seed åtte fullførte forsøk til de åtte rekordene; kontroller nye nøkler, nullable felt/statusutfall, kaskader, spill med bare ufullførte forsøk, og ingen AI-lesetilgang til forsøk. |
-| `backend/tests/integration/ai_checks.py` og `backend/tests/fixtures/sql-cases.json` | Legg til forsøk på direkte og modellforeslått lesing av `app.attempts`, også for spørsmålsstilleren. Behold fasit for offentlig rekordhistorikk. |
-| `backend/tests/benchmarks/benchmark_checks.py` og `backend/verification/harness.py` | Seed sammenhengende forsøk/rekorder, bruk ny ID per virkelig forsøk og samme ID ved omforsøk. Behold HTTP-/DB-tidsmål; dokumenter forsøksvolum i tillegg til rekordvolum. |
-| `backend/verification/controls.py` og `model_checks.py` | Støtt modellformat 2 og eksplisitt nullbarhet. Fire kontroller for hver av fem tabeller (MDB-1–20), tre uendrede AI-visninger (MDB-21–23), objektsjekk MDB-24. Manglende eller ufullstendig uttrekk gir BLOCKED. |
-| `backend/verification/check_registry.py`, `pipeline.py`, `reports.py`, runner og egne tester | Oppdater alle hardkodede antall/ID-er, modellvekter fra 20/4/4 til 24/4/4, rapporter og bevisste avviksfixturer. Lag ny kontrollversjon/måleserie; gamle resultater skal ikke omtolkes. |
-| Frontendtester | Implementer [TWEB-01–10](../../../webapp/spec/platform-test-plan.md) sammen med webappen. GI-/TLAB-testene beholdes for sine egne ansvarsområder. |
+| `backend/tests/integration/api_checks.py` | Bruker forsøks-ID/status og skiller 201/200 fra rekordutfall. Dekker ulike forsøk med lik verdi, replay etter bedre rekord/deaktivering, konflikt, ufullført/null, eierfiltrert liste/detalj, sideinndeling og kontosletting. Samtidig replay, rollback ved forsøksfeil og tapt COMMIT-bekreftelse kontrolleres separat. |
+| `backend/tests/integration/database_checks.py` | Kontrollerer forsøksnøkler, nullable felt/statusutfall, tillatte innsettinger, kaskader, spill med bare ufullførte forsøk, rettigheter, omstart og gjenoppretting. |
+| `backend/tests/integration/ai_checks.py` og `backend/tests/fixtures/sql-cases.json` | Avvist direkte/modellforeslått lesing av `app.attempts`, også egne forsøk og delspørringer. Offentlig rekordfasit beholdes. |
+| `backend/tests/benchmarks/benchmark_checks.py` og `backend/verification/harness.py` | Seeder sammenhengende forsøk/rekorder, bruker ny ID per virkelig forsøk og samme ID ved omforsøk. HTTP-/DB-tidsmål beholdes; start- og sluttvolum for forsøk/rekorder lagres i benchmarkrapporten. |
+| `backend/verification/controls.py` og `model_checks.py` | Modellformat 2 og eksplisitt nullbarhet. Fire kontroller for hver av fem tabeller (MDB-1–20), tre AI-visninger (MDB-21–23), objektsjekk MDB-24. Manglende eller ufullstendig uttrekk gir BLOCKED. |
+| Kontrollregister, pipeline, rapporter og runner | De nye scenarioene er registrert i eksisterende kravgrupper. Modell-ID-er/vekter kommer fra felles kontrollsett (24/4/4). Rapportene identifiserer kontrollversjon 2; versjon og digest holder ulike måleserier atskilt. |
+| Enhetstester | `validate_attempt` skiller fullførte sluttresultater fra valgfrie delverdier. Signaturen er dokumentert i `test-runtime.md`; rekord- og rangeringsreglene beholdes. |
+| Frontendtester – gjenstår | Implementer [TWEB-01–11](../../../webapp/spec/platform-test-plan.md) sammen med webappen. GI-/TLAB-testene beholdes for sine egne ansvarsområder. |
 
 Rene rekordfunksjoner for streng forbedring og rangering beholder sine forventninger. Utvid status-/forsøksvalidering i stedet for å gjøre ufullførte delverdier til rekorder.
 
@@ -59,3 +61,5 @@ Kontrollert 2026-10-27 med `openapi-spec-validator` 0.7.2 og `jsonschema` 4.25.1
 - Lokale lenker i endrede Markdown-dokumenter finnes, og `git diff --check` er uten avvik.
 
 Dette validerer dokumentstruktur og kontrakteksempler. Det beviser ikke fungerende eierskapskontroll, atomisk lagring, diagrammenes visuelle utforming eller produktoppførsel; disse kontrolleres ved implementering etter testplanene.
+
+**Oppfølging av testkoden, 2026-10-27:** Kontrollverktøyenes egne tester består. Hurtigkjøring rapporterer produktkontroller som BLOCKED når implementasjon/PostgreSQL-serververktøy mangler, og lange kontroller som SKIPPED; ingen FoM-punkt opprettes. Oppdatert testkode er ikke dokumentasjon på at de fremtidige tjenestene allerede oppfyller kravene. Bruk [kjøreguiden](../../../backend/verification/README.md) ved implementering.

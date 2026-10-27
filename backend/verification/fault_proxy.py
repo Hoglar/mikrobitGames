@@ -1,4 +1,4 @@
-"""PostgreSQL test proxy: lose COMMIT acknowledgement after a record insert.
+"""PostgreSQL test proxy: lose COMMIT acknowledgement after an attempt/record insert.
 
 Only used on the harness-owned cluster with sslmode=disable. It never parses
 or logs passwords. Other server messages pass through byte-for-byte.
@@ -39,9 +39,9 @@ class CommitFaultProxy:
                     if not data:return
                     if source is client:
                         # Parse packets may split across reads. Only inspect a bounded
-                        # window for the first record INSERT after test startup.
+                        # window for an attempt/record INSERT after test startup.
                         text=(client_tail+data).lower();client_tail=text[-8192:]
-                        if b'insert' in text and b'records' in text:insert_seen=True
+                        if b'insert' in text and (b'records' in text or b'attempts' in text):insert_seen=True
                         server.sendall(data)
                     else:
                         buffer+=data

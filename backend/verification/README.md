@@ -1,10 +1,12 @@
 # Testfasen – én kommando
 
-**Revisjon 2026-10-27:** Spesifikasjonene er oppdatert til API 0.2.0, databasekontrakt 1.2 og modellformat 2. Eksisterende kjørbar test-/kontrollkode gjelder tidligere rekordmodell og kan ikke verifisere denne revisjonen før [tilpasningene](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester) er gjennomført. Modellsettet skal bli 24/4/4; dagens verktøy er fortsatt 20/4/4. Dette er dokumentasjonskontroll, ikke bestått produkttest.
+**Revisjon 2026-10-27:** Test-/kontrollkoden er tilpasset API 0.2.0, databasekontrakt 1.2 og modellformat 2. Kontrollversjon 2 bruker 24/4/4 modellpunkter og skiller måleserien fra den tidligere versjonen. Se [endringsoversikten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester). Kontrollverktøyenes egne tester er kjørt; produktimplementasjon og faktiske produktmålinger gjenstår.
 
 **Vanlig bruk:** Kjør `./backend/check` fra prosjektroten. Den starter hele den automatiserte backend-testpakken. Du trenger ikke starte database, API, AI eller flere testprogrammer manuelt.
 
 Testkode og benchmark er skrevet før komponentene. Så lenge migreringer eller tjenester mangler, viser rapporten **BLOCKED**. Det er ikke en bestått test eller en baseline.
+
+Etter kontraktssamordningen kan `./backend/check selftest` kontrollere selve verktøyene uten ferdig backend. Det erstatter ikke `./backend/check`, som brukes til produktmåling etter implementering. Kontrollversjon 2 er allerede tatt i bruk; rapporter fra det tidligere 20/4/4-settet blandes ikke med de nye 24/4/4-målingene.
 
 ## 1. Engangsoppsett på Parrot
 

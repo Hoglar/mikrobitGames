@@ -58,15 +58,13 @@ class DatabaseModelTests(unittest.TestCase):
         self.actual = {'extraction_complete': True,
                        'tables': copy.deepcopy(self.expected['tables']),
                        'views': copy.deepcopy(self.expected['views'])}
-        for table in self.actual['tables'].values():
-            table['not_null_columns'] = list(table['columns'])
 
     def failed(self):
         return {id for id, result in compare_database(self.expected, self.actual).items() if result['status'] == 'FAIL'}
 
     def test_exact_synthetic_snapshot(self):
         results = compare_database(self.expected, self.actual)
-        self.assertEqual(len(results), 20)
+        self.assertEqual(len(results), 24)
         self.assertTrue(all(r['status'] == 'PASS' for r in results.values()))
 
     def test_wrong_type(self):
@@ -99,23 +97,49 @@ class DatabaseModelTests(unittest.TestCase):
 
     def test_missing_table_fails_four_checks_and_object_set(self):
         del self.actual['tables']['app.records']
-        self.assertEqual(self.failed(), {'MDB-13', 'MDB-14', 'MDB-15', 'MDB-16', 'MDB-20'})
+        self.assertEqual(self.failed(), {'MDB-13', 'MDB-14', 'MDB-15', 'MDB-16', 'MDB-24'})
 
     def test_missing_view(self):
         del self.actual['views']['ai_read.players']
-        self.assertEqual(self.failed(), {'MDB-17', 'MDB-20'})
+        self.assertEqual(self.failed(), {'MDB-21', 'MDB-24'})
 
     def test_secret_projection(self):
         self.actual['views']['ai_read.players']['columns'].append('password_hash')
-        self.assertEqual(self.failed(), {'MDB-17'})
+        self.assertEqual(self.failed(), {'MDB-21'})
 
     def test_filtered_view(self):
         self.actual['views']['ai_read.games']['row_filter'] = 'is_active = true'
-        self.assertEqual(self.failed(), {'MDB-18'})
+        self.assertEqual(self.failed(), {'MDB-22'})
 
     def test_extra_join(self):
         self.actual['views']['ai_read.records']['joins'] = ['app.sessions']
+        self.assertEqual(self.failed(), {'MDB-23'})
+
+    def test_missing_attempt_table(self):
+        del self.actual['tables']['app.attempts']
+        self.assertEqual(self.failed(), {'MDB-17', 'MDB-18', 'MDB-19', 'MDB-20', 'MDB-24'})
+
+    def test_attempt_nullable_values_must_remain_nullable(self):
+        for column in ('value', 'record_id'):
+            with self.subTest(column=column):
+                self.actual['tables']['app.attempts']['not_null_columns'].append(column)
+                self.assertEqual(self.failed(), {'MDB-17'})
+                self.actual['tables']['app.attempts']['not_null_columns'].remove(column)
+
+    def test_attempt_owner_is_part_of_primary_key(self):
+        self.actual['tables']['app.attempts']['primary_key'] = ['id']
+        self.assertEqual(self.failed(), {'MDB-18'})
+
+    def test_attempt_reference_and_null_metadata_are_checked(self):
+        self.actual['tables']['app.attempts']['foreign_keys'][-1]['on_delete'] = 'SET NULL'
         self.assertEqual(self.failed(), {'MDB-19'})
+        del self.actual['tables']['app.attempts']['not_null_columns']
+        self.assertTrue(all(r['status'] == 'BLOCKED' for r in compare_database(self.expected, self.actual).values()))
+
+    def test_legacy_model_requires_separate_control_version(self):
+        self.expected['format_version'] = 1
+        with self.assertRaises(ValueError):
+            compare_database(self.expected, self.actual)
 
     def test_type_aliases_and_constraint_order(self):
         self.actual['tables']['app.records']['columns']['value'] = 'int8'

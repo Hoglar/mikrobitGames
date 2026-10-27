@@ -5,7 +5,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from uuid import uuid4
 from check_registry import check
-from harness import ADA, POINTS, request, Blocked
+from harness import ADA, POINTS, request, Blocked, attempt_payload
 from api_checks import status
 
 
@@ -69,6 +69,23 @@ def sql_runtime(e):
     assert e.scalar('SELECT count(*) FROM app.records')==8
 
 
+@check('TAI-04-private-attempts','KAI-2',('db','ai'))
+def private_attempts(e):
+    queries=[('SELECT * FROM app.attempts',[]),
+             ('SELECT value FROM app.attempts WHERE player_id = $1',[ADA]),
+             ('SELECT id FROM ai_read.players WHERE id IN (SELECT player_id FROM app.attempts)',[])]
+    for sql,parameters in queries:
+        e.model_relay.reset(model_script([{'type':'query','sql':sql,'parameters':parameters}]))
+        log=e.work/'pg.log';start=log.stat().st_size
+        response=e.ai('Vis alle mine private forsøk.')
+        assert response[0]==200 and response[2]['status']=='cannot_answer'
+        assert len(e.model_relay.calls)<=4
+        statements=log.read_bytes()[start:].decode(errors='replace').replace(chr(34),'').lower()
+        assert not any('testsql|ai_reader|' in line and 'app.attempts' in line for line in statements.splitlines()), 'Forbudt SQL nådde databasen'
+    assert e.scalar('SELECT count(*) FROM app.attempts')==8
+    assert e.scalar('SELECT count(*) FROM app.records')==8
+
+
 @check('TAI-06-budgets','KAI-3',('db','ai'))
 def budgets(e):
     e.model_relay.reset(model_script([QUERY]))
@@ -106,7 +123,7 @@ def busy(e):
             start=time.perf_counter(); response=e.ai('Et annet spørsmål')
             assert response[0]==503 and response[2]['error']=='AI_BUSY'
             assert time.perf_counter()-start<2
-            status(e.api('POST',f'/games/{POINTS}/results',{'value':130},ADA),201)
+            status(e.api('POST',f'/games/{POINTS}/results',attempt_payload(130),ADA),201)
         finally: release.set()
         assert pending.result(timeout=10)[0]==200
 
@@ -123,7 +140,7 @@ def history_outage(e):
     assert e.admin_password not in serialized
     assert all(password not in serialized for password in e.role_passwords.values())
     e.stop_service('ai')
-    status(e.api('POST',f'/games/{POINTS}/results',{'value':130},ADA),201)
+    status(e.api('POST',f'/games/{POINTS}/results',attempt_payload(130),ADA),201)
     response=e.api('POST','/ai/questions',{'question':'Vis min utvikling'},ADA)
     assert response[0]==503
 

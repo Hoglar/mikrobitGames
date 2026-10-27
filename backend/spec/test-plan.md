@@ -1,6 +1,6 @@
 # Testplan for databasedelen – WBS 5.1
 
-**Status:** Samordnet testplan 2026-10-27 for databasekontrakt 1.2, modellformat 2 og API 0.2.0. Eksisterende testkode/modellverktøy gjelder tidligere modell og må tilpasses før produktmåling; se [tilpasningslisten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester). Ingen produktkontroller er kjørt.
+**Status:** Samordnet testplan 2026-10-27 for databasekontrakt 1.2, modellformat 2 og API 0.2.0. Testkode/modellverktøy er tilpasset som kontrollversjon 2; se [endringsoversikten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester). Ingen produktkontroller er kjørt.
 
 ## Testing, verifisering og FoM
 

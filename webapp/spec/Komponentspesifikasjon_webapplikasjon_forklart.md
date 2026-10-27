@@ -21,7 +21,7 @@ Navigasjon mellom sidene håndteres av en felles router. Backend API er en ekste
 - **Input:** Brukerens innloggings- eller registreringsopplysninger.
 - **Output:** Forespørsel til Backend API; navigasjon til Launcher etter vellykket innlogging.
 - **Avhengigheter:** Backend API og Router.
-- **Avgrensning:** Backend avgjør om opplysningene er gyldige. Frontend lagrer ikke passord eller sesjonstoken. Registrering gir ingen automatisk innlogging; vis innloggingsskjema etter opprettet konto. `GET /auth/session` etablerer kontotilstand ved oppstart; 401 krever ny innlogging. Cookie, CSRF og fornyelse følger [utviklerguiden](../../spec/contracts/webapp-backend/contract.md).
+- **Avgrensning:** Backend avgjør om opplysningene er gyldige. Frontend lagrer ikke passord eller sesjonstoken. Registrering gir ingen automatisk innlogging; vis innloggingsskjema etter opprettet konto. `GET /auth/session` etablerer kontotilstand ved oppstart; 401 betyr utlogget tilstand og krever innlogging bare for beskyttede funksjoner. Offentlige sider skal fortsatt vises. Cookie, CSRF og fornyelse følger [utviklerguiden](../../spec/contracts/webapp-backend/contract.md).
 
 ### 2.2 Navigasjonsmeny
 - **Ansvar:** Vise navigasjonsvalg for Launcher, Dashboard, Profil og AI-chat, samt tilgang til utlogging.
@@ -32,16 +32,16 @@ Navigasjon mellom sidene håndteres av en felles router. Backend API er en ekste
 - **Visning:** Menyen vises på hovedsidene, men er skjult under aktiv spilling.
 
 ### 2.3 Router
-- **Ansvar:** Koble adresser/sidevalg til riktige visninger, håndtere navigasjon og beskytte Spillplattform for ordinære spill, Dashboard, Profil og AI-chat med sesjonskontroll; Launcher og Testlab kan åpnes uten innlogging.
+- **Ansvar:** Koble adresser/sidevalg til riktige visninger, håndtere navigasjon og beskytte Spillplattform for ordinære spill, Dashboard, Profil og AI-chat med sesjonskontroll; Launcher med offentlig topplistevisning og Testlab kan åpnes uten innlogging.
 - **Input:** Navigasjonsforespørsler og eventuelle parametere, som spill-ID.
 - **Output:** Viser riktig side/komponent.
 - **Avhengigheter:** Sidene som inngår i rutekonfigurasjonen. Detaljene avhenger av valgt rammeverk.
 - **Avgrensning:** Skal ikke lagre resultater eller behandle spillregler.
 
 ### 2.4 Launcher
-- **Ansvar:** Vise spillkatalogen og la brukeren velge et spill.
-- **Input:** Liste over tilgjengelige spill hentet fra Backend API; brukerens valg.
-- **Output:** Navigasjon til valgt spill med spill-ID.
+- **Ansvar:** Vise spillkatalogen og la brukeren velge et spill eller åpne spillets offentlige toppliste uten innlogging. Topplistevisningen tilhører Launcher; Dashboard viser eierens private historikk.
+- **Input:** Spillkatalog og `GET /games/{game_id}/leaderboard` fra Backend API; brukerens valg og sideparametere. Offentlig rekordhistorikk kan åpnes for en valgt spiller via `/players/{player_id}/games/{game_id}/records`.
+- **Output:** Navigasjon til valgt spill med spill-ID, eller offentlig visning av plassering, brukernavn, rekordverdi og enhet. Tom toppliste og API-feil vises tydelig. Innlogging kreves først når brukeren vil spille.
 - **Avhengigheter:** Router og Backend API (spillkatalogen hentes fra serveren).
 - **Avgrensning:** Selve spillet kjøres av Spillplattform, ikke Launcher. Backendens `Game.id` kobles til en lokalt registrert spillmodul; navn brukes ikke som nøkkel, og backend sender ikke kjørbar kode. Ukjent modul eller inaktivt spill kan ikke startes. Testlab er en separat lokal oppføring som også virker uten backend. Vis katalogfeil separat fra dette verktøyet.
 
@@ -103,7 +103,7 @@ Tabellen viser hvilke komponenter som samarbeider, og hva de bruker hverandre ti
 | Innlogging og registrering → Backend API | Sender innloggings- eller registreringsopplysninger. Backend behandler forespørselen og sender svar tilbake. |
 | Innlogging og registrering → Router | Ber routeren åpne Launcher etter vellykket innlogging. |
 | Navigasjonsmeny → Router | Ber routeren åpne siden brukeren velger i menyen. |
-| Launcher → Backend API | Henter listen over tilgjengelige spill som vises i Launcher. |
+| Launcher → Backend API | Henter spillkatalog, offentlige topplister og valgt spillers offentlige rekordhistorikk uten krav om innlogging. |
 | Launcher → Router | Ber routeren åpne Spillplattformen med spillet brukeren har valgt. |
 | Spillplattform → Micro:bit-kommunikasjon | Sjekker om Micro:bit er tilkoblet, og mottar knappetrykk, annen spillinput og tilkoblingsstatus. |
 | Micro:bit-kommunikasjon → Fysisk Micro:bit | Håndterer forbindelsen til den fysiske enheten og oppdager når tilkoblingen brytes. |

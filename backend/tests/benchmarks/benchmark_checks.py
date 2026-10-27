@@ -7,7 +7,7 @@ import re
 import threading
 import time
 from check_registry import check
-from harness import ADA, POINTS, MODEL, request, Blocked
+from harness import ADA, POINTS, MODEL, request, Blocked, attempt_payload
 
 
 def percentile(values, fraction=.95):
@@ -31,7 +31,7 @@ def summarize(samples):
 def sample(e,index,operation,scheduled,player_index=None):
     player_index=index%30 if player_index is None else player_index
     player=e.players[player_index][0];game=e.games[player_index%10][0]
-    start=time.perf_counter();db_ms=None;error=None;code=None;http_ms=None
+    start=time.perf_counter();db_ms=None;error=None;code=None;http_ms=None;payload=None
     try:
         if operation=='leaderboard':
             method,path='GET',f'/games/{game}/leaderboard?page_size=30'
@@ -42,10 +42,11 @@ def sample(e,index,operation,scheduled,player_index=None):
         else:
             method,path='POST',f'/games/{game}/results'
             value=50000-index if player_index%10==1 else 1000+index
-            response=e.api(method,path,{'value':value},player,timeout=10,validate_response=False)
+            payload=attempt_payload(value)
+            response=e.api(method,path,payload,player,timeout=10,validate_response=False)
         http_ms=(time.perf_counter()-start)*1000
         code,headers,body=response
-        if code not in ((200,201) if operation=='result' else (200,)):error='HTTP_'+str(code)
+        if code != (201 if operation=='result' else 200):error='HTTP_'+str(code)
         # Required test instrumentation measures backend request for DB operation
         # (including pool wait) through committed completion, per contract 1.4.
         match=re.search(r'(?:^|,)\s*db\s*;\s*dur=([0-9]+(?:\.[0-9]+)?)',headers.get('server-timing',''))
@@ -53,10 +54,15 @@ def sample(e,index,operation,scheduled,player_index=None):
         from protocol_checks import validate
         validate(method,path,response)
         if operation=='session' and code==200 and body['player']['id']!=player:error='WRONG_PLAYER'
-        if operation=='result' and code in (200,201) and body['current_record']['player_id']!=player:error='WRONG_PLAYER'
+        if operation=='result' and code in (200,201):
+            attempt=body['attempt']
+            if (attempt['player_id'],attempt['game_id'],attempt['id'],attempt['status'],attempt['value']) != (
+                    player,game,payload['attempt_id'],'completed',value):error='WRONG_ATTEMPT'
+            if body['current_record']['player_id']!=player:error='WRONG_PLAYER'
     except Exception as exc:error=type(exc).__name__
     return {'operation':operation,'http_ms':http_ms if http_ms is not None else (time.perf_counter()-start)*1000,'db_ms':db_ms,
-            'dispatch_lag_ms':max(0,start-scheduled)*1000,'status':code,'error':error}
+            'dispatch_lag_ms':max(0,start-scheduled)*1000,'status':code,'error':error,
+            'attempt_id':payload['attempt_id'] if payload else None}
 
 
 def workload(e,seconds,offset=0):
@@ -104,6 +110,7 @@ def http_db(e):
         if phase=='with_ai':
             e.require('ai');real_model_metadata(e)
         e.reset_data(large=True)
+        fixture_counts=dict(e.fixture_counts)
         e.ai_relay.reset();e.model_relay.reset()
         samples=[];stop=threading.Event();ai_calls=[]
         def monitor():
@@ -136,7 +143,8 @@ def http_db(e):
                         return sample(e,next_index+i,operation,time.perf_counter(),0 if operation=='result' and repetition%2==0 else i)
                     with ThreadPoolExecutor(max_workers=30) as pool:peaks.extend(pool.map(burst,range(30)))
                     next_index+=30
-            all_results[phase]={'warmup':warm,'normal':normal,'peaks':peaks,'summary':summarize(normal),
+            all_results[phase]={'fixture_counts':fixture_counts,
+                                'warmup':warm,'normal':normal,'peaks':peaks,'summary':summarize(normal),
                                 'resource_samples':samples,'ai_calls':ai_calls}
             e.measurements['http_db']=all_results
         finally:
@@ -144,6 +152,8 @@ def http_db(e):
             for thread in threads:thread.join(timeout=66)
         time.sleep(3)
         all_results[phase]['open_transactions_after_drain']=e.scalar("SELECT count(*) FROM pg_stat_activity WHERE usename IN ('backend_app','ai_reader') AND xact_start IS NOT NULL")
+        all_results[phase]['final_counts']={table:e.scalar(f'SELECT count(*) FROM app.{table}')
+                                           for table in ('records','attempts')}
     # Evaluate only after both phases have been recorded, including regressions.
     assessment=assess_http_db(all_results)
     e.measurements['http_db_assessment']=assessment

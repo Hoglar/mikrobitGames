@@ -134,6 +134,12 @@ class HTTPHarnessTests(unittest.TestCase):
         with self.assertRaises(AssertionError):validate('POST','/auth/logout',(204,{},'unexpected'))
 
     def test_commit_fault_drops_ack_after_record_insert(self):
+        self.check_commit_fault(b'INSERT INTO app.records VALUES (1)')
+
+    def test_commit_fault_drops_ack_after_incomplete_attempt_insert(self):
+        self.check_commit_fault(b'INSERT INTO app.attempts VALUES (1)')
+
+    def check_commit_fault(self, insert):
         from fault_proxy import CommitFaultProxy
         listener=socket.socket();listener.bind(('127.0.0.1',0));listener.listen()
         errors=[]
@@ -149,7 +155,7 @@ class HTTPHarnessTests(unittest.TestCase):
         proxy=CommitFaultProxy(listener.getsockname()[1]);proxy.arm.set()
         try:
             with socket.create_connection(('127.0.0.1',proxy.port),timeout=3) as conn:
-                conn.sendall(b'INSERT INTO app.records VALUES (1)')
+                conn.sendall(insert)
                 self.assertEqual(conn.recv(1024),b'')
             self.assertTrue(proxy.triggered.wait(2))
         finally:proxy.close();listener.close();thread.join(timeout=3)
@@ -172,6 +178,12 @@ class ReportingTests(unittest.TestCase):
         self.assertEqual(series_key(a),series_key(b))
         b['environment']['model_digest']='different'
         self.assertNotEqual(series_key(a),series_key(b))
+
+    def test_changed_control_version_never_joins_legacy_series(self):
+        old={'control_digest':'same','environment':{},'machine':'host'}
+        current=dict(old,control_version=2)
+        self.assertNotEqual(series_key(old),series_key(current))
+        self.assertNotEqual(series_key(dict(old,control_version=1)),series_key(current))
 
     def test_no_curve_for_incomplete_run(self):
         with tempfile.TemporaryDirectory() as directory:

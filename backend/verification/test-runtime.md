@@ -1,6 +1,6 @@
 # Teknisk design: interne grensesnitt og testtilkobling
 
-**Revisjon 2026-10-27:** Spesifikasjonene er oppdatert til API 0.2.0, databasekontrakt 1.2 og modellformat 2. Eksisterende kjørbar test-/kontrollkode gjelder tidligere rekordmodell og kan ikke verifisere denne revisjonen før [tilpasningene](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester) er gjennomført. Modellsettet skal bli 24/4/4; dagens verktøy er fortsatt 20/4/4. Dette er dokumentasjonskontroll, ikke bestått produkttest.
+**Revisjon 2026-10-27:** Test-/kontrollkoden er tilpasset API 0.2.0, databasekontrakt 1.2 og modellformat 2. Kontrollversjon 2 bruker 24/4/4 modellpunkter og skiller måleserien fra den tidligere versjonen. Se [endringsoversikten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester). Kontrollverktøyenes egne tester er kjørt; produktimplementasjon og faktiske produktmålinger gjenstår.
 
 Dette dokumentet eier de konkrete interne designvalgene som implementasjonen og testpakken deler: oppstart, miljøvariabler, funksjonssignaturer, modellmeldinger og instrumentering. Det ligger ved testverktøyene, men inngår i designgrunnlaget for første implementasjon. Funksjonskrav og sikkerhetsgrenser kommer fra [kontraktene og modulkravene](../spec/README.md); testtilkoblingen skal ikke innføre nye produktkrav. Endres et internt grensesnitt, oppdateres dette dokumentet, berørte kall og tester sammen etter reglene i implementeringsplanen.
 
@@ -56,6 +56,7 @@ Testtoken sendes som tekst i cookie; `token_hash` beregnes som SHA-256 av cookie
 | --- | --- |
 | `score_rules.py` | `is_improvement(value, previous, direction) -> bool`; `previous=None` er første rekord. |
 | Samme | `validate_score(value, min_value, max_value)`; avvis med `ValueError`/`TypeError`, inkludert boolske verdier. |
+| Samme | `validate_attempt(status, value, min_value, max_value)`; `completed` bruker sluttresultatgrensene, `incomplete` tillater `None` eller sikkert ikke-negativt heltall uten sluttresultatgrensene. Ukjent status/ugyldig verdi gir `ValueError`/`TypeError`. Validering gjør ikke et ufullført forsøk rekordberettiget. |
 | Samme | `rank_scores([(player_id, value), ...], direction) -> [(rank, player_id, value), ...]`; delt plassering 1,1,3 og stabil ID-sortering. |
 | `auth_service.py` | `normalize_username(text) -> str`; små ASCII-bokstaver, `ValueError` ved ugyldig navn. |
 | Samme | `session_expiry(created_at, renewed_at) -> datetime`; tidligste av siste fornyelse + 259 200 sekunder og opprettelse + 2 592 000 sekunder. |

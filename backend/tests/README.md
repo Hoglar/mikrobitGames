@@ -1,6 +1,6 @@
 # Backend-tester
 
-**Revisjon 2026-10-27:** Spesifikasjonene er oppdatert til API 0.2.0, databasekontrakt 1.2 og modellformat 2. Eksisterende kjørbar test-/kontrollkode gjelder tidligere rekordmodell og kan ikke verifisere denne revisjonen før [tilpasningene](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester) er gjennomført. Modellsettet skal bli 24/4/4; dagens verktøy er fortsatt 20/4/4. Dette er dokumentasjonskontroll, ikke bestått produkttest.
+**Revisjon 2026-10-27:** Test-/kontrollkoden er tilpasset API 0.2.0, databasekontrakt 1.2 og modellformat 2. Kontrollversjon 2 bruker 24/4/4 modellpunkter og skiller måleserien fra den tidligere versjonen. Se [endringsoversikten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester). Kontrollverktøyenes egne tester er kjørt; produktimplementasjon og faktiske produktmålinger gjenstår.
 
 **Kjør hele testfasen med `./backend/check`.** [Kjøreguiden](../verification/README.md) viser engangsoppsett, oppdatering av serverklonen og hvordan rapporten leses. [Testgrensesnittene](../verification/test-runtime.md) er input til implementasjonen.
 
@@ -14,8 +14,8 @@
 | [Modelluttrekk](../verification/model_checks.py) | PostgreSQL-kataloger, OpenAPI og komponentavhengigheter mot uavhengig fasit. |
 | [Kontrollverktøyenes tester](verification/) | Bevisste modellavvik, manglende målinger, FoM-vekter, reléer, feilinjeksjon og rapportering. |
 
-Testfasiten kommer fra [DB-planen](../spec/test-plan.md), [backendplanen](../spec/backend-module.md) og [AI-planen](../spec/ai-module.md). [OpenAPI for kontrakt 1.3](../../spec/contracts/webapp-backend/openapi.yaml), versjon 0.2.0, er gjeldende implementeringsgrunnlag; kjørbare kontrakttester må tilpasses.
+Testfasiten kommer fra [DB-planen](../spec/test-plan.md), [backendplanen](../spec/backend-module.md) og [AI-planen](../spec/ai-module.md). [OpenAPI for kontrakt 1.3](../../spec/contracts/webapp-backend/openapi.yaml), versjon 0.2.0, er gjeldende implementeringsgrunnlag; kjørbare kontrakttester følger denne revisjonen.
 
-Kontrollkoblingen er eksplisitt: integrasjon/benchmark har `@check(id, gruppe, ...)`, mens enhetstestene kobles til gruppene i `pipeline.unit_group`. Alle deltester i en gruppe må bestå. Modellpunktene skal følge 24/4/4-fordelingen i [implementeringsplanen](../spec/implementation-plan.md). Verktøyenes egne tester teller aldri som produktets FoM.
+Kontrollkoblingen er eksplisitt: integrasjon/benchmark har `@check(id, gruppe, ...)`, mens enhetstestene kobles til gruppene i `pipeline.unit_group`. Alle deltester i en gruppe må bestå. Modellpunktene følger 24/4/4-fordelingen i [implementeringsplanen](../spec/implementation-plan.md). Verktøyenes egne tester teller aldri som produktets FoM.
 
 Kontroller av faktiske komponenter kan først bestå når komponentene er implementert. Testpakken er ikke bevis på at database, backend eller AI allerede virker. Offentlig publisering, faktisk nettleser og Micro:bit-demonstrasjon inngår også ved systemleveransen.

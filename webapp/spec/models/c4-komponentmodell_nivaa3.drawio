@@ -40,7 +40,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="B5ffPejdYstvTyzY7kfC-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Launcher" vertex="1">
+        <mxCell id="B5ffPejdYstvTyzY7kfC-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Launcher&lt;br&gt;Spill og offentlige topplister" vertex="1">
           <mxGeometry height="60" width="120" x="60" y="185" as="geometry" />
         </mxCell>
         <mxCell id="OIb666_q8W5nFm19aQrx-2" edge="1" parent="1" source="B5ffPejdYstvTyzY7kfC-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="tnxjoFmZvHlBDLSw9lDT-12">
@@ -173,7 +173,7 @@
             <mxPoint x="190" y="880" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="OIb666_q8W5nFm19aQrx-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Henter tilgjengelige spill" vertex="1">
+        <mxCell id="OIb666_q8W5nFm19aQrx-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Spill og topplister" vertex="1">
           <mxGeometry height="30" width="90" x="60" y="860" as="geometry" />
         </mxCell>
         <mxCell id="OIb666_q8W5nFm19aQrx-15" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="ber router om å åpne dashboard når spil avsluttes" vertex="1">

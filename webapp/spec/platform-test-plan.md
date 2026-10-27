@@ -14,5 +14,6 @@
 | TWEB-08 | Profil viser skrivebeskyttede felt. Passordendring/sletting krever gjeldende passord og avslutter sesjoner. Kontosletting fjerner privat og offentlig historikk. |
 | TWEB-09 | AI viser ren tekst, håndterer ok/no_data/cannot_answer og tekniske feil uten å stoppe spilling. Spørsmål er selvstendige, uten automatiske omforsøk. Privat forsøkshistorikk sendes ikke som kontekst. |
 | TWEB-10 | Testlab kan åpnes fra Launcher uten konto eller backend, også mens katalogkallet feiler. Ingen sesjonsfornyelse eller resultatinnsending. Sensor/output krever klar forbindelse. |
+| TWEB-11 | Åpne Launcher, et spills toppliste og valgt spillers offentlige rekordhistorikk uten cookie. Sesjonsoppslag med 401 skal ikke sende brukeren bort fra offentlig visning. Kontroller rangering, enhet, sideinndeling, tom liste og feiltilstand. Spilling og privat Dashboard krever fortsatt innlogging; ingen private forsøk vises offentlig. |
 
 Bruk kontrollerte API-svar for frontendtester og faktisk backend ved systemintegrasjon. Test også proxy-/nettverksfeil uten JSON. Micro:bit-bibliotekets GI-tester og Testlabs TLAB-tester beholdes som egne kontrollsett. Rapporter PASS/FAIL/SKIPPED/BLOCKED med versjon og miljø; planen er ikke bevis på beståtte tester.
