@@ -1,5 +1,7 @@
 # Testfasen – én kommando
 
+**Revisjon 2026-10-27:** Spesifikasjonene er oppdatert til API 0.2.0, databasekontrakt 1.2 og modellformat 2. Eksisterende kjørbar test-/kontrollkode gjelder tidligere rekordmodell og kan ikke verifisere denne revisjonen før [tilpasningene](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester) er gjennomført. Modellsettet skal bli 24/4/4; dagens verktøy er fortsatt 20/4/4. Dette er dokumentasjonskontroll, ikke bestått produkttest.
+
 **Vanlig bruk:** Kjør `./backend/check` fra prosjektroten. Den starter hele den automatiserte backend-testpakken. Du trenger ikke starte database, API, AI eller flere testprogrammer manuelt.
 
 Testkode og benchmark er skrevet før komponentene. Så lenge migreringer eller tjenester mangler, viser rapporten **BLOCKED**. Det er ikke en bestått test eller en baseline.

@@ -17,4 +17,4 @@ Se [ADR-001](../spec/decisions/adr-001-direkte-datatilgang-for-ai.md) om AI-tilg
 - [verification/](verification/README.md): verifikasjonsverktøy.
 - [results/](results/README.md): dokumenterte resultater.
 
-Hele den automatiserte testfasen kjøres med `./backend/check` fra prosjektroten. Se [kjøreguiden](verification/README.md) for engangsoppsett på Parrot og hvordan rapportene leses. Testpakken er skrevet; komponentene er ennå ikke implementert, så disse kontrollene vil foreløpig vise BLOCKED. Se også [felles prosjektstruktur](../docs/project-structure.md).
+Hele den automatiserte testfasen kjøres med `./backend/check` fra prosjektroten. Se [kjøreguiden](verification/README.md) for engangsoppsett på Parrot og hvordan rapportene leses. Testpakken er skrevet for tidligere rekordmodell. Før kontrollene brukes mot API 0.2.0 og den utvidede datamodellen, må de [tilpasses](../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester). Komponentene er heller ikke implementert; ingen produktverifisering er utført. Se også [felles prosjektstruktur](../docs/project-structure.md).

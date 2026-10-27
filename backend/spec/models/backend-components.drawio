@@ -19,7 +19,7 @@
         <mxCell id="auth_service" value="&lt;b&gt;auth_service&lt;/b&gt;&lt;br&gt;Konto og sesjoner" vertex="1" parent="api" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;">
           <mxGeometry as="geometry" x="40" y="180" width="140" height="60" />
         </mxCell>
-        <mxCell id="score_service" value="&lt;b&gt;score_service&lt;/b&gt;&lt;br&gt;Spilldata og rekorder" vertex="1" parent="api" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;">
+        <mxCell id="score_service" value="&lt;b&gt;score_service&lt;/b&gt;&lt;br&gt;Private forsøk og offentlige rekorder" vertex="1" parent="api" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;">
           <mxGeometry as="geometry" x="220" y="180" width="140" height="60" />
         </mxCell>
         <mxCell id="ai_gateway" value="&lt;b&gt;ai_gateway&lt;/b&gt;&lt;br&gt;AI-kontrakt og frist" vertex="1" parent="api" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;">
@@ -67,7 +67,7 @@
         <mxCell id="gateway_ai" source="ai_gateway" target="ai_service" value="Lokal HTTP" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;fontSize=11;defaultLabelBackgroundColor=page;">
           <mxGeometry as="geometry" relative="1" />
         </mxCell>
-        <mxCell id="legend" value="Piler viser kall/avhengigheter; svar følger samme vei tilbake. Stiplet pil gjelder bare readiness-kontroll.&lt;br&gt;Spilleridentitet kommer fra sesjonen. Skriving kontrollerer sesjonen på nytt i transaksjonen.&lt;br&gt;Ingen DB-lås eller forbindelse holdes mens AI arbeider." vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;text;fillColor=none;strokeColor=none;align=left;fontSize=13;">
+        <mxCell id="legend" value="Piler viser kall/avhengigheter; svar følger samme vei tilbake. Stiplet pil gjelder bare readiness-kontroll.&lt;br&gt;Spilleridentitet kommer fra sesjonen. Skriving kontrollerer sesjonen på nytt i transaksjonen.&lt;br&gt;Forsøk leses bare av eieren; AI ser offentlige rekorder.&lt;br&gt;Ingen DB-lås eller forbindelse holdes mens AI arbeider." vertex="1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;text;fillColor=none;strokeColor=none;align=left;fontSize=13;">
           <mxGeometry as="geometry" x="40" y="740" width="1080" height="70" />
         </mxCell>
       </root>

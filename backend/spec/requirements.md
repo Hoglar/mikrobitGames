@@ -1,10 +1,10 @@
 # Krav til databasedelen – WBS 5.1
 
-**Status:** Ferdigstilt for [WBS 5.1 / issue #15](https://github.com/Hoglar/mikrobitGames/issues/15), 2026-10-24. Dette dokumentet fordeler databasedelens krav og ansvar. Testkode er nå skrevet; databaseimplementasjon og produktmålinger gjenstår. Teknisk struktur eies av datamodellen, og byggerekkefølgen av [implementeringsplanen](implementation-plan.md).
+**Status:** Samordnet revisjon 2026-10-27; godkjenningen nedenfor gjaldt tidligere rekordmodell. [Endringsoversikt](../../spec/contracts/webapp-backend/alignment.md). Tidligere: ferdigstilt for [WBS 5.1 / issue #15](https://github.com/Hoglar/mikrobitGames/issues/15), 2026-10-24. Dette dokumentet fordeler databasedelens krav og ansvar. Testkode er nå skrevet; databaseimplementasjon og produktmålinger gjenstår. Teknisk struktur eies av datamodellen, og byggerekkefølgen av [implementeringsplanen](implementation-plan.md).
 
 ## Grunnlag og modell
 
-Databasen lagrer spillere, sesjoner, spill og historiske personlige rekorder i PostgreSQL. [Datamodellen](models/data-model.md) definerer felt og regler; [ER-diagrammet](models/database-er.drawio) viser strukturen. [database-schema.json](models/database-schema.json) er en maskinlesbar forventning for den avgrensede modellkontrollen i [testplanen](test-plan.md).
+Databasen lagrer spillere, sesjoner, spill, private forsøk og offentlige historiske personlige rekorder i PostgreSQL. [Datamodellen](models/data-model.md) definerer felt og regler; [ER-diagrammet](models/database-er.drawio) viser strukturen. [database-schema.json](models/database-schema.json) er en maskinlesbar forventning for den avgrensede modellkontrollen i [testplanen](test-plan.md).
 
 Krav-ID-er og prioriteringer videreføres fra [kontrakt 1.4](contracts/backend-database/contract.md) og [kontrakt 1.6](contracts/ai-database/contract.md). Kontraktene er autoritative for oppførsel og tilgang. Endringer i modellen oppdaterer diagram, maskinlesbar forventning og berørte tester sammen.
 
@@ -12,8 +12,8 @@ Krav-ID-er og prioriteringer videreføres fra [kontrakt 1.4](contracts/backend-d
 
 | Kravgrunnlag | Databasens ansvar | Verifisering |
 | --- | --- | --- |
-| DB-001 | Riktige felter, datatyper, obligatoriske verdier, nøkler og radlokale begrensninger. Bevare alle registrerte rekordoppføringer frem til kontosletting. | TDB-01–04 |
-| DB-002 | Støtte transaksjoner, låsing og atomisk sletting av spiller med sesjoner og rekorder. | TDB-04, TDB-06; samtidighet gjennom integrasjon etter 1.4. |
+| DB-001 | Riktige felter, datatyper, obligatoriske verdier, nøkler og radlokale begrensninger. Bevare alle registrerte forsøk og rekordoppføringer frem til kontosletting. | TDB-01–04 |
+| DB-002 | Støtte transaksjoner, låsing og atomisk sletting av spiller med sesjoner, forsøk og rekorder. | TDB-04, TDB-06; samtidighet gjennom integrasjon etter 1.4. |
 | DB-003, AI-005 | Egne roller for backend og AI. Bare tillatte operasjoner og data skal være tilgjengelige, også når tilgangen prøves direkte mot PostgreSQL. | TDB-05 |
 | DB-004–005 | Bekreftede lagringer tåler omstart; rollback etterlater ikke delvise endringer. Databasefeil er tilgjengelige for tjenestens feilhåndtering. | TDB-06–07 |
 | DB-006–007, AI-008 | Støtte de avtalte belastnings- og ressursgrensene. | TDB-08 og integrasjon mot faktisk backend og AI. |
@@ -26,7 +26,7 @@ Backend avgjør om et resultat er en ny rekord, kontrollerer spillerens innloggi
 ## Tilgang og livsløp
 
 - `backend_app` får rettighetene definert i 1.4, inkludert nødvendig oppretting, lesing, oppdatering og sletting. Innloggings- og eierskapskontroll skjer i backend.
-- `ai_reader` får bare lesetilgang gjennom `ai_read.players`, `ai_read.games` og `ai_read.records` etter 1.6. Passordhash og sesjoner skal være utilgjengelige.
+- `ai_reader` får bare lesetilgang gjennom `ai_read.players`, `ai_read.games` og `ai_read.records` etter 1.6. Passordhash, sesjoner og hele den private forsøkshistorikken skal være utilgjengelige, også for egne data.
 - Oppretting og endring av struktur, visninger og rettigheter skjer gjennom versjonerte migreringer med en separat oppsettsrolle. Testene bruker tjenestenes egne roller når deres tilgang undersøkes.
 - SQL-filteret, verktøytilgangen og Linux-isolasjonen for AI implementeres og testes i AI-modulen og driftsoppsettet. Databasetester gir bevis for databasegrensen.
 

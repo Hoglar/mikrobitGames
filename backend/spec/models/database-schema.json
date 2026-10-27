@@ -1,10 +1,9 @@
 {
-  "format_version": 1,
+  "format_version": 2,
   "source_documents": [
     "data-model.md",
     "../contracts/ai-database/contract.md"
   ],
-  "all_table_columns_not_null": true,
   "tables": {
     "app.players": {
       "columns": {
@@ -14,6 +13,7 @@
         "password_hash": "text",
         "created_at": "timestamptz"
       },
+      "not_null_columns": ["id", "username", "username_key", "password_hash", "created_at"],
       "generated_columns": {"username_key": "lower(username)"},
       "primary_key": ["id"],
       "unique_keys": [["username_key"]],
@@ -29,6 +29,7 @@
         "absolute_expires_at": "timestamptz",
         "expires_at": "timestamptz"
       },
+      "not_null_columns": ["id", "token_hash", "player_id", "created_at", "renewed_at", "absolute_expires_at", "expires_at"],
       "generated_columns": {},
       "primary_key": ["id"],
       "unique_keys": [["token_hash"]],
@@ -46,6 +47,7 @@
         "max_value": "bigint",
         "is_active": "boolean"
       },
+      "not_null_columns": ["id", "name", "score_unit", "ranking_direction", "min_value", "max_value", "is_active"],
       "generated_columns": {},
       "primary_key": ["id"],
       "unique_keys": [],
@@ -59,12 +61,71 @@
         "value": "bigint",
         "created_at": "timestamptz"
       },
+      "not_null_columns": ["id", "player_id", "game_id", "value", "created_at"],
       "generated_columns": {},
       "primary_key": ["id"],
       "unique_keys": [["player_id", "game_id", "value"]],
       "foreign_keys": [
         {"columns": ["player_id"], "references": "app.players", "referenced_columns": ["id"], "on_delete": "CASCADE"},
         {"columns": ["game_id"], "references": "app.games", "referenced_columns": ["id"], "on_delete": "RESTRICT"}
+      ]
+    },
+    "app.attempts": {
+      "columns": {
+        "player_id": "uuid",
+        "id": "uuid",
+        "game_id": "uuid",
+        "status": "varchar(16)",
+        "value": "bigint",
+        "created_at": "timestamptz",
+        "record_outcome": "varchar(16)",
+        "record_id": "uuid"
+      },
+      "not_null_columns": [
+        "player_id",
+        "id",
+        "game_id",
+        "status",
+        "created_at",
+        "record_outcome"
+      ],
+      "generated_columns": {},
+      "primary_key": [
+        "player_id",
+        "id"
+      ],
+      "unique_keys": [],
+      "foreign_keys": [
+        {
+          "columns": [
+            "player_id"
+          ],
+          "references": "app.players",
+          "referenced_columns": [
+            "id"
+          ],
+          "on_delete": "CASCADE"
+        },
+        {
+          "columns": [
+            "game_id"
+          ],
+          "references": "app.games",
+          "referenced_columns": [
+            "id"
+          ],
+          "on_delete": "RESTRICT"
+        },
+        {
+          "columns": [
+            "record_id"
+          ],
+          "references": "app.records",
+          "referenced_columns": [
+            "id"
+          ],
+          "on_delete": "CASCADE"
+        }
       ]
     }
   },

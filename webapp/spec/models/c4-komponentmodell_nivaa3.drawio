@@ -50,7 +50,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="B5ffPejdYstvTyzY7kfC-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Profilbruker" vertex="1">
+        <mxCell id="B5ffPejdYstvTyzY7kfC-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Profil: visning, passord og sletting" vertex="1">
           <mxGeometry height="40" width="140" x="280" y="330" as="geometry" />
         </mxCell>
         <mxCell id="OIb666_q8W5nFm19aQrx-22" edge="1" parent="1" source="B5ffPejdYstvTyzY7kfC-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="OIb666_q8W5nFm19aQrx-8">
@@ -99,7 +99,7 @@
         <mxCell id="tnxjoFmZvHlBDLSw9lDT-17" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Henter info om bruker" vertex="1">
           <mxGeometry height="30" width="140" x="40" y="900" as="geometry" />
         </mxCell>
-        <mxCell id="tnxjoFmZvHlBDLSw9lDT-25" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Henter tidligere spillresultat" vertex="1">
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-25" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Henter egne private forsøk og offentlige rekorder" vertex="1">
           <mxGeometry height="30" width="110" x="150" y="590" as="geometry" />
         </mxCell>
         <mxCell id="tnxjoFmZvHlBDLSw9lDT-27" edge="1" parent="1" source="tnxjoFmZvHlBDLSw9lDT-11" style="endArrow=none;html=1;rounded=0;defaultLabelBackgroundColor=page;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=block;startFill=1;" target="tnxjoFmZvHlBDLSw9lDT-47" value="">
@@ -129,7 +129,7 @@
             <mxPoint x="170.00000000000006" y="839.3800000000001" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="tnxjoFmZvHlBDLSw9lDT-42" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Sender spillresultat for lagring" vertex="1">
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-42" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Sender forsøk med ID, status og eventuell verdi" vertex="1">
           <mxGeometry height="30" width="80" x="80" y="800" as="geometry" />
         </mxCell>
         <mxCell id="tnxjoFmZvHlBDLSw9lDT-28" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Mottar spillinputt og sjekker tilkoblingsstatus" vertex="1">
@@ -144,7 +144,7 @@
         <mxCell id="tnxjoFmZvHlBDLSw9lDT-52" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Kommuniserer fysisk med enhet" vertex="1">
           <mxGeometry height="30" width="60" x="480" y="840" as="geometry" />
         </mxCell>
-        <mxCell id="tnxjoFmZvHlBDLSw9lDT-58" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Henter offentlig high-score data og sender spørsmål" vertex="1">
+        <mxCell id="tnxjoFmZvHlBDLSw9lDT-58" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Sender selvstendig spørsmål om offentlige rekorder" vertex="1">
           <mxGeometry height="30" width="80" x="590" y="650" as="geometry" />
         </mxCell>
         <mxCell id="tnxjoFmZvHlBDLSw9lDT-60" parent="1" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=none;strokeColor=#3333FF;" value="" vertex="1">

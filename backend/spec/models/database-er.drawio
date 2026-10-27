@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" type="device">
   <diagram id="database-er" name="Datamodell">
-    <mxGraphModel dx="1320" dy="1180" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1320" pageHeight="1180" math="0" shadow="0" adaptiveColors="auto" background="#FFFFFF">
+    <mxGraphModel dx="1320" dy="1640" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1320" pageHeight="1640" math="0" shadow="0" adaptiveColors="auto" background="#FFFFFF">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -259,12 +259,27 @@
         <mxCell id="game_records" value="ON DELETE RESTRICT" style="edgeStyle=entityRelationEdgeStyle;segment=40;rounded=0;html=1;startArrow=ERmandOne;startSize=16;endArrow=ERzeroToMany;endSize=20;strokeWidth=1.5;strokeColor=#475569;fontFamily=Helvetica;fontSize=11;fontColor=#475569;labelBackgroundColor=default;defaultLabelBackgroundColor=page;" edge="1" source="games_id" target="records_game_id" parent="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="legend" value="&lt;b&gt;Slik leses modellen&lt;/b&gt;&lt;br&gt;PK = primærnøkkel · FK = fremmednøkkel · UQ = unik verdi eller kombinasjon.&lt;br&gt;Alle felt er obligatoriske (NOT NULL). En forelder kan ha 0..* barn; hvert barn har nøyaktig 1 forelder.&lt;br&gt;CASCADE: tilhørende rader slettes med spilleren. RESTRICT: et spill med rekorder kan ikke slettes." style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=14;verticalAlign=top;spacingTop=8;;html=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1020" width="1160" height="100" as="geometry" />
+        <mxCell id="legend" value="&lt;b&gt;Slik leses modellen&lt;/b&gt;&lt;br&gt;PK = primærnøkkel · FK = fremmednøkkel · UQ = unik verdi eller kombinasjon.&lt;br&gt;Bare attempts.value og attempts.record_id kan være NULL. En forelder kan ha 0..* barn; spiller og spill er obligatorisk per forsøk; rekordreferansen er valgfri.&lt;br&gt;CASCADE: tilhørende rader slettes med spilleren. RESTRICT: et spill med forsøk eller rekorder kan ikke slettes." style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=14;verticalAlign=top;spacingTop=8;;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1450" width="1160" height="100" as="geometry" />
         </mxCell>
         <mxCell id="reference" value="Feltregler og tidsgrenser: data-model.md · AI-lesetilgang: kontrakt 1.6 (ai_read-visninger)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontFamily=Helvetica;fontColor=#243247;fontSize=12;fontColor=#596579;;html=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="1130" width="1160" height="30" as="geometry" />
+          <mxGeometry x="40" y="1570" width="1160" height="30" as="geometry" />
         </mxCell>
+        <mxCell id="attempts" value="app.attempts · privat" style="swimlane;startSize=40;horizontal=1;rounded=0;collapsible=0;fillColor=#D5E8D4;swimlaneFillColor=#FFFFFF;strokeColor=#82B366;fontSize=19;fontStyle=1;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="980" width="640" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="attempts_player_id" value="PK, FK: player_id · uuid" style="text;html=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#E2E8F0;" vertex="1" parent="attempts"><mxGeometry x="0" y="40" width="640" height="32" as="geometry" /></mxCell>
+        <mxCell id="attempts_id" value="PK: id · uuid (klientens attempt_id)" style="text;html=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#E2E8F0;" vertex="1" parent="attempts"><mxGeometry x="0" y="72" width="640" height="32" as="geometry" /></mxCell>
+        <mxCell id="attempts_game_id" value="FK: game_id · uuid" style="text;html=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#E2E8F0;" vertex="1" parent="attempts"><mxGeometry x="0" y="104" width="640" height="32" as="geometry" /></mxCell>
+        <mxCell id="attempts_status" value="status · varchar(16)" style="text;html=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#E2E8F0;" vertex="1" parent="attempts"><mxGeometry x="0" y="136" width="640" height="32" as="geometry" /></mxCell>
+        <mxCell id="attempts_value" value="NULL: value · bigint" style="text;html=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#E2E8F0;" vertex="1" parent="attempts"><mxGeometry x="0" y="168" width="640" height="32" as="geometry" /></mxCell>
+        <mxCell id="attempts_created_at" value="created_at · timestamptz" style="text;html=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#E2E8F0;" vertex="1" parent="attempts"><mxGeometry x="0" y="200" width="640" height="32" as="geometry" /></mxCell>
+        <mxCell id="attempts_record_outcome" value="record_outcome · varchar(16)" style="text;html=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#E2E8F0;" vertex="1" parent="attempts"><mxGeometry x="0" y="232" width="640" height="32" as="geometry" /></mxCell>
+        <mxCell id="attempts_record_id" value="FK, NULL: record_id · uuid" style="text;html=1;align=left;spacingLeft=12;fontSize=14;strokeColor=#E2E8F0;" vertex="1" parent="attempts"><mxGeometry x="0" y="264" width="640" height="32" as="geometry" /></mxCell>
+        <mxCell id="attempts_note" value="PK (player_id, id). Samme ID/body gir ingen ny rad.&lt;br&gt;completed krever verdi; incomplete kan ha NULL.&lt;br&gt;Bare completed kan gi rekord. record_outcome/-id beholdes.&lt;br&gt;Ingen AI-visning av forsøk." style="text;html=1;align=left;spacingLeft=12;fontSize=12;" vertex="1" parent="attempts"><mxGeometry x="0" y="300" width="640" height="80" as="geometry" /></mxCell>
+        <mxCell id="player_attempts" value="ON DELETE CASCADE" style="edgeStyle=entityRelationEdgeStyle;html=1;startArrow=ERmandOne;endArrow=ERzeroToMany;strokeColor=#475569;" edge="1" source="players_id" target="attempts_player_id" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="game_attempts" value="ON DELETE RESTRICT" style="edgeStyle=entityRelationEdgeStyle;html=1;startArrow=ERmandOne;endArrow=ERzeroToMany;strokeColor=#475569;" edge="1" source="games_id" target="attempts_game_id" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="record_attempts" value="ON DELETE CASCADE" style="edgeStyle=entityRelationEdgeStyle;html=1;startArrow=ERzeroToOne;endArrow=ERzeroToMany;strokeColor=#475569;" edge="1" source="records_id" target="attempts_record_id" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

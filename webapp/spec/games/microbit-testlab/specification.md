@@ -4,7 +4,7 @@
 
 ## Formål og grensesnitt
 
-Testlab er en fri testflate i spillvelgeren. Brukeren skal kunne undersøke alle inputkilder, sende output til Micro:bit og ta opp data for senere gjennomgang. Første versjon bruker bare faktiske data fra Micro:bit V2 og har ingen poeng eller rekordlagring. Den kan foreløpig åpnes uten innlogging.
+Testlab er en fri testflate i spillvelgeren. Brukeren skal kunne undersøke alle inputkilder, sende output til Micro:bit og ta opp data for senere gjennomgang. Første versjon bruker bare faktiske data fra Micro:bit V2 og har ingen poeng eller rekordlagring. Den åpnes uten innlogging, sesjonsfornyelse eller backendregistrering som et uttrykkelig lokalt verktøy i Launcher. Tilkoblingspanelet kan åpnes uten enhet; input/output og adapterens spillsesjon krever klar forbindelse.
 
 Spillet bruker [det felles Micro:bit-API-et](../../../../spec/contracts/microbit-webapp/web-page-developer-interface.md). Sensorsemantikk, outputgrenser og kommunikasjon følger API-et og [serieprotokollen](../../../../spec/contracts/microbit-webapp/microbit-serial-protocol.md).
 

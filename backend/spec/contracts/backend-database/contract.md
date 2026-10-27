@@ -1,8 +1,8 @@
 # Kontrakt mellom Backend API og PostgreSQL
 
-**Arbeidspakke:** [WBS 1.4 / issue #4](https://github.com/Hoglar/mikrobitGames/issues/4)  
-**Versjon:** 1.1 – ferdigstilt dokumentasjonsleveranse, 2026-10-23.  
-**Status:** Gjennomgått og godkjent av prosjekteier som leveranse for WBS 1.4. Funksjonelle valg og overordnede kvalitetskrav er avklart. Sesjonsreglene i del 8 brukes i første backend-implementasjon og tester. Oppdatert 2026-10-27: frontendforløpet følger den nå godkjente kontrakten i 1.3. Ingen programvare er implementert eller testet som del av denne leveransen.
+**Arbeidspakke:** [WBS 1.4 / issue #4](https://github.com/Hoglar/mikrobitGames/issues/4)
+**Versjon:** 1.2 – samordnet revisjon, 2026-10-27.
+**Status:** Oppdatert etter brukerens valg om private spillforsøk. Godkjenningen av 1.1 gjaldt den tidligere dokumentasjonen. Denne revisjonen og API 0.2.0 er grunnlag for bestilt samordning; implementasjon og produktverifisering gjenstår. Se [endringsoversikten](../../../../spec/contracts/webapp-backend/alignment.md).
 
 Les [sammendraget som følger issue #4](README.md) først. Dette dokumentet er den detaljerte spesifikasjonen og kan brukes som oppslagsverk ved implementasjon.
 
@@ -16,17 +16,17 @@ Backend og PostgreSQL skal kjøre på samme Parrot Linux-PC med 16 GB RAM og opp
 
 ## 2. Avklarte funksjonelle valg
 
-- Spillere oppretter selv konto med brukernavn og passord. Innlogging kreves for spilling og innsending av rekorder.
+- Spillere oppretter selv konto med brukernavn og passord. Innlogging kreves for ordinære spill og innsending av forsøk. Testlab er et lokalt frontendverktøy uten innlogging eller backendlagring.
 - Topplister og tidligere rekorder/progresjon er offentlige, også uten innlogging.
 - Hvert spill bruker én numerisk resultatverdi med fast enhet. Spillet angir om høyere eller lavere verdi er bedre.
-- Bare personlige rekorder per spiller og spill lagres. Første gyldige resultat blir første rekord; senere resultater må være strengt bedre. Tidligere rekorder beholdes. Like og dårligere resultater lagres ikke.
+- Alle avsluttede spillforsøk lagres privat for eieren, både fullførte og ufullførte. Bare fullførte forsøk kan gi rekord: første gyldige sluttresultat blir første rekord, senere må være strengt bedre. Tidligere rekorder beholdes offentlig. Like og dårligere resultater lagres som forsøk uten ny rekordrad. Ufullførte forsøk har eventuell delverdi eller `null` og gir aldri rekord.
 - Topplisten inneholder bare gjeldende rekord per spiller. Like resultater gir delt plassering. Teknisk anbefaling er konkurranserangering som 1, 1, 3, med spiller-ID som stabil sekundær sortering.
 - Innloggingssesjoner lagres i databasen. Fornyelse og utløp følger arbeidsgrunnlaget i del 8. Utlogging avslutter den aktuelle sesjonen straks.
 - Passordendring krever gyldig innlogging og gjeldende passord. Alle eksisterende sesjoner avsluttes. Automatisk gjenoppretting av glemt passord inngår ikke i første versjon.
-- Kontosletting krever gyldig innlogging og bekreftelse av passord. Konto, alle sesjoner og all tilhørende rekordhistorikk slettes samlet.
+- Kontosletting krever gyldig innlogging og bekreftelse av passord. Konto, alle sesjoner og alle tilhørende forsøk og all rekordhistorikk slettes samlet.
 - Utviklerne administrerer spill. Spill med historikk deaktiveres fremfor å slettes. Spillere kan ikke redigere registrerte rekorder.
 
-Eksempel på poengspill: **100, 80, 120, 110** gir lagret historikk **100, 120** og gjeldende rekord **120**. Eksempel på tidsspill: **60 000, 65 000, 55 000, 58 000 ms** gir historikk **60 000, 55 000 ms** og gjeldende rekord **55 000 ms**.
+Eksempel på poengspill: **100, 80, 120, 110** gir fire private forsøk og offentlig rekordhistorikk **100, 120** og gjeldende rekord **120**. Eksempel på tidsspill: **60 000, 65 000, 55 000, 58 000 ms** gir fire private forsøk og rekordhistorikk **60 000, 55 000 ms** og gjeldende rekord **55 000 ms**.
 
 ## 3. Prioriterte kvalitetskrav
 
@@ -35,8 +35,8 @@ Prioritet 1 er dataintegritet og sikkerhet, prioritet 2 er pålitelighet, og pri
 | ID | Prioritet | Krav og kriterium for verifisering |
 | --- | --- | --- |
 | DB-001 | 1 | Gyldige referanser, unike brukernavn og gyldige feltverdier. Ingen ugyldig rad i testene; samtidige registreringer med samme normaliserte navn oppretter nøyaktig én konto. |
-| DB-002 | 1 | Rekordregistrering, passordendring og kontosletting er atomiske. Samtidige rekorder tilsvarer en gyldig seriell behandling. Ingen delvis lagring eller utilsiktet tap av tidligere historikk. Kontosletting er det avtalte unntaket fra bevaring av historikk. |
-| DB-003 | 1 | Innlogging og eierskap kontrolleres av backend. Ingen råpassord eller rå sesjonstoken lagres i database/logger; ingen passordhash eller sesjonsdata i offentlige svar. Databasebrukeren mangler administrator- og skjemarettigheter. Alle negative tilgangstester skal bestås. |
+| DB-002 | 1 | Lagring av forsøk med eventuell rekord, passordendring og kontosletting er atomiske. Samtidige rekorder tilsvarer en gyldig seriell behandling. Ingen delvis lagring eller utilsiktet tap av tidligere historikk. Kontosletting er det avtalte unntaket fra bevaring av historikk. |
+| DB-003 | 1 | Innlogging og eierskap kontrolleres av backend. Ingen råpassord eller rå sesjonstoken lagres i database/logger; ingen passordhash, sesjonsdata eller private forsøk i offentlige svar eller AI-datagrunnlag. Databasebrukeren mangler administrator- og skjemarettigheter. Alle negative tilgangstester skal bestås. |
 | DB-004 | 2 | Bekreftede lagringer overlever omstart av backend og database når lagringsmediet er intakt. Forventet tap etter omstart er null. Dette er ikke en garanti mot diskhavari. |
 | DB-005 | 2 | Databasefeil gir et definert feilutfall, uten falsk bekreftelse på innlogging eller lagring. Forbindelsesbrudd rundt commit kan gi ukjent utfall og håndteres etter del 7. |
 | DB-006 | 3 | Ved normalprofilen i del 9 fullføres minst 95 % av kallene innen hver operasjonstype på høyst 200 ms. Ved topper på 30 samtidige forespørsler fullføres alle innen ett sekund. Ingen uventede databasefeil eller dataintegritetsbrudd. |
@@ -76,13 +76,14 @@ Den autoritative feltspesifikasjonen og indeksplanen ligger i [datamodellen](../
 | `players` | Spiller-ID, brukernavn, normalisert unikt brukernavn, passordhash og opprettelsestidspunkt. |
 | `sessions` | Hash av tilfeldig sesjonstoken, spiller-ID, opprettelse, siste fornyelse og utløpsgrenser. Én spiller kan ha flere sesjoner. |
 | `games` | Spill-ID, navn, resultatenhet, rangeringsretning, tillatt resultatintervall og aktiv-status. |
+| `attempts` | Privat forsøk med klientens ID, spiller/spill, status, valgfri del-/sluttverdi, registreringstid og opprinnelig rekordutfall/-referanse. |
 | `records` | Rekord-ID, spiller-ID, spill-ID, resultatverdi og registreringstidspunkt. Én spiller og ett spill kan ha flere historiske rekorder. |
 
-Alle ID-er er stabile. Alle lagrede tidspunkt settes av serveren og representerer entydige tidspunkt; UTC brukes i utveksling og rapporter. Rekordtidspunktet betyr tidspunktet resultatet ble registrert, ikke en påstand fra nettleseren om når spillet fysisk ble fullført.
+Alle ID-er er stabile. Forsøks-ID genereres i frontend og er unik per spiller; øvrige ID-er genereres av backend. Alle lagrede tidspunkt settes av serveren og representerer entydige tidspunkt; UTC brukes i utveksling og rapporter. Rekordtidspunktet betyr tidspunktet resultatet ble registrert, ikke en påstand fra nettleseren om når spillet fysisk ble fullført.
 
 Anbefalt første versjon bruker brukernavn på 3–32 tegn fra `A–Z`, `a–z`, `0–9`, `_` og `-`. Store og små bokstaver skiller ikke kontoer. Passord er 12–128 Unicode-kodepunkter; passord normaliseres eller trimmes ikke. Backend håndhever passordlengden før hashing. Argon2id anbefales gjennom et etablert bibliotek, med minimumsparametere etter OWASP: 19 MiB minne, to iterasjoner og parallellitet én. Endelig bibliotek og ytelse dokumenteres ved implementasjon.
 
-Resultater lagres som heltall i spillets enhet, eksempelvis poeng eller millisekunder, innenfor spillets avtalte intervall. Desimaltid representeres dermed presist som millisekunder. Ikke-numeriske verdier, brøker, verdier utenfor intervallet og ukjente/inaktive spill avvises. Spillenes konkrete intervaller settes når spillene registreres. Første versjon støtter ingen sekundær resultatverdi for rangering.
+Fullførte resultater lagres som heltall i spillets enhet, eksempelvis poeng eller millisekunder, innenfor spillets avtalte intervall. Desimaltid representeres dermed presist som millisekunder. For fullførte forsøk avvises ikke-numeriske verdier, brøker og verdier utenfor intervallet. Ufullførte forsøk krever `value: null` eller en ikke-negativ delverdi i det sikre heltallsområdet; spillets sluttresultatintervall gjelder ikke delverdier. Ukjente spill og nye forsøk i inaktive spill avvises. Identisk omforsøk kan bekreftes etter deaktivering. Spillenes konkrete intervaller settes når spillene registreres. Første versjon støtter ingen sekundær resultatverdi for rangering.
 
 Databasen håndhever feltbegrensninger, unike verdier og fremmednøkler. Backend håndhever innlogging, passordkontroll og regler som avhenger av andre rader, inkludert om resultatet er en ny rekord. Dette skillet skal verifiseres eksplisitt; gyldig format alene beviser ikke at et nettleserrapportert resultat faktisk er oppnådd i et spill.
 
@@ -99,25 +100,28 @@ Operasjonene er logiske navn i kontrakten, ikke fastsatte HTTP-endepunkter eller
 | Fornye sesjon | Eksisterende gyldig sesjon og eksplisitt autentisert fornyelsesforespørsel | Oppdater `renewed_at` til serverens nåtid og `expires_at` til det tidligste av nåtid + 72 timer og absolutt utløp. En utløpt eller slettet sesjon gjenopplives aldri. |
 | Logge ut | Aktuell sesjon | Sesjonen slettes. Gjentatt utlogging er ufarlig og kan returnere samme vellykkede utfall. |
 | Endre passord | Gyldig sesjon, kontrollert gjeldende passord, ny hash | Oppdater hash og slett alle spillerens sesjoner i samme transaksjon. Ny innlogging kreves. |
-| Slette konto | Gyldig sesjon og kontrollert gjeldende passord | Slett spiller, alle sesjoner og alle rekorder atomisk. Spilltabellen beholdes. |
-| Registrere resultat | Gyldig sesjon, aktivt spill, gyldig resultatverdi | `created` med rekord-ID ved ny rekord, `already_recorded` med eksisterende ID ved tidligere lagret samme verdi, ellers `not_improved`. De to siste utfallene skriver ingen resultatoppføring. |
+| Slette konto | Gyldig sesjon og kontrollert gjeldende passord | Slett spiller, alle sesjoner, alle forsøk og alle rekorder atomisk. Spilltabellen beholdes. |
+| Registrere resultat | Gyldig sesjon, `attempt_id`, spill, status og verdi etter valideringsreglene | Alle nye forsøk lagres. Rekordutfall er `created`, `already_recorded`, `not_improved` eller `not_eligible`. Identisk spiller/ID og innhold returnerer tidligere forsøk; endret innhold gir `attempt_conflict`. |
+| Hente egne forsøk | Gyldig sesjon, side/sidestørrelse, valgfri spill-ID | Bare eierens forsøk, synkende på `(created_at, id)`, med total fra samme snapshot. Ukjent filterspill gir `not_found`. |
+| Hente eget enkeltforsøk | Gyldig sesjon og forsøks-ID | Eget forsøk; annen eiers eller ukjent ID gir samme `not_found`. |
 | Hente toppliste | Spill-ID, side og sidestørrelse | Én gjeldende rekord per spiller med spiller-ID, brukernavn, verdi, enhet, tidspunkt og plassering. Offentlig. Ukjent spill gir `not_found`; kjent spill uten rekorder gir tom liste. |
 | Hente personlige rekorder | Spiller-ID, side og sidestørrelse | Gjeldende rekord per spill for denne spilleren. Offentlig. |
 | Hente rekordhistorikk | Spiller-ID, spill-ID, side og sidestørrelse | Historikk sortert på registreringstidspunkt og rekord-ID. Offentlig. Ukjent spiller/spill gir `not_found`; ingen historikk gir tom liste. |
-| Administrere spill | Separat utvikler-/vedlikeholdsrolle | Opprette spill, endre visningsnavn eller deaktivere/reaktivere spill. Spill uten rekorder kan slettes. Spill med rekorder kan ikke slettes. |
+| Administrere spill | Separat utvikler-/vedlikeholdsrolle | Opprette spill, endre visningsnavn eller deaktivere/reaktivere spill. Bare spill uten forsøk og rekorder kan slettes. Spill med historikk deaktiveres. |
 
 Anbefalt sideinndeling er 30 rader som standard, maksimalt 100 og ikke-negativ sideindeks. Plassering i topplisten beregnes over hele resultatsettet før sideinndeling. Flere sideforespørsler kan vise endringer dersom nye rekorder kommer mellom kallene; en enkelt forespørsel skal være konsistent.
 
-Rangeringsretning, enhet og resultatintervall er uforanderlige etter første lagrede rekord. Et vesentlig endret spill får ny spill-ID. Deaktivering stopper nye resultater; eksisterende topplister og historikk kan fortsatt leses og merkes med spillets status. Brukernavnendring og manuell redigering/sletting av enkeltrekorder støttes ikke i første versjon. Kontosletting er en egen avtalt operasjon.
+Rangeringsretning, enhet og resultatintervall er uforanderlige etter første lagrede forsøk. Et vesentlig endret spill får ny spill-ID. Deaktivering stopper nye resultater; eksisterende topplister og historikk kan fortsatt leses og merkes med spillets status. Brukernavnendring og manuell redigering/sletting av enkeltrekorder støttes ikke i første versjon. Kontosletting er en egen avtalt operasjon.
 
-### Transaksjonsregel for rekordregistrering
+### Transaksjonsregel for forsøk og eventuell rekord
 
-1. Start transaksjon og lås den aktuelle spillerraden med `FOR UPDATE`. Dette fungerer også før spillerens første rekord og serialiserer skrivende konto-/rekordoperasjoner for spilleren.
-2. Kontroller sesjonen på nytt inne i transaksjonen. Lås deretter spillraden med `FOR SHARE` og kontroller aktiv-status og resultatregler.
-3. Undersøk om samme spiller/spill/verdi allerede er lagret. Hvis ja, returner eksisterende rekord. Ellers hent gjeldende beste verdi og sett bare inn dersom resultatet er første eller strengt bedre.
-4. Fullfør transaksjonen før resultatet bekreftes. Ingen låser holdes mens brukeren spiller eller mens passord hashes.
+1. Start transaksjon og lås spillerraden med `FOR UPDATE`. Kontroller sesjonen på nytt etter låsing.
+2. Slå opp `(player_id, attempt_id)` før aktiv-status og resultatregler kontrolleres. Hvis forsøket finnes, sammenlign spill-ID, status og verdi (med null-likhet). Identisk innhold returnerer tidligere forsøk og lagret rekordutfall/-referanse uten skriving, også for nå inaktivt spill. Endret innhold gir `attempt_conflict`. Gjeldende rekord leses på nytt for svaret.
+3. Ved ny ID: lås spillraden med `FOR SHARE`, kontroller at spillet er aktivt og valider status/verdi. For `incomplete` er utfallet alltid `not_eligible`. For `completed`: tidligere rekord med samme verdi gir `already_recorded`; ellers blir første/strengt bedre verdi `created`, og andre verdier `not_improved`.
+4. Sett inn forsøket og eventuell ny rekord i samme transaksjon. Forsøket lagrer opprinnelig rekordutfall og eventuell rekord-ID, slik at et identisk omforsøk bevarer disse. Separate forsøk med samme verdi er tillatt. `current_record` beregnes fra rekordtabellen ved hvert kall og kan være `null`.
+5. Commit før bekreftelse. HTTP 201 betyr nytt forsøk lagret, 200 betyr identisk omforsøk. Ingen låser holdes mens brukeren spiller, mens passord hashes eller mens AI arbeider.
 
-Denne løsningen låser per spiller, også på tvers av spill, og er valgt som en enkel anbefaling for 30 spillere. Den skal måles mot DB-006. Operasjoner som låser både spiller og spill, bruker alltid denne rekkefølgen. Spilladministrasjon må låse spillraden før kontroll av historikk og endring, slik at første rekord og endring av spillregler ikke konkurrerer ukontrollert.
+Denne løsningen låser per spiller, også på tvers av spill, og er valgt som en enkel anbefaling for 30 spillere. Den skal måles mot DB-006. Operasjoner som låser både spiller og spill, bruker alltid denne rekkefølgen. Spilladministrasjon må låse spillraden før kontroll av historikk og endring, slik at første forsøk og endring av spillregler ikke konkurrerer ukontrollert.
 
 Passordendring, kontosletting, sesjonsoppretting, sesjonsfornyelse og utlogging bruker også spillerradlåsen. Når passord er kontrollert før transaksjonen, må backend etter låsing kontrollere at hash/sesjon fortsatt er den samme før endringen eller sesjonsopprettingen fullføres. Fornyelse kontrollerer gyldighet på nytt etter låsing og kan bare oppdatere en fortsatt eksisterende rad. Dette hindrer at parallell fornyelse omgår utlogging eller passordendring. Flere spillere kan behandles parallelt.
 
@@ -126,6 +130,7 @@ Passordendring, kontosletting, sesjonsoppretting, sesjonsfornyelse og utlogging 
 | Feilklasse | Betydning og forventet håndtering |
 | --- | --- |
 | `validation_error` | Ugyldige felt eller resultatverdier. Avvis uten skriving. |
+| `attempt_conflict` | Samme spiller/forsøks-ID brukt med annet spill, status eller verdi. Ingen skriving. |
 | `conflict` | Opptatt brukernavn eller operasjon i strid med avtalte regler. Eksisterende data beholdes. |
 | `unauthenticated` / `forbidden` | Manglende/ugyldig sesjon, feil passordbekreftelse eller manglende rettighet. Ingen beskyttet skriving. |
 | `not_found` | Referert spiller eller spill finnes ikke. |
@@ -134,7 +139,7 @@ Passordendring, kontosletting, sesjonsoppretting, sesjonsfornyelse og utlogging 
 
 Feiltypene er kontraktens interne utfall. HTTP-status og tekst til brukeren defineres i webapp–backend-kontrakten. Interne feil kan logges med korrelasjons-ID, operasjon og feilklasse, men ikke råpassord, sesjonstoken eller fullstendige spørringsparametere.
 
-Rekordinnsending kan gjentas med samme spiller, spill og verdi etter ukjent utfall. En allerede lagret verdi gir `already_recorded`; en fortsatt forbedring kan lagres; et resultat som i mellomtiden er slått, gir `not_improved`. Dette garanterer ingen duplisert rekord og en konsistent tilstand, men ikke identisk returverdi ved gjentakelse. Gjentatte ikke-rekorder gir ingen lagret spillforsøkshistorikk.
+Forsøksinnsending kan gjentas med samme spiller, `attempt_id`, spill, status og verdi etter ukjent utfall. Det lagres høyst ett forsøk per spiller/ID, mens forskjellige ID-er med samme verdi er forskjellige forsøk. Identisk omforsøk returnerer tidligere forsøk, opprinnelig rekordutfall og rekordreferanse. Bare `current_record` kan endres. Frontend beholder ID og eier gjennom omforsøk og krever samme konto etter sesjonsutløp. Ved `attempt_conflict` opprettes ingen ny ID automatisk.
 
 Backend kan gjøre høyst ett nytt forsøk etter kjent rollback ved deadlock, innen samlet frist. Den skal aldri gjenta en skriving blindt etter ukjent commit-utfall. Ved konto-/passord-/slettingsoperasjoner rapporteres ukjent utfall og gjeldende tilstand kontrolleres gjennom ny innlogging/oppslag. En tapt bekreftelse på sesjonsoppretting kan etterlate en ubrukt sesjon som utløper normalt.
 
@@ -146,6 +151,7 @@ Backend kan gjøre høyst ett nytt forsøk etter kjent rollback ved deadlock, in
 | `players` | `SELECT`, `INSERT`, `DELETE`; `UPDATE` bare for `password_hash`. |
 | `sessions` | `SELECT`, `INSERT`, `DELETE`; `UPDATE` bare for `renewed_at` og `expires_at`. Absolutt utløp og opprettelse kan ikke endres. |
 | `games` | `SELECT` og nødvendig kolonnebegrenset `UPDATE` på `is_active` for PostgreSQLs radlåsprivilegium. Backend tilbyr ingen spilladministrasjonsoperasjon til spillere. |
+| `attempts` | `SELECT`, `INSERT`; ingen direkte `UPDATE` eller `DELETE`. Kontosletting rydder via kaskade. Backend håndhever eierfiltrering ved lesing. |
 | `records` | `SELECT`, `INSERT`; ingen direkte `UPDATE` eller `DELETE`. Kontosletting rydder via fremmednøkkelens kaskade. |
 
 PostgreSQLs låsende lesing krever oppdateringsprivilegium på minst én kolonne. Rettigheten til `games.is_active` er et bevisst begrenset unntak for `FOR SHARE`, og skal inngå i rettighetsgjennomgangen. Den er ikke en mekanisme som gjør databasebrukeren sikker mot kompromittert backend. Alternativt kan låsingen kapsles i en avgrenset databasefunksjon etter en separat vurdering.
@@ -158,17 +164,17 @@ Backend verifiserer spillerens passord mot lagret Argon2id-hash. Sesjonstoken ge
 
 ### Fornyelse uten å avbryte spill
 
-Følgende regler erstatter det tidligere forslaget om fast utløp etter innlogging. De brukes i første backend-implementasjon og testgrunnlaget. Frontendforløpet nedenfor er del av den godkjente kontrakten i 1.3. Godkjenningen gjelder oppførselen som skal implementeres, ikke en allerede verifisert løsning.
+Følgende regler erstatter det tidligere forslaget om fast utløp etter innlogging. De brukes i første backend-implementasjon og testgrunnlaget. Frontendforløpet følger samordnet API 0.2.0; tidligere godkjenning gjaldt 0.1.0, ikke en allerede verifisert løsning.
 
 - Webappen ber om fornyelse før spillstart og omtrent hvert femte minutt mens spillet er aktivt og spilleren gir input. En åpen, inaktiv fane eller automatisk henting av offentlige topplister skal ikke holde innloggingen ved like. Nettleseren rapporterer aktivitet; backend bruker alltid sin egen tid og kontrollerer sesjonen.
 - Backend oppdaterer samme sesjon til `expires_at = min(nåtid + 72 timer, absolute_expires_at)`. Dette er forlengelse av en databasesesjon og trenger ikke et separat refresh-token-system. Cookie-levetiden oppdateres til gjenværende varighet.
 - `absolute_expires_at` settes til 30 døgn etter opprinnelig innlogging, slik at en sesjon ikke kan forlenges ubegrenset. Tre og 30 døgn er produkt-/designvalg, ikke tidsgrenser hentet fra en standard. Ved den absolutte grensen kreves passord på nytt.
 - På selve utløpstidspunktet er sesjonen ugyldig. Bare en fortsatt gyldig sesjon kan fornyes. Utlogging, passordendring og kontosletting gjelder umiddelbart og kan ikke omgås av fornyelse.
-- Hvis utløp eller forbindelsesbrudd likevel oppstår under spilling, skal webappen beholde det pågående spillet og resultatet midlertidig. Før innsending kreves ny innlogging som samme spiller. Resultatet flyttes ikke automatisk til en annen konto. Dette brukerforløpet må også inn i webapp–backend-spesifikasjonen; databasekontrakten gir ingen rett til innsending med utløpt sesjon.
+- Hvis utløp eller forbindelsesbrudd likevel oppstår under spilling, skal webappen beholde det pågående spillet og resultatet midlertidig. Før innsending kreves ny innlogging som samme spiller. Resultatet flyttes ikke automatisk til en annen konto. Dette brukerforløpet er samordnet i webapp–backend-spesifikasjonen; databasekontrakten gir ingen rett til innsending med utløpt sesjon.
 
 Anbefalt opprydding av utløpte sesjoner er daglig. Utlogging sletter bare aktuell sesjon; passordendring og kontosletting fjerner alle. Fornyelsesreglene bygger på skillet mellom inaktivitetsutløp og absolutt utløp i OWASPs veiledning, men de konkrete intervallene er prosjektets egne valg.
 
-Cookie-, CSRF-, CORS- og registreringsoppførsel følger den godkjente [kontrakten i 1.3](../../../../spec/contracts/webapp-backend/contract.md). De endrer ikke lagringskontrakten. Webappen må håndheve innlogging før spillstart, og backend kontrollerer på nytt ved innsending.
+Cookie-, CSRF-, CORS- og registreringsoppførsel følger [kontrakten i 1.3, revisjon 0.2.0](../../../../spec/contracts/webapp-backend/contract.md). De endrer ikke lagringskontrakten. Webappen må håndheve innlogging før ordinær spillstart, og backend kontrollerer på nytt ved innsending.
 
 Sikkerhetskopier oppbevares tilgangsbegrenset, med minst én kopi utenfor den aktuelle harddisken. Ved gjenoppretting slettes alle gjenopprettede sesjoner før tjenesten åpnes, slik at gamle innlogginger ikke blir gyldige igjen. En slettet konto kan fortsatt forekomme i eldre sikkerhetskopier i oppbevaringsperioden; gjenopprettingsrutinen må håndtere slettinger etter kopitidspunktet før offentlig åpning. Dette skal dokumenteres ved driftsoppsett.
 
@@ -178,13 +184,13 @@ Verifikasjonsplanen er et vedlegg med praktiske muligheter for senere arbeid. Ho
 
 **Enhetstester** undersøker isolert logikk uten PostgreSQL, som rangering, validering og tidsregler. **Integrasjonstester** undersøker virkelig kommunikasjon og lagring. **Verifisering** samler disse testene og modellkontrollen som bevis mot kravene. **FoM** er et valgt tall som måles likt mellom iterasjoner; det er ikke et annet navn på testene. [Arbeidsflyten for iterativ utvikling](../../iterative-development.md) beskriver skillet og bruk av resultatene til neste forbedring.
 
-Nødvendige scenarioer dekker tilkobling, CRUD-operasjonene i del 6, rekorder i begge rangeringsretninger, offentlig historikk, sesjonsutløp, passordendring, kontosletting, spilldeaktivering, samtidighet, omstart, feil og rettigheter. Kontroller utvalgte tester ved bevisste feil i en isolert kopi; testen skal da feile. Ingen test skal merkes bestått bare fordi AI har vurdert sin egen kode.
+Nødvendige scenarioer dekker tilkobling, CRUD-operasjonene i del 6, rekorder i begge rangeringsretninger, offentlig rekordhistorikk, privat forsøkshistorikk, sesjonsutløp, passordendring, kontosletting, spilldeaktivering, samtidighet, omstart, feil og rettigheter. Kontroller utvalgte tester ved bevisste feil i en isolert kopi; testen skal da feile. Ingen test skal merkes bestått bare fordi AI har vurdert sin egen kode.
 
 Anbefalt, reproduserbar belastningsprofil:
 
 | Del | Profil |
 | --- | --- |
-| Startdata | 1 000 syntetiske kontoer, 10 spill, 10 000 historiske rekorder, begge rangeringsretninger. Tilbakestill samme datasett mellom sammenlignbare kjøringer. |
+| Startdata | 1 000 syntetiske kontoer, 10 spill, 10 000 historiske rekorder med 10 000 tilhørende fullførte forsøk, begge rangeringsretninger. Tilbakestill samme datasett mellom sammenlignbare kjøringer. |
 | Normalbelastning | 30 simulerte spillere, én operasjon per spiller hvert femte sekund, forskjøvet: 6 operasjoner/s. Fordeling: 60 % toppliste med 30 rader, 20 % sesjonsoppslag og 20 % resultatregistrering. |
 | Varighet | To minutters oppvarming og 15 minutters måling. Gjenta for å undersøke målevariasjon. |
 | Topper | 30 samtidige operasjoner, separat for hver operasjonstype, ti repetisjoner. Både samme og forskjellige spillere brukes ved rekordregistrering. |

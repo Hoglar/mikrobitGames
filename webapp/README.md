@@ -4,7 +4,7 @@ Spill, launcher, dashboard, felles Web Serial-adapter og kommunikasjon med backe
 
 Kontrakter: [Micro:bit–webapp](../spec/contracts/microbit-webapp/README.md) og [webapp–backend](../spec/contracts/webapp-backend/README.md).
 
-Frontendutviklere: bruk den godkjente [API-guiden](../spec/contracts/webapp-backend/contract.md) og [OpenAPI 0.1.0](../spec/contracts/webapp-backend/openapi.yaml) for innlogging, spilldata, rekordinnsending og AI-spørsmål. Godkjenning av kontrakt 1.3 er bekreftet 2026-10-27.
+Frontendutviklere: bruk den samordnede [API-guiden](../spec/contracts/webapp-backend/contract.md) og [OpenAPI 0.2.0](../spec/contracts/webapp-backend/openapi.yaml) for innlogging, spilldata, private forsøk, offentlige rekorder og AI-spørsmål. Se [konflikter og beslutninger](../spec/contracts/webapp-backend/alignment.md). Godkjenningen av 0.1.0 gjaldt den tidligere revisjonen.
 
 - [spec/](spec/README.md): krav, modeller og testplan.
 - [tests/](tests/README.md): lokale tester.

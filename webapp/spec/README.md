@@ -1,6 +1,6 @@
 # Krav, modeller og testplan
 
-Utarbeid requirements.md med funksjonelle krav og kvalitetskrav. [Testplanen](game-input-test-plan.md) beskriver testing og benchmarking av det felles spillinput-biblioteket. Modeller lagres under [models/](models/README.md). Referer til relevante felles kontrakter fremfor å kopiere dem.
+[Komponentspesifikasjonen](Komponentspesifikasjon_webapplikasjon_forklart.md) beskriver frontendkrav og ansvar, samordnet med [API 0.2.0](../../spec/contracts/webapp-backend/README.md). [Plattformtestplanen](platform-test-plan.md) dekker konto, private forsøk, offentlige rekorder og AI. En eventuell separat requirements.md skal gjengi disse kravene fremfor å innføre andre regler. [Testplanen](game-input-test-plan.md) beskriver testing og benchmarking av det felles spillinput-biblioteket. Modeller lagres under [models/](models/README.md). Referer til relevante felles kontrakter fremfor å kopiere dem.
 
 [Spillspesifikasjoner](games/README.md) samles i `games/<game-name>/`. Første spill er [Micro:bit Testlab](games/microbit-testlab/README.md).
 

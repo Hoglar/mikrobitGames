@@ -1,6 +1,8 @@
 # WBS 1.6 – Kontrakt mellom AI-tjenesten og databasen
 
-**Status:** Ferdigstilt og godkjent av prosjekteier som dokumentasjonsleveranse for [WBS 1.6 / issue #6](https://github.com/Hoglar/mikrobitGames/issues/6), 2026-10-24. Versjon 1.0. Oppsett, implementasjon og kjøring av tester følger i komponent- og integreringsarbeidet.
+**Revisjon 1.1, 2026-10-27:** Privat forsøkstabell er uttrykkelig utenfor AI-rettighetene. De tre eksisterende visningene og grensene beholdes. Tidligere godkjenning gjaldt 1.0.
+
+**Historisk status:** Ferdigstilt og godkjent av prosjekteier som dokumentasjonsleveranse for [WBS 1.6 / issue #6](https://github.com/Hoglar/mikrobitGames/issues/6), 2026-10-24. Versjon 1.0. Oppsett, implementasjon og kjøring av tester følger i komponent- og integreringsarbeidet.
 
 ## Formål og ansvar
 
@@ -20,7 +22,7 @@ AI-en får tilgang gjennom tre **databasevisninger**: navngitte utsnitt av tabel
 | `ai_read.games` | `app.games` | `id`, `name`, `score_unit`, `ranking_direction`, `min_value`, `max_value`, `is_active` |
 | `ai_read.records` | `app.records` | `id`, `player_id`, `game_id`, `value`, `created_at` |
 
-`password_hash` og hele `app.sessions` er utilgjengelige. Nye databasefelt blir ikke automatisk synlige: visningene definerer kolonnene eksplisitt og endres gjennom en gjennomgått migrering.
+`password_hash`, hele `app.sessions` og hele `app.attempts` er utilgjengelige. Ingen visning av private forsøk tilbys AI, heller ikke for spørsmålsstillerens egne data. Nye databasefelt blir ikke automatisk synlige: visningene definerer kolonnene eksplisitt og endres gjennom en gjennomgått migrering.
 
 ## Rettigheter som databasen håndhever
 

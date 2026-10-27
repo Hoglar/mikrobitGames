@@ -1,6 +1,6 @@
 # AI-modulen – krav, modell og testplan for WBS 6.1
 
-**Status:** Ferdigstilt og godkjent av brukeren for [WBS 6.1 / issue #17](https://github.com/Hoglar/mikrobitGames/issues/17), 2026-10-24. Ingen implementasjon eller målinger er gjennomført.
+**Status:** Presisert 2026-10-27: AI ser bare offentlig rekordgrunnlag, ingen private forsøk. Tidligere leveranse: ferdigstilt og godkjent av brukeren for [WBS 6.1 / issue #17](https://github.com/Hoglar/mikrobitGames/issues/17), 2026-10-24. Ingen implementasjon eller målinger er gjennomført.
 
 **Dokumentrolle:** Kravtabellen fordeler ansvaret fra 1.5/1.6. Komponenter, meldingsflyt og modellvalg er teknisk design; testtabellen beskriver kontrollene. Byggerekkefølge og iterasjoner ligger i [implementeringsplanen](implementation-plan.md). Se [leseoversikten](README.md) for autoritative kilder.
 
@@ -13,7 +13,7 @@
 | Kravgrunnlag | Konkret ansvar i AI-modulen | Planlagt kontroll |
 | --- | --- | --- |
 | AI-001 | Svare kort på norsk ut fra faktiske data. «Min» bruker innlogget `player_id`. Følge spillets enhet og rangeringsretning; forklare manglende grunnlag. | TAI-02, TAI-08 |
-| AI-002, AI-005 | Lese alle tillatte spillerdata, spill og historiske rekorder gjennom de tre `ai_read`-visningene. Ingen tilgang til passord, sesjoner eller skriving. | TAI-01, TAI-04, TAI-07 |
+| AI-002, AI-005 | Lese alle tillatte spillerdata, spill og historiske rekorder gjennom de tre `ai_read`-visningene. Ingen tilgang til passord, sesjoner, private spillforsøk (heller ikke egne) eller skriving. | TAI-01, TAI-04, TAI-07 |
 | AI-003, AI-007 | Skille `ok`, `no_data`, `cannot_answer` og tekniske feil etter 1.5. Avvise ugyldig input før modellkjøring. | TAI-01, TAI-05 |
 | AI-006 | Kontrollere hele SQL-strukturen før utførelse. Ingen shell-, filskrive- eller generelle kodeverktøy for modellen. | TAI-03, TAI-04, TAI-07 |
 | AI-004, AI-008 | Ett aktivt spørsmål uten kø; samlet ventefrist 60 s. Én DB-forbindelse, høyst tre spørringsforsøk, 2 s per SQL-spørring og høyst 1 000 rader / 1 MiB per resultat. | TAI-05, TAI-06, TAI-08 |
@@ -67,7 +67,7 @@ Bruk de samme syntetiske Ada/Nora-dataene som i [databasens testplan](test-plan.
 | TAI-01 | Enhet/HTTP: felt, typer, Unicode-lengder, ekstra felt, ukjent spill-ID og svarformat. Bruk en kontrollert modelladapter. | Grensene fra 1.5 håndheves. Ugyldig input gir 400 uten modellkall; gyldige forespørsler og svar bevarer riktig ID. |
 | TAI-02 | Integrasjon med faktisk lokal modell og testdatabase: spørsmålene over og varierte formuleringer. | Riktige tall, enheter, identiteter og statuser. Sammenlign med uavhengig fasit; identisk ordlyd kreves ikke. |
 | TAI-03 | Enhet: SQL-parser og tillatelsesregler, inkludert gyldige JOIN/aggregater, skjult skriving i CTE, flere kommandoer, låsing, forbudte funksjoner og andre skjemaer. | Gyldige lesinger godtas; alle forbudte/ukjente konstruksjoner avvises før DB-kall. Parserfeil gir aldri fri passasje. |
-| TAI-04 | Integrasjon: direkte forsøk som `ai_reader`, uavhengig av SQL-filteret, samt skadelige instruksjoner i spørsmål og syntetiske DB-tekster. | Tillatte data kan leses, også inaktive spill. Hemmeligheter og skriving avvises. Data og skjema er uendret. Gjenbruk TDB-05. |
+| TAI-04 | Integrasjon: direkte forsøk som `ai_reader`, uavhengig av SQL-filteret, samt skadelige instruksjoner i spørsmål og syntetiske DB-tekster. | Tillatte data kan leses, også inaktive spill. Hemmeligheter, direkte lesing av `app.attempts` (også egne forsøk) og skriving avvises. Data og skjema er uendret. Gjenbruk TDB-05. |
 | TAI-05 | Enhet/integrasjon: tomt resultat, avvist SQL, feil modellformat, modell-/DB-brudd og tidsavbrudd. | Skille manglende data, ubesvarbart spørsmål og teknisk feil etter 1.5/1.6. Rydd opp; ikke returner falsk suksess. |
 | TAI-06 | Styrt klokke og kontrollerte adaptere: to samtidige kall, langsom modell, avbrudd, forsøksgrenser og resultat-/kontekstgrenser. | Andre kall gir 503 uten kø. Ingen fjerde SQL-spørring eller femte modellkall. Sene svar ignoreres; fortsatt arbeid holder tjenesten opptatt. Ingen skjult avkorting. |
 | TAI-07 | Drift/integrasjon: prosessbrukere, lesbare hemmeligheter, skrivbare mapper, lytteadresser og to påfølgende spørsmål. | Modellen har ingen shell-/filverktøy eller DB-hemmelighet. Ingen ekstern AI-trafikk; tidligere spørsmål følger ikke med i neste. Vanlig spill/rekordlagring virker når AI er nede. |

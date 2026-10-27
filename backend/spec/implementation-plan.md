@@ -1,8 +1,10 @@
 # Felles implementeringsplan: database, API og AI
 
-**Status:** Avtalt arbeidsmåte, 2026-10-24. Planen beskriver hele opplegget. Oppdatert 2026-10-25: testpakken har nå enhetstester, integrasjon, benchmark, modelluttrekk, SSH-kjøring og rapportering. Komponentene og engangsoppsettet på Parrot må fortsatt klargjøres før full måling. Ingen produktbaseline eller FoM-måling foreligger.
+**Revisjon 2026-10-27:** Privat forsøkshistorikk inngår i første implementasjon. Modellkontrollsettet er nå planlagt som 24/4/4; eksisterende kjørbare verktøy er fortsatt 20/4/4 og må tilpasses før måling. Se [tilpasningslisten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester).
 
-Database, backend API og AI-tjeneste implementeres samlet fra modellene. [Frontendkontrakten i 1.3](../../spec/contracts/webapp-backend/README.md) er godkjent, bekreftet 2026-10-27, og brukes som felles fasit for frontend, backend og kontrakttester. Kontrollene trenger ikke ferdig nettside eller Micro:bit; samlet systemdemonstrasjon kommer senere.
+**Tidligere status:** Avtalt arbeidsmåte, 2026-10-24. Planen beskriver hele opplegget. Oppdatert 2026-10-25: testpakken har nå enhetstester, integrasjon, benchmark, modelluttrekk, SSH-kjøring og rapportering. Komponentene og engangsoppsettet på Parrot må fortsatt klargjøres før full måling. Ingen produktbaseline eller FoM-måling foreligger.
+
+Database, backend API og AI-tjeneste implementeres samlet fra modellene. [Frontendkontrakten i 1.3](../../spec/contracts/webapp-backend/README.md) var godkjent som 0.1.0; gjeldende samordnede revisjon er 0.2.0 og brukes som felles implementeringsgrunnlag for frontend, backend og kontrakttester. Kontrollene trenger ikke ferdig nettside eller Micro:bit; samlet systemdemonstrasjon kommer senere.
 
 Se [kort kjøreoversikt](../verification/README.md) og [arbeidsflyten i draw.io](../../docs/presentation/iterative-development.drawio).
 
@@ -14,7 +16,7 @@ Krav og design finnes via [leseoversikten](README.md). Trinnene nedenfor organis
 | --- | --- | --- |
 | 1. Klargjør | Fastsett filplasseringer og Git-unntak etter [reglene for lokale data](../../docs/project-structure.md#versjonskontroll-og-lokale-data) før oppsett. Lås applikasjonsavhengigheter og PostgreSQL-hovedversjon. Konkretiser SQL-tillatelseslisten innenfor 1.6. Følg de interne grensesnittene i `test-runtime.md`. Klargjør serverklonen, tjenestebrukere og målerettigheter etter kjøreguiden. | Dokumenterte valg og gjentakbart oppsett; hemmeligheter og driftsdata holdes utenfor Git. |
 | 2. Database | Lag migreringer, begrensninger, roller, AI-visninger og gjenopprettingsrutine etter datamodellen og 1.4/1.6. | Database kan opprettes på nytt og brukes med tjenestenes egne roller. |
-| 3. API og rekordflyt | Bygg databaseadapter, konto/sesjoner, rekordlogikk og offentlige oppslag. Koble HTTP-rutene til tjenestene etter 1.3 og komponentmodellen. | Vanlig konto- og rekordflyt kan kjøres uten AI, nettside og Micro:bit. |
+| 3. API, forsøk og rekordflyt | Bygg databaseadapter, konto/sesjoner, privat forsøkshistorikk/idempotens, atomisk rekordlogikk og offentlige oppslag. Koble HTTP-rutene til tjenestene etter 1.3 og komponentmodellen. | Vanlig konto-, forsøks- og rekordflyt kan kjøres uten AI, nettside og Micro:bit. |
 | 4. AI og sammenkobling | Bygg SQL-kontroll, leselager, modellklient, styring og intern HTTP-inngang. Koble API-gatewayen til den lokale AI-tjenesten. | Hele backendens avtalte flyt er implementert, med sikkerhets- og ressursgrenser. |
 | 5. Lever for måling | Ferdigstill oppstart, DB-timing og dokumenterte kjørekommandoer. Gjennomgå Git-filoversikt og endringer for hemmeligheter, driftsdata og store genererte filer etter reglene for lokale data. Lagre den samlede kodeversjonen og klargjør samme versjon på Parrot. | Brukeren kan committe leveransen og kjøre hele testfasen for første målbare baseline. |
 
@@ -45,8 +47,8 @@ Gjenbruk Ada/Nora-datasettet og scenarioene i [DB-testplanen](test-plan.md), [ba
 | KDB-3 | Effektive rettigheter | TDB-05/TAI-04: faktiske DB-roller; avvis hemmeligheter og uautorisert skriving. |
 | KDB-4 | Bevaring og gjenoppretting | TDB-07: data etter omstart/gjenoppretting, med avtalte regler for sesjoner. |
 | KAPI-1 | Konto og sesjoner | TBE-02: registrering, innlogging, fornyelse, utløp, utlogging, passordendring og kontosletting. |
-| KAPI-2 | Rekorder og gjentakelser | TBE-03,05: begge rangeringsretninger, ingen duplikater, samtidighet og ukjent commit-utfall. |
-| KAPI-3 | Offentlige oversikter | TBE-04: toppliste, delt plassering, sideinndeling og bevart historikk. |
+| KAPI-2 | Private forsøk, rekorder og gjentakelser | TBE-03,05: begge rangeringsretninger, ingen duplikater, samtidighet og ukjent commit-utfall. |
+| KAPI-3 | Offentlige oversikter | TBE-04: privat eierfiltrert historikk, toppliste, delt plassering, sideinndeling og bevart historikk. |
 | KAPI-4 | Ugyldig og uautorisert input | TBE-01,07: kontraktfeil, eierskap, cookie-/CSRF-regler og rategrenser; HTTP-klienten etterligner nettleserforespørsler. |
 | KAI-1 | API–AI-meldinger og feil | TAI-01,05/TBE-06: felter, bevart ID, feil, opptatt tjeneste og tidsavbrudd. |
 | KAI-2 | SQL-filter | TAI-03: tillatt lesing, avvist skriving, farlige funksjoner og skjulte operasjoner. |
@@ -61,7 +63,7 @@ Ingen AI brukes som dommer. Disse objektive kontrollene beviser **ikke at alle p
 
 | Område | Faste kontrollpunkter | Fasiten |
 | --- | --- | --- |
-| Database | De eksisterende 20 strukturkontrollene: tabeller, nøkler og AI-visninger. | [Databaseskjema](models/database-schema.json) og reglene i [testplanen](test-plan.md). |
+| Database | De nye 24 strukturkontrollene: tabeller, nøkler og AI-visninger. | [Databaseskjema](models/database-schema.json) og reglene i [testplanen](test-plan.md). |
 | Frontend/API | Fire grupper: (1) ruter/metoder, (2) forespørselsskjemaer, (3) svar-/feilskjemaer, (4) deklarert autentisering. | [OpenAPI 1.3](../../spec/contracts/webapp-backend/openapi.yaml), mot kjørende APIs uttrekk. |
 | AI og interne grensesnitt | Fire grupper: (1) internt AI-forespørselsskjema, (2) internt svar-/feilskjema, (3) API-komponentavhengigheter, (4) AI-komponentavhengigheter. | [Kontrakt 1.5](contracts/backend-ai/contract.md), [API-modell](models/backend-components.json) og [AI-modell](models/ai-components.json). |
 
@@ -73,10 +75,10 @@ Begge uttrykkes i prosent, hvor høyere er bedre. `K` er antall beståtte kravpu
 
 ```text
 Krav-FoM   = (100 / 3) × (K_DB / 4 + K_API / 4 + K_AI / 4)
-Modell-FoM = (100 / 3) × (M_DB / 20 + M_API / 4 + M_AI / 4)
+Modell-FoM = (100 / 3) × (M_DB / 24 + M_API / 4 + M_AI / 4)
 ```
 
-DBs 20 detaljkontroller får dermed ikke større samlet vekt enn de andre områdene. Rapporten viser også delresultater og konkrete avvik; DBs antall strukturavvik fra 0 til 20 beholdes som diagnose.
+DBs 24 detaljkontroller får dermed ikke større samlet vekt enn de andre områdene. Rapporten viser også delresultater og konkrete avvik; DBs antall strukturavvik fra 0 til 24 beholdes som diagnose.
 
 | Status | Betydning og behandling |
 | --- | --- |

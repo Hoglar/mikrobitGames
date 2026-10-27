@@ -1,14 +1,14 @@
 # Backend API – krav, modell og testplan for WBS 4.1
 
-**Status:** Ferdigstilt og godkjent av brukeren for [WBS 4.1 / issue #13](https://github.com/Hoglar/mikrobitGames/issues/13), 2026-10-24. Oppdatert 2026-10-27: godkjenning av frontendkontrakt 1.3 er bekreftet, og den er felles fasit for implementasjon og kontrakttester. Ingen tjenester er implementert, startet eller publisert som del av denne dokumentasjonsleveransen.
+**Status:** Samordnet revisjon 2026-10-27 etter brukerens valg om privat forsøkshistorikk. Godkjenningen av WBS 4.1 (2026-10-24) og API 0.1.0 gjaldt tidligere grunnlag. Gjeldende API er 0.2.0 og databasekontrakten er 1.2; ingen tjenester eller produktmålinger er levert.
 
 **Dokumentrolle:** Kravtabellen beskriver hva API-et skal oppfylle. Komponent-, teknologi- og driftsdelene beskriver valgt design; testtabellen beskriver hvordan det kontrolleres. Byggerekkefølge og iterasjoner ligger i [implementeringsplanen](implementation-plan.md). Se [leseoversikten](README.md) for autoritative kilder.
 
 ## Ansvar og grensesnitt
 
-Backend binder nettsiden, PostgreSQL og lokal AI sammen. Den håndhever innlogging, kontoendringer og rekordregler, tilbyr offentlige spilldata og formidler AI-spørsmål. Frontendens inngang er den godkjente [utviklerguiden](../../spec/contracts/webapp-backend/contract.md) med [OpenAPI-kontrakten](../../spec/contracts/webapp-backend/openapi.yaml). Begge brukes som fasit for frontend, backend og kontrakttestene. Senere avtalte endringer samordnes i kontrakt, implementasjon og tester.
+Backend binder nettsiden, PostgreSQL og lokal AI sammen. Den håndhever innlogging, kontoendringer og rekordregler, tilbyr offentlige spilldata og formidler AI-spørsmål. Frontendens inngang er den samordnede [utviklerguiden](../../spec/contracts/webapp-backend/contract.md) med [OpenAPI-kontrakten](../../spec/contracts/webapp-backend/openapi.yaml). Begge brukes som fasit for frontend, backend og kontrakttestene. Senere avtalte endringer samordnes i kontrakt, implementasjon og tester.
 
-[1.4](contracts/backend-database/contract.md) fastsetter databaseoperasjoner og transaksjoner. [1.5](contracts/backend-ai/contract.md) fastsetter kommunikasjon med AI. [Databasespesifikasjonen](requirements.md) og [AI-modulplanen](ai-module.md) er allerede ferdigstilt. Denne planen konkretiserer HTTP-grensesnittet uten å endre de interne kontraktene.
+[1.4](contracts/backend-database/contract.md) fastsetter databaseoperasjoner og transaksjoner. [1.5](contracts/backend-ai/contract.md) fastsetter kommunikasjon med AI. [Databasespesifikasjonen](requirements.md) og [AI-modulplanen](ai-module.md) er allerede ferdigstilt. Denne revisjonen samordner HTTP-grensesnittet med databasekontrakt 1.2 og privat forsøkshistorikk. AI-kontraktene presiserer at private forsøk er utenfor datatilgangen.
 
 ## Krav og prioritering
 
@@ -16,8 +16,8 @@ Backend binder nettsiden, PostgreSQL og lokal AI sammen. Den håndhever innloggi
 | --- | --- | --- |
 | BE-001 | 1 | Implementere endepunkter, felt, feil og tilgang etter den avtalte OpenAPI-kontrakten. Alle kontrakttester skal bestå; ingen hemmeligheter i offentlige svar eller logger. |
 | BE-002 | 1 | Registrering, innlogging, eksplisitt sesjonsfornyelse, utlogging, passordendring og kontosletting følger 1.4. Utløpte/slettede sesjoner gir ingen beskyttet operasjon; innsendt spiller-ID kan ikke overstyre sesjonen. |
-| BE-003 | 1 | Lagre bare første/strengt bedre personlige rekord og bevare tidligere rekorder. Lås, kontroller sesjon/spill og commit etter 1.4. Samtidighet og gjentatte kall skal ikke lage duplikater eller delvis lagring. |
-| BE-004 | 1 | Offentlige spill, topplister og historikk gir korrekt enhet, rangeringsretning, delt plassering og sideinndeling. Inaktive spill kan leses, men tar ikke nye resultater. |
+| BE-003 | 1 | Lagre alle avsluttede forsøk privat og bare første/strengt bedre fullførte resultat som offentlig rekord. Bevare begge historikkene frem til kontosletting. Lås, kontroller sesjon/spill og commit etter 1.4. Samtidighet og gjentatte kall skal ikke lage duplikater eller delvis lagring. |
+| BE-004 | 1 | Offentlige spill, topplister og historikk gir korrekt enhet, rangeringsretning, delt plassering og sideinndeling. Inaktive spill kan leses, men tar ikke nye forsøk; identiske omforsøk kan bekreftes. Privat forsøkshistorikk leses bare av eieren, med riktig filtrering, sortering og sideinndeling. |
 | BE-005 | 2 | Formidle AI etter 1.5 med serverbestemt identitet og kontrollert svar. Ingen DB-lås/-forbindelse holdes mens AI arbeider. AI-feil skal ikke stanse konto- eller rekordfunksjoner. |
 | BE-006 | 3 | Under normalprofilen for 30 spillere i 1.4: p95 ≤ 500 ms per HTTP-operasjon for toppliste, sesjonsoppslag og resultatregistrering, målt lokalt gjennom HTTPS-inngangen. DB-006s egne grenser gjelder separat. Innlogging/passordhashing og AI måles separat. |
 | BE-007 | 2 | Nettsiden/API-et skal være tilgjengelig fra internett over HTTPS når hjemmemaskinen og forbindelsen er oppe. Etter normal omstart skal nettside, innlogging og rekordlagring virke uten interaktiv oppstart innen 5 minutter etter at operativsystem og nettverk er klare. Bekreftede data bevares. Dette er et testmål, ikke et løfte om kontinuerlig oppetid. |
@@ -33,12 +33,12 @@ Sikkerhet og integritet prioriteres foran ytelse. BE-006 og femminuttersmålet e
 | --- | --- |
 | `http_api` | HTTP-ruter, validering, cookie/CSRF, feilformat, forespørsels-ID og begrensning av trafikk. Kaller tjenestene; kun helsesjekken bruker databaseadapteren direkte. |
 | `auth_service` | Passordhashing, innloggingskontroll, sesjoner og bekreftede kontoendringer. Bruker `database`. |
-| `score_service` | Spill-/spilleroppslag, topplister, historikk og atomisk resultatregistrering. Bruker `score_rules` og `database`. |
-| `score_rules` | Ren logikk for gyldige resultater, forbedring og rangering. Ingen nettverk, database eller modellkall. |
+| `score_service` | Spill-/spilleroppslag, offentlige rekorder og privat forsøkshistorikk med eierfiltrering. Atomisk forsøk-/rekordregistrering og idempotens per spiller/forsøks-ID. Bruker `score_rules` og `database`. |
+| `score_rules` | Ren logikk for gyldige resultater, forbedring og rangering, samt skille mellom fullført og ufullført forsøk. Ingen nettverk, database eller modellkall. |
 | `database` | Eneste PostgreSQL-adapter for API-et. Parameterbinding, samlet poolbudsjett, låsing, transaksjoner og feilklassifisering etter 1.4. |
 | `ai_gateway` | Eneste HTTP-klient til AI-tjenesten. Setter interne meldinger, håndhever 60 s frist og kontrollerer svarformat/ID. Ingen direkte modell- eller SQL-kjøring. |
 
-Beskyttede ruter henter identiteten gjennom `auth_service`. Skriving kontrollerer sesjonen på nytt inne i den låste transaksjonen etter 1.4; kontrollen ved HTTP-inngangen alene er ikke tilstrekkelig. Offentlige lesinger bruker én SQL-setning for rangering, antall og rader, slik at de får samme snapshot også med `READ COMMITTED`. AI-kall sendes først etter sesjonskontroll, og autentiseringshemmeligheter sendes aldri videre.
+Beskyttede ruter henter identiteten gjennom `auth_service`. Skriving kontrollerer sesjonen på nytt inne i den låste transaksjonen etter 1.4; kontrollen ved HTTP-inngangen alene er ikke tilstrekkelig. Offentlige lesinger og private sidelister bruker én SQL-setning for rangering, antall og rader, slik at de får samme snapshot også med `READ COMMITTED`. AI-kall sendes først etter sesjonskontroll, og autentiseringshemmeligheter sendes aldri videre.
 
 Valg i [ADR-007](../../spec/decisions/adr-007-backend-web-hosting.md): Python med FastAPI, PostgreSQL-driver med eksplisitte transaksjoner og en egen HTTP-klient for AI. Bruk samme språk som AI-tjenesten for å begrense antall teknologier. FastAPIs standardvalideringsfeil må tilpasses det godkjente feilformatet i 1.3; automatisk generert dokumentasjon er et uttrekk av implementasjonen, ikke fasiten. Bibliotekversjoner fastsettes før kodegenerering.
 
@@ -73,10 +73,10 @@ Gjenbruk Ada/Nora og spillene fra [databasens testplan](test-plan.md), med styrt
 | ID | Krav | Test og forventet resultat |
 | --- | --- | --- |
 | TBE-01 | BE-001 | Enhet/HTTP: gyldige/ugyldige felt, typer, lengder, ekstra felt, sideparametere, body-grense og feilformat. Alle svar matcher avtalt kontrakt; ingen standard 422 eller feilsider fra rammeverket. |
-| TBE-02 | BE-002, BE-008 | Enhet og DB-integrasjon: registrering, navn med ulik bokstavstørrelse, innlogging, 72 t/30 døgn, fornyelse ved grensen, utlogging, passordendring og kontosletting. Ingen utløpt sesjon gjenopplives; riktige rader/sesjoner slettes atomisk. |
-| TBE-03 | BE-003 | Enhet for begge rangeringsretninger. Integrasjon: 100, 80, 120, 110 lagrer bare 100 og 120; gjentatt 100 gir `already_recorded` med gammel rekord og gjeldende 120. Tidsspillet følger motsatt retning. |
-| TBE-04 | BE-004 | Offentlig lesing uten cookie: Ada 120/Nora 115; tredje spiller 120 gir plassering 1,1,3 før sideinndeling. Historikk bevares, inaktive spill leses, ukjente ID-er gir 404 og kjent tom historikk gir tom liste. |
-| TBE-05 | BE-002–003 | Integrasjon: samtidige rekorder, kontosletting/passordendring mot fornyelse/innsending, DB-brudd rundt commit. Riktig seriell tilstand, ingen falsk lagringsbekreftelse. Ukjent commit gir `OUTCOME_UNKNOWN`; gjentatt rekord gir ingen duplikat. |
+| TBE-02 | BE-002, BE-008 | Enhet og DB-integrasjon: registrering, navn med ulik bokstavstørrelse, innlogging, 72 t/30 døgn, fornyelse ved grensen, utlogging, passordendring og kontosletting. Ingen utløpt sesjon gjenopplives; riktige sesjoner, forsøk og rekorder slettes atomisk ved kontosletting. |
+| TBE-03 | BE-003 | Enhet for begge rangeringsretninger. Integrasjon: fire fullførte forsøk 100, 80, 120, 110 gir fire private forsøk og rekordhistorikk 100 → 120. Ny ID med 100 gir 201/`already_recorded`; samme ID og body gir 200 uten nytt forsøk. Ufullført gir `not_eligible`, også med høy delverdi; test null. Tidsspillet følger motsatt retning. |
+| TBE-04 | BE-004 | Offentlig lesing uten cookie: Ada 120/Nora 115; tredje spiller 120 gir plassering 1,1,3 før sideinndeling. Historikk bevares, inaktive spill leses, ukjente ID-er gir 404 og kjent tom rekordhistorikk gir tom liste. Private forsøk krever sesjon, har nyeste-først/spillfilter og gir 404 ved annen eiers ID. Ingen private forsøk i offentlige svar eller AI-visninger. |
+| TBE-05 | BE-002–003 | Integrasjon: samtidige rekorder, kontosletting/passordendring mot fornyelse/innsending, DB-brudd rundt commit. Riktig seriell tilstand, ingen falsk lagringsbekreftelse. Ukjent commit gir `OUTCOME_UNKNOWN`; gjentatt forsøks-ID/body gir ingen duplikat. Endret spill/status/verdi under samme ID gir ATTEMPT_CONFLICT. Bekreft atomisk forsøk/rekord og omforsøk etter deaktivering. |
 | TBE-06 | BE-005 | Kontrollert AI-tjeneste returnerer alle utfall fra 1.5, feil ID/format og sent svar. Backend lager riktig ekstern feil og holder ikke DB-ressurser under AI-venting. Spill/lagring virker mens AI er opptatt/nede. Gjenta sentrale kall med virkelig AI senere. |
 | TBE-07 | BE-001, BE-008 | Nettleser/proxy: cookie-flagg, fremmed/manglende/null Origin uten gyldig Referer, manglende custom header, forfalsket spiller-ID og proxyheader. Avvis uautorisert skriving. Test rategrenser og ingen lekkasje i svar/logger. |
 | TBE-08 | BE-006 | Benchmark etter 1.4s normalprofil, med og uten aktiv AI. Mål HTTP p95 separat fra DB-tid; registrer feil, hash-ytelse, CPU, PSS og forbindelser. Backend- og DB-mål må begge vurderes. |

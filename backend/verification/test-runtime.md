@@ -1,5 +1,7 @@
 # Teknisk design: interne grensesnitt og testtilkobling
 
+**Revisjon 2026-10-27:** Spesifikasjonene er oppdatert til API 0.2.0, databasekontrakt 1.2 og modellformat 2. Eksisterende kjørbar test-/kontrollkode gjelder tidligere rekordmodell og kan ikke verifisere denne revisjonen før [tilpasningene](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester) er gjennomført. Modellsettet skal bli 24/4/4; dagens verktøy er fortsatt 20/4/4. Dette er dokumentasjonskontroll, ikke bestått produkttest.
+
 Dette dokumentet eier de konkrete interne designvalgene som implementasjonen og testpakken deler: oppstart, miljøvariabler, funksjonssignaturer, modellmeldinger og instrumentering. Det ligger ved testverktøyene, men inngår i designgrunnlaget for første implementasjon. Funksjonskrav og sikkerhetsgrenser kommer fra [kontraktene og modulkravene](../spec/README.md); testtilkoblingen skal ikke innføre nye produktkrav. Endres et internt grensesnitt, oppdateres dette dokumentet, berørte kall og tester sammen etter reglene i implementeringsplanen.
 
 Testpakken implementerer ikke backendfunksjonene; den starter og kontrollerer den virkelige koden. Daglig bruk står i [kjøreguiden](README.md).
@@ -44,7 +46,7 @@ Under feiltester svarer et kontrollert HTTP-relé med avtalte meldinger. Ved vir
 
 ## Data og tid
 
-Funksjonstestene bruker Ada/Nora, to spill og åtte historiske rekorder fra DB-planen. Rekorddatoene er faste. Sesjonene opprettes relativt til testkjøringens UTC-klokke slik at innlogging fungerer på vilkårlig testdato; tidspunktet registreres. Eksakte utløpsgrenser testes separat med styrt klokke i enhetstestene.
+Funksjonstestene bruker Ada/Nora, to spill, åtte fullførte forsøk og åtte historiske rekorder fra DB-planen. Rekorddatoene er faste. Sesjonene opprettes relativt til testkjøringens UTC-klokke slik at innlogging fungerer på vilkårlig testdato; tidspunktet registreres. Eksakte utløpsgrenser testes separat med styrt klokke i enhetstestene.
 
 Testtoken sendes som tekst i cookie; `token_hash` beregnes som SHA-256 av cookieverdien kodet som UTF-8. Dette gjør den tidligere generelle tokenbeskrivelsen entydig for testadapteren. Ingen ekte passord eller brukere inngår.
 
@@ -65,7 +67,7 @@ Testtoken sendes som tekst i cookie; `token_hash` beregnes som SHA-256 av cookie
 
 API må ved `MBG_TEST_METRICS=1` sende `Server-Timing: db;dur=<millisekunder>` for toppliste, sesjonsoppslag og resultatregistrering. Målegrensen er fra backend ber om DB-operasjonen, inkludert poolventing, til resultat/commit er klart. HTTP-tid måles uavhengig i testklienten. Manglende DB-måling gir BLOCKED, ikke en antatt DB-tid. Instrumenteringen gjennomgås sammen med databaseadapteren.
 
-Benchmarkdata: 1 000 spillere, 10 spill og 10 000 historiske rekorder. Last: 30 aktive spillere, 6 operasjoner/s med 60/20/20-fordeling, 120 s oppvarming og 900 s måling per fase. Deretter ti topper med 30 samtidige kall per operasjonstype. Forsinket utsending, feil, råtider, PSS, CPU-ticks og forbindelser beholdes. Målingen foregår på serveren; SSH/internett inngår ikke i HTTP-/DB-tiden.
+Benchmarkdata: 1 000 spillere, 10 spill og 10 000 historiske rekorder og 10 000 tilhørende fullførte forsøk. Last: 30 aktive spillere, 6 operasjoner/s med 60/20/20-fordeling, 120 s oppvarming og 900 s måling per fase. Deretter ti topper med 30 samtidige kall per operasjonstype. Forsinket utsending, feil, råtider, PSS, CPU-ticks og forbindelser beholdes. Målingen foregår på serveren; SSH/internett inngår ikke i HTTP-/DB-tiden.
 
 `backend/database/restore.sh <backupfil>` skal gjenopprette til databasen i `MBG_ADMIN_DSN` og fjerne gjenopprettede sesjoner. Testpakken lager kopien og en separat tom måldatabase, kjører den virkelige gjenopprettingsrutinen og sammenligner data etterpå. Rutinen implementeres i databasearbeidet, ikke erstattes av en testdobbel.
 

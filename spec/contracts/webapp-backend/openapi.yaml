@@ -1,6 +1,5 @@
 openapi: 3.1.0
-info: {title: mikrobitGames – Webapp / Backend API, version: 0.1.0, description: 'Godkjent kontrakt
-    for WBS 1.3, bekreftet av brukeren 2026-10-27. Felles fasit for frontend, backend og kontrakttester. Godkjenningen gjelder dokumentasjonen, ikke implementasjonen. Se contract.md for sesjoner, omforsøk, CSRF og frontendforløp.
+info: {title: mikrobitGames – Webapp / Backend API, version: 0.2.0, description: 'Revisjon 0.2.0 av WBS 1.3, samordnet 2026-10-27 etter brukerens valg om privat forsøkshistorikk. Godkjenningen av 0.1.0 gjelder den tidligere versjonen. Felles fasit for frontend, backend og kontrakttester. Tidligere godkjenning gjelder dokumentasjonen i 0.1.0; denne revisjonen følger bestilt samordning, ikke ferdig implementasjon. Se contract.md for sesjoner, omforsøk, CSRF og frontendforløp.
     JSON-objekter har eksplisitte felt; ukjente query-parametere avvises. Alle POST-kall krever JSON,
     X-MBG-Request: 1 og verifisert Origin/Referer. Ingen CORS-tilgang til andre origins. UTF-8, UUID og
     UTC. Maksimal body 16 KiB.'}
@@ -400,87 +399,273 @@ paths:
       - {$ref: '#/components/parameters/GameId'}
       - {$ref: '#/components/parameters/Page'}
       - {$ref: '#/components/parameters/PageSize'}
-  /games/{game_id}/results:
+  "/games/{game_id}/results":
     post:
       operationId: submitResult
       tags:
       - Spill og rekorder
       summary: Send resultat for innlogget spiller
-      description: Spilleridentitet og registreringstid settes av backend. Kun nye personlige rekorder
-        lagres. Samme spiller/spill/verdi kan gjentas etter ukjent utfall uten duplikat; returutfallet
-        kan endres når bedre rekorder kommer imellom.
+      description: Lagrer alle avsluttede forsøk privat. Bare fullførte kan gi offentlig
+        rekord. Samme spiller/attempt_id og identisk spill/status/verdi returnerer eksisterende
+        forsøk uten skriving, også når spillet siden er deaktivert. Samme ID med endret
+        innhold gir 409 ATTEMPT_CONFLICT. Sesjon må alltid være gyldig. Ulike ID-er
+        med samme verdi er ulike forsøk.
       security:
-      - {sessionCookie: []}
+      - sessionCookie: []
       responses:
         '201':
-          description: Første eller strengt bedre personlig rekord er bekreftet lagret.
+          description: Nytt forsøk er lagret, uansett rekordeffekt.
           headers:
             X-Request-ID:
-              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
-              schema: {type: string, format: uuid}
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell
+                body.
+              schema:
+                type: string
+                format: uuid
             Cache-Control:
-              schema: {type: string, const: no-store}
+              schema:
+                type: string
+                const: no-store
           content:
             application/json:
               schema:
-                allOf:
-                - {$ref: '#/components/schemas/ResultResponse'}
-                - properties:
-                    outcome: {const: created}
-              example:
-                outcome: created
-                record: {id: 10000000-0000-4000-8000-000000000002, player_id: 11111111-1111-4111-8111-111111111111,
-                  game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 120, created_at: '2026-10-02T12:00:00Z'}
-                current_record: {id: 10000000-0000-4000-8000-000000000002, player_id: 11111111-1111-4111-8111-111111111111,
-                  game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 120, created_at: '2026-10-02T12:00:00Z'}
-        '200':
-          description: Ingen ny rekordrad.
-          headers:
-            X-Request-ID:
-              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
-              schema: {type: string, format: uuid}
-            Cache-Control:
-              schema: {type: string, const: no-store}
-          content:
-            application/json:
-              schema:
-                allOf:
-                - {$ref: '#/components/schemas/ResultResponse'}
-                - properties:
-                    outcome: {enum: [already_recorded, not_improved]}
+                "$ref": "#/components/schemas/ResultResponse"
               examples:
-                alreadyRecorded:
+                newRecord:
                   value:
-                    outcome: already_recorded
-                    record: {id: 10000000-0000-4000-8000-000000000001, player_id: 11111111-1111-4111-8111-111111111111,
-                      game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 100, created_at: '2026-10-01T12:00:00Z'}
-                    current_record: {id: 10000000-0000-4000-8000-000000000002, player_id: 11111111-1111-4111-8111-111111111111,
-                      game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 120, created_at: '2026-10-02T12:00:00Z'}
+                    attempt:
+                      id: 44444444-4444-4444-8444-444444444444
+                      player_id: 11111111-1111-4111-8111-111111111111
+                      game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+                      status: completed
+                      value: 120
+                      created_at: '2026-10-02T12:00:00Z'
+                      record_outcome: created
+                      record_id: 10000000-0000-4000-8000-000000000002
+                    outcome: created
+                    record:
+                      id: 10000000-0000-4000-8000-000000000002
+                      player_id: 11111111-1111-4111-8111-111111111111
+                      game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+                      value: 120
+                      created_at: '2026-10-02T12:00:00Z'
+                    current_record:
+                      id: 10000000-0000-4000-8000-000000000002
+                      player_id: 11111111-1111-4111-8111-111111111111
+                      game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+                      value: 120
+                      created_at: '2026-10-02T12:00:00Z'
                 notImproved:
                   value:
+                    attempt:
+                      id: 44444444-4444-4444-8444-444444444444
+                      player_id: 11111111-1111-4111-8111-111111111111
+                      game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+                      status: completed
+                      value: 80
+                      created_at: '2026-10-02T12:00:00Z'
+                      record_outcome: not_improved
+                      record_id: null
                     outcome: not_improved
                     record: null
-                    current_record: {id: 10000000-0000-4000-8000-000000000002, player_id: 11111111-1111-4111-8111-111111111111,
-                      game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa, value: 120, created_at: '2026-10-02T12:00:00Z'}
-        '400': {$ref: '#/components/responses/InvalidResult'}
-        '500': {$ref: '#/components/responses/InternalError'}
-        '503': {$ref: '#/components/responses/WriteUnavailable'}
-        default: {$ref: '#/components/responses/UnexpectedError'}
-        '401': {$ref: '#/components/responses/AuthRequired'}
-        '403': {$ref: '#/components/responses/Forbidden'}
-        '413': {$ref: '#/components/responses/TooLarge'}
-        '415': {$ref: '#/components/responses/UnsupportedType'}
-        '404': {$ref: '#/components/responses/NotFound'}
-        '409': {$ref: '#/components/responses/GameInactive'}
+                    current_record:
+                      id: 10000000-0000-4000-8000-000000000002
+                      player_id: 11111111-1111-4111-8111-111111111111
+                      game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+                      value: 120
+                      created_at: '2026-10-02T12:00:00Z'
+                incompleteWithoutValue:
+                  value:
+                    attempt:
+                      id: 44444444-4444-4444-8444-444444444444
+                      player_id: 11111111-1111-4111-8111-111111111111
+                      game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+                      status: incomplete
+                      value: null
+                      created_at: '2026-10-02T12:00:00Z'
+                      record_outcome: not_eligible
+                      record_id: null
+                    outcome: not_eligible
+                    record: null
+                    current_record: null
+        '200':
+          description: Identisk forsøk er allerede lagret; ingen ny skriving. current_record
+            leses på nytt.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell
+                body.
+              schema:
+                type: string
+                format: uuid
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ResultResponse"
+              example:
+                attempt:
+                  id: 44444444-4444-4444-8444-444444444444
+                  player_id: 11111111-1111-4111-8111-111111111111
+                  game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+                  status: completed
+                  value: 120
+                  created_at: '2026-10-02T12:00:00Z'
+                  record_outcome: created
+                  record_id: 10000000-0000-4000-8000-000000000002
+                outcome: created
+                record:
+                  id: 10000000-0000-4000-8000-000000000002
+                  player_id: 11111111-1111-4111-8111-111111111111
+                  game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+                  value: 120
+                  created_at: '2026-10-02T12:00:00Z'
+                current_record:
+                  id: 10000000-0000-4000-8000-000000000002
+                  player_id: 11111111-1111-4111-8111-111111111111
+                  game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+                  value: 120
+                  created_at: '2026-10-02T12:00:00Z'
+        '400':
+          "$ref": "#/components/responses/InvalidResult"
+        '500':
+          "$ref": "#/components/responses/InternalError"
+        '503':
+          "$ref": "#/components/responses/WriteUnavailable"
+        default:
+          "$ref": "#/components/responses/UnexpectedError"
+        '401':
+          "$ref": "#/components/responses/AuthRequired"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '413':
+          "$ref": "#/components/responses/TooLarge"
+        '415':
+          "$ref": "#/components/responses/UnsupportedType"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '409':
+          "$ref": "#/components/responses/ResultConflict"
       parameters:
-      - {$ref: '#/components/parameters/GameId'}
-      - {$ref: '#/components/parameters/BrowserRequest'}
+      - "$ref": "#/components/parameters/GameId"
+      - "$ref": "#/components/parameters/BrowserRequest"
       requestBody:
         required: true
         content:
           application/json:
-            schema: {$ref: '#/components/schemas/ResultRequest'}
-            example: {value: 120}
+            schema:
+              "$ref": "#/components/schemas/ResultRequest"
+            examples:
+              completed:
+                value:
+                  attempt_id: 44444444-4444-4444-8444-444444444444
+                  status: completed
+                  value: 120
+              incomplete:
+                value:
+                  attempt_id: 44444444-4444-4444-8444-444444444444
+                  status: incomplete
+                  value: null
+  "/account/results":
+    get:
+      operationId: getOwnResults
+      tags:
+      - Spill og rekorder
+      summary: Hent privat forsøkshistorikk
+      description: Egne forsøk, også i inaktive spill. Sortert synkende på (created_at,
+        id). Filtrert total og rader leses fra samme snapshot. Kjent spill uten forsøk
+        gir tom liste; ukjent game_id gir 404.
+      security:
+      - sessionCookie: []
+      responses:
+        '200':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell
+                body.
+              schema:
+                type: string
+                format: uuid
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AttemptPage"
+        '400':
+          "$ref": "#/components/responses/InvalidRequest"
+        '500':
+          "$ref": "#/components/responses/InternalError"
+        '503':
+          "$ref": "#/components/responses/Unavailable"
+        default:
+          "$ref": "#/components/responses/UnexpectedError"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '401':
+          "$ref": "#/components/responses/AuthRequired"
+      parameters:
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PageSize"
+      - name: game_id
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+  "/account/results/{attempt_id}":
+    get:
+      operationId: getOwnResult
+      tags:
+      - Spill og rekorder
+      summary: Hent ett eget forsøk
+      description: Bare sesjonens spiller kan lese sine forsøk. Ingen player_id i input.
+        Manglende eller annen eiers forsøk gir samme 404.
+      security:
+      - sessionCookie: []
+      responses:
+        '200':
+          description: Vellykket svar.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell
+                body.
+              schema:
+                type: string
+                format: uuid
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Attempt"
+        '400':
+          "$ref": "#/components/responses/InvalidRequest"
+        '500':
+          "$ref": "#/components/responses/InternalError"
+        '503':
+          "$ref": "#/components/responses/Unavailable"
+        default:
+          "$ref": "#/components/responses/UnexpectedError"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '401':
+          "$ref": "#/components/responses/AuthRequired"
+      parameters:
+      - name: attempt_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
   /players/{player_id}:
     get:
       operationId: getPlayer
@@ -784,9 +969,146 @@ components:
       type: object
       additionalProperties: false
       required:
+      - attempt_id
+      - status
       - value
       properties:
-        value: {type: integer, minimum: 0, maximum: 9007199254740991}
+        attempt_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - completed
+          - incomplete
+        value:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          maximum: 9007199254740991
+      oneOf:
+      - properties:
+          status:
+            const: completed
+          value:
+            type: integer
+            minimum: 0
+            maximum: 9007199254740991
+      - properties:
+          status:
+            const: incomplete
+      description: Alle felt kreves; bruk null når et ufullført forsøk mangler delverdi.
+        Fullført verdi må også være innen spillets min_value/max_value. Ufullført delverdi
+        følger bare den sikre heltallsgrensen.
+    Attempt:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - player_id
+      - game_id
+      - status
+      - value
+      - created_at
+      - record_outcome
+      - record_id
+      properties:
+        id:
+          type: string
+          format: uuid
+        player_id:
+          type: string
+          format: uuid
+        game_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - completed
+          - incomplete
+        value:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          maximum: 9007199254740991
+        created_at:
+          type: string
+          format: date-time
+          pattern: Z$
+          description: UTC fra serveren.
+        record_outcome:
+          type: string
+          enum:
+          - created
+          - already_recorded
+          - not_improved
+          - not_eligible
+        record_id:
+          type:
+          - string
+          - 'null'
+          format: uuid
+      description: Privat forsøk. id er klientens attempt_id, unik per spiller. record_outcome
+        og record_id beskriver effekten ved første lagring og endres ikke.
+      oneOf:
+      - properties:
+          status:
+            const: completed
+          value:
+            type: integer
+            minimum: 0
+            maximum: 9007199254740991
+          record_outcome:
+            enum:
+            - created
+            - already_recorded
+          record_id:
+            type: string
+            format: uuid
+      - properties:
+          status:
+            const: completed
+          value:
+            type: integer
+            minimum: 0
+            maximum: 9007199254740991
+          record_outcome:
+            const: not_improved
+          record_id:
+            type: 'null'
+      - properties:
+          status:
+            const: incomplete
+          record_outcome:
+            const: not_eligible
+          record_id:
+            type: 'null'
+    AttemptPage:
+      type: object
+      additionalProperties: false
+      required:
+      - items
+      - page
+      - page_size
+      - total
+      properties:
+        items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Attempt"
+        page:
+          type: integer
+          minimum: 0
+        page_size:
+          type: integer
+          minimum: 1
+          maximum: 100
+        total:
+          type: integer
+          minimum: 0
     LeaderboardEntry:
       type: object
       additionalProperties: false
@@ -842,7 +1164,9 @@ components:
       - request_id
       - error
       properties:
-        request_id: {type: string, format: uuid}
+        request_id:
+          type: string
+          format: uuid
         error:
           type: object
           additionalProperties: false
@@ -850,12 +1174,34 @@ components:
           - code
           - message
           properties:
-            code: {type: string, enum: [INVALID_REQUEST, INVALID_RESULT, AUTH_REQUIRED, INVALID_CREDENTIALS,
-                FORBIDDEN, CURRENT_PASSWORD_INCORRECT, NOT_FOUND, METHOD_NOT_ALLOWED, USERNAME_TAKEN,
-                GAME_INACTIVE, REQUEST_TOO_LARGE, UNSUPPORTED_MEDIA_TYPE, RATE_LIMITED, INTERNAL_ERROR,
-                SERVICE_UNAVAILABLE, OUTCOME_UNKNOWN, AI_BUSY, AI_UNAVAILABLE, AI_TIMEOUT, INVALID_AI_RESPONSE]}
-            message: {type: string, minLength: 1, description: Trygg tekst til brukeren; klienten bruker
-                code for logikk.}
+            code:
+              type: string
+              enum:
+              - INVALID_REQUEST
+              - INVALID_RESULT
+              - AUTH_REQUIRED
+              - INVALID_CREDENTIALS
+              - FORBIDDEN
+              - CURRENT_PASSWORD_INCORRECT
+              - NOT_FOUND
+              - METHOD_NOT_ALLOWED
+              - USERNAME_TAKEN
+              - GAME_INACTIVE
+              - REQUEST_TOO_LARGE
+              - UNSUPPORTED_MEDIA_TYPE
+              - RATE_LIMITED
+              - INTERNAL_ERROR
+              - SERVICE_UNAVAILABLE
+              - OUTCOME_UNKNOWN
+              - AI_BUSY
+              - AI_UNAVAILABLE
+              - AI_TIMEOUT
+              - INVALID_AI_RESPONSE
+              - ATTEMPT_CONFLICT
+            message:
+              type: string
+              minLength: 1
+              description: Trygg tekst til brukeren; klienten bruker code for logikk.
     GamePage:
       type: object
       additionalProperties: false
@@ -925,27 +1271,77 @@ components:
           type: array
           items: {$ref: '#/components/schemas/Record'}
     ResultResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - attempt
+      - outcome
+      - record
+      - current_record
+      properties:
+        attempt:
+          "$ref": "#/components/schemas/Attempt"
+        outcome:
+          type: string
+          enum:
+          - created
+          - already_recorded
+          - not_improved
+          - not_eligible
+        record:
+          anyOf:
+          - "$ref": "#/components/schemas/Record"
+          - type: 'null'
+        current_record:
+          anyOf:
+          - "$ref": "#/components/schemas/Record"
+          - type: 'null'
+      description: outcome er lik attempt.record_outcome. record samsvarer med attempt.record_id
+        (ellers null). Begge er uendret ved omforsøk. current_record er beste rekord ved
+        dette kallet, kan være null og kan endres mellom kall.
       oneOf:
-      - type: object
-        additionalProperties: false
-        required:
-        - outcome
-        - record
-        - current_record
-        properties:
-          outcome: {type: string, enum: [created, already_recorded]}
-          record: {$ref: '#/components/schemas/Record'}
-          current_record: {$ref: '#/components/schemas/Record'}
-      - type: object
-        additionalProperties: false
-        required:
-        - outcome
-        - record
-        - current_record
-        properties:
-          outcome: {type: string, const: not_improved}
-          record: {type: 'null'}
-          current_record: {$ref: '#/components/schemas/Record'}
+      - properties:
+          outcome:
+            const: created
+          attempt:
+            properties:
+              record_outcome:
+                const: created
+          record:
+            "$ref": "#/components/schemas/Record"
+          current_record:
+            "$ref": "#/components/schemas/Record"
+      - properties:
+          outcome:
+            const: already_recorded
+          attempt:
+            properties:
+              record_outcome:
+                const: already_recorded
+          record:
+            "$ref": "#/components/schemas/Record"
+          current_record:
+            "$ref": "#/components/schemas/Record"
+      - properties:
+          outcome:
+            const: not_improved
+          attempt:
+            properties:
+              record_outcome:
+                const: not_improved
+          record:
+            type: 'null'
+          current_record:
+            "$ref": "#/components/schemas/Record"
+      - properties:
+          outcome:
+            const: not_eligible
+          attempt:
+            properties:
+              record_outcome:
+                const: not_eligible
+          record:
+            type: 'null'
   responses:
     InvalidRequest:
       description: Ugyldig forespørsel; ingen handling utført.
@@ -1327,3 +1723,29 @@ components:
       content:
         application/json:
           schema: {$ref: '#/components/schemas/Error'}
+    ResultConflict:
+      description: GAME_INACTIVE for nytt forsøk i inaktivt spill; ATTEMPT_CONFLICT når
+        samme spiller/attempt_id gjenbrukes med annet spill, status eller verdi.
+      headers:
+        X-Request-ID:
+          description: Servergenerert korrelasjons-ID; samme som request_id i eventuell
+            body.
+          schema:
+            type: string
+            format: uuid
+        Cache-Control:
+          schema:
+            type: string
+            const: no-store
+      content:
+        application/json:
+          schema:
+            allOf:
+            - "$ref": "#/components/schemas/Error"
+            - properties:
+                error:
+                  properties:
+                    code:
+                      enum:
+                      - GAME_INACTIVE
+                      - ATTEMPT_CONFLICT

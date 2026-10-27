@@ -1,10 +1,9 @@
 # Webapp–backend
 
-**Status:** Godkjent og ferdigstilt som dokumentasjonsleveranse for [WBS 1.3 / issue #3](https://github.com/Hoglar/mikrobitGames/issues/3), bekreftet av brukeren 2026-10-27. Godkjenningen omfatter utviklerguiden og OpenAPI-kontrakten, versjon **0.1.0**.
+**Gjeldende revisjon: 0.2.0, 2026-10-27.** Samordnet etter brukerens valg om privat lagring av alle avsluttede spillforsøk. Godkjenningen av 0.1.0 som WBS 1.3-leveranse gjaldt den tidligere versjonen; produktimplementasjon og verifisering gjenstår.
 
-Kontrakten er felles fasit for frontend, backend og kontrakttester. Den ble konkretisert sammen med [backendplanen for WBS 4.1](../../../backend/spec/backend-module.md). Senere avtalte endringer må følges opp i kontrakt, kode og tester. Implementasjon og faktiske målinger følger i komponentarbeidet.
+- [Utviklerguiden](contract.md): brukerforløp, innlogging, forsøk, rekorder, profil, AI og feil.
+- [OpenAPI](openapi.yaml): maskinlesbar fasit for ruter, felt, typer, tilgang og svar.
+- [Konflikter og beslutninger](alignment.md): avvik mellom spesifikasjonene, løsning og tilpasning av testgrunnlaget.
 
-- **Frontend starter i [utviklerguiden](contract.md):** tilgjengelige endepunkter, innlogging, resultater, AI og feilhåndtering.
-- [OpenAPI-kontrakten](openapi.yaml) beskriver felter, typer, svar, autentisering og eksempler som maskinlesbar fasit. Den kan brukes til API-dokumentasjon, klienttyper og kontroller ved implementasjon.
-
-Nettsiden og API-et planlegges på samme offentlige HTTPS-adresse, med Linux-PC-en hjemme hos prosjekteier som vert. Domene og nettverkstilgang avklares før publisering. Ingen tjenester er implementert eller eksponert gjennom denne dokumentasjonen.
+Kontrakten er felles implementeringsgrunnlag for frontend, backend og kontrakttester. Endringer samordnes i begge kontraktfilene og berørte modeller/tester. Nettsiden og API-et planlegges på samme offentlige HTTPS-adresse på hjemmemaskinen. Domene og ekstern tilgjengelighet avklares før publisering.

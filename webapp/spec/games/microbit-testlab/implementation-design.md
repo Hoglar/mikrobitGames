@@ -13,7 +13,7 @@ Designet bygger på [spesifikasjonen](specification.md) og [det felles Micro:bit
 | Opptak | Start/pause/fortsett/stopp, begrensede buffere og eksport. |
 | Testlab-styring | Samordning, tilkoblingsstatus, nullstilling og opprydding. |
 
-Siden eier forbindelsen. Testlab mottar input og sender output gjennom én spillsesjon i den felles adapteren. Verktøyet åpnes lokalt fra spillvelgeren og trenger ingen backendregistrering.
+Siden eier forbindelsen. Testlab kan åpne tilkoblingspanelet uten en tilkoblet enhet. Etter at adapteren er klar opprettes én spillsesjon med `createGameSession()`; Testlab mottar input og sender output gjennom denne. Ingen spillsesjon opprettes før readiness. Verktøyet åpnes lokalt fra spillvelgeren og trenger ingen backendregistrering.
 
 ## Dataflyt og tilstander
 

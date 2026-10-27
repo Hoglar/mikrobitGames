@@ -1,10 +1,12 @@
 # WBS 1.5 – Kontrakt mellom Backend API og AI-tjenesten
 
-**Status:** Dokumentasjonsleveranse for [WBS 1.5 / issue #5](https://github.com/Hoglar/mikrobitGames/issues/5). Versjon 1.0 ble godkjent av prosjekteier 2026-10-23; versjon 1.1 utvider til spørsmål på tvers av spill etter prosjekteiers ønske 2026-10-24. Ett spørsmål og ett svar uten samtalehistorikk, med lokal HTTP/JSON. Implementasjon, kjørbare tester og målinger følger i komponent- og integreringsarbeidet.
+**Revisjon 1.2, 2026-10-27:** Presisert at private forsøk er utenfor AI-grunnlaget. Meldingsformat, offentlig rekordgrunnlag og grenser er uendret. Tidligere godkjenning gjaldt tidligere revisjoner.
+
+**Historisk status:** Dokumentasjonsleveranse for [WBS 1.5 / issue #5](https://github.com/Hoglar/mikrobitGames/issues/5). Versjon 1.0 ble godkjent av prosjekteier 2026-10-23; versjon 1.1 utvider til spørsmål på tvers av spill etter prosjekteiers ønske 2026-10-24. Ett spørsmål og ett svar uten samtalehistorikk, med lokal HTTP/JSON. Implementasjon, kjørbare tester og målinger følger i komponent- og integreringsarbeidet.
 
 ## Formål og avgrensning
 
-En innlogget spiller kan stille frie spørsmål om dataene i databasen, både innenfor ett spill og på tvers av spill og spillere. Spørsmålene er ikke begrenset til forhåndsdefinerte spørsmålstyper. AI-tjenesten henter relevante data og returnerer ett kort svar på norsk som ren tekst. Hvert spørsmål behandles selvstendig, uten samtalehistorikk eller strømming av svaret.
+En innlogget spiller kan stille frie spørsmål om dataene i databasen, både innenfor ett spill og på tvers av spill og spillere. Spørsmålene er ikke begrenset til forhåndsdefinerte spørsmålstyper. Private spillforsøk er utenfor datagrunnlaget, også når spilleren spør om egne forsøk. AI-tjenesten henter relevante data og returnerer ett kort svar på norsk som ren tekst. Hvert spørsmål behandles selvstendig, uten samtalehistorikk eller strømming av svaret.
 
 «Utvikling» betyr endring i **personlige rekorder**, ikke alle spillforsøk. AI-en må følge spillets enhet og regel for om høyere eller lavere resultat er best. Spørsmål om andre spillere bruker den offentlige rekordhistorikken fra [WBS 1.4](../backend-database/README.md).
 
