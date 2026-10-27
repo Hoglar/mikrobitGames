@@ -2,7 +2,7 @@
 
 **Status:** Avtalt arbeidsmåte, 2026-10-24. Planen beskriver hele opplegget. Oppdatert 2026-10-25: testpakken har nå enhetstester, integrasjon, benchmark, modelluttrekk, SSH-kjøring og rapportering. Komponentene og engangsoppsettet på Parrot må fortsatt klargjøres før full måling. Ingen produktbaseline eller FoM-måling foreligger.
 
-Database, backend API og AI-tjeneste implementeres samlet fra modellene. [Frontendkontrakten i 1.3](../../spec/contracts/webapp-backend/README.md) brukes som arbeidsgrunnlag her, selv om den fortsatt er merket forslag. Den andre oppgaveeierens formelle godkjenning endres ikke. Kontrollene trenger ikke ferdig nettside eller Micro:bit; samlet systemdemonstrasjon kommer senere.
+Database, backend API og AI-tjeneste implementeres samlet fra modellene. [Frontendkontrakten i 1.3](../../spec/contracts/webapp-backend/README.md) er godkjent, bekreftet 2026-10-27, og brukes som felles fasit for frontend, backend og kontrakttester. Kontrollene trenger ikke ferdig nettside eller Micro:bit; samlet systemdemonstrasjon kommer senere.
 
 Se [kort kjøreoversikt](../verification/README.md) og [arbeidsflyten i draw.io](../../docs/presentation/iterative-development.drawio).
 

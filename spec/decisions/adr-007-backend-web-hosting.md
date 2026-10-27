@@ -1,6 +1,6 @@
 # ADR-007: Backend API og nettside på hjemmemaskinen
 
-**Status:** Godkjent av brukeren som del av WBS 4.1, 2026-10-24. Hjemmemaskinen er planlagt vert for både nettside og backend. Tunnel er en reserveplan uten valgt leverandør. Frontendkontrakten 1.3 er fortsatt et forslag under den ansvarlige for 1.3. Ingen publisering er utført.
+**Status:** Godkjent av brukeren som del av WBS 4.1, 2026-10-24. Hjemmemaskinen er planlagt vert for både nettside og backend. Tunnel er en reserveplan uten valgt leverandør. Godkjenning av frontendkontrakten 1.3 er bekreftet 2026-10-27. Ingen publisering er utført.
 
 ## Kontekst
 

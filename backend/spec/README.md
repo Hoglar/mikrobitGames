@@ -29,8 +29,8 @@ Tester avledes fra dette grunnlaget. Ved motstrid mellom kontrakt, modell og tes
 
 ## Beslutningsstatus for første implementasjon
 
-- **Arbeidsgrunnlag:** Bruk gjeldende 1.3 som fasit for backend og kontrakttester, etter brukerens beslutning. Dokumentet forblir et forslag overfor frontend; oppgaveeieren har fortsatt ansvar for formell godkjenning.
-- **Sesjoner:** Fornyelsesreglene i 1.4 del 8 brukes i første implementasjon og testgrunnlaget. Frontendens gjennomføring samordnes gjennom 1.3. Dette er ikke en påstand om ferdig implementasjon eller gruppegodkjenning.
+- **Frontendkontrakt:** 1.3 er godkjent, bekreftet av brukeren 2026-10-27. Utviklerguiden og OpenAPI 0.1.0 er felles fasit for frontend, backend og kontrakttester.
+- **Sesjoner:** Fornyelsesreglene i 1.4 del 8 brukes i første implementasjon og testgrunnlaget. Frontendforløpet er beskrevet i den godkjente 1.3. Implementasjon og verifisering gjenstår.
 - **Internt design:** Funksjonsnavn, modellmeldinger og oppstartsgrensesnitt i `test-runtime.md` er eksplisitte designvalg som implementasjonen og testene deler. De utvider ikke funksjonsomfanget.
 - **Klargjøres ved byggestart:** Applikasjonens bibliotekversjoner, PostgreSQL-hovedversjon, SQL-tillatelseslisten innenfor 1.6 og tjenestebrukere/målerettigheter på Parrot. Modellens faktiske egnethet må måles. Domene og offentlig nettverkstilgang avklares før publisering.
 

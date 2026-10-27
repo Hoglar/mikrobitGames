@@ -12,7 +12,7 @@
 | [Modelluttrekk](../verification/model_checks.py) | PostgreSQL-kataloger, OpenAPI og komponentavhengigheter mot uavhengig fasit. |
 | [Kontrollverktøyenes tester](verification/) | Bevisste modellavvik, manglende målinger, FoM-vekter, reléer, feilinjeksjon og rapportering. |
 
-Testfasiten kommer fra [DB-planen](../spec/test-plan.md), [backendplanen](../spec/backend-module.md) og [AI-planen](../spec/ai-module.md). [OpenAPI 1.3](../../spec/contracts/webapp-backend/openapi.yaml) brukes som avtalt arbeidsgrunnlag; formell godkjenning ligger hos oppgaveeieren.
+Testfasiten kommer fra [DB-planen](../spec/test-plan.md), [backendplanen](../spec/backend-module.md) og [AI-planen](../spec/ai-module.md). [OpenAPI for kontrakt 1.3](../../spec/contracts/webapp-backend/openapi.yaml), versjon 0.1.0, er godkjent og brukes som fasit for API-kontrakttestene.
 
 Kontrollkoblingen er eksplisitt: integrasjon/benchmark har `@check(id, gruppe, ...)`, mens enhetstestene kobles til gruppene i `pipeline.unit_group`. Alle deltester i en gruppe må bestå. Modellpunktene følger 20/4/4-fordelingen i [implementeringsplanen](../spec/implementation-plan.md). Verktøyenes egne tester teller aldri som produktets FoM.
 

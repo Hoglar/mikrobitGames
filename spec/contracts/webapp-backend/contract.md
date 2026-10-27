@@ -1,6 +1,6 @@
 # Frontendguide: Webapp ↔ Backend API
 
-**Status:** Forslag til kontrakt 1.3, utarbeidet sammen med [WBS 4.1 / issue #13](https://github.com/Hoglar/mikrobitGames/issues/13), 2026-10-24. Gjeldende kontrakt og OpenAPI brukes som arbeidsgrunnlag for første backend-implementasjon etter brukerens beslutning. Den ansvarlige for 1.3 avklarer fortsatt med frontend; senere avtalte endringer følges opp i kode og tester. Godkjenningen av 4.1 godkjenner ikke denne kontrakten eller OpenAPI-filen. Issue 1.3 er ikke erklært ferdig.
+**Status:** Godkjent og ferdigstilt for [WBS 1.3 / issue #3](https://github.com/Hoglar/mikrobitGames/issues/3), bekreftet av brukeren 2026-10-27. Versjon **0.1.0**, sammen med OpenAPI-filen. Kontrakten ble utarbeidet sammen med [WBS 4.1 / issue #13](https://github.com/Hoglar/mikrobitGames/issues/13) og er felles fasit for frontend, backend og tester. Godkjenningen gjelder dokumentasjonen; den dokumenterer ikke ferdig implementasjon eller beståtte produktkontroller.
 
 **Start her:** Frontend bruker `/api/v1` på samme HTTPS-adresse som nettsiden. Backend tilbyr konto/innlogging, spilloversikt, topplister, rekordhistorikk, innsending av resultater og AI-spørsmål. [openapi.yaml](openapi.yaml) er den maskinlesbare fasiten for endepunkter, felt, typer og HTTP-status. Denne guiden beskriver brukerforløp og oppførsel. Endringer oppdaterer begge dokumentene sammen.
 

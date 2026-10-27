@@ -1,12 +1,12 @@
 # Backend API – krav, modell og testplan for WBS 4.1
 
-**Status:** Ferdigstilt og godkjent av brukeren for [WBS 4.1 / issue #13](https://github.com/Hoglar/mikrobitGames/issues/13), 2026-10-24. Oppdatert arbeidsgrunnlag 2026-10-25: gjeldende 1.3 brukes for backend-implementasjonen etter brukerens beslutning; formell godkjenning eies fortsatt av den ansvarlige for 1.3. Ingen tjenester er implementert, startet eller publisert.
+**Status:** Ferdigstilt og godkjent av brukeren for [WBS 4.1 / issue #13](https://github.com/Hoglar/mikrobitGames/issues/13), 2026-10-24. Oppdatert 2026-10-27: godkjenning av frontendkontrakt 1.3 er bekreftet, og den er felles fasit for implementasjon og kontrakttester. Ingen tjenester er implementert, startet eller publisert som del av denne dokumentasjonsleveransen.
 
 **Dokumentrolle:** Kravtabellen beskriver hva API-et skal oppfylle. Komponent-, teknologi- og driftsdelene beskriver valgt design; testtabellen beskriver hvordan det kontrolleres. Byggerekkefølge og iterasjoner ligger i [implementeringsplanen](implementation-plan.md). Se [leseoversikten](README.md) for autoritative kilder.
 
 ## Ansvar og grensesnitt
 
-Backend binder nettsiden, PostgreSQL og lokal AI sammen. Den håndhever innlogging, kontoendringer og rekordregler, tilbyr offentlige spilldata og formidler AI-spørsmål. Frontendens inngang er [utviklerguiden](../../spec/contracts/webapp-backend/contract.md) med [OpenAPI-kontrakten](../../spec/contracts/webapp-backend/openapi.yaml). Begge brukes som arbeidsgrunnlag for første backend-implementasjon og kontrakttestene. Den ansvarlige for 1.3 avklarer dem med frontend; eventuelle avtalte endringer samordnes i kontrakt, implementasjon og tester. Godkjenningen av 4.1 ferdigstiller ikke 1.3.
+Backend binder nettsiden, PostgreSQL og lokal AI sammen. Den håndhever innlogging, kontoendringer og rekordregler, tilbyr offentlige spilldata og formidler AI-spørsmål. Frontendens inngang er den godkjente [utviklerguiden](../../spec/contracts/webapp-backend/contract.md) med [OpenAPI-kontrakten](../../spec/contracts/webapp-backend/openapi.yaml). Begge brukes som fasit for frontend, backend og kontrakttestene. Senere avtalte endringer samordnes i kontrakt, implementasjon og tester.
 
 [1.4](contracts/backend-database/contract.md) fastsetter databaseoperasjoner og transaksjoner. [1.5](contracts/backend-ai/contract.md) fastsetter kommunikasjon med AI. [Databasespesifikasjonen](requirements.md) og [AI-modulplanen](ai-module.md) er allerede ferdigstilt. Denne planen konkretiserer HTTP-grensesnittet uten å endre de interne kontraktene.
 
@@ -23,7 +23,7 @@ Backend binder nettsiden, PostgreSQL og lokal AI sammen. Den håndhever innloggi
 | BE-007 | 2 | Nettsiden/API-et skal være tilgjengelig fra internett over HTTPS når hjemmemaskinen og forbindelsen er oppe. Etter normal omstart skal nettside, innlogging og rekordlagring virke uten interaktiv oppstart innen 5 minutter etter at operativsystem og nettverk er klare. Bekreftede data bevares. Dette er et testmål, ikke et løfte om kontinuerlig oppetid. |
 | BE-008 | 1 | Internettilgangen skal ha cookie-/CSRF-kontroll, begrensede forespørsler og beskyttelse mot gjentatte passordforsøk. Bare webinngangen eksponeres; API, PostgreSQL, AI og modellkjøring lytter lokalt. Alle negative tilgangstester skal bestå. |
 
-Sikkerhet og integritet prioriteres foran ytelse. BE-006 og femminuttersmålet er akseptansegrenser for senere testing, ikke målte egenskaper. Ingen tilgjengelighetsprosent settes for en PC som også kan skrus av. Ved strøm-/nettbrudd er tjenesten utilgjengelig; foreslått frontendoppførsel beskrives i 1.3.
+Sikkerhet og integritet prioriteres foran ytelse. BE-006 og femminuttersmålet er akseptansegrenser for senere testing, ikke målte egenskaper. Ingen tilgjengelighetsprosent settes for en PC som også kan skrus av. Ved strøm-/nettbrudd er tjenesten utilgjengelig; avtalt frontendoppførsel beskrives i 1.3.
 
 ## Komponentmodell
 
@@ -40,7 +40,7 @@ Sikkerhet og integritet prioriteres foran ytelse. BE-006 og femminuttersmålet e
 
 Beskyttede ruter henter identiteten gjennom `auth_service`. Skriving kontrollerer sesjonen på nytt inne i den låste transaksjonen etter 1.4; kontrollen ved HTTP-inngangen alene er ikke tilstrekkelig. Offentlige lesinger bruker én SQL-setning for rangering, antall og rader, slik at de får samme snapshot også med `READ COMMITTED`. AI-kall sendes først etter sesjonskontroll, og autentiseringshemmeligheter sendes aldri videre.
 
-Valg i [ADR-007](../../spec/decisions/adr-007-backend-web-hosting.md): Python med FastAPI, PostgreSQL-driver med eksplisitte transaksjoner og en egen HTTP-klient for AI. Bruk samme språk som AI-tjenesten for å begrense antall teknologier. FastAPIs standardvalideringsfeil må tilpasses endelig avtalt feilformat i 1.3; automatisk generert dokumentasjon er et uttrekk av implementasjonen, ikke fasiten. Bibliotekversjoner fastsettes før kodegenerering.
+Valg i [ADR-007](../../spec/decisions/adr-007-backend-web-hosting.md): Python med FastAPI, PostgreSQL-driver med eksplisitte transaksjoner og en egen HTTP-klient for AI. Bruk samme språk som AI-tjenesten for å begrense antall teknologier. FastAPIs standardvalideringsfeil må tilpasses det godkjente feilformatet i 1.3; automatisk generert dokumentasjon er et uttrekk av implementasjonen, ikke fasiten. Bibliotekversjoner fastsettes før kodegenerering.
 
 [Interne grensesnitt og oppstart](../verification/test-runtime.md) konkretiserer funksjonene som enhetstestene kaller, tokenrepresentasjon, miljøvariabler og måleinstrumentering. Dette er del av første implementasjons tekniske design; produktoppførselen bestemmes fortsatt av kontraktene.
 
@@ -56,7 +56,7 @@ API-tjenesten kjører som egen Linux-bruker uten sudo, med bare `backend_app`-ti
 
 **Avklart premiss:** Hjemmemaskinen er en Parrot Linux-PC med 16 GB RAM, eldre Intel-prosessor og GTX 980. Den skal servere både nettsiden og backend og være tilgjengelig fra internett. Nøyaktig maskinvare og ledig diskplass kontrolleres ved oppsett.
 
-**Plan A – direkte tilgang:** Caddy håndterer HTTPS, serverer webappens bygde filer og videresender `/api/*` til API-et på `127.0.0.1:8000` uten å fjerne prefikset. Backend monterer rutene under `/api/v1` etter forslaget til 1.3. Andre adresser tilhører frontend; ukjente API-ruter skal ikke returnere frontendens HTML. PostgreSQL (`5432`), AI-tjenesten (foreslått `8001`) og Ollama (`11434`) er lokale. Bare port 443 og port 80 for HTTPS-omdirigering/sertifikatoppsett åpnes for webtrafikk. Caddys administrasjonsgrensesnitt eksponeres ikke.
+**Plan A – direkte tilgang:** Caddy håndterer HTTPS, serverer webappens bygde filer og videresender `/api/*` til API-et på `127.0.0.1:8000` uten å fjerne prefikset. Backend monterer rutene under `/api/v1` etter den godkjente kontrakten i 1.3. Andre adresser tilhører frontend; ukjente API-ruter skal ikke returnere frontendens HTML. PostgreSQL (`5432`), AI-tjenesten (foreslått `8001`) og Ollama (`11434`) er lokale. Bare port 443 og port 80 for HTTPS-omdirigering/sertifikatoppsett åpnes for webtrafikk. Caddys administrasjonsgrensesnitt eksponeres ikke.
 
 Bruk systemd-tjenester for webinngang, API, PostgreSQL, AI-tjeneste og modellkjører. Aktiver oppstart ved boot og kontrollert restart etter prosessfeil med forsinkelse og grense mot endeløse restart-løkker. PostgreSQL må være klar før API-et erklæres klart; tap av databasen skal gi 503 og kunne gjenopprettes uten ny deploy. AI er en valgfri avhengighet for vanlig spillfunksjon, og skal ikke hindre oppstart av API eller nettside. Avslutt vedlikehold kontrollert, med opprydding av pågående forespørsler.
 

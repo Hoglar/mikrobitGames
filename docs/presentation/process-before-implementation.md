@@ -2,6 +2,8 @@
 
 *mikrobitGames – status før første backend-implementasjon, 25. oktober 2026*
 
+*Tillegg 27. oktober 2026: Kontrakt 1.3 er nå godkjent. Rapporten nedenfor beskriver prosessen og statusen 25. oktober.*
+
 Arbeidet har handlet om å forberede backenddelen av et skolesystem med Micro:bit, nettleserspill, rekordlagring og lokal AI. Målet var å lage et forståelig grunnlag for AI-assistert implementasjon, der vi selv kan kontrollere resultatet. Gjennom dialog avklarte vi behov og vurderte forslag. Utviklings-AI bidro med alternativer, dokumentasjon, modeller og testkode, mens den ansvarlige studenten tok beslutningene om backendens arbeidsgrunnlag.
 
 Vi startet med hva systemet skulle lagre og tilby: brukerkontoer, innloggingssesjoner, spill og personlige rekorder. Første resultat og senere forbedringer skal lagres, slik at historikken viser progresjon. Spill kan rangere høy eller lav verdi som best, og topplistene skal være offentlige. Samtidig avklarte vi rammene: en eldre Parrot Linux-PC hjemme skal kjøre backend, PostgreSQL og lokal AI, med opptil omtrent 30 samtidige spillere som dimensjonerende belastning. Dette påvirket valg om ressursbruk, sikkerhet og drift.

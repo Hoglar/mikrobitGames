@@ -2,7 +2,7 @@
 
 **Arbeidspakke:** [WBS 1.4 / issue #4](https://github.com/Hoglar/mikrobitGames/issues/4)  
 **Versjon:** 1.1 – ferdigstilt dokumentasjonsleveranse, 2026-10-23.  
-**Status:** Gjennomgått og godkjent av prosjekteier som leveranse for WBS 1.4. Funksjonelle valg og overordnede kvalitetskrav er avklart. Presisering 2026-10-25: sesjonsreglene i del 8 brukes som arbeidsgrunnlag for første backend-implementasjon og tester. Frontendens gjennomføring samordnes gjennom 1.3; formell gruppegodkjenning påstås ikke. Ingen programvare er implementert eller testet som del av denne leveransen.
+**Status:** Gjennomgått og godkjent av prosjekteier som leveranse for WBS 1.4. Funksjonelle valg og overordnede kvalitetskrav er avklart. Sesjonsreglene i del 8 brukes i første backend-implementasjon og tester. Oppdatert 2026-10-27: frontendforløpet følger den nå godkjente kontrakten i 1.3. Ingen programvare er implementert eller testet som del av denne leveransen.
 
 Les [sammendraget som følger issue #4](README.md) først. Dette dokumentet er den detaljerte spesifikasjonen og kan brukes som oppslagsverk ved implementasjon.
 
@@ -158,7 +158,7 @@ Backend verifiserer spillerens passord mot lagret Argon2id-hash. Sesjonstoken ge
 
 ### Fornyelse uten å avbryte spill
 
-Følgende regler erstatter det tidligere forslaget om fast utløp etter innlogging. De brukes i første backend-implementasjon og testgrunnlaget. Frontendforløpet nedenfor er fortsatt del av forslaget i 1.3; denne presiseringen erklærer ikke løsningen implementert eller gruppegodkjent.
+Følgende regler erstatter det tidligere forslaget om fast utløp etter innlogging. De brukes i første backend-implementasjon og testgrunnlaget. Frontendforløpet nedenfor er del av den godkjente kontrakten i 1.3. Godkjenningen gjelder oppførselen som skal implementeres, ikke en allerede verifisert løsning.
 
 - Webappen ber om fornyelse før spillstart og omtrent hvert femte minutt mens spillet er aktivt og spilleren gir input. En åpen, inaktiv fane eller automatisk henting av offentlige topplister skal ikke holde innloggingen ved like. Nettleseren rapporterer aktivitet; backend bruker alltid sin egen tid og kontrollerer sesjonen.
 - Backend oppdaterer samme sesjon til `expires_at = min(nåtid + 72 timer, absolute_expires_at)`. Dette er forlengelse av en databasesesjon og trenger ikke et separat refresh-token-system. Cookie-levetiden oppdateres til gjenværende varighet.
@@ -168,7 +168,7 @@ Følgende regler erstatter det tidligere forslaget om fast utløp etter innloggi
 
 Anbefalt opprydding av utløpte sesjoner er daglig. Utlogging sletter bare aktuell sesjon; passordendring og kontosletting fjerner alle. Fornyelsesreglene bygger på skillet mellom inaktivitetsutløp og absolutt utløp i OWASPs veiledning, men de konkrete intervallene er prosjektets egne valg.
 
-Cookie-, CSRF-, CORS- og registreringsoppførsel følger gjeldende [arbeidsgrunnlag i 1.3](../../../../spec/contracts/webapp-backend/contract.md). De endrer ikke lagringskontrakten. Webappen må håndheve innlogging før spillstart, og backend kontrollerer på nytt ved innsending.
+Cookie-, CSRF-, CORS- og registreringsoppførsel følger den godkjente [kontrakten i 1.3](../../../../spec/contracts/webapp-backend/contract.md). De endrer ikke lagringskontrakten. Webappen må håndheve innlogging før spillstart, og backend kontrollerer på nytt ved innsending.
 
 Sikkerhetskopier oppbevares tilgangsbegrenset, med minst én kopi utenfor den aktuelle harddisken. Ved gjenoppretting slettes alle gjenopprettede sesjoner før tjenesten åpnes, slik at gamle innlogginger ikke blir gyldige igjen. En slettet konto kan fortsatt forekomme i eldre sikkerhetskopier i oppbevaringsperioden; gjenopprettingsrutinen må håndtere slettinger etter kopitidspunktet før offentlig åpning. Dette skal dokumenteres ved driftsoppsett.
 

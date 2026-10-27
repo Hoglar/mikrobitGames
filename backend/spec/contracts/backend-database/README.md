@@ -19,7 +19,7 @@ Spillere oppretter konto selv. Spilling og innsending krever innlogging; topplis
 - **Feil:** Ugyldige data avvises. Flertrinnslagringer gjennomføres samlet eller rulles tilbake. Databasefeil skal aldri rapporteres som vellykket lagring.
 - **Beskyttelse:** Passord lagres som hash. Backend bestemmer spilleridentiteten fra innloggingen.
 
-**Sesjoner:** [Del 8 i kontrakten](contract.md#8-autentisering-og-drift) er fasit for fornyelse, utløp og håndtering under spilling. Reglene brukes i første backend-implementasjon og tester; frontendforløpet samordnes gjennom forslaget i 1.3.
+**Sesjoner:** [Del 8 i kontrakten](contract.md#8-autentisering-og-drift) er fasit for fornyelse, utløp og håndtering under spilling. Reglene brukes i første backend-implementasjon og tester; frontendforløpet følger den godkjente kontrakten i 1.3.
 
 ## Kvalitetskrav
 
