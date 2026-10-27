@@ -19,6 +19,8 @@ python3 microbit/toolchain/build.py
 
 The wrapper fetches immutable revisions from [toolchain/lock.json](toolchain/lock.json), initializes pinned submodules, checks runtime sources for local changes, and builds our `src/` with the upstream bootstrap. First use requires network access. `--prepare-only` fetches/configures without compiling. Later builds reuse generated dependencies under `.build/`; they do not update branches. Application warnings are errors. BLE/SoftDevice and serial diagnostics are disabled; scheduler tick is 1 ms. Radio services are never started.
 
+`toolchain/compiler-compat.cmake` corrects the pinned bootstrap's obsolete dependency-file placeholder. This is required for reliable incremental header rebuilds with modern CMake. Before this correction, a hardware run exposed stale objects with inconsistent application layouts despite a successful link. Rebuild with the current wrapper; do not flash images from that older build setup. The optional [ELF layout audit](verification/README.md) also checks for inconsistent compiled project types.
+
 Artifacts are staged in `microbit/build/v2/`:
 
 - `MICROBIT.hex`: flash this V2 image.

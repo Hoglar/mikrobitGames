@@ -20,6 +20,8 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib ninja-build
       - run: python3 microbit/toolchain/build.py
+      - run: python3 -m pip install pyelftools==0.33
+      - run: python3 microbit/verification/audit_layout.py microbit/build/v2/MICROBIT
       - uses: actions/upload-artifact@v4
         with:
           name: microbit-v2-firmware

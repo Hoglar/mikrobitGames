@@ -63,6 +63,10 @@ def main():
     cmake_file = bootstrap / "CMakeLists.txt"
     hook = '\ninclude("../../toolchain/application.cmake")\n'
     cmake_text = run("git", "show", "HEAD:CMakeLists.txt", cwd=bootstrap, capture=True)
+    compiler_hook = "include(${TOOLCHAIN_FOLDER}/compiler-flags.cmake)"
+    if cmake_text.count(compiler_hook) != 1:
+        raise RuntimeError("Pinned bootstrap compiler hook changed")
+    cmake_text = cmake_text.replace(compiler_hook, compiler_hook + '\ninclude("../../toolchain/compiler-compat.cmake")')
     cmake_file.write_text(cmake_text + hook, encoding="utf-8")
     if args.prepare_only:
         print("Pinned sources ready:", bootstrap)

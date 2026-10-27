@@ -1,0 +1,2 @@
+pyocd==0.46.0
+pyelftools==0.33

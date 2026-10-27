@@ -34,6 +34,10 @@ def percentiles(values):
 class Link:
     def __init__(self, port):
         self.port, self.next_write = port, 0
+        if hasattr(port, "set_buffer_size"):
+            # Windows' default 4 KiB RX queue can overflow during host scheduling
+            # delays even while a healthy board keeps its 50 Hz schedule.
+            port.set_buffer_size(rx_size=65536, tx_size=4096)
         self.pending = bytearray()
 
     def write(self, data):
@@ -47,23 +51,26 @@ class Link:
         return time.monotonic()
 
     def line(self, deadline):
-        while time.monotonic() < deadline:
-            byte = self.port.read(1)
-            if not byte:
-                continue
-            if byte == b"\n":
-                line = bytes(self.pending)
-                self.pending.clear()
+        while True:
+            boundary = self.pending.find(b"\n")
+            if boundary >= 0:
+                line = bytes(self.pending[:boundary])
+                del self.pending[:boundary + 1]
                 assert len(line) <= 1024 and all(32 <= c <= 126 for c in line), "Invalid wire bytes"
                 return line.decode("ascii")
-            self.pending.extend(byte)
             assert len(self.pending) <= 1025, "Oversized device line"
-        raise TimeoutError("Device line deadline expired")
+            available = self.port.in_waiting
+            if not available and time.monotonic() >= deadline:
+                raise TimeoutError("Device line deadline expired")
+            data = self.port.read(max(1, min(available, 4096)))
+            self.pending.extend(data)
 
     def expect(self, expected, deadline):
         while True:
             line = self.line(deadline)
             if line == expected:
+                if time.monotonic() > deadline:
+                    raise TimeoutError("Result received after host deadline")
                 return time.monotonic()
             s = json.loads(line)
             validate_snapshot(s)
@@ -73,10 +80,19 @@ class Link:
         deadline = ended + 3
         while True:
             line = self.line(deadline)
-            obj = json.loads(line)
+            if line.startswith("ERR|"):
+                raise ValueError("Device rejected handshake: " + line)
+            try:
+                obj = json.loads(line)
+            except json.JSONDecodeError:
+                # Opening an already-streaming port can start in the middle of an
+                # old line. Only the new deviceInfo establishes the framing barrier.
+                continue
+            if not isinstance(obj, dict):
+                continue
             if obj.get("type") == "deviceInfo":
                 break
-            validate_snapshot(obj)  # An old committed snapshot may precede the barrier.
+            # Old snapshots/results preceding the barrier do not establish state.
         expected = json.loads(CORPUS.read_text())["deviceInfo"]["v2"]
         assert {k: v for k, v in obj.items() if k != "capabilities"} == {k: v for k, v in expected.items() if k != "capabilities"}
         assert obj["capabilities"]["sensors"] == expected["capabilities"]["sensors"]
@@ -86,6 +102,8 @@ class Link:
         assert outputs["builtInSounds"] == ["hello", "happy"]
         first = json.loads(self.line(deadline))
         validate_snapshot(first)
+        if time.monotonic() > deadline:
+            raise TimeoutError("Handshake completed after host deadline")
         return obj, first
 
 
