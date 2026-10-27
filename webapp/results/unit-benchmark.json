@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "timestamp": "2026-10-27T15:31:55.189Z",
+  "revision": "947d0cb5643c5f102212a9fdbc734de9d515819a",
+  "sourceHashes": {
+    "src/platform/rules.js": "8583714fa9cc40b76609ff5bc4cf21b49459e8421d1188c0b437c3154ce0141b",
+    "src/testlab/recorder.js": "91f5e28abf2068ad46433108b6e36937f9ade0e9067104249b8b154583c89a05",
+    "verification/benchmark.js": "87fada9ba80e82cc529b312485ab99729a1d8197b2f713260d078dabe3e659fb"
+  },
+  "environment": {
+    "node": "v24.22.1",
+    "platform": "darwin",
+    "release": "27.0.0",
+    "arch": "arm64",
+    "cpu": "Apple M1"
+  },
+  "method": "Node performance.now; nearest-rank percentiles; 1000 warmup operations; accelerated logical time; assertions included; no forced GC",
+  "status": "MEASURED",
+  "correctness": "PASS",
+  "measurements": [
+    {
+      "name": "platform-start-and-retry",
+      "count": 50000,
+      "elapsedMs": 34.6665,
+      "operationsPerSecond": 1442314.6265126274,
+      "cpuUsPerOperation": 0.7932,
+      "latencyMs": {
+        "p50": 0.0006249999999994316,
+        "p95": 0.0007500000000000284,
+        "p99": 0.00079200000000057,
+        "max": 0.06254199999999344
+      }
+    },
+    {
+      "name": "recorder-50Hz-600s-logical-time",
+      "count": 30000,
+      "elapsedMs": 31.025500000000008,
+      "operationsPerSecond": 966946.5439718938,
+      "cpuUsPerOperation": 1.3103666666666667,
+      "latencyMs": {
+        "p50": 0.0006669999999928677,
+        "p95": 0.0019170000000059417,
+        "p99": 0.002124999999992383,
+        "max": 0.6735410000000002
+      }
+    },
+    {
+      "name": "export-50Hz",
+      "elapsedMs": 10.719708999999995,
+      "jsonBytes": 736275,
+      "csvBytes": 240218,
+      "retainedSamples": 3000,
+      "retainedEvents": 1000,
+      "dropped": {
+        "samples": 3200,
+        "events": 30000
+      }
+    },
+    {
+      "name": "recorder-500Hz-600s-logical-time",
+      "count": 300000,
+      "elapsedMs": 212.727166,
+      "operationsPerSecond": 1410257.117795665,
+      "cpuUsPerOperation": 0.7600066666666667,
+      "latencyMs": {
+        "p50": 0.0006250000000136424,
+        "p95": 0.0007080000000314612,
+        "p99": 0.0018329999999906477,
+        "max": 0.9337920000000111
+      }
+    },
+    {
+      "name": "export-500Hz",
+      "elapsedMs": 11.309124999999995,
+      "jsonBytes": 736276,
+      "csvBytes": 240218,
+      "retainedSamples": 3000,
+      "retainedEvents": 1000,
+      "dropped": {
+        "samples": 3020,
+        "events": 300000
+      }
+    }
+  ],
+  "limitations": [
+    "No latency threshold is specified for these pure platform/recorder helpers; measurements are baselines only.",
+    "No serial parsing, callbacks, browser rendering, real-time soak or heap trend measured.",
+    "GI propagation budget p95 <=5ms at 50Hz for 1/4 subscribers remains BLOCKED until adapter exists.",
+    "Physical input budget p95 <=100ms over >=20 instrumented trials remains BLOCKED without V2/instrumentation."
+  ]
+}

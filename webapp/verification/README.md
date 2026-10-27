@@ -1,7 +1,5 @@
-# Verifikasjonsverktøy
+# Måleverktøy
 
-Skript for automatisert modelluttrekk, deterministisk sammenligning og benchmarks. Dokumenter forutsetninger og kjørekommando sammen med hvert verktøy. Resultater lagres under modulens results. Ingen verktøy er implementert ennå.
+`npm run benchmark` fra webapp kjører `benchmark.js` og skriver [rapporten](../results/unit-benchmark.json). Kjøringen måler rene plattformregler og Testlab-opptak, med 50/500 Hz akselerert logisk input og bufferomløp. Den bruker ingen enhet eller backend. Kapasitetskontroller feiler med ikke-null exitkode.
 
-For Micro:bit-biblioteket følger verifikasjonen [implementeringsplanen](../spec/game-input-implementation-plan.md) og [testplanen](../spec/game-input-test-plan.md). Planlagte leveranser er en lokal ES-modul-eksempelside, fixture-baserte målinger og separate manuelle V2-/nettleserkontroller. Eksempel og verktøy er ennå ikke implementert.
-
-Rapporter programvarerevisjon, fixture-revisjon, Node-/nettleser-/verktøyversjoner og fysisk V2-/firmwareoppsett der det brukes. Skill mock-resultater fra ekte tillatelsesdialog, USB, fysiske stimuli og output. Kontroller at tap av input pauser spillet og at gjenopprettet forbindelse venter på spillerens valg om å fortsette. Resultater og begrensninger lagres under `webapp/results`; uinstrumentert fysisk latenstid kan ikke føres som bestått.
+Rapporten inneholder miljø, kildehasher, metode, prøveantall, CPU-tid, throughput, percentiler og eksportstørrelser. Tidene inkluderer måleoverhead; én lokal kjøring er ikke en regresjonsgrense. Ingen adapter-, browser-, faktisk langkjørings- eller fysisk latens er verifisert. Se [planen](../spec/implementation-plan.md) for obligatoriske fremtidige målinger og grenser.

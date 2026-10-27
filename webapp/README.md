@@ -1,5 +1,7 @@
 # Webapp
 
+**[Implementasjonsplan for hele websiden](spec/implementation-plan.md)** – arkitektur, leveranserekkefølge, tester og benchmarks.
+
 Spill, launcher, dashboard, felles Web Serial-adapter og kommunikasjon med backend.
 
 Kontrakter: [Micro:bit–webapp](../spec/contracts/microbit-webapp/README.md) og [webapp–backend](../spec/contracts/webapp-backend/README.md).
@@ -17,9 +19,11 @@ Frontendutviklere: bruk den samordnede [API-guiden](../spec/contracts/webapp-bac
 
 Planen dekker modulansvar, tilkobling og gjenoppretting, meldingsvalidering, input-hendelser, kommandoer, spillbytte og trinnvise leveranser med testkriterier. Spillplattformen har fortsatt ansvar for pause/gjenopptakelse, poeng og lagring av resultater. Se også [utviklergrensesnittet](../spec/contracts/microbit-webapp/web-page-developer-interface.md) og [testplanen](spec/game-input-test-plan.md).
 
-Bibliotek, eksempel, `package.json` og testverktøy er ikke implementert ennå. Npm-kommandoene i planen er planlagte leveranser, ikke kommandoer som kan kjøres i denne utsjekkingen.
+Adapterbibliotek og eksempel er ikke implementert ennå. Et kjørbart grunnlag for plattformregler og Testlab-opptak er etablert. Se [samlet implementasjonsplan](spec/implementation-plan.md) for leveranser og nøyaktig testdekning.
 
-Teknologi og kommandoer for oppsett, kjøring og testing dokumenteres her når implementasjonen starter. Mappene er etablert, men funksjonaliteten er ikke implementert. Se [felles prosjektstruktur](../docs/project-structure.md).
+Fra `webapp/`, med Node 24.22.1 og npm 11.19.1: `npm ci`, `npm test`, `npm run benchmark`. Disse kommandoene trenger ingen fysisk enhet eller tredjepartsavhengigheter. Benchmarkrapporten lagres i `results/unit-benchmark.json`. Browser/adapter-skriptene i adapterplanen er fortsatt fremtidige leveranser.
+
+Grunnlaget bruker JavaScript ES-moduler og Nodes native testkjører. Frontendvisninger, router, Web Serial-adapter og backendintegrasjon gjenstår. Se [felles prosjektstruktur](../docs/project-structure.md).
 
 ## Leveranse til hjemmeserveren
 
