@@ -1,27 +1,20 @@
 # Firmware Host Tests
 
-The planned tests compile the hardware-independent C++ core on Linux with native GCC or Clang, without CODAL or a physical board. They are not implemented yet. Use the [shared corpus](../../spec/contracts/microbit-webapp/fixtures/README.md) and [firmware test plan](../spec/test-plan.md); do not copy a separate protocol schema into the runner.
-
-## Planned Test Project
-
-Create a standalone `CMakeLists.txt` here, enable CTest, and build the same core sources used by firmware with fake clock, transport, sensors, and outputs. Any host JSON fixture loader is test-only and must not become a firmware dependency. Fixture interpretation for firmware covers parsing, encoding, metadata, sequences, and session behavior; browser-only tilt/shake/sound-label expectations are tested by the webapp runner.
-
-After that test project exists, run from the repository root:
+The CMake/CTest suite compiles the **same core sources** as the V2 firmware with fake hardware and deterministic clocks. It requires a C++11 compiler, CMake and Python 3, with no CODAL download or board.
 
 ```sh
-cmake -S microbit/tests -B microbit/build/host -DCMAKE_BUILD_TYPE=Debug
+cmake -S microbit -B microbit/build/host -DCMAKE_BUILD_TYPE=Debug -DMIKROBIT_SANITIZERS=ON
 cmake --build microbit/build/host
 ctest --test-dir microbit/build/host --output-on-failure
 ```
 
-These are intended commands, not currently runnable targets. Add an AddressSanitizer/UndefinedBehaviorSanitizer configuration on a supported host compiler, retaining C++11 semantics and unsigned wrap tests. Record compiler/version and fixture revision in results.
+`cmake -S microbit/tests` is also supported with a separate build directory. Sanitizers apply on GCC/Clang; omit that option for MSVC. The core builds without exceptions or RTTI; the test runner uses exceptions to report assertions.
 
-## Required Coverage
+CTest runs:
 
-- Every command action, error precedence, checked decimal overflow, boundaries, unsupported board metadata, and exact wire encoding.
-- LF/CRLF, all chunk splits, unknown/invalid bytes, bounded unterminated overflow, and resynchronization without partial execution.
-- Digital debounce/counts, coherent snapshots, sensor failure, deadline overrun, and unsigned counter/time wrap.
-- Repeated handshakes during active TX/output, ID consumption/rejection, generation-tagged stale callbacks, and ordering around `deviceInfo`.
-- Bounded mailboxes, asynchronous object lifetime, playback replacement/STOP/CLEAR, audio-input continuity, and backpressure failures.
+- `firmware_core`: framing/chunk splits, LF/CRLF and invalid bytes, canonical numeric syntax and overflow, validation precedence, command IDs and session barriers, partial TX, debounce/time wrap, complete-snapshot validation/coalescing, encoder bounds, output replacement/cancellation/deadlines, execution faults, bounded RX/control queues and backpressure, plus 100,000 deterministic framing-fuzz bytes.
+- `shared_fixtures`: Python drives the compiled `firmware_simulator` against the repository's [conformance.json](../../spec/contracts/microbit-webapp/fixtures/conformance.json). It checks every command result, the positive V2 metadata object, valid fixed-schema snapshot encodings and batched CRLF commands. No copied JSON schema or JSON library enters firmware.
 
-CI must run these tests and a pinned V2 cross-build without requiring hardware. Use a separate optional hardware job for the physical checks. Missing hardware skips only hardware cases, never host tests. A host pass does not establish actual sensor/API timing or resource use.
+The simulator accepts raw protocol bytes on stdin; `--command`, `--info` and `--snapshot` provide fixture entry points. It uses fake outputs, does not run a real-time acquisition loop and is not a browser implementation. JSON rejection, sequence filtering and derived game inputs remain browser tests. Tests cover clock/debounce wrap and maximum encoded counters; natural lifetime counter/sequence wrap and physical timing still need the accelerated hardware tests.
+
+The [CI workflow](../../.github/workflows/microbit-firmware.yml) runs sanitized host tests and a separate pinned V2 cross-build, uploading HEX/ELF/map/provenance. It does not require or claim a connected board. See [validation results](../results/implementation-validation.md) for the local run and remaining hardware gates.

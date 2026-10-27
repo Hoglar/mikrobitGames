@@ -1,0 +1,12 @@
+{
+  "bootstrap": {"url":"https://github.com/lancaster-university/microbit-v2-samples.git","commit":"04b7089d82af24534f3dcd460a9c343850b60b5d"},
+  "libraries": {
+    "codal-microbit-v2": {"url":"https://github.com/lancaster-university/codal-microbit-v2.git","commit":"f5d1682fc3882022d3d5a7facb1fddb4b0ea7b52"},
+    "codal-core": {"url":"https://github.com/lancaster-university/codal-core.git","commit":"e6b061f2a6d8977811e3025da387d3007e5796f2"},
+    "codal-nrf52": {"url":"https://github.com/lancaster-university/codal-nrf52.git","commit":"1fbb7240290fe36a55c61378f5cdeb7640f3ec4a"},
+    "codal-microbit-nrf5sdk": {"url":"https://github.com/microbit-foundation/codal-microbit-nrf5sdk.git","commit":"4b8abc690f6c9fca6132e6db5ee13a795a263f88"}
+  },
+  "submodules": {
+    "codal-nrf52/nrfx": "281cc2e178fd9a470d844b3afdea9eb322a0b0e8"
+  }
+}

@@ -1,9 +1,18 @@
-# V2 Hardware Verification Tools
+# V2 Hardware Verification
 
-No runner is implemented yet. Implement a host serial harness following the [test plan](../spec/test-plan.md), the [serial contract](../../spec/contracts/microbit-webapp/microbit-serial-protocol.md), and [shared fixtures](../../spec/contracts/microbit-webapp/fixtures/README.md). Document actual install/run commands when the runner exists, rather than advertising placeholder commands.
+`serial_smoke.py` checks a flashed V2 over an explicitly selected serial port. It checks the handshake/capabilities, snapshot schema/progression/idle cadence, shared command results, oversized-line recovery and batched commands. It records acquisition versus host-arrival intervals, sequence gaps, throughput and host-observed result latency. It does not certify physical inputs/outputs, cold-boot silence, firmware-internal acknowledgement latency, concurrent-load gates or RAM headroom.
 
-The runner must explicitly select a port, use the protocol's paced writes, complete startup, validate `microbit-v2`, and record source/build/fixture/board/interface revisions. Do not infer a pass from a port opening or an unchanged reading. Exclude browser/editor/terminal contention on that port.
+Run with the same Python installation that can access the port (usually Windows Python when building in WSL):
 
-Provide operator prompts or documented instrumentation for input changes and output checks. Support fault injection for dropped/fragmented/oversized lines, sensor failures, application reset, and output/TX cancellation. Distinguish actual board behavior from a fake transport or fault-build result. Expected disconnections are evaluated by recovery outcomes; unexpected ones fail the current case.
+```sh
+python -m pip install -r microbit/verification/requirements.txt
+python microbit/verification/serial_smoke.py --port COM5 --board-revision V2.2 --interface-version <actual-version> --provenance microbit/build/v2/provenance.json --duration 60 --report microbit/results/my-board-smoke.json
+```
 
-Store reports and benchmark captures under `microbit/results`. Include acquisition/host timing separately, bytes/second, sequence gaps, result latency, callback/service gaps, linker size, heap/stack observations, and all skipped/instrumentation limitations. Normal/conformance firmware never writes debug text to the protocol port.
+Replace the port/revisions with observed values. Close the browser/editor/terminal using that port. The tool sends display/speaker commands, including tones. It uses 115200 8N1, no flow control, and at most 16 bytes per write with chunk starts at least 5 ms apart. A selected port failing to open, handshake, or complete checks is a failure. Unexpected disconnects fail the run. Reports preserve build/fixture identity and board/interface revisions.
+
+Without `--port`, it writes **SKIPPED: micro:bit not connected** and exits successfully; no serial package is needed for that path. This is never a hardware pass.
+
+Complete the [HW-01 through HW-22 test plan](../spec/test-plan.md) separately, including operator-observed movement/touch/light/audio/display checks, simultaneous output load, startup/recovery, injected mandatory-sensor failures, 5 ms service-gap measurements, accelerated counter wrap and heap/stack soak. Attach instrumentation and stimulus descriptions. Unperformed checks remain skipped/pending, with reasons. Never infer physical changes from unchanged messages or silently substitute host timings for instrumented firmware/physical latency.
+
+Normal firmware exposes bounded debugger statistics without writing diagnostic text to the protocol port. See [CODAL bindings](../src/platform/codal/README.md) and [local validation results](../results/implementation-validation.md).

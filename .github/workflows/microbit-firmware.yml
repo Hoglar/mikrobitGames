@@ -1,0 +1,26 @@
+name: microbit firmware
+on:
+  push:
+    paths: ['microbit/**', 'spec/contracts/microbit-webapp/**', '.github/workflows/microbit-firmware.yml']
+  pull_request:
+    paths: ['microbit/**', 'spec/contracts/microbit-webapp/**', '.github/workflows/microbit-firmware.yml']
+permissions:
+  contents: read
+jobs:
+  host-tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -S microbit -B microbit/build/host -DCMAKE_BUILD_TYPE=Debug -DMIKROBIT_SANITIZERS=ON
+      - run: cmake --build microbit/build/host --parallel 2
+      - run: ctest --test-dir microbit/build/host --output-on-failure
+  v2-build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib ninja-build
+      - run: python3 microbit/toolchain/build.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: microbit-v2-firmware
+          path: microbit/build/v2/

@@ -1,88 +1,48 @@
 # micro:bit V2 C++ Firmware
 
-Firmware for the built-in sensors, LED display, and speaker used by web games. **Only micro:bit V2 is supported.** Application code will be C++ on CODAL, as proposed in [ADR-008](../spec/decisions/adr-008-microbit-v2-cpp-codal.md). There is no V1 target or browser compatibility path in this release.
+C++11/CODAL firmware implements the shared web-game input protocol on **V2 boards only**. It streams full sensor snapshots after `HELLO|1`, tracks debounced A/B/logo presses, and handles display/speaker commands without waiting for playback to complete. No game-specific configuration is required.
 
-Firmware, build scaffolding, host tests, and verification scripts are **not implemented yet**. Commands below are an integration recipe and the intended workflow after those files exist, not evidence this checkout builds. An upstream sample is not this project's protocol firmware.
+Host tests and the pinned V2 cross-build run successfully. Physical board verification is still required; see [validation results](results/implementation-validation.md). ADR-008 remains Proposed until its hardware acceptance gates pass.
 
-## Documentation
+## Build and Test
 
-- [Implementation design](spec/firmware-implementation.md): components, tasks, buffers, drivers, cancellation, faults, and first integration checklist.
-- [Serial contract](../spec/contracts/microbit-webapp/microbit-serial-protocol.md): authoritative wire behavior and numerical requirements.
-- [Game API](../spec/contracts/microbit-webapp/web-page-developer-interface.md): browser-facing behavior.
-- [Test plan](spec/test-plan.md), [host tests](tests/README.md), [verification tools](verification/README.md), and [results](results/README.md).
-
-The [component diagram](spec/models/c4-component.drawio) remains an empty placeholder; use the design's component table until a diagram is authored.
-
-## Reference Environment and Version Record
-
-The initial reference host is Linux, native or WSL2. Windows can flash and use the resulting V2 HEX. A native Windows cross-build is not yet verified. Upstream documents GNU Arm Embedded tooling, Git, CMake, and Python 3, with `python build.py` producing `MICROBIT.hex`; see [upstream instructions](https://github.com/lancaster-university/microbit-v2-samples#building).
-
-| Item | Baseline or required first-build record |
-|---|---|
-| Application | C++11, no exceptions or RTTI |
-| Runtime | Candidate `codal-microbit-v2` tag `v0.3.5`; record its resolved full commit before acceptance |
-| Dependencies | Use that target's `target-locked.json`; record every repository/commit |
-| Build integration | Upstream `microbit-v2-samples`; record a reviewed immutable commit; floating `master` is discovery only |
-| Cross compiler | `arm-none-eabi-gcc`/`arm-none-eabi-g++`; exact distribution/version/archive checksum to be established by a successful build |
-| Other tools | Record Python 3, CMake, build tool, Git, and host OS/architecture versions |
-| Host-test compiler | Record native GCC/Clang version; it does not produce firmware |
-
-Do not call the environment reproducible until those unresolved versions have tested values. At first integration commit the bootstrap/configuration files and a lock/provenance record beside them; ignore generated dependencies/outputs. Normal builds use recorded pins without `--dev`, `--update`, or moving branches. Dependency upgrades require new fixture, cross-build, and hardware results.
-
-## First Build Integration Recipe
-
-Use this when implementing the scaffold, after adding a real `microbit/src/main.cpp` and components. These shell commands run from the repository root on Linux. Replace the placeholder with the reviewed immutable commit; do not execute it literally.
+Run from the repository root on Linux or WSL. Install Git, Python 3, CMake, a native C++ compiler, Make/Ninja and the GNU Arm embedded compiler with newlib/C++ libraries. For Ubuntu:
 
 ```sh
-git clone https://github.com/lancaster-university/microbit-v2-samples.git microbit/.build/codal
-git -C microbit/.build/codal checkout --detach <reviewed-bootstrap-commit>
+sudo apt-get update
+sudo apt-get install -y build-essential cmake ninja-build git python3 gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib
+cmake -S microbit -B microbit/build/host -G Ninja -DCMAKE_BUILD_TYPE=Debug -DMIKROBIT_SANITIZERS=ON
+cmake --build microbit/build/host
+ctest --test-dir microbit/build/host --output-on-failure
+python3 microbit/toolchain/build.py
 ```
 
-Configure the bootstrap to compile our `microbit/src`, not its sample `source`. For working directory `microbit/.build/codal`, the upstream configuration has this shape. Commit the effective configuration/pins and verify generated compiler flags:
+The wrapper fetches immutable revisions from [toolchain/lock.json](toolchain/lock.json), initializes pinned submodules, checks runtime sources for local changes, and builds our `src/` with the upstream bootstrap. First use requires network access. `--prepare-only` fetches/configures without compiling. Later builds reuse generated dependencies under `.build/`; they do not update branches. Application warnings are errors. BLE/SoftDevice and serial diagnostics are disabled; scheduler tick is 1 ms. Radio services are never started.
 
-```json
-{
-  "target": {
-    "name": "codal-microbit-v2",
-    "url": "https://github.com/lancaster-university/codal-microbit-v2",
-    "branch": "v0.3.5",
-    "type": "git"
-  },
-  "application": "../../src",
-  "config": {
-    "MICROBIT_BLE_ENABLED": 0,
-    "MICROBIT_BLE_PAIRING_MODE": 0,
-    "CODAL_DEBUG": "CODAL_DEBUG_DISABLED",
-    "DMESG_SERIAL_DEBUG": 0
-  }
-}
-```
+Artifacts are staged in `microbit/build/v2/`:
 
-The tag identifies the candidate; accepted integration replaces it with its recorded immutable target commit. Disable developer-mode serial logs. Do not start radio services; route audio only to the built-in speaker.
+- `MICROBIT.hex`: flash this V2 image.
+- `MICROBIT`: ELF with debug symbols; `MICROBIT.map`: linker map.
+- `compile_commands.json` and `codal_extra_definitions.h`: effective application build configuration.
+- `provenance.json`: dependency/submodule pins, tool versions, source/artifact hashes, repository dirty state, size and linker symbols.
 
-Once the integration, configuration, and application exist:
+The upstream raw BIN includes a large address gap to UICR and is not staged. Generated files are ignored by Git. Preserve provenance beside any image used for verification. Build dependencies are pinned; host tools are recorded rather than supplied in a hermetic image. Different compiler versions or source paths can change artifacts. A native Windows cross-build is not verified; Windows can flash an image built with WSL.
 
-```sh
-cd microbit/.build/codal
-python3 build.py
-```
+To rebuild every object without deleting dependencies, run `cmake --build microbit/.build/codal/build --target clean`, then the wrapper. Dependency upgrades require new software and hardware results.
 
-The upstream artifact is expected at `microbit/.build/codal/MICROBIT.hex`. The eventual wrapper must stage it at `microbit/build/v2/MICROBIT.hex`, with ELF/map/provenance. Clean builds use a fresh generated build tree with the same pins, not an update command. No project wrapper exists yet, so no wrapper command is advertised as runnable.
+## Flash and Verify
 
-Record tool versions, project revision/dirty state, bootstrap/target/transitive hashes, configuration, build type/flags, flash/RAM sizes, and artifact SHA-256 values. Preserve provenance with results. Inspect the first build to establish actual ELF/map filenames before documenting commands that depend on them.
+1. Connect a physical V2 using a USB data cable. Close other applications holding its serial port.
+2. Copy `microbit/build/v2/MICROBIT.hex` to its mounted `MICROBIT` drive. Wait for flashing and check for `FAIL.TXT`.
+3. Use the browser adapter or the [serial smoke tool](verification/README.md), with 115200 baud, 8N1 and no flow control. The firmware is silent until a valid handshake.
+4. Record the board/interface revisions and run the [hardware test plan](spec/test-plan.md). Host tests and a successful cross-build do not establish physical axis signs, cadence, audio quality, pulse detection or runtime memory headroom.
 
-## Flash and Connect
+No V1 image or Universal HEX is produced.
 
-1. Identify a physical V2 and connect a USB data cable. Close other tools/tabs holding its serial port.
-2. Copy the built V2 HEX to its mounted `MICROBIT` drive. Wait for flashing; investigate `FAIL.TXT` instead of testing an older image. On Windows use Explorer or `Copy-Item` with the actual drive path.
-3. Record printed board revision and interface firmware information. WSL2 may build while Windows copies/flashes the artifact; this workflow does not require forwarding USB into WSL.
-4. Open the page in a supported secure-context browser, select the device from its connection button, and let the adapter handshake. Startup is silent until `HELLO|1`; unsolicited snapshots are not expected.
-5. Verify `deviceInfo` and first snapshot, then run the hardware tests. Do not open another serial terminal alongside the browser.
+## Implementation and Specifications
 
-V1 is outside support. Do not generate a V1 image or Universal HEX for this release. Unsupported board identities received by the browser fail startup explicitly.
+- [Source layout](src/README.md), [CODAL bindings](src/platform/codal/README.md), and [implementation design](spec/firmware-implementation.md).
+- [Authoritative serial contract](../spec/contracts/microbit-webapp/microbit-serial-protocol.md) and [game-facing interface](../spec/contracts/microbit-webapp/web-page-developer-interface.md).
+- [Host tests](tests/README.md), [hardware verification](verification/README.md), and [results](results/README.md).
 
-## Tests and Diagnostics
-
-The planned host C++ test project is described in [tests/README.md](tests/README.md). It runs fixtures without hardware; the cross-build checks CODAL integration. Real-device tests establish physical timing, detection, sound, display/light interaction, and memory behavior.
-
-Normal/conformance firmware must not print debug output onto the protocol port. Use a debugger and bounded diagnostic records; a separate debug transport needs explicit configuration. Exclude debugger pauses from benchmarks. Save results under `microbit/results` with exact source/toolchain/artifact identifiers. No hardware verification or tested V2 revision matrix is claimed until those records exist.
+`mikrobit::Application* application` is debugger-visible. Inspect `application->stats` and `application->firmware.diagnostics()` for service gaps, acquisition failures/overruns, RX overflow, coalesced snapshots, malformed input, output failures and TX stalls. Normal firmware never prints diagnostics on the protocol port. The component diagram remains a placeholder; the implementation design describes component ownership.

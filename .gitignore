@@ -33,6 +33,10 @@ node_modules/
 /webapp/dist/
 /webapp/build/
 
+# Generated micro:bit toolchains, dependencies, firmware and host tests
+/microbit/.build/
+/microbit/build/
+
 # Raw test runs and machine-specific test configuration
 backend/results/runs/
 backend/check.local.json

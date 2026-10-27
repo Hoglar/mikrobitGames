@@ -4,7 +4,7 @@
 
 This plan verifies C++/CODAL firmware on real **V2 boards only** against the [serial protocol](../../spec/contracts/microbit-webapp/microbit-serial-protocol.md) and [implementation design](firmware-implementation.md). It covers inputs, outputs, recovery, scheduling, and resources. The protocol owns schemas, limits, deadlines, and error names. V1 hardware tests/builds are outside scope.
 
-Run the shared [corpus](../../spec/contracts/microbit-webapp/fixtures/README.md) against the host-built C++ core and a separate pinned V2 cross-build. Firmware uses command-input and positive encoder cases; browser validation/derivation cases stay in browser tests. These software checks need no board. Firmware and runners are not implemented yet.
+Run the shared [corpus](../../spec/contracts/microbit-webapp/fixtures/README.md) against the host-built C++ core and a separate pinned V2 cross-build. Firmware uses command-input and positive encoder cases; browser validation/derivation cases stay in browser tests. These software checks need no board. The [host suite](../tests/README.md), [build wrapper](../README.md), and [wire smoke runner](../verification/README.md) are implemented. Physical/manual/instrumented gates remain required; see [recorded software results](../results/implementation-validation.md).
 
 ## Connection and Skip Rules
 

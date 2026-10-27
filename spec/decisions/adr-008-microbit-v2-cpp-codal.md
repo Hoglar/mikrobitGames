@@ -1,6 +1,6 @@
 # C++ firmware on CODAL for micro:bit V2
 
-**Status: Proposed** — C++ and V2-only support are confirmed project constraints. CODAL, build integration, and resource budgets below are the proposed implementation baseline, pending the first successful build and hardware run.
+**Status: Proposed** — C++ and V2-only support are confirmed project constraints. The CODAL implementation, host tests and pinned V2 cross-build now exist; physical hardware and resource acceptance remain pending. See [validation results](../../microbit/results/implementation-validation.md).
 
 ## Context and Problem Statement
 
@@ -24,11 +24,13 @@ The controller needs concurrent sensor reporting, serial command handling, and i
 
 Proposed option: **C++ on CODAL**, using the upstream [microbit-v2-samples build integration](https://github.com/lancaster-university/microbit-v2-samples) as the starting point, with our application under `microbit/src`. The [official runtime overview](https://tech.microbit.org/software/runtime/) identifies CODAL as the V2 runtime.
 
-Use C++11 application code without C++ exceptions or RTTI. The source-inspected candidate target is `codal-microbit-v2` tag `v0.3.5`, whose [locked target manifest](https://github.com/lancaster-university/codal-microbit-v2/blob/v0.3.5/target-locked.json) provides transitive dependency revisions and C++ flags. This is a candidate version, not a claim that it is the latest or has built successfully here. Before accepting the first build, resolve the tag and bootstrap build tooling to full commit hashes and record the compiler/tool versions as described in the [module README](../../microbit/README.md). Normal builds must use those recorded revisions and the target's locked dependencies, without developer-mode updates.
+Use C++11 application code without C++ exceptions or RTTI. The integrated target is `codal-microbit-v2` tag `v0.3.5`, whose [locked target manifest](https://github.com/lancaster-university/codal-microbit-v2/blob/v0.3.5/target-locked.json) provides transitive dependency revisions and C++ flags. [The project lock](../../microbit/toolchain/lock.json) records immutable target/bootstrap/transitive/submodule commits; generated provenance records compiler/tool versions and effective configuration. Normal builds use those recorded revisions without developer-mode updates. This is a tested build baseline, not a claim that it is the latest runtime.
 
 Use CODAL cooperative fibers with explicit ownership: one protocol/controller task, one sensor task, one digital-input task, one output-service task, and one TX task. Interrupt handlers only service runtime drivers or publish bounded notifications. All work must yield; spin waits cannot hold up acquisition or reception. Application buffers and work queues are fixed-capacity. Runtime-managed allocation is measured rather than assumed absent.
 
 Use separate protocol-core and CODAL-adapter layers. A host C++ compiler runs fixture/state-machine tests without CODAL; the cross-build verifies actual driver integration. Application display/audio controllers implement replacement and cancellation, including a generation barrier on every `HELLO`. Normal firmware disables radio/BLE services and protocol-port debug printing.
+
+The initial adapter uses direct Nordic TEMP conversion polling because the stock thermometer waits without a deadline. Version-specific accelerometer enable/readiness handling avoids its initial unbounded sample wait. These exceptions are isolated in the [CODAL adapter](../../microbit/src/platform/codal/README.md) and require review when upgrading the runtime. All other sensor/display/serial/audio hardware remains behind CODAL.
 
 ### Consequences
 
