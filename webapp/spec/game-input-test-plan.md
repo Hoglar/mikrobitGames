@@ -4,6 +4,8 @@
 
 Verify the shared adapter against the [serial contract](../../spec/contracts/microbit-webapp/microbit-serial-protocol.md), [public API](../../spec/contracts/microbit-webapp/web-page-developer-interface.md), and [shared fixtures](../../spec/contracts/microbit-webapp/fixtures/README.md). They own schemas, formulas, bounds, deadlines, error codes, and lifecycle policy. The library and its runner are not implemented yet; tests below specify expected behavior.
 
+Follow the [JavaScript implementation plan](game-input-implementation-plan.md) for module boundaries and delivery order. The component specification's mandatory connection/pause/reconnect/exit flow is verified through the platform example; the library itself does not save scores or results.
+
 ## Test Layers
 
 1. **Unit tests, always runnable:** Fixture parsing, exact validation, normalization, counters, gesture/sound history, immutable state, subscriptions, and encoding using a fake clock. No board required.
@@ -35,6 +37,8 @@ Verify the shared adapter against the [serial contract](../../spec/contracts/mic
 | GI-18 | Playback semantics | Acknowledgement resolves at start, not completion. Successive accepted same-target commands replace active output; clear/stop cancel all relevant modes. Different targets remain independent. Invalid commands leave active output unchanged. Use a firmware model for automation and actual hardware for physical behavior. |
 | GI-19 | Microphone classification | Verify first-sample labels, hysteresis boundaries, retained labels, unavailable-state null, and session reset. Batching is equivalent; no lossless clap/event or self-speaker suppression guarantee is inferred. |
 | GI-20 | Browser lifecycle/errors | Cover secure-context/support checks, permission denial/cancel, reader/writer cleanup, explicit disconnect during startup/recovery, repeated disconnect, and active-game shutdown. Report error kinds without corrupting sensor state; cleanup always releases resources even when STOP/CLEAR fails. |
+
+Extend GI-03 with escaped/nested duplicate JSON keys and bounded byte decoding; GI-11/13 with mutation of queued argument arrays, hung write promises, and results arriving before write completion; GI-09/17 with callbacks that unsubscribe/dispose while notification is in progress. Extend GI-10/17/20 with a logical game retained across physical reconnect, local disposal after the port is gone, late chooser/open completions, recoverable read errors with stream recreation, and resource cleanup failure reporting. Platform checks must block launch before readiness, pause immediately on unavailable input, and wait for the player's resume choice after reconnect. Exit/result saving remains platform-owned and is tested separately from the library.
 
 ## Benchmarks and Release Gates
 

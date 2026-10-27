@@ -6,6 +6,8 @@ This draft defines one framework-independent adapter shared by the page's games,
 
 The page owns `microbit.connect()`, `disconnect()`, connection status, capabilities, and error reporting. Call `connect()` from an explicit user action in a supported secure-context browser. It resolves only after valid `deviceInfo` **and the first valid snapshot**; errors/timeouts release serial resources. A connected call is idempotent; concurrent connecting calls share one operation. Explicit disconnect cancels startup/recovery and prevents automatic reconnection.
 
+Unexpected physical loss retains the active logical game facade/subscriptions with unavailable input. A later page-level `connect()` may attach a fresh supported device session to that paused game; reconnect resets event/gesture baselines without replaying old actions. The platform decides when to resume game simulation after readiness, with the player's explicit choice. Library readiness does not automatically resume the game. Explicit page `disconnect()` still disposes the game as described below.
+
 Only one game session may be active. `createGameSession()` requires a connected adapter and rejects until any previous game session has finished disposal. Games receive session-bound `inputs`/`outputs`, not ownership of the port. Connection lifetime is independent of game switching.
 
 ```javascript
@@ -43,6 +45,8 @@ await microbit.disconnect();
 Every `subscribe`, `onPress`, and `onGesture` call returns an unsubscribe function. State subscriptions immediately receive current state, then one callback per accepted snapshot or lifecycle change, in order. Duplicate registrations are independent; callback exceptions are reported without preventing other subscribers. State, nested objects, and capabilities are immutable to callers. Events are not replayed when a subscriber joins.
 
 `dispose()` immediately removes the game's subscriptions, rejects unsent calls, and prevents new calls on its facade with `disposed`. It drains any already-written command, then sends supported speaker `STOP` and display `CLEAR` using the shared writer. An already-written call whose game was disposed rejects locally, but its ID stays reserved until its result is drained or the adapter recovers. Disposal resolves only after cleanup acknowledgements; on cleanup failure it closes the connection and rejects. A later game cannot start until disposal completes. Repeated disposal shares the same operation/result. Commands/events from a disposed game cannot leak into the next one.
+
+If the port is already disconnected, `dispose()` releases local state/subscriptions and resolves without device cleanup commands; pending calls reject and old IDs/operations remain fenced to their closed connection. This cannot guarantee the removed board's outputs stopped. If a connected port fails during cleanup, close/reject as above. A new game still requires a ready connection and a fresh event baseline.
 
 Page `disconnect()` disposes an active game, attempts the same output cleanup when ready, and always releases reader, writer, and port even if cleanup fails. It suppresses automatic recovery while closing, rejects on cleanup failure after releasing resources, and is idempotent when already disconnected; concurrent calls share the operation. Abrupt removal/page termination cannot guarantee cleanup; firmware outputs are individually bounded to 10000 ms. Version 1 has no device-side host-liveness heartbeat.
 
@@ -130,5 +134,7 @@ Commands replace active playback on the same target; speaker/display are indepen
 ## Verification
 
 The [browser test plan](../../../webapp/spec/game-input-test-plan.md) covers state, counted presses, derivation, scheduling, disposal, and recovery. Both sides use the [shared fixtures](fixtures/README.md). Check real browser permissions/cleanup and supported V2 revisions before claiming support. V1 rejection is a host fixture, not a required hardware run. Responsiveness thresholds are unverified requirements until recorded measurements meet them.
+
+The [JavaScript implementation plan](../../../webapp/spec/game-input-implementation-plan.md) defines module responsibilities, development tooling, delivery phases, and platform integration. It implements this facade without introducing game-specific protocol behavior.
 
 The baseline release budget at the normal 50 Hz rate is p95 at most 5 ms from complete-line receipt to state/event callbacks with one and four subscribers, and p95 at most 100 ms from an instrumented physical button/tilt stimulus to the game callback. At least 20 trials are required for the physical measurement. Approximate manual timing cannot establish a latency pass. A game needing a tighter budget must specify it before testing; it cannot weaken these baseline requirements.

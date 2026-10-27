@@ -59,6 +59,8 @@ Navigasjon mellom sidene håndteres av en felles router. Backend API er en ekste
 - **Avgrensning:** Skal ikke avgjøre hvordan hvert spill reagerer på input eller beregne poeng.
 - **Krav:** Alle spill bruker denne løsningen for Micro:bit-input. Komponenten leverer standardiserte hendelser, for eksempel `button=A, action=pressed`, og status for tilkoblingen. Hvert spill tolker hendelsene ut fra egne spillregler. Tilkobling må bekreftes før et spill starter, og frakobling under spill må meldes til Spillplattformen.
 
+**Teknisk konkretisering:** Komponenten implementeres etter [JavaScript-planen](game-input-implementation-plan.md), [utviklergrensesnittet](../../spec/contracts/microbit-webapp/web-page-developer-interface.md) og [serieprotokollen](../../spec/contracts/microbit-webapp/microbit-serial-protocol.md). Det uformelle knappeeksemplet over er ikke et ekstra meldingsformat: engangshandlinger bruker `onPress({ input, count })`, mens holdte knapper og tilt leses fra felles state. Kun V2 støttes. Websiden eier forbindelsen; hvert spill får en avgrenset spilløkt. Gjenopprettet input gjør ikke at spillet automatisk fortsetter: Spillplattformen venter på spillerens valg. Protokoll, datahåndtering og testing kan implementeres uten at frontendrammeverk er valgt.
+
 ### 2.7 Dashboard
 - **Ansvar:** Vise brukerens lagrede resultater, personlig highscore og spillhistorikk, inkludert resultater fra ufullførte spill med tydelig statusmerking. Kun resultater med status `fullført` kan telle mot personlig rekord eller offentlige highscore-lister; ufullførte resultater vises kun i historikken og som siste spillresultat. Ved navigasjon etter et avsluttet spill skal resultatet fra siste spill fremheves; ved åpning via navigasjonsmenyen vises en generell oversikt.
 - **Input:** Resultatdata fra Backend API; eventuelt spill-ID eller resultat-ID ved navigasjon etter avsluttet spill.
@@ -125,7 +127,7 @@ Dette er **bruker-/dataflyt** som supplement til C3-avhengighetene, ikke en erst
 
 ## 6. Avklaringer før implementering
 
-- **WBS 1.2:** **Avklart:** Tilkobling kreves før spillstart; ved frakobling pauses spillet og brukeren må koble til på nytt eller avslutte. Må fortsatt avklare tilkoblingsteknologi, input-hendelser og gjenopptakelse av spilltilstand.
+- **WBS 1.2:** Tilkobling kreves før spillstart; ved bortfall pauses spillet og brukeren velger å koble til og fortsette eller avslutte. Web Serial, V2-protokoll og standardiserte input-/output-metoder er beskrevet i de felles kontraktene og [implementeringsplanen](game-input-implementation-plan.md). Disse tekniske utkastene må verifiseres under implementering; Spillplattformen har ansvar for å bevare spilltilstand under pause og vente på spillerens valg om å fortsette.
 - **WBS 1.3:** Hvilke API-endepunkter og dataformater brukes til innlogging, spillkatalog, resultater, profil og AI-chat?
 - **Spillgrensesnitt:** Hvordan registreres nye spill, og hvilken felles kontrakt må hvert spill følge for Micro:bit-input og resultater?
 - **Spillkatalog:** **Avklart:** Oversikten hentes fra Backend API. Avklar datafelter og hvordan backend angir hvilket spill frontend skal laste.
