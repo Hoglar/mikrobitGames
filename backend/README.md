@@ -17,4 +17,6 @@ Se [ADR-001](../spec/decisions/adr-001-direkte-datatilgang-for-ai.md) om AI-tilg
 - [verification/](verification/README.md): verifikasjonsverktøy.
 - [results/](results/README.md): dokumenterte resultater.
 
-Hele den automatiserte testfasen kjøres med `./backend/check` fra prosjektroten. Se [kjøreguiden](verification/README.md) for engangsoppsett på Parrot og hvordan rapportene leses. Testpakken er [tilpasset API 0.2.0 og privat forsøkshistorikk](../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester). Kontrollverktøyenes egne tester kan kjøres med `./backend/check selftest`. Komponentene er ennå ikke implementert; produktkontrollene er derfor BLOCKED og ingen produktbaseline er målt. Se også [felles prosjektstruktur](../docs/project-structure.md).
+Første implementasjon av database, API og AI er skrevet. [Oppsett og leveransestatus](SETUP.md) beskriver låste avhengigheter, tjenesteisolasjon, kjente avklaringer og utførte oppstartskontroller. Ingen produktbaseline er målt. Frontendkontrakt 1.3 / API 0.2.0 brukes som arbeidsgrunnlag og er fortsatt et forslag overfor frontendgruppen.
+
+Hele den automatiserte testfasen kjøres med `./backend/check` fra prosjektroten. Brukeren starter den første kjøringen etter egen commit. Se [kjøreguiden](verification/README.md) for resultatene og [felles prosjektstruktur](../docs/project-structure.md) for filreglene.

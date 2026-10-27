@@ -5,6 +5,16 @@ import runpy
 from pathlib import Path
 import sys
 
+# Optional host isolation bootstrap. This only changes process identities and
+# measurement permissions, never the selected checks or their expectations.
+if os.environ.get('MBG_ISOLATED_RUNNER') != '1' and (len(sys.argv) == 1 or sys.argv[1] in ('full', 'quick')):
+    import json
+    local_config = Path(__file__).resolve().parent / 'check.local.json'
+    if local_config.exists():
+        launcher = json.loads(local_config.read_text()).get('isolated_launcher')
+        if launcher:
+            os.execv(launcher, [launcher, 'check', *(sys.argv[1:] or ['full'])])
+
 venv_python = Path(__file__).resolve().parents[1] / '.venv/bin/python'
 if venv_python.exists() and str(Path(sys.prefix).resolve()) != str(venv_python.parent.parent.resolve()):
     os.execv(str(venv_python), [str(venv_python), str(Path(__file__).resolve()), *sys.argv[1:]])
