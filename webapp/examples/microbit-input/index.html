@@ -24,8 +24,35 @@
     </section>
     <section aria-labelledby="output-heading">
       <h2 id="output-heading">Outputs</h2>
+      <p class="note">Connect and start either game to send outputs. Drawings and sound settings can be prepared before connecting.</p>
       <div class="toolbar"><label>Display text <input id="display-text" value="READY" maxlength="32"></label><button id="show-text" disabled>Show text</button><button id="clear" disabled>Clear display</button></div>
-      <div class="toolbar"><button id="tone" disabled>Play tone</button><button id="melody" disabled>Play melody</button><button id="sound" disabled>Play named sound</button><button id="stop" disabled>Stop sound</button></div>
+      <div class="output-editors">
+        <div class="image-editor">
+          <h3>Draw an image</h3>
+          <p class="note">USB at the top. Click a pixel to toggle it; drag to paint or erase.</p>
+          <label class="slider-label" for="brush">Brush brightness <output id="brush-value" for="brush">9</output><input id="brush" type="range" min="0" max="9" step="1" value="9"></label>
+          <div class="matrix-frame"><span class="matrix-top">USB ↑</span><div id="image-grid" class="image-grid" role="group" aria-label="5 by 5 image editor"></div></div>
+          <div class="toolbar"><button id="reset-image">Clear drawing</button><button id="fill-image">Fill drawing</button><button id="send-image" disabled>Send image</button></div>
+          <p class="note">Brightness 0 erases. Edits stay local until you choose Send image. Clear display only clears the board.</p>
+        </div>
+        <div class="sound-editor">
+          <h3>Sound controls</h3>
+          <div class="sound-settings">
+            <label>Frequency (Hz)<input id="frequency" type="number" min="20" max="9999" step="1" value="440" required></label>
+            <label>Note length (ms)<input id="note-duration" type="number" min="1" max="10000" step="1" value="500" required></label>
+            <label>Octave<select id="octave"><option value="3">3 · low</option><option value="4" selected>4 · middle</option><option value="5">5 · high</option></select></label>
+          </div>
+          <label class="slider-label" for="volume">Tone / melody volume <output id="volume-value" for="volume">128</output><input id="volume" type="range" min="0" max="255" step="1" value="128"></label>
+          <div class="toolbar"><button id="tone" disabled>Play tone</button><button id="stop" disabled>Stop sound</button></div>
+          <p class="note">Click a piano key to play a note on the micro:bit using the note length and volume above. Each new note replaces the previous one.</p>
+          <div id="piano" class="piano" role="group" aria-label="Piano keys"></div>
+          <p id="last-note" class="note" role="status">No note played yet</p>
+          <div class="toolbar"><label>Melody<select id="melody-choice"><option value="scale">Rising scale</option><option value="descending">Falling scale</option><option value="arpeggio">Arpeggio</option><option value="twinkle">Twinkle, twinkle</option></select></label><button id="melody" disabled>Play melody</button></div>
+          <p id="melody-description" class="note"></p>
+          <div class="toolbar"><label>Named sound<select id="sound-choice" disabled><option value="">Connect to see sounds</option></select></label><button id="sound" disabled>Play named sound</button></div>
+          <p class="note">Named sounds use their own fixed volume and duration.</p>
+        </div>
+      </div>
       <p class="note">Output acknowledgements mean started or applied. A later command can interrupt playback.</p>
     </section>
     <section aria-labelledby="sensor-heading">

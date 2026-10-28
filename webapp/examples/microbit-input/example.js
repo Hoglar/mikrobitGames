@@ -1,9 +1,11 @@
 import { microbit } from '../../src/microbit-input/index.js';
 import { afterInputChange, resumeGame } from '../../src/platform/rules.js';
+import { createOutputControls } from './output-controls.js';
 
 const $ = id => document.getElementById(id);
 let game = null, kind = null, phase = 'idle', score = 0, busy = false;
 let lightMin = null, lightMax = null, shakes = 0, shakeAt = null;
+const outputControls = createOutputControls({ getGame: () => game, run: action });
 function log(message) {
   const item = document.createElement('li'); item.textContent = message;
   $('events').prepend(item);
@@ -29,8 +31,7 @@ function refresh() {
   for (const id of ['counter', 'cursor']) $(id).disabled = busy || !ready;
   $('resume').disabled = busy || phase !== 'paused' || !ready;
   $('exit').disabled = busy || !game;
-  for (const id of ['show-text', 'clear', 'tone', 'melody', 'stop']) $(id).disabled = busy || !game || !ready;
-  $('sound').disabled = busy || !game || !ready || !microbit.capabilities?.outputs.builtInSounds.length;
+  outputControls.update({ ready, busy, capabilities: microbit.capabilities });
   $('game-status').textContent = !game ? 'No game running' : `${kind === 'counter' ? 'Button counter' : 'Tilt cursor'} · ${phase}`;
 }
 async function action(work) {
@@ -83,14 +84,6 @@ $('exit').addEventListener('click', () => action(async () => {
   const old = game; phase = 'idle';
   try { await old.dispose(); } finally { if (game === old) game = null; }
 }));
-$('show-text').addEventListener('click', () => action(() => game.outputs.display.showText($('display-text').value)));
-$('clear').addEventListener('click', () => action(() => game.outputs.display.clear()));
-$('tone').addEventListener('click', () => action(() => game.outputs.speaker.playTone({ frequencyHz: 440, durationMs: 500 })));
-$('melody').addEventListener('click', () => action(() => game.outputs.speaker.playMelody({ notes: [
-  { frequencyHz: 440, durationMs: 200 }, { frequencyHz: 0, durationMs: 100 }, { frequencyHz: 660, durationMs: 250 }
-] })));
-$('sound').addEventListener('click', () => action(() => game.outputs.speaker.playBuiltInSound(microbit.capabilities.outputs.builtInSounds[0])));
-$('stop').addEventListener('click', () => action(() => game.outputs.speaker.stop()));
 microbit.onError(failure => { log(`${failure.kind}: ${failure.message}`); $('error').textContent = failure.message; refresh(); });
 const timer = setInterval(refresh, 100);
 window.addEventListener('pagehide', () => { clearInterval(timer); void microbit.disconnect().catch(() => {}); }, { once: true });

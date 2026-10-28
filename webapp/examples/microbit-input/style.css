@@ -8,16 +8,36 @@ h2 { margin: 0 0 16px; font-size: 1.1rem; }
 .intro { max-width: 720px; margin-bottom: 32px; color: #50626a; }
 section { background: white; border: 1px solid #d4dfd8; border-radius: 14px; padding: 24px; margin: 18px 0; }
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 10px 0; }
-button, input { font: inherit; border-radius: 7px; border: 1px solid #a6bab1; padding: 9px 14px; }
+button, input, select { font: inherit; border-radius: 7px; border: 1px solid #a6bab1; padding: 9px 14px; }
 button { background: #e8f1eb; cursor: pointer; color: #153a30; }
 button:first-child { background: #165a49; color: white; }
 button:disabled { opacity: .4; cursor: default; }
-button:focus-visible, input:focus-visible { outline: 3px solid #dca823; outline-offset: 3px; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #dca823; outline-offset: 3px; }
 #error { color: #a02d2d; min-height: 1.5em; }
 #arena { position: relative; border: 1px solid #d4dfd8; border-radius: 9px; height: 180px; display: grid; place-items: center; overflow: hidden; background: #f7faf8; }
 #score { font-size: 4rem; font-variant-numeric: tabular-nums; }
 #cursor-dot { position: absolute; width: 24px; height: 24px; border-radius: 50%; background: #d68620; transform: translate(-50%, -50%); left: 50%; top: 50%; }
 .note, #instructions { color: #50626a; font-size: .9rem; }
+.output-editors { display: grid; grid-template-columns: minmax(260px, .9fr) minmax(0, 1.4fr); gap: 32px; margin: 28px 0; }
+.output-editors h3 { margin: 0 0 12px; }
+.slider-label { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; }
+.slider-label input { grid-column: 1 / -1; width: 100%; padding: 0; accent-color: #165a49; }
+.slider-label output { font-variant-numeric: tabular-nums; }
+.matrix-frame { max-width: 280px; margin: 20px auto; padding: 12px 18px 18px; background: #172b36; border-radius: 14px; }
+.matrix-top { display: block; text-align: center; color: #c7d6d0; font-size: .75rem; margin-bottom: 12px; }
+.image-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; touch-action: none; user-select: none; }
+.image-grid .pixel { aspect-ratio: 1; padding: 0; min-width: 0; border-radius: 50%; border: 1px solid #52616a; background: #283741; color: #c4d1d7; font-size: .7rem; }
+.image-grid .pixel[aria-pressed="true"] { background: rgb(255 89 61 / var(--brightness)); color: #fff; border-color: #ff9983; }
+.sound-settings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.sound-settings label { display: grid; gap: 6px; font-size: .85rem; }
+.sound-settings input, .sound-settings select { width: 100%; min-width: 0; padding: 8px; }
+.sound-editor .toolbar label { display: grid; gap: 4px; }
+.piano { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); position: relative; height: 170px; isolation: isolate; margin-top: 16px; }
+.piano .piano-key { border-radius: 0 0 6px 6px; padding: 0 0 12px; display: flex; align-items: end; justify-content: center; min-width: 0; background: #fafcfb; color: #172b36; font-size: .75rem; border: 1px solid #73867e; }
+.piano .piano-key.black-key { position: absolute; top: 0; height: 62%; width: 8%; transform: translateX(-50%); z-index: 1; background: #172b36; color: white; font-size: .65rem; }
+.piano .piano-key:active { background: #dca823; color: #172b36; }
+.piano .piano-key:focus-visible { outline-offset: -4px; }
+.piano .piano-key:disabled { opacity: .55; }
 .readouts { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .sensor-checks { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .sensor-checks h3 { margin: 0 0 8px; font-size: 1rem; }
@@ -28,3 +48,4 @@ button:focus-visible, input:focus-visible { outline: 3px solid #dca823; outline-
 pre { white-space: pre-wrap; font-size: .8rem; }
 #events { max-height: 400px; overflow: auto; padding-left: 24px; font-size: .85rem; }
 @media (max-width: 650px) { .readouts, .sensor-checks { grid-template-columns: 1fr; } main { padding: 24px 16px; } section { padding: 18px; } }
+@media (max-width: 850px) { .output-editors { grid-template-columns: 1fr; } }
