@@ -2,6 +2,8 @@
 
 The production ES-module library, two-game example, automated tests and replay benchmarks are implemented. This record covers software validation on Windows 11 x64 (10.0.26200), Intel i7-1260P. Physical browser/V2 interoperability has not been tested in this delivery.
 
+This is the initial implementation record. The later [sensor follow-up](input-sensor-follow-up.md) records subsequent user hardware observations, the revised shake rule/fixtures, 56 Node tests and 7 browser tests. The source/fixture hashes and test totals below describe the earlier run.
+
 ## Reproducible checks
 
 From `webapp/`, using Node 24.22.1 and npm 11.19.1:

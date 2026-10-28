@@ -57,4 +57,6 @@ npm run dev:input
 
 Open `http://127.0.0.1:4173/examples/microbit-input/` for the two-game example. It uses the production singleton; browser tests install their serial mocks before import. The example is a local developer tool, separate from the production launcher/authentication/Testlab UI.
 
+The example's Sensor checks show the current light level and its observed range, plus a persistent shake count, last detection time and two-second highlight. Start either game to activate gesture subscriptions. `accelerometer.gesture` itself remains a one-snapshot pulse; use `onGesture` for actions rather than polling that field. Reset readings clears the example's counters/range without resetting the library's classifier. Light values are the firmware's raw 0..255 scale, not lux; the V2 senses through the top LED row. A direct phone flashlight produced 246–248 in the 2026-10-28 check even when ambient lighting read zero. See [follow-up results](../../results/input-sensor-follow-up.md).
+
 See [validation results](../../results/game-input-validation.md). Automated Streams/browser mocks do not prove real permission dialogs, USB behavior, physical V2 interoperability or instrumented input latency.

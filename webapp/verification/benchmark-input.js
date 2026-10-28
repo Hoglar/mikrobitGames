@@ -54,5 +54,5 @@ const report = { recordedAt: new Date().toISOString(), revision: execFileSync('g
   method: 'Production adapter/framer/validation/normalization/subscriptions; fake transport and accelerated host/device time; performance.now from complete-line handling to each callback; 1000 warmup snapshots per case; nearest-rank percentiles.',
   limitations: ['Node measurements are not browser/USB measurements.', 'Five minutes is logical replay time, not a real-time hardware soak.',
     'No physical input/output latency, browser scheduling, continuous heap/stack peak or actual serial command round trip was measured.'] };
-writeFileSync(new URL('../results/input-benchmark.json', import.meta.url), JSON.stringify(report, null, 2) + '\n');
+writeFileSync(process.env.INPUT_BENCHMARK_REPORT ?? new URL('../results/input-benchmark.json', import.meta.url), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report, null, 2));

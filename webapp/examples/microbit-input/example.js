@@ -3,6 +3,7 @@ import { afterInputChange, resumeGame } from '../../src/platform/rules.js';
 
 const $ = id => document.getElementById(id);
 let game = null, kind = null, phase = 'idle', score = 0, busy = false;
+let lightMin = null, lightMax = null, shakes = 0, shakeAt = null;
 function log(message) {
   const item = document.createElement('li'); item.textContent = message;
   $('events').prepend(item);
@@ -10,6 +11,17 @@ function log(message) {
 }
 function refresh() {
   const state = microbit.getState(), ready = state.inputAvailable;
+  if (ready) {
+    lightMin = lightMin === null ? state.lightLevel : Math.min(lightMin, state.lightLevel);
+    lightMax = lightMax === null ? state.lightLevel : Math.max(lightMax, state.lightLevel);
+  }
+  $('light-value').textContent = ready ? `${state.lightLevel} / 255` : 'Unavailable';
+  $('light-meter').hidden = !ready;
+  if (ready) $('light-meter').value = state.lightLevel;
+  $('light-range').textContent = lightMin === null ? 'No readings yet' : `Observed since reset: ${lightMin}–${lightMax}`;
+  const recentShake = shakeAt !== null && performance.now() - shakeAt < 2000;
+  $('shake-check').dataset.recent = String(recentShake);
+  $('shake-status').textContent = !game ? 'Start either game to detect shakes.' : !ready ? 'Input unavailable.' : recentShake ? 'Shake detected!' : 'Listening for shakes.';
   $('connection').textContent = state.connection === 'connected' ? 'Connected · input ready' : state.connection === 'connecting' ? 'Connecting · input unavailable' : 'Disconnected';
   $('state').textContent = JSON.stringify(state, null, 2);
   $('connect').disabled = busy || state.connection !== 'disconnected';
@@ -46,8 +58,21 @@ async function start(name) {
     log(`${event.input}: ${event.count} press(es)`);
     if (name === 'counter' && event.input === 'a') { score += event.count; $('score').textContent = String(score); }
   });
-  session.inputs.onGesture(gesture => { if (phase === 'playing') log(gesture); });
+  session.inputs.onGesture(gesture => {
+    if (game !== session) return;
+    log(gesture);
+    if (gesture === 'shake') {
+      shakes++; shakeAt = performance.now();
+      $('shake-count').textContent = String(shakes);
+      $('shake-last').textContent = `Last detected at ${new Date().toLocaleTimeString()}`;
+      refresh();
+    }
+  });
 }
+$('reset-readings').addEventListener('click', () => {
+  lightMin = lightMax = shakeAt = null; shakes = 0;
+  $('shake-count').textContent = '0'; $('shake-last').textContent = 'No shake detected yet'; refresh();
+});
 $('connect').addEventListener('click', () => action(() => microbit.connect()));
 $('disconnect').addEventListener('click', () => action(async () => {
   try { await microbit.disconnect(); } finally { game = null; phase = 'idle'; }

@@ -1,0 +1,110 @@
+{
+  "recordedAt": "2026-10-28T18:34:20.288Z",
+  "revision": "eba4fdc320cb1add3937cfe31be84180600661eb",
+  "node": "v24.22.1",
+  "platform": "win32",
+  "release": "10.0.26200",
+  "arch": "x64",
+  "cpu": "12th Gen Intel(R) Core(TM) i7-1260P",
+  "fixtureSha256": "ee530fbd678dd530b278466167ec98647adbee79e9e899b01fcb2dfe04654de2",
+  "protocolVersion": 1,
+  "sourceHashes": {
+    "adapter.js": "a58953d6515bd40e0196a4414d8d1357691f42afafbb3018eb73df549b6c3806",
+    "errors.js": "9f10dfcd5f3bba5127029fa854b5ceaad3c5dbd912521cde6caeefbc0fe8109d",
+    "index.js": "39ae9dc3c51f3329fb5753c1ed79952c5eed7ec04fc519ede64de5d422538558",
+    "sessions.js": "36d3c35dc469d913632512d391952f7f1802110df9e0b21cb7de58ea9f9e9c11",
+    "types.js": "cd3edac92a3555569b75f2aa98c7ad07116211c99019de47042113de98a41829",
+    "inputs/derived.js": "e489a572570dda714a0419eb69d5cd34be7954127e9aa3dbfe7a016ea06ba70c",
+    "inputs/state.js": "2b1517135ba6b705d75fb1e8c9c1720599557944210f62199fbd96f51b7c8db3",
+    "outputs/commands.js": "3177ac9b8e8122f2d785d57a7b921e2c7065d450cbc2c7951ab22ab869c875d7",
+    "protocol/constants.js": "9755b6c45bad484b402af5e3809138582bc30770e32e6efb4ff728926ad2037d",
+    "protocol/line-framer.js": "f13776cf7c564a0c564441b4489a89b8d318ef222c125e62728ce7c0358fbf06",
+    "protocol/messages.js": "c3fb4a478eddd390a15cf9ebccda1fcc10aa9091db33ac385b89fad6b4f0eb53",
+    "transport/paced-writer.js": "3b7ef52869239c3d2df95e0eb4262afcfad978866bc1c7e19da35cb8035a52ee",
+    "transport/web-serial.js": "2dbfc0ed48c953955effe1e57ceeadcb6080fb725469ea0ddb32fd098d7b53ba"
+  },
+  "measurements": [
+    {
+      "rateHz": 50,
+      "subscribers": 1,
+      "logicalDurationSeconds": 300,
+      "snapshots": 15000,
+      "callbacks": 15000,
+      "elapsedMs": 666.5586000000001,
+      "messagesPerSecond": 22503.647841315076,
+      "cpuUsPerMessage": 54.13333333333333,
+      "propagationMs": {
+        "p50": 0.011799999999993815,
+        "p95": 0.03170000000000073,
+        "p99": 0.09710000000001173,
+        "max": 1.1207000000000562
+      },
+      "pendingFrames": 0,
+      "lastSequence": 16000,
+      "status": "PASS"
+    },
+    {
+      "rateHz": 50,
+      "subscribers": 4,
+      "logicalDurationSeconds": 300,
+      "snapshots": 15000,
+      "callbacks": 60000,
+      "elapsedMs": 633.6305,
+      "messagesPerSecond": 23673.102857264606,
+      "cpuUsPerMessage": 51,
+      "propagationMs": {
+        "p50": 0.01269999999999527,
+        "p95": 0.027100000000018554,
+        "p99": 0.08519999999998618,
+        "max": 0.5873000000000275
+      },
+      "pendingFrames": 0,
+      "lastSequence": 16000,
+      "status": "PASS"
+    },
+    {
+      "rateHz": 500,
+      "subscribers": 1,
+      "logicalDurationSeconds": 300,
+      "snapshots": 150000,
+      "callbacks": 150000,
+      "elapsedMs": 5891.8049,
+      "messagesPerSecond": 25459.09149164121,
+      "cpuUsPerMessage": 38.74666666666667,
+      "propagationMs": {
+        "p50": 0.012799999999515421,
+        "p95": 0.019400000000132422,
+        "p99": 0.051199999999880674,
+        "max": 5.982199999999466
+      },
+      "pendingFrames": 0,
+      "lastSequence": 151000,
+      "status": "PASS"
+    },
+    {
+      "rateHz": 500,
+      "subscribers": 4,
+      "logicalDurationSeconds": 300,
+      "snapshots": 150000,
+      "callbacks": 600000,
+      "elapsedMs": 8007.2411,
+      "messagesPerSecond": 18733.044019368917,
+      "cpuUsPerMessage": 45.413333333333334,
+      "propagationMs": {
+        "p50": 0.011300000000119326,
+        "p95": 0.03739999999925203,
+        "p99": 0.107399999998961,
+        "max": 90.11269999999968
+      },
+      "pendingFrames": 0,
+      "lastSequence": 151000,
+      "status": "PASS"
+    }
+  ],
+  "method": "Production adapter/framer/validation/normalization/subscriptions; fake transport and accelerated host/device time; performance.now from complete-line handling to each callback; 1000 warmup snapshots per case; nearest-rank percentiles.",
+  "limitations": [
+    "Node measurements are not browser/USB measurements.",
+    "Five minutes is logical replay time, not a real-time hardware soak.",
+    "No physical input/output latency, browser scheduling, continuous heap/stack peak or actual serial command round trip was measured."
+  ]
+}

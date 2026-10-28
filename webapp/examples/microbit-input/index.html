@@ -28,6 +28,13 @@
       <div class="toolbar"><button id="tone" disabled>Play tone</button><button id="melody" disabled>Play melody</button><button id="sound" disabled>Play named sound</button><button id="stop" disabled>Stop sound</button></div>
       <p class="note">Output acknowledgements mean started or applied. A later command can interrupt playback.</p>
     </section>
+    <section aria-labelledby="sensor-heading">
+      <div class="toolbar"><h2 id="sensor-heading">Sensor checks</h2><button id="reset-readings">Reset readings</button></div>
+      <div class="sensor-checks">
+        <div><h3>Light level</h3><output id="light-value">Unavailable</output><meter id="light-meter" min="0" max="255" value="0" aria-label="Light level" hidden></meter><p id="light-range">No readings yet</p><p class="note">Face the 5×5 LEDs toward a bright lamp, then cover them. Values range from 0 to 255; zero is a valid reading.</p></div>
+        <div id="shake-check"><h3>Shakes detected</h3><output id="shake-count" aria-live="polite">0</output><p id="shake-status">Start either game to detect shakes.</p><p id="shake-last">No shake detected yet</p><p class="note">Shake briskly side to side, then hold still before trying again. The count stays visible after the brief gesture pulse has ended.</p></div>
+      </div>
+    </section>
     <section class="readouts"><div><h2>Current input</h2><pre id="state"></pre></div><div><h2>Recent events</h2><ol id="events" reversed></ol></div></section>
   </main>
 </body>

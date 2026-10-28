@@ -51,5 +51,5 @@ test('GI benchmark browser propagation at 50/500 Hz with one/four subscribers', 
     method: 'Production library with native browser Streams and a Web Serial mock; accelerated device timestamps; performance.now from complete-line handling to callbacks; 1000 warmup frames; nearest-rank percentiles.',
     limitations: ['Logical replay time is not real-time USB soak.', 'No real permission dialog, USB hardware, physical end-to-end latency or continuous memory peak measured.'] };
   writeFileSync(testInfo.outputPath('browser-benchmark.json'), JSON.stringify(report, null, 2));
-  writeFileSync(new URL('../../../results/input-browser-benchmark.json', import.meta.url), JSON.stringify(report, null, 2) + '\n');
+  writeFileSync(process.env.INPUT_BROWSER_BENCHMARK_REPORT ?? new URL('../../../results/input-browser-benchmark.json', import.meta.url), JSON.stringify(report, null, 2) + '\n');
 });

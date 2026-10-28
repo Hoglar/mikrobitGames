@@ -92,6 +92,19 @@ test('GI-07/19 shared tilt/shake corpus, device-time batching, strength and soun
   assert.equal(shake.update(s(51)), false); assert.equal(shake.update(s(52, 1600)), false); assert.equal(shake.update(s(53)), true);
 });
 
+test('GI-07 excursion history expires and slow movement cannot accumulate a shake', () => {
+  const shake = new ShakeDetector();
+  let u = 0;
+  const feed = (x, ms = 20) => { u += ms; return shake.update({ x, y: 0, z: -1000, u }); };
+  for (let i = 0; i < 1000; i++) assert.equal(feed(i * 8), false); // Sustained monotonic tilt.
+  shake.reset(); u = 0;
+  for (let i = 0; i < 500; i++) assert.equal(feed(0), false); // Old idle anchors expire.
+  for (const x of [-800, -400, 0, 400, 800, 400, 0, -400, -800, -400, 0]) assert.equal(feed(x), false);
+  assert.equal(feed(400), true);
+  // Continuing vigorous movement never satisfies the quiet re-arm rule.
+  for (let i = 0; i < 100; i++) assert.equal(feed(i % 2 ? -1600 : 1600), false);
+});
+
 test('GI-11 every command action/default encodes golden firmware lines and owns its values', () => {
   const caps = validateDeviceInfo(corpus.deviceInfo.v2).capabilities;
   const actions = [

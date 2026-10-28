@@ -72,3 +72,30 @@ test('GI-14/20 unsupported board and denied chooser produce a usable error and n
   await expect(page.locator('#connection')).toHaveText('Disconnected');
   expect(await page.evaluate(() => window.serialMock.port.closeLocked)).toBe(false);
 });
+
+test('sensor checks retain a one-snapshot shake and distinguish zero light from unavailable input', async ({ page }) => {
+  await expect(page.locator('#light-value')).toHaveText('Unavailable');
+  await page.locator('#connect').click(); await expect(page.locator('#counter')).toBeEnabled();
+  await page.locator('#counter').click();
+  await page.evaluate(() => {
+    const port = window.serialMock.port; clearInterval(port.timer); port.timer = null;
+    // Establish a baseline, then three alternating >=1200 mg changes on X.
+    for (const x of [-800, 800, -800, 800]) port.sample({ x, y: 0, z: -1000, l: 0 });
+    port.sample({ x: 800, l: 0 }); // The public gesture pulse is already over.
+    port.timer = setInterval(() => port.sample(), 20);
+  });
+  await expect(page.locator('#shake-count')).toHaveText('1');
+  await expect(page.locator('#shake-check')).toHaveAttribute('data-recent', 'true');
+  await expect(page.locator('#shake-status')).toHaveText('Shake detected!');
+  await expect(page.locator('#light-value')).toHaveText('0 / 255');
+  expect(await page.evaluate(async () => (await import('/src/microbit-input/index.js')).microbit.getState().accelerometer.gesture)).toBe(null);
+  await page.evaluate(() => window.serialMock.port.sample({ l: 255 }));
+  await expect(page.locator('#light-value')).toHaveText('255 / 255');
+  await expect(page.locator('#light-range')).toHaveText('Observed since reset: 0–255');
+  await expect(page.locator('#shake-check')).toHaveAttribute('data-recent', 'false');
+  await expect(page.locator('#shake-count')).toHaveText('1');
+  await expect(page.locator('#events')).toContainText('shake');
+  await page.locator('#reset-readings').click(); await expect(page.locator('#shake-count')).toHaveText('0');
+  await expect(page.locator('#light-range')).toHaveText('Observed since reset: 255–255');
+  await page.locator('#disconnect').click(); await expect(page.locator('#light-value')).toHaveText('Unavailable');
+});

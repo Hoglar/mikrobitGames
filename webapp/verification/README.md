@@ -9,3 +9,5 @@ Rapporten inneholder miljø, kildehasher, metode, prøveantall, CPU-tid, through
 `npm run test:browser` måler også tilsvarende profiler med native Streams i Chromium og Web Serial-mock. Rapporten er [input-browser-benchmark.json](../results/input-browser-benchmark.json). Nettlesertestene starter lokalserveren selv. Installer riktig Chromium-revisjon med `npx playwright install chromium` etter `npm ci`.
 
 Replay med akselerert logisk tid er ikke en faktisk femminutters USB-soak. Reelle tillatelsesdialoger, hardware-roundtrip, kontinuerlig heap-/stack-topp og fysisk knapp/tilt til spillcallback er fortsatt umålt. Manuell timing kan ikke etablere fysisk latens-PASS. Se [valideringsrapporten](../results/game-input-validation.md) og [planen](../spec/implementation-plan.md).
+
+Sett eventuelt `INPUT_BENCHMARK_REPORT` eller `INPUT_BROWSER_BENCHMARK_REPORT` til en annen filsti før kjøring for å bevare tidligere rapporter. Relative stier tolkes fra arbeidsmappen (`webapp/` ved npm-kommandoene). [Sensoroppfølgingen](../results/input-sensor-follow-up.md) bruker separate rapporter etter endringen av ristklassifikatoren.

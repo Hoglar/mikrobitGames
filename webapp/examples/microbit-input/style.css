@@ -19,6 +19,12 @@ button:focus-visible, input:focus-visible { outline: 3px solid #dca823; outline-
 #cursor-dot { position: absolute; width: 24px; height: 24px; border-radius: 50%; background: #d68620; transform: translate(-50%, -50%); left: 50%; top: 50%; }
 .note, #instructions { color: #50626a; font-size: .9rem; }
 .readouts { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.sensor-checks { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.sensor-checks h3 { margin: 0 0 8px; font-size: 1rem; }
+.sensor-checks output { display: block; font-size: 2rem; font-variant-numeric: tabular-nums; }
+.sensor-checks meter { width: 100%; }
+#shake-check { border-radius: 8px; padding: 12px; border: 2px solid transparent; }
+#shake-check[data-recent="true"] { background: #e5f5e8; border-color: #165a49; }
 pre { white-space: pre-wrap; font-size: .8rem; }
 #events { max-height: 400px; overflow: auto; padding-left: 24px; font-size: .85rem; }
-@media (max-width: 650px) { .readouts { grid-template-columns: 1fr; } main { padding: 24px 16px; } section { padding: 18px; } }
+@media (max-width: 650px) { .readouts, .sensor-checks { grid-template-columns: 1fr; } main { padding: 24px 16px; } section { padding: 18px; } }

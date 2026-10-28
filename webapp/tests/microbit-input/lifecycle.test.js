@@ -312,6 +312,24 @@ test('GI-20 disconnect after a fatal loss reports outstanding hung resource clea
   close.resolve(); await flush(); assert.equal(h.transport.closed, true); await h.adapter.disconnect();
 });
 
+test('GI-07 recorded hand shakes emit the same event individually and batched, with a one-snapshot pulse', async () => {
+  for (const batch of [false, true]) {
+    const h = harness(); await h.start(); const game = h.adapter.createGameSession(), events = [], pulses = [];
+    game.inputs.subscribe(state => { if (state.accelerometer?.gesture) pulses.push(state.accelerometer.gesture); });
+    game.inputs.onGesture(event => {
+      assert.equal(h.adapter.getState().accelerometer.gesture, 'shake'); events.push(event);
+    });
+    const c = corpus.shakeCases.find(c => c.id === 'recorded-hand-shake-v2-21');
+    const lines = c.samples.map(s => JSON.stringify({ ...corpus.snapshots.v2, ...s, n: s.n + 1, u: s.u + 20 }) + '\n');
+    if (batch) h.transport.push(lines.join(''));
+    else for (const line of lines) { h.transport.push(line); await flush(); }
+    await flush();
+    assert.deepEqual(events, ['shake']); assert.deepEqual(pulses, ['shake']);
+    assert.equal(h.adapter.getState().accelerometer.gesture, null);
+    await h.stop(); assert.equal(h.clock.jobs.size, 0);
+  }
+});
+
 test('GI-03/04/08/10/17 accelerated five-minute replay mixes wraps, bad frames, recovery and game switching', async () => {
   const h = harness({ beforeInfo: t => { if (t.helloCount === 1) { t.n = 4294967294; t.u = 4294967256; t.ac = 4294967245; } } });
   await h.start(); let game = h.adapter.createGameSession(), observed = 0, expected = 0, baseline = false;
