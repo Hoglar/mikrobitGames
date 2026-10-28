@@ -1,0 +1,30 @@
+:root { font: 16px/1.55 system-ui, sans-serif; color: #172b36; background: #f2f5f2; color-scheme: light; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 1050px; margin: auto; padding: 48px 24px; }
+.eyebrow { letter-spacing: .16em; font-size: .75rem; color: #42726a; font-weight: 750; }
+h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.15; margin: 12px 0 20px; }
+h2 { margin: 0 0 16px; font-size: 1.1rem; }
+.intro { max-width: 720px; margin-bottom: 32px; color: #50626a; }
+section { background: white; border: 1px solid #d4dfd8; border-radius: 14px; padding: 24px; margin: 18px 0; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 10px 0; }
+button, input { font: inherit; border-radius: 7px; border: 1px solid #a6bab1; padding: 9px 14px; }
+button { background: #e8f1eb; cursor: pointer; color: #153a30; }
+button:first-child { background: #165a49; color: white; }
+button:disabled { opacity: .4; cursor: default; }
+button:focus-visible, input:focus-visible { outline: 3px solid #dca823; outline-offset: 3px; }
+#error { color: #a02d2d; min-height: 1.5em; }
+#arena { position: relative; border: 1px solid #d4dfd8; border-radius: 9px; height: 180px; display: grid; place-items: center; overflow: hidden; background: #f7faf8; }
+#score { font-size: 4rem; font-variant-numeric: tabular-nums; }
+#cursor-dot { position: absolute; width: 24px; height: 24px; border-radius: 50%; background: #d68620; transform: translate(-50%, -50%); left: 50%; top: 50%; }
+.note, #instructions { color: #50626a; font-size: .9rem; }
+.readouts { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.sensor-checks { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.sensor-checks h3 { margin: 0 0 8px; font-size: 1rem; }
+.sensor-checks output { display: block; font-size: 2rem; font-variant-numeric: tabular-nums; }
+.sensor-checks meter { width: 100%; }
+#shake-check { border-radius: 8px; padding: 12px; border: 2px solid transparent; }
+#shake-check[data-recent="true"] { background: #e5f5e8; border-color: #165a49; }
+pre { white-space: pre-wrap; font-size: .8rem; }
+#events { max-height: 400px; overflow: auto; padding-left: 24px; font-size: .85rem; }
+@media (max-width: 650px) { .readouts, .sensor-checks { grid-template-columns: 1fr; } main { padding: 24px 16px; } section { padding: 18px; } }
