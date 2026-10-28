@@ -1,37 +1,37 @@
 # WBS 1.5 – Kontrakt mellom Backend API og AI-tjenesten
 
-**Revisjon 1.2, 2026-10-27:** Presisert at private forsøk er utenfor AI-grunnlaget. Meldingsformat, offentlig rekordgrunnlag og grenser er uendret. Tidligere godkjenning gjaldt tidligere revisjoner.
-
-**Historisk status:** Dokumentasjonsleveranse for [WBS 1.5 / issue #5](https://github.com/Hoglar/mikrobitGames/issues/5). Versjon 1.0 ble godkjent av prosjekteier 2026-10-23; versjon 1.1 utvider til spørsmål på tvers av spill etter prosjekteiers ønske 2026-10-24. Ett spørsmål og ett svar uten samtalehistorikk, med lokal HTTP/JSON. Implementasjon, kjørbare tester og målinger følger i komponent- og integreringsarbeidet.
+**Revisjon 1.3, 2026-10-28:** Brukeren har bestilt integrasjon av samtaleassistenten i backend/API etter utprøving, med oppdaterte kontraktforslag og tester. [ADR-009](../../../../spec/decisions/adr-009-conversational-ai.md) erstatter tidligere selvstendige spørsmål og modellgenerert SQL. Frontendendringene er fortsatt et forslag til frontendgruppen. Historiske revisjoner og målinger beholdes i Git og rapportmappene.
 
 ## Formål og avgrensning
 
-En innlogget spiller kan stille frie spørsmål om dataene i databasen, både innenfor ett spill og på tvers av spill og spillere. Spørsmålene er ikke begrenset til forhåndsdefinerte spørsmålstyper. Private spillforsøk er utenfor datagrunnlaget, også når spilleren spør om egne forsøk. AI-tjenesten henter relevante data og returnerer ett kort svar på norsk som ren tekst. Hvert spørsmål behandles selvstendig, uten samtalehistorikk eller strømming av svaret.
+En innlogget spiller kan stille frie spørsmål om dataene i databasen, både innenfor ett spill og på tvers av spill og spillere. Brukeren skriver fri tekst og kan også prate uten dataoppslag. Dataverktøyene støtter spilloversikt, gjeldende rekorder/rangering, rekordutvikling og spillerens spill; øvrige analyser kan kreve avklaring eller være utenfor verktøysettet. Private spillforsøk er utenfor datagrunnlaget, også når spilleren spør om egne forsøk. AI-tjenesten henter relevante data og returnerer ett kort svar på norsk som ren tekst. Oppfølgingsspørsmål bruker et avgrenset samtaleminne. Svar strømmes ikke.
 
 «Utvikling» betyr endring i **personlige rekorder**, ikke alle spillforsøk. AI-en må følge spillets enhet og regel for om høyere eller lavere resultat er best. Spørsmål om andre spillere bruker den offentlige rekordhistorikken fra [WBS 1.4](../backend-database/README.md).
 
 AI-tjenesten skal ha lesetilgang til alle spill, inkludert deaktiverte spill, alle spilleres rekordhistorikk og ikke-sensitive spillerdata som ID, brukernavn og tidspunkt for kontoopprettelse. Passordhash, hele `sessions`-tabellen, innloggingstoken og øvrige autentiseringshemmeligheter er utenfor tilgangen. Den konkrete listen over tillatte databasefelt og håndhevingen fastsettes i 1.6. Tjenesten henter data som trengs for spørsmålet; hele databasen skal ikke automatisk sendes til modellen.
 
-Valg av AI-modell, kjøremiljø og intern organisering tas i [WBS 6.1](https://github.com/Hoglar/mikrobitGames/issues/17). Kontrollert databasetilgang beskrives i [WBS 1.6](../ai-database/contract.md), med [ADR-001](../../../../spec/decisions/adr-001-direkte-datatilgang-for-ai.md) som grunnlag.
+Valg av AI-modell, kjøremiljø og intern organisering tas i [WBS 6.1](https://github.com/Hoglar/mikrobitGames/issues/17). Kontrollert databasetilgang beskrives i [WBS 1.6](../ai-database/contract.md), med [ADR-009](../../../../spec/decisions/adr-009-conversational-ai.md) og [ADR-001](../../../../spec/decisions/adr-001-direkte-datatilgang-for-ai.md) som grunnlag.
 
 ## Kommunikasjon og ansvar
 
 - **Fast premiss:** Backend og AI kjører på samme Linux-PC, og AI-svar beregnes med en lokalt installert modell.
 - **Valgt kommunikasjon:** Backend kaller den separate AI-tjenesten med `POST /v1/answer` over HTTP med JSON (`Content-Type: application/json`). Tjenesten lytter kun på `127.0.0.1`; port konfigureres ved implementasjon. Dette er grensesnittet til vår AI-tjeneste; hvordan den kaller selve modellen avklares i WBS 6.1.
 - **Begrunnelse:** Et eget HTTP-grensesnitt kan testes med kjente svar og feil uten en kjørende modell. Backend beholder samme grensesnitt når AI-tjenestens modell eller kjøremiljø endres. AI-tjenesten får separat oppstart og omstart.
-- Backend kontrollerer innlogging og henter `player_id` fra sesjonen. «Jeg» og «min» viser til denne spilleren. Passord, passordhash og sesjonstoken sendes ikke til AI-tjenesten.
+- Backend kontrollerer innlogging og henter `player_id` og `player_name` fra sesjonen. Backend lager en ugjennomsiktig `conversation_id` per innlogging med en prosesslokal hemmelig nøkkel; dette er ikke cookie, tokenhash eller database-ID for sesjonen. «Jeg» og «min» viser til denne spilleren. Passord, passordhash og sesjonstoken sendes ikke til AI-tjenesten.
 - Webappen oppgir spørsmålet og eventuelt valgt spill som kontekst. Backend lager en ny `request_id` og sender forespørselen videre. Spørsmålet bestemmer hvilke spill som undersøkes; spillkonteksten er ingen tilgangsgrense og hindrer ikke spørsmål på tvers av spill.
 - AI-tjenesten henter tillatte rekorddata gjennom grensesnittet fra 1.6. Backend mottar et ferdig svar; den utfører ikke SQL eller annen kode fra svaret.
 - Backend kontrollerer svarformat, størrelsesgrense og samsvarende `request_id` før videreformidling. Webappen viser svaret som ren tekst. Formatkontroll alene beviser ikke at AI-ens faktapåstander er riktige.
 
 ## Meldingsformat og eksempel
 
-`request_id`, `player_id` og `question` er obligatoriske. De to ID-ene er UUID-er. `game_id` er valgfri spillkontekst: en UUID, `null` eller utelatt. Den begrenser ikke tilgangen til andre spill. `question` er en tekststreng med 1–1 000 Unicode-kodepunkter etter trimming av innledende og avsluttende blanktegn. Ukjente felt og ugyldige typer avvises.
+`request_id`, `player_id`, `player_name`, `conversation_id` og `question` er obligatoriske. De tre ID-ene er UUID-er; `player_name` følger brukernavnregelen (3–32 ASCII-bokstaver, sifre, `_` eller `-`). Bare backend bestemmer identitetsfeltene. Frontend kan ikke sende samtale-ID eller historikk. AI-tjenesten binder samtale-ID til spiller-ID og avviser bruk med en annen spiller. `game_id` er valgfri spillkontekst: en UUID, `null` eller utelatt. Den begrenser ikke tilgangen til andre spill. `question` er en tekststreng med 1–1 000 Unicode-kodepunkter etter trimming av innledende og avsluttende blanktegn. Ukjente felt og ugyldige typer avvises.
 
 ```json
 {
   "request_id": "33333333-3333-4333-8333-333333333333",
   "player_id": "11111111-1111-4111-8111-111111111111",
+  "player_name": "Ada",
+  "conversation_id": "44444444-4444-4444-8444-444444444444",
   "game_id": null,
   "question": "Hvilke spill har Nora registrert rekorder i?"
 }
@@ -47,13 +47,25 @@ Eksempel med testdata der Nora har rekorder i Poengjakt og Sprint. Et gyldig sva
 }
 ```
 
-Disse tre svarfeltene er obligatoriske; ekstra felt avvises. `answer` er ren tekst med 1–4 000 Unicode-kodepunkter. Alle tre statusverdiene nedenfor returneres med HTTP 200:
+Disse tre svarfeltene er obligatoriske. I tillegg tillates `notices`: en liste med høyst 21 minnevarsler, hvert på 1–200 kodepunkter. Andre felt avvises. Frontend viser varslene som ren tekst. `answer` er ren tekst med 1–4 000 Unicode-kodepunkter. Alle tre statusverdiene nedenfor returneres med HTTP 200:
 
 | Status | Betydning |
 | --- | --- |
-| `ok` | Spørsmålet kan besvares ut fra tilgjengelige rekorddata. Tall, enheter og sammenligninger skal stemme med dataene. |
+| `ok` | Vanlig samtale/avklaring, eller et svar ut fra tilgjengelige rekorddata. Tall, enheter og sammenligninger skal stemme med dataene. |
 | `no_data` | Nødvendig historikk eller navngitt spiller finnes ikke. Forklar hva som mangler; ikke dikt opp resultater. Én rekord kan beskrives, men gir ikke grunnlag for å hevde en forbedring. |
-| `cannot_answer` | AI-en kan ikke besvare spørsmålet med de tilgjengelige, tillatte dataene. Forklar dette i svaret. |
+| `cannot_answer` | Tjenesten fikk ikke fullført svaret innen verktøy-, resultat- eller kontekstgrensen. Forklar begrensningen. Modellen kan også forklare manglende funksjoner som vanlig prat med `ok`; status alene er ikke en faktadom. |
+
+## Samtaleminne og sletting
+
+- Én samtale per innlogging, delt av nettleserfaner som bruker samme cookie. En ny innlogging, også for samme konto, får en annen samtale. Sesjonsfornyelse med samme token beholder samtalen.
+- Høyst **20 fullførte utvekslinger** lagres i AI-prosessens RAM. Bare brukerens spørsmål og assistentens svar beholdes, ikke rå DB-resultater eller interne verktøymeldinger. Ingen trening, diskhistorikk eller varig minne.
+- Eldre utvekslinger fjernes først ved plassmangel; `notices` varsler om dette. 20 er en øvre grense, ikke garanti for at 20 lange utvekslinger får plass eller huskes riktig av modellen. Nåværende spørsmål og datagrunnlag avkortes ikke.
+- Etter 30 minutter uten bruk regnes minnet som utløpt; bakgrunnsopprydding kjører hvert minutt. Høyst 64 samtaler beholdes; ved kapasitet slettes den minst nylig brukte. Omstart av API eller AI mister tilgangen til tidligere minne. Disse tilfellene starter tom samtale uten eget varsel.
+- Utlogging, passordendring og kontosletting stanser tilgangen gjennom API-et. Rester i AI-prosessens RAM kan leve frem til utløp, kapasitetsrydding eller omstart. Dette er ikke umiddelbar fysisk sletting ved utlogging.
+- `POST /v1/conversation/reset` tar de fire identitetsfeltene over, uten `question` eller `game_id`. Den sletter bare denne samtalen og svarer HTTP 200 med `request_id`, `status: "ok"`, `answer: "Samtalen er slettet."`. Gjentakelse er trygg. Hvis arbeid pågår, gis `AI_BUSY` uten påstand om sletting.
+- Frontend bruker `POST /api/v1/ai/conversation/reset` med `{}` og de vanlige cookie-/CSRF-reglene. Backend oversetter vellykket sletting til HTTP 204 uten body. Ingen historikkleserute inngår.
+
+Modellen velger dataverktøy; faste parameterbundne SQL-spørringer henter bare offentlige data. Deklarerte `records`-svar krever vellykket datahenting i samme spørsmål. Vanlig tekst kan godtas som `chat` for å håndtere hilsener som ignorerer JSON-formatet. Modellen kan feilklassifisere faktasvar, velge feil verktøy eller tolke riktig data feil; dette er ingen full sannhetskontroll. Antall offentlige rekordholdere er ikke et sikkert antall personer som har spilt. Private forsøk er utilgjengelige.
 
 ## Feil og ventetid
 

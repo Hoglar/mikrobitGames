@@ -1,5 +1,10 @@
 # Første implementasjon
 
+**Gjeldende samtaleløsning, 2026-10-28:** Assistenten er nå integrert i API-et med opptil 20 utvekslinger per innlogging, navngitte dataverktøy og reset-rute. Ingen nye avhengigheter, modellnedlasting eller sudo-oppsett trengs for denne endringen. Prøv med `.venv/bin/python backend/ops/try-ai.py`, og avslutt prøven før benchmark. Full testfase startes av brukeren med `./backend/check` fra prosjektroten. Lagre først en ren commit hvis kjøringen skal gi et sammenlignbart FoM-punkt. Kontrollversjon 3 starter ny serie; tidligere rapporter beholdes. Historiske diagnoser nedenfor beskriver tidligere varianter. Se [gjeldende kontrakt](spec/contracts/backend-ai/contract.md).
+
+**Avgrenset kontroll før overlevering:** 72 kontrollverktøytester og 69 enhetstester består. Tolv utvalgte API/AI-integrasjonskontroller består samlet over diagnosekjøringen og omkontrollen av den rettede storresultat-fixturen; alle 32 modellkontroller består. Siste omkontroll ligger lokalt i `backend/results/runs/conversation-final-check.json`, tidligere diagnose i `conversation-integration-20261028T142241Z.json`. Ingen full testfase, benchmark eller ny FoM er kjørt for denne revisjonen. Den siste planlagte Qwen-prøven gjennom API ble avbrutt før utførelse; ingen ny påstand om full faktakvalitet eller svartid gjøres. Hilsener ble kontrollert i den tidligere avgrensede modellprøven, mens integrasjon og minnegrenser er kontrollert med styrte modellsvar.
+
+
 Arbeidsgrunnlag: API 0.2.0 i frontendkontrakt 1.3 (fortsatt forslag overfor frontendgruppen), databasekontrakt 1.2 og de avtalte AI-kontraktene. Ingen produktbaseline er kjørt av utviklingsagenten. Testkode og forventninger beholdes.
 
 ## Plassering og avhengigheter
@@ -48,6 +53,71 @@ Når engangsoppsettet er ferdig, gjennomgå og commit endringene selv. Kjør der
 Full kjøring tar omtrent 40–60 minutter. En ren Git-versjon er nødvendig for et komplett FoM-punkt. Agenten kjører bare oppstarts-/syntakskontroller. Brukeren starter den første målingen og bestiller eventuelle rettinger.
 
 Offentlig HTTPS, webpakke, DNS, brannmur og oppstart etter full maskinreboot ferdigstilles ved senere systemleveranse. Ingen offentlige porter skal åpnes av dette oppsettet.
+
+## Prøv AI-en selv i terminalen
+
+Kjør fra prosjektroten på Parrot med det eksisterende testoppsettet:
+
+```bash
+.venv/bin/python backend/ops/try-ai.py
+```
+
+Dette er manuell utprøving, ikke `./backend/check`: ingen automatisk spørsmålsserie,
+benchmark, FoM eller krav om ren commit. Unngå samtidig benchmark, siden modellen
+vil konkurrere om maskinens ressurser. Programmet starter en egen midlertidig
+database med Ada/Nora-data og eksisterende API, AI og modell på loopback. Det bruker
+modellstien fra `backend/check.local.json` og laster ikke ned noe. Forespørslene går
+gjennom API-et med en syntetisk spillersesjon; identiteten bestemmes av API-et.
+Produktets instruksjoner, SQL-filter, databaseroller og tids-/forsøksgrenser beholdes.
+
+Du starter som **Ada med Poengjakt som spillkontekst**, akkurat som i modelltesten.
+Skriv for eksempel «Hvordan ligger jeg an mot Nora i Sprint?». Hvert spørsmål
+behandles selvstendig: AI-en husker ikke tidligere spørsmål eller svar.
+
+- `/data` viser de faktiske offentlige rekordene direkte fra testdatabasen.
+- `/spiller nora` eller `/spiller ada` bytter syntetisk innlogget spiller.
+- `/spill ingen`, `/spill sprint` eller `/spill poengjakt` endrer spillkontekst.
+- `/hjelp` viser kommandoene.
+- `/avslutt`, Ctrl+D eller Ctrl+C stopper tjenestene og fjerner databasen.
+
+Fasit: Ada har Poengjakt 100 → 120 poeng og Sprint 60 000 → 55 000 ms;
+Nora har Poengjakt 110 → 115 poeng og Sprint 65 000 → 58 000 ms.
+Ada er dermed 3 sekunder raskere i Sprint. Dette er rekordhistorikk, ikke alle forsøk.
+Svar, status og tidsbruk vises i terminalen. Ingen samtalerapport lagres av verktøyet;
+kopier interessante spørsmål og svar hvis de skal undersøkes videre. Testmiljøets
+midlertidige logger slettes ved normal avslutning.
+
+Denne diagnosen kjører tjenestene som utviklerens Linux-bruker. Den bruker egne
+databaseroller, men verifiserer ikke separate Linux-brukere eller prosessisolasjon;
+det gjør den ordinære testfasen. Ingen offentlig tilgang åpnes. En ren Ollama-chat
+ville ikke hatt denne databasekoblingen og ville derfor prøvd en annen funksjon.
+
+Terminalverktøyet fjerner `DISPLAY`, `WAYLAND_DISPLAY` og `XAUTHORITY` fra sitt
+eget prosessmiljø før tjenestene starter. Modellen trenger ingen grafikkvinduer;
+arvet SSH-grafikkvideresending kan ellers gi `connect 127.0.0.1 port 6000:
+Connection refused` under grafikkoppdagelse. Endringen påvirker ikke terminalens
+SSH-oppsett og deaktiverer ikke GPU-beregning. En eventuell HTTP-feil som
+`503 AI_UNAVAILABLE` må undersøkes separat: den kan også skyldes intern
+datahentingsfeil etter ugyldig modellgenerert SQL.
+
+## Separat samtaleprototype
+
+Etter brukerens bestilling finnes et eget forsøk med kort samtalehistorikk og
+navngitte dataverktøy i [prototypemappen](prototypes/conversation/README.md).
+Start fra prosjektroten med:
+
+```bash
+.venv/bin/python backend/prototypes/conversation/run.py
+```
+
+Det bruker samme Qwen og syntetiske Ada/Nora-data, men en annen samtaleflyt enn
+backendens AI. `/ny` glemmer samtalen; bytte av spiller glemmer også historikken.
+Ingen varig samtalelagring eller ny frontend/API-kontrakt er innført. Første
+avgrensede evaluering ga riktige toppliste- og Sprint-svar, men også feil ved
+hilsen, et verktøyvalg og en oppdiktet tilleggspåstand. Prototypen er derfor klar
+til manuell utprøving, ikke godkjent for produksjon. Se README-en for detaljer,
+kontroller og kjente begrensninger. Ordinær `./backend/check` måler fortsatt den
+eksisterende backendimplementasjonen.
 
 ## Avklart feil i testdata
 
@@ -108,3 +178,118 @@ Etter rettelsen bestod `TBE-05-concurrent-records` og `TBE-05-concurrent-replay`
 Disse avgrensede funksjonskontrollene brukte reell API/AI-oppstart og PostgreSQL med standard lokal testoppstart under utviklerens Linux-bruker. De testet ikke prosessisolasjon eller ekte AI. Miljøet ble stoppet og de midlertidige databasene fjernet. Ingen full testfase, benchmark, modellspørsmål, commit eller push er utført av agenten i denne runden.
 
 Ingen produktkode, krav, testforventninger, pool-/tidsgrenser eller belastningsprofil er endret. Testinfrastrukturen er rettet; dette gir ny `control_digest` og en separat måleserie. Neste komplette kjøring blir første punkt med korrigert databasetransport, og skal ikke fremstilles som en backend-ytelsesforbedring over `e21d82e`. Ytelsen må måles på nytt. AI-feilen er ikke behandlet i denne runden. Ingen ny sudo-installasjon trengs: gjennomgå og commit, kontroller ren arbeidsmappe, og kjør `./backend/check` selv.
+
+## AI-undersøkelse og delvis retting 2026-10-28
+
+Brukerens komplette kjøring `20261027T194827.319030Z` på commit `d70e9fa5d8944705060c716eea29a7c0fcd65ec3` hadde 39 PASS og én FAIL i integrasjon/benchmark. Den eneste feilen var `TAI-02-08-real-model`; krav-FoM var 91,67 %. Rapporten beholdes uendret.
+
+En målrettet gjennomgang av modellforslag og databaseutfall avdekket en feil i produktkoden: SQLGlot representerer også `AND`, `OR` og `EXISTS` som `Func`. SQL-filteret vurderte funksjonstypen før sin eksplisitte syntaksliste og avviste dermed allerede tillatt SQL. En gyldig spørring etter spiller-ID **og** spillnavn ble stoppet før databasetilgangen. Filteret kontrollerer nå den eksplisitte syntakslisten først, og kontrollerer fortsatt alle nestede uttrykk og objekter. Ingen nye funksjoner, tabeller eller rettigheter er lagt til.
+
+Etter rettelsen kan modellen lese rekordene 100 og 120 for Ada i Poengjakt og svare om utviklingen. Dette bekrefter at databasetilgangen fungerer. Sammenligningen mot Nora i Sprint har et separat problem: modellen velger fortsatt feil spill/spillergrunnlag, og kan derfor svare `no_data` selv om de nødvendige rekordene finnes. Forsøk på å presisere modellinstruksjon og spillkontekst ga ustabile svar og er forkastet. Modellinstruksjonen, adapteren og orkestreringen er beholdt fra baseline; bare SQL-filteret er rettet.
+
+De 27 eksisterende SQL-policytestene og fire supplerende regresjonstester består. Regresjonstestene kontrollerer også at tillatt `AND`/`OR`/`EXISTS` ikke slipper gjennom nestet lesing av private tabeller, farlige funksjoner eller skriving. De ligger under `backend/ai-service/tests/` og kjøres separat som dokumentert der. Det faste FoM-kontrollsettet, testforventningene, modellvalget og grensene er uendret. Denne produktrettelsen endrer ikke `control_digest`.
+
+Ti målrettede integrasjonskontroller av gateway, AI-transport, SQL-avvisning, private forsøk, forsøksbudsjett, samtidighetsgrense, fravær av samtalehistorikk, resultatgrenser og SQL-tidsavbrudd består på den beholdte koden. Kontrollene bruker midlertidig PostgreSQL og reelle tjenester under utviklerens Linux-bruker; de er ikke en ny kontroll av Linux-prosessisolasjonen.
+
+Den eksisterende `TAI-02-08-real-model` ble deretter kjørt alene, inkludert kald modell og tre varme runder: **7 av 10 svar oppfylte format/status/tidskravene**, mot 3 av 10 i brukerens siste komplette rapport. Alle svar kom innen 60 sekunder; kaldt svar tok omtrent 41 sekunder. Alle tre Sprint-sammenligninger ga fortsatt `no_data`, så kontrollen er fortsatt **FAIL**. Svar om Poengjakt-utvikling og Noras spill samsvarte med testdataene i denne avgrensede kontrollen; det beviser ikke generell faktakvalitet. Råresultatene fra diagnosekjøringen ligger lokalt i `backend/results/runs/ai-targeted-20261028.json`, tydelig merket uten FoM. Ingen tidligere rapport er overskrevet.
+
+Alle midlertidige tjenester ble stoppet og databasen fjernet. Ingen full `./backend/check`, HTTP-/DB-belastningsbenchmark, ny FoM-beregning, commit eller push er utført. SQL-rettelsen er klar til gjennomgang, men den samlede AI-feilen er ikke ferdigrettet. En ny lang testkjøring er ikke nødvendig for å konstatere den gjenværende feilen; videre modellstyring eller modellvalg må undersøkes i en ny avtalt runde. Eksisterende krav, modell og tilgangsgrenser skal fortsatt ligge fast inntil annet avtales.
+
+### Avgrenset sammenligning av spillkontekst 2026-10-28
+
+Etter brukerens bestilling ble samme spørsmål, «Hvordan ligger jeg an mot Nora i Sprint?», kjørt i rekkefølgen med/uten/uten/med spillkontekst. Bare `game_id` i meldingen til modellen ble fjernet i uten-varianten. Forespørselen til AI-tjenesten var identisk: den validerte fortsatt Poengjakt som valgt spill og brukte samme SQL-budsjett. Modell, systeminstruksjon, spørsmålsstillerens identitet og øvrige modellinnstillinger var uendret. De lagrede førstegangskallene er sammenlignet for å bekrefte denne avgrensningen.
+
+Med kontekst undersøkte modellen Ada i Poengjakt i begge forsøk. Uten kontekst undersøkte den Ada i Sprint i begge forsøk, men la til det feilaktige filteret `ranking_direction = 'asc'`. Databasen bruker `lower_is_better` for Sprint, og ingen rader traff filteret. Den hentet heller ikke Nora. Alle fire svar endte som `no_data`, selv om fasiten er Ada 55 000 ms og Nora 58 000 ms. Undersøkelsen støtter at spillkonteksten forstyrrer spillvalget i dette spørsmålet; den viser også at fjerning alene ikke løser sammenligningen. Dette er ett spørsmål med to repetisjoner per variant, ikke generell dokumentasjon av modellkvalitet eller hastighet.
+
+Ingen produktkode, krav eller testforventninger ble endret i sammenligningen. Råmodellkall, SQL, syntetiske databaseutfall, svar og innstillinger er lagret lokalt i `backend/results/runs/ai-context-comparison-20261028.json`. Alle midlertidige tjenester og databasedata ble ryddet. Ingen full testfase, FoM, commit eller push ble utført.
+
+### Sekvensielt forsøk med feltforklaring og sammenligning 2026-10-28
+
+Etter ny bestilling ble tre varianter kjørt én gang hver mot samme spørsmål og datasett: opprinnelig instruksjon uten spillkontekst, samme variant med presise `ranking_direction`-verdier, og deretter samme variant med veiledning om å hente begge spillernes gjeldende rekorder. Variantene kjørte i en midlertidig kopi av AI-koden. Bare spillkontekst ble fjernet fra modellens forespørsel; AI-endepunktets spillkontroll og SQL-budsjett ble beholdt. Kodekopiens opprinnelige 3072-byte kontekstkontroll og alle øvrige grenser gjaldt også de utvidede instruksjonene. Modellinnstillinger og første brukermelding var identiske mellom variantene.
+
+- Referansevarianten brukte fortsatt `ranking_direction='asc'` og returnerte `no_data`.
+- Feltforklaringen ga først et feil filter med `higher_is_better`, deretter et korrekt filter med `lower_is_better`. Modellen fikk Adas Sprint-rekorder, men hentet ikke Nora og returnerte fortsatt `no_data`.
+- Veiledningen om begge spillere ga SQL med `p.player_id`, selv om `ai_read.players` har kolonnen `id`. PostgreSQL avviste spørringen, og tjenesten svarte 500 `INTERNAL_ERROR`. Dette var en ugyldig modellgenerert spørring, ikke manglende databaserettigheter.
+
+Ingen variant ga korrekt sammenligning. Den planlagte videre kontrollen med andre navn, spill og formuleringer var betinget av et korrekt svar og ble derfor ikke startet. Ingen av instruksjonsvariantene er tatt inn i produktkoden. Resultatet dokumenterer disse konkrete forsøkene, ikke at modellen aldri kan løse oppgaven. Rådata ligger lokalt i `backend/results/runs/ai-field-guidance-20261028.json`. Midlertidig kodekopi, tjenester og database er fjernet. Ingen full testfase, FoM, commit eller push er utført.
+
+### Direkte modellprøve, hilsener og SQL-referanser 2026-10-28
+
+Brukeren bestilte en avgrenset undersøkelse av direkte Qwen-kall, modellmeldingene
+fra backend og muligheten for korrigering av ugyldig SQL. Samme installerte modell,
+JSON-protokoll og genereringsinnstillinger ble brukt; ingen ny modell ble lastet
+ned. Kjøringene nedenfor er diagnoser med syntetiske data, ikke FoM eller grunnlag
+for ytelsessammenligning. Tjenestene kjørte under utviklerens Linux-bruker i egne
+midlertidige databaser på loopback; prosessisolasjon ble ikke målt på nytt.
+
+Direkte SQL-generering med de tre visningenes skjema, spiller-ID og Sprint-spørsmålet
+ga et selvmotsigende filter: brukernavnet måtte både være Nora og forskjellig fra
+Nora. SQL-en kunne kjøres, men hentet ingen rader. Et direkte kall med backendens
+opprinnelige første modellmelding ga samme første SQL-forslag som backendflyten:
+Ada i Poengjakt, selv om spørsmålet gjaldt sammenligning med Nora i Sprint.
+Dette bekrefter feil i modellens datavalg også uten backendorkestrering. Den enklere
+instruksjonen endret flere inputdetaljer; forsøket identifiserer ikke én bestemt
+instruksjon som årsak og beviser ikke generell manglende modellevne.
+
+Meldingsgjennomgangen viste også en svakhet rundt hilsener. Orkestreringen krever
+faktisk hentet grunnlag før `ok` og `no_data`, slik rekordspørsmål krever. Når modellen
+svarer på en hilsen med en av disse statusene, får den derfor beskjed om å hente data.
+For «Hei hei» fulgte feil parameterliste og deretter et udefinert `g`-alias, som ga
+databasefeil. En instruksjon om å håndtere hilsener direkte med `cannot_answer`
+fungerte på «Hei hei» og «Hallo!», men ga regresjon på rekordutvikling. Den er forkastet;
+modellinstruksjonen og protokollen er beholdt fra baseline. Vi har ikke innført
+generell chat, klassifisering av hilsener eller fritak fra datakravet for faktasvar.
+
+**Beholdt produktretting:** `query_policy` kontrollerer nå kolonnereferanser og
+tabellalias mot det eksplisitte skjemaet for de tre offentlige visningene. Udefinerte
+alias, ukjente kolonner og tvetydige referanser avvises før databaseforbindelsen
+opprettes. SQLGlot kvalifiserer bare en kopi for kontroll; SQL-en som kjøres blir
+ikke automatisk omskrevet. Orkestreringen gir modellen en fast, kort forklaring om
+kolonner/alias, uten rå PostgreSQL-feilmeldinger. Avvisningen bruker et SQL-forsøk,
+og eventuell korrigering deler eksisterende grenser: tre SQL-forsøk inklusive
+spillkontroll, fire modellkall og 60 sekunder. Dette følger kontrakt 1.6 sin regel
+om å avvise ugyldig SQL før kjøring og tillate korrigering innen budsjettet.
+Ingen kontrakt, tilgang, testforventning eller målegrense er endret. Andre feil ved
+databasekjøring, inkludert rettighetsfeil og tidsavbrudd, er fortsatt tekniske feil.
+
+Kontroller etter rettelsen:
+
+- De 27 eksisterende SQL-policytestene og seks supplerende regresjonstestmetoder
+  bestod. Tilleggene dekker blant annet avvisning før DB-tilkobling, CTE-er,
+  korrelerte delspørringer, aggregater, vindusfunksjoner og bevaring av SQL-en.
+- Ti eksisterende integrasjonskontroller for gateway, transport, SQL-policy, private
+  forsøk, budsjetter, samtidighet, historikk/fravær av tjeneste, resultatgrenser og
+  SQL-tidsavbrudd bestod.
+- Fire avgrensede tilleggskontroller bestod: samsvar mellom filterets kolonneliste
+  og de virkelige visningene; korrigering av udefinert alias/ukjent kolonne innen
+  totalt tre forsøk uten at ugyldig SQL når databasen; stopp ved gjentatte avvisninger;
+  og fortsatt teknisk feil uten omforsøk når SELECT-rettigheten trekkes tilbake.
+- Komponentenes importgraf samsvarer fortsatt med modellen. Ingen ny komponent
+  eller avhengighet mellom komponentene er innført.
+
+Sju ekte modellspørsmål ble deretter prøvd med **koden som beholdes og opprinnelig
+instruksjon**. Begge formuleringene om Poengjakt-utvikling hentet relevante data og
+ga 100 → 120 / 20 poeng. Spørsmålet om Noras spill hentet Noras data og ga Poengjakt
+og Sprint. Begge Sprint-sammenligningene valgte fortsatt feil datagrunnlag og ga
+feilaktig `no_data`. Hilsenene ga HTTP 200 med `cannot_answer`, ikke 503; de utløste
+fortsatt unødvendige modellforsøk, og «Hallo!»-svaret ga en misvisende forklaring om
+tilgangsbeskyttelse/SQL. Hilsener er derfor ikke en ferdig samtalefunksjon.
+
+Den forkastede instruksjonsvarianten ga dessuten et tilsynelatende riktig svar om
+Noras spill etter å ha hentet **Adas** rekorder. Begge spillere har de samme spillene
+i dette datasettet. Riktig slutttekst eller `ok` er derfor ikke tilstrekkelig bevis
+på riktig datagrunnlag. Den beholdte varianten hentet Nora korrekt i dette forsøket;
+det er fortsatt bare en avgrenset observasjon, ikke generell faktagodkjenning.
+
+Rå modellmeldinger, SQL, resultater og svar er bevart lokalt, uten å overskrive tidligere
+rapporter:
+
+- `backend/results/runs/ai-diagnosis-20261028T083605Z.json`
+- `backend/results/runs/ai-reference-checks-20261028T083952Z.json` (inkluderer forkastet hilsen-instruksjon)
+- `backend/results/runs/ai-retained-samples-20261028T084241Z.json` (beholdt kode)
+
+Alle tjenester og databaser startet av disse forsøkene er ryddet. Ingen full
+`./backend/check`, benchmark, ny FoM, commit eller push er utført. Det faste
+kontrollgrunnlaget er uendret. Oppstart av `try-ai.py` på nytt bruker den beholdte
+rettelsen uten ny sudo-installasjon. Sprint-feilen gjenstår; en ny lang benchmark
+er ikke nødvendig for å bekrefte den. Videre modellforsøk krever en ny bestilt runde.

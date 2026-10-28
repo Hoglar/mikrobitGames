@@ -5,7 +5,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from uuid import uuid4
 from check_registry import check
-from harness import ADA, POINTS, request, Blocked, attempt_payload
+from harness import ADA, NORA, POINTS, request, Blocked, attempt_payload, PASSWORD, ROOT
 from api_checks import status
 
 
@@ -16,8 +16,8 @@ def model_script(messages, delay=0):
         return 200,{}, {'model':'test-double','done':True,'message':{'role':'assistant','content':json.dumps(item)}}
     return respond
 
-QUERY={'type':'query','sql':'SELECT value FROM ai_read.records WHERE player_id = $1','parameters':[ADA]}
-ANSWER={'type':'answer','status':'ok','answer':'Ada har registrerte rekorder.'}
+QUERY={'type':'tool','name':'history','args':{'player':'me','game':'Poengjakt'}}
+ANSWER={'type':'answer','kind':'records','answer':'Ada har registrerte rekorder.'}
 
 
 @check('TBE-06-gateway','KAI-1',('db','api'))
@@ -29,8 +29,10 @@ def gateway(e):
     e.ai_relay.reset(respond)
     body=status(e.api('POST','/ai/questions',{'question':'Vis min utvikling'},ADA),200)
     assert body['answer']=='Testsvaret'
-    assert set(observed[0]) <= {'request_id','player_id','question','game_id'}
+    assert set(observed[0]) <= {'request_id','player_id','player_name','conversation_id','question','game_id'}
     assert observed[0]['player_id']==ADA and observed[0]['request_id']==body['request_id']
+    assert observed[0]['player_name']=='Ada'
+    assert observed[0]['conversation_id'] != e.tokens[ADA]
     for upstream,code,external in ((503,'AI_BUSY',503),(500,'INTERNAL_ERROR',503)):
         e.ai_relay.reset(lambda path,b,index:(upstream,{}, {'request_id':b['request_id'],'error':code}))
         response=e.api('POST','/ai/questions',{'question':'Vis min utvikling'},ADA)
@@ -95,7 +97,7 @@ def budgets(e):
     assert len(e.model_relay.calls)<=4
     statements=log.read_bytes()[start:].decode(errors='replace').replace(chr(34),'').lower()
     assert sum('testsql|ai_reader|' in line and 'from ai_read.records' in line for line in statements.splitlines())<=3
-    # Context adds a fixed DB lookup: no more than two generated queries remain.
+    # Context adds a fixed DB lookup: no more than two tool queries remain.
     e.model_relay.reset(model_script([QUERY]))
     start=log.stat().st_size
     response=e.ai(game_id=POINTS)
@@ -131,10 +133,14 @@ def busy(e):
 @check('TAI-07-history-outage','KAI-3',('db','api','ai'))
 def history_outage(e):
     marker='UNIQUE_PREVIOUS_QUESTION_91736'
+    conversation=str(uuid4())
     e.model_relay.reset(model_script([QUERY,ANSWER]))
-    assert e.ai(marker)[0]==200
+    assert e.ai(marker,conversation_id=conversation)[0]==200
     e.model_relay.reset(model_script([QUERY,ANSWER]))
-    assert e.ai('Neste selvstendige spørsmål')[0]==200
+    assert e.ai('Oppfølging i samme samtale',conversation_id=conversation)[0]==200
+    assert marker in json.dumps(e.model_relay.calls)
+    e.model_relay.reset(model_script([QUERY,ANSWER]))
+    assert e.ai('Annen samtale')[0]==200
     serialized=json.dumps(e.model_relay.calls)
     assert marker not in serialized
     assert e.admin_password not in serialized
@@ -147,15 +153,23 @@ def history_outage(e):
 
 @check('TAI-06-large-result','KAI-3',('db','ai'))
 def large_result(e):
-    e.reset_data(large=True)
-    query={'type':'query','sql':'SELECT id, value FROM ai_read.records','parameters':[]}
-    e.model_relay.reset(model_script([query]))
-    response=e.ai(player_id=e.players[0][0])
+    # The named standings tool reads one current record per player. Create more
+    # than 1000 real record holders, not an arbitrary model-supplied projection.
+    e.rows("""INSERT INTO app.players(id,username,password_hash,created_at)
+        SELECT md5('limit-player-'||i)::uuid, 'Holder'||i,
+          (SELECT password_hash FROM app.players LIMIT 1), now()
+        FROM generate_series(1,1001) AS i""")
+    e.rows("""INSERT INTO app.records(id,player_id,game_id,value,created_at)
+        SELECT md5('limit-record-'||i)::uuid, md5('limit-player-'||i)::uuid, %s, 100, now()
+        FROM generate_series(1,1001) AS i""", (POINTS,))
+    e.rows("""INSERT INTO app.attempts(player_id,id,game_id,status,value,created_at,record_outcome,record_id)
+        SELECT r.player_id,r.id,r.game_id,'completed',r.value,r.created_at,'created',r.id
+        FROM app.records r JOIN app.players p ON p.id=r.player_id WHERE p.username LIKE 'Holder%%'""")
+    e.model_relay.reset(model_script([{'type':'tool','name':'standings','args':{'game':'Poengjakt'}}]))
+    response=e.ai()
     assert response[0]==200 and response[2]['status']=='cannot_answer'
     # An over-limit result must not be sent as a complete dataset to the model.
-    for call in e.model_relay.calls:
-        text=json.dumps(call['body'])
-        assert text.count('00000000-0000-0000-0000-')<1000
+    assert len(e.model_relay.calls)==1, 'Over-limit dataset was sent back to the model.'
 
 
 @check('TBE-06-timeout','KAI-1',('db','api'),slow=True)
@@ -193,22 +207,84 @@ def process_isolation(e):
 
 @check('TAI-06-result-bytes','KAI-3',('db','ai'))
 def result_bytes(e):
+    # Named tools cannot request 200 repeated columns. Keep the 1 MiB adapter
+    # guarantee independently tested against the real DB and the same reader role.
+    import sys, os
+    from unittest.mock import patch
+    sys.path.insert(0,str(ROOT/'backend/ai-service/src'))
+    import read_store
     e.reset_data(large=True)
     e.rows("UPDATE app.games SET name=repeat('X',100)")
     projections=', '.join(f'g.name AS c{i}' for i in range(200))
-    query={'type':'query','sql':f'SELECT {projections} FROM ai_read.records r JOIN ai_read.games g ON g.id=r.game_id LIMIT 100','parameters':[]}
-    e.model_relay.reset(model_script([query]))
-    response=e.ai(player_id=e.players[0][0])
-    assert response[0]==200 and response[2]['status']=='cannot_answer'
-    assert all(len(json.dumps(call['body']).encode())<1048576 for call in e.model_relay.calls)
+    with patch.dict(os.environ, {'MBG_DATABASE_DSN': e.ai_dsn}):
+        try:
+            read_store.query(f'SELECT {projections} FROM ai_read.records r JOIN ai_read.games g ON g.id=r.game_id LIMIT 100', [], time.monotonic()+10)
+        except read_store.ResultTooLarge:
+            return
+    raise AssertionError('Adapteren godtok resultat over 1 MiB.')
 
 
 @check('TAI-06-sql-timeout','KAI-3',('db','ai'),slow=True)
 def sql_timeout(e):
-    e.reset_data(large=True)
-    query={'type':'query','sql':'SELECT count(*) FROM ai_read.records a CROSS JOIN ai_read.records b CROSS JOIN ai_read.records c','parameters':[]}
-    e.model_relay.reset(model_script([query]))
-    start=time.perf_counter();response=e.ai(player_id=e.players[0][0])
+    # Block the actual fixed tool query rather than accepting arbitrary model SQL.
+    e.model_relay.reset(model_script([QUERY]))
+    with e.connect() as conn:
+        with conn.transaction():
+            conn.execute('LOCK TABLE app.records IN ACCESS EXCLUSIVE MODE')
+            start=time.perf_counter();response=e.ai()
     assert response[0]==500 and response[2]['error']=='INTERNAL_ERROR'
     assert set(response[2])=={'request_id','error'}
     assert time.perf_counter()-start<5, 'SQL-spørringen ble ikke stoppet nær grensen på 2 sekunder.'
+
+
+@check('TAI-07-conversation-session','KAI-3',('db','api','ai'))
+def conversation_session(e):
+    chat={'type':'answer','kind':'chat','answer':'Hei!'}
+    e.model_relay.reset(model_script([chat]))
+    marker='SESSION_ONLY_ADA_72819'
+    status(e.api('POST','/ai/questions',{'question':marker},ADA),200)
+    first_handle=e.ai_relay.calls[-1]['body']['conversation_id']
+    e.model_relay.reset(model_script([chat]))
+    status(e.api('POST','/ai/questions',{'question':'Husker du?'},ADA),200)
+    assert marker in json.dumps(e.model_relay.calls)
+    assert first_handle==e.ai_relay.calls[-1]['body']['conversation_id']
+    e.model_relay.reset(model_script([chat]))
+    status(e.api('POST','/ai/questions',{'question':'Hei'},NORA),200)
+    assert marker not in json.dumps(e.model_relay.calls)
+    # A second login for the same account starts a separate conversation.
+    login=e.api('POST','/auth/login',{'username':'Ada','password':PASSWORD})
+    cookie=login[1]['set-cookie'].split(';')[0]
+    e.model_relay.reset(model_script([chat]))
+    status(e.api('POST','/ai/questions',{'question':'Ny innlogging'},headers={'Cookie':cookie}),200)
+    assert marker not in json.dumps(e.model_relay.calls)
+    assert first_handle!=e.ai_relay.calls[-1]['body']['conversation_id']
+    serialized=json.dumps(e.ai_relay.calls)
+    assert cookie.split('=',1)[1] not in serialized
+    assert e.tokens[ADA] not in serialized
+    # Input cannot choose another player, session or supply authoritative history.
+    for extra in ({'conversation_id':first_handle},{'player_id':NORA},{'history':[]}):
+        status(e.api('POST','/ai/questions',{'question':'Hei',**extra},ADA),400,'INVALID_REQUEST')
+    status(e.api('POST','/ai/conversation/reset',{},ADA),204)
+    e.model_relay.reset(model_script([chat]))
+    status(e.api('POST','/ai/questions',{'question':'Etter sletting'},ADA),200)
+    assert marker not in json.dumps(e.model_relay.calls)
+    status(e.api('POST','/ai/conversation/reset',{}),401,'AUTH_REQUIRED')
+    status(e.api('POST','/ai/conversation/reset',{},ADA,headers={'Origin':'https://invalid.example'}),403,'FORBIDDEN')
+    # Internal handles are also bound to the trusted player ID.
+    cid=str(uuid4())
+    assert e.ai('Hei',conversation_id=cid)[0]==200
+    assert e.ai('Hei',conversation_id=cid,player_id=NORA)[0]==400
+
+
+@check('TAI-07-conversation-20','KAI-3',('db','api','ai'))
+def conversation_twenty(e):
+    e.model_relay.reset(model_script([{'type':'answer','kind':'chat','answer':'Notert.'}]))
+    marker='FIRST_EXCHANGE_612839'
+    for index in range(20):
+        result=status(e.api('POST','/ai/questions',{'question':marker if index==0 else f'Melding {index}'},ADA),200)
+        assert 'notices' not in result
+    result=status(e.api('POST','/ai/questions',{'question':'Melding 20'},ADA),200)
+    assert marker in json.dumps(e.model_relay.calls[-1]['body'])
+    assert result['notices']
+    status(e.api('POST','/ai/questions',{'question':'Melding 21'},ADA),200)
+    assert marker not in json.dumps(e.model_relay.calls[-1]['body'])

@@ -1,10 +1,10 @@
 # Felles implementeringsplan: database, API og AI
 
-**Revisjon 2026-10-27:** Privat forsøkshistorikk inngår i første implementasjon. Kjørbar testkode er tilpasset privat forsøkshistorikk og API 0.2.0. Kontrollversjon 2 bruker 24/4/4 modellpunkter; målinger blandes ikke med tidligere kontrollversjon. Produktimplementasjon og baseline gjenstår. Se [endringsoversikten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester).
+**Revisjon 2026-10-28:** Første implementasjon og tidligere målinger er gjennomført. Brukerbestilt samtaleintegrasjon følger [ADR-009](../../spec/decisions/adr-009-conversational-ai.md), API 0.3.0 og kontrollversjon 3. Modellpunktene er fortsatt 24/4/4. Ny full måling kjøres av brukeren; historiske rapporter beholdes separat.
 
 **Tidligere status:** Avtalt arbeidsmåte, 2026-10-24. Planen beskriver hele opplegget. Oppdatert 2026-10-25: testpakken har nå enhetstester, integrasjon, benchmark, modelluttrekk, SSH-kjøring og rapportering. Komponentene og engangsoppsettet på Parrot må fortsatt klargjøres før full måling. Ingen produktbaseline eller FoM-måling foreligger.
 
-Database, backend API og AI-tjeneste implementeres samlet fra modellene. [Frontendkontrakten i 1.3](../../spec/contracts/webapp-backend/README.md) var godkjent som 0.1.0; gjeldende samordnede revisjon er 0.2.0 og brukes som felles implementeringsgrunnlag for frontend, backend og kontrakttester. Kontrollene trenger ikke ferdig nettside eller Micro:bit; samlet systemdemonstrasjon kommer senere.
+Database, backend API og AI-tjeneste implementeres samlet fra modellene. [Frontendkontrakten i 1.3](../../spec/contracts/webapp-backend/README.md) var godkjent som 0.1.0; gjeldende revisjon er 0.3.0 og brukes som arbeidsgrunnlag for backend og kontrakttester, fortsatt som forslag overfor frontendgruppen. Kontrollene trenger ikke ferdig nettside eller Micro:bit; samlet systemdemonstrasjon kommer senere.
 
 Se [kort kjøreoversikt](../verification/README.md) og [arbeidsflyten i draw.io](../../docs/presentation/iterative-development.drawio).
 
@@ -60,7 +60,7 @@ Gjenbruk Ada/Nora-datasettet og scenarioene i [DB-testplanen](test-plan.md), [ba
 | KAPI-4 | Ugyldig og uautorisert input | TBE-01,07: kontraktfeil, eierskap, cookie-/CSRF-regler og rategrenser; HTTP-klienten etterligner nettleserforespørsler. |
 | KAI-1 | API–AI-meldinger og feil | TAI-01,05/TBE-06: felter, bevart ID, feil, opptatt tjeneste og tidsavbrudd. |
 | KAI-2 | SQL-filter | TAI-03: tillatt lesing, avvist skriving, farlige funksjoner og skjulte operasjoner. |
-| KAI-3 | Grenser og isolasjon | TAI-06–07: forsøk, tid, samtidighet, resultatstørrelse, prosessrettigheter, ingen samtalehistorikk og vanlig backend når AI er nede. |
+| KAI-3 | Grenser og isolasjon | TAI-06–07: forsøk, tid, samtidighet, resultatstørrelse, prosessrettigheter, sesjonsbundet samtalehistorikk, sletting/utløp og vanlig backend når AI er nede. |
 | KAI-4 | Faktisk lokal modell | Objektiv del av TAI-02,08: faste spørsmål gjennom virkelig tjeneste mot testdata; status, ID, svarskjema, ikke-tomt svar, lengde og svar innen kontraktens tidsfrist. |
 
 KAI-4 bruker et versjonert spørsmålssett med forventet status per spørsmål. De tre første spørsmålene i AI-planens tabell har data og skal gi `ok`. En kontrollert modelladapter kan ikke bestå dette punktet. Svartider og feil fra kald oppstart og varme runder lagres separat etter TAI-08. En observert overskredet frist er FAIL, ikke en utelatt måling.

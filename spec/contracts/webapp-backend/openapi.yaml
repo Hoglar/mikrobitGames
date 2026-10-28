@@ -1,5 +1,5 @@
 openapi: 3.1.0
-info: {title: mikrobitGames – Webapp / Backend API, version: 0.2.0, description: 'Revisjon 0.2.0 av WBS 1.3, samordnet 2026-10-27 etter brukerens valg om privat forsøkshistorikk. Godkjenningen av 0.1.0 gjelder den tidligere versjonen. Felles fasit for frontend, backend og kontrakttester. Tidligere godkjenning gjelder dokumentasjonen i 0.1.0; denne revisjonen følger bestilt samordning, ikke ferdig implementasjon. Se contract.md for sesjoner, omforsøk, CSRF og frontendforløp.
+info: {title: mikrobitGames – Webapp / Backend API, version: 0.3.0, description: 'Revisjon 0.3.0 av WBS 1.3, bestilt 2026-10-28: samtalehistorikk og kontrollerte dataverktøy. Implementeringsgrunnlag for backend, fortsatt forslag overfor frontendgruppen. Se contract.md for sesjoner, minnesletting og feil.
     JSON-objekter har eksplisitte felt; ukjente query-parametere avvises. Alle POST-kall krever JSON,
     X-MBG-Request: 1 og verifisert Origin/Referer. Ingen CORS-tilgang til andre origins. UTF-8, UUID og
     UTC. Maksimal body 16 KiB.'}
@@ -781,11 +781,12 @@ paths:
       operationId: askAI
       tags:
       - AI
-      summary: Still ett selvstendig spørsmål om tillatte data
-      description: Backend lager request_id og henter player_id fra sesjonen. Ingen samtalehistorikk.
-        game_id er valgfri kontekst; spørsmål på tvers av spill er tillatt. Ukjent oppgitt game_id gir
-        400. no_data og cannot_answer er også HTTP 200. Maks 60 sekunder til fullstendig svar fra AI-tjenesten;
-        ingen automatiske omforsøk.
+      summary: Fortsett samtalen for innlogget sesjon
+      description: Vanlig samtale og spørsmål om offentlige rekorder. Backend bestemmer spiller og
+        intern samtaleidentitet fra innloggingen; frontend sender ingen historikk eller identitet.
+        Opptil 20 utvekslinger i RAM, 30 minutter inaktivitet og begrenset kontekst; ingen varig lagring.
+        game_id er valgfri bakgrunn, ikke tilgangsgrense. Ukjent game_id gir 400.
+        no_data og cannot_answer er også HTTP 200. Maks 60 sekunder; ingen automatiske API-omforsøk.
       security:
       - {sessionCookie: []}
       responses:
@@ -820,6 +821,58 @@ paths:
           application/json:
             schema: {$ref: '#/components/schemas/AIQuestion'}
             example: {question: 'Hvordan har jeg utviklet meg i Poengjakt?', game_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa}
+  /ai/conversation/reset:
+    post:
+      operationId: resetAIConversation
+      tags:
+      - AI
+      summary: Start en ny samtale
+      description: Sletter historikken for aktuell innlogget sesjon. Andre innlogginger berøres ikke. AI_BUSY
+        betyr at sletting ikke er gjennomført; prøv igjen når pågående svar er ferdig.
+      security:
+      - sessionCookie: []
+      responses:
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/AIUnavailable'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+        '401':
+          $ref: '#/components/responses/AuthRequired'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '413':
+          $ref: '#/components/responses/TooLarge'
+        '415':
+          $ref: '#/components/responses/UnsupportedType'
+        '502':
+          $ref: '#/components/responses/InvalidAIResponse'
+        '504':
+          $ref: '#/components/responses/AITimeout'
+        '204':
+          description: Sesjon og cookie fjernet. Også 204 når sesjonen allerede er borte.
+          headers:
+            X-Request-ID:
+              description: Servergenerert korrelasjons-ID; samme som request_id i eventuell body.
+              schema:
+                type: string
+                format: uuid
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+      parameters:
+      - $ref: '#/components/parameters/BrowserRequest'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmptyRequest'
+            example: {}
   /health:
     get:
       operationId: getHealth
@@ -1150,6 +1203,11 @@ components:
         status: {type: string, enum: [ok, no_data, cannot_answer]}
         answer: {type: string, minLength: 1, maxLength: 4000, description: Ren norsk tekst. Må ikke tolkes
             som HTML.}
+        notices:
+          type: array
+          maxItems: 21
+          description: Valgfrie meldinger om at eldre samtaleutvekslinger er glemt. Vis som tekst.
+          items: {type: string, minLength: 1, maxLength: 200}
     Health:
       type: object
       additionalProperties: false

@@ -48,3 +48,9 @@ class AIResponse(unittest.TestCase):
         for payload in (None, [], 'text', 42):
             with self.subTest(payload=payload), self.assertRaises(ValueError):
                 self.subject.validate_response(payload, REQUEST_ID)
+
+    def test_memory_notices_are_bounded_and_optional(self):
+        self.subject.validate_response(self.response(notices=['Eldste melding er glemt.']),REQUEST_ID)
+        for notices in ('tekst',[1],[''],['x'*201],['x']*22):
+            with self.subTest(notices=notices),self.assertRaises(ValueError):
+                self.subject.validate_response(self.response(notices=notices),REQUEST_ID)

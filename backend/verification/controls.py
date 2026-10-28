@@ -1,6 +1,6 @@
 """Pure control logic. Never imports the application or opens a database."""
 
-CONTROL_VERSION = 2  # API 0.2.0, database model format 2; never reuse the v1 series.
+CONTROL_VERSION = 3  # API 0.3.0: session conversations and named data tools; new series.
 TABLE_ORDER = ('app.players', 'app.sessions', 'app.games', 'app.records', 'app.attempts')
 VIEW_ORDER = ('ai_read.players', 'ai_read.games', 'ai_read.records')
 MODEL_COUNTS = (24, 4, 4)

@@ -1,6 +1,6 @@
 # Webapp–backend
 
-**Gjeldende revisjon: 0.2.0, 2026-10-27.** Samordnet etter brukerens valg om privat lagring av alle avsluttede spillforsøk. Godkjenningen av 0.1.0 som WBS 1.3-leveranse gjaldt den tidligere versjonen; produktimplementasjon og verifisering gjenstår.
+**Gjeldende revisjon: 0.3.0, 2026-10-28.** Samtaleassistent med avgrenset hukommelse og «ny samtale». Arbeidsgrunnlag for backend etter brukerbestilling, fortsatt et forslag til frontendgruppen.
 
 - [Utviklerguiden](contract.md): brukerforløp, innlogging, forsøk, rekorder, profil, AI og feil.
 - [OpenAPI](openapi.yaml): maskinlesbar fasit for ruter, felt, typer, tilgang og svar.

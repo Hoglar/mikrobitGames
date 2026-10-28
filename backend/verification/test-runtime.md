@@ -1,6 +1,6 @@
 # Teknisk design: interne grensesnitt og testtilkobling
 
-**Revisjon 2026-10-27:** Test-/kontrollkoden er tilpasset API 0.2.0, databasekontrakt 1.2 og modellformat 2. Kontrollversjon 2 bruker 24/4/4 modellpunkter og skiller måleserien fra den tidligere versjonen. Se [endringsoversikten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester). Kontrollverktøyenes egne tester er kjørt; produktimplementasjon og faktiske produktmålinger gjenstår.
+**Revisjon 2026-10-28:** Brukerbestilt samtaleassistent er integrert med API 0.3.0, intern AI-kontrakt 1.3 og AI–database-kontrakt 1.2. Frontendkontrakten er fortsatt et forslag til frontendgruppen. Kontrollversjon 3 beholder 24/4/4 modellpunkter og starter en egen måleserie. Full testfase og benchmark kjøres av brukeren; tidligere rapporter beholdes.
 
 Dette dokumentet eier de konkrete interne designvalgene som implementasjonen og testpakken deler: oppstart, miljøvariabler, funksjonssignaturer, modellmeldinger og instrumentering. Det ligger ved testverktøyene, men inngår i designgrunnlaget for første implementasjon. Funksjonskrav og sikkerhetsgrenser kommer fra [kontraktene og modulkravene](../spec/README.md); testtilkoblingen skal ikke innføre nye produktkrav. Endres et internt grensesnitt, oppdateres dette dokumentet, berørte kall og tester sammen etter reglene i implementeringsplanen.
 
@@ -30,17 +30,25 @@ API og AI skal tilby `/openapi.json` for uttrekk. Frontendfasiten er `spec/contr
 
 ## Kontrollerte modellmeldinger
 
-For testadapteren konkretiseres den planlagte interne JSON-protokollen slik:
+Samtalerevisjonen bruker følgende modellhandlinger:
 
 ```json
-{"type":"query","sql":"SELECT value FROM ai_read.records WHERE player_id = $1","parameters":["11111111-1111-4111-8111-111111111111"]}
+{"type":"tool","name":"history","args":{"game":"Poengjakt","player":"me"}}
 ```
 
 ```json
-{"type":"answer","status":"ok","answer":"Ada har registrerte rekorder."}
+{"type":"answer","kind":"records","answer":"Ada har registrerte rekorder."}
 ```
 
-Bruk Ollamas `POST /api/chat` uten strømming. JSON ligger i `message.content`, med `options.num_ctx=4096` og `options.num_predict=512`. Tjenesten kontrollerer skjema, SQL, datagrunnlag og budsjett. Dette konkretiserer modelladapteren; det endrer ikke frontend- eller API–AI-kontrakten. SQL-en inneholder PostgreSQL-parametere (`$1` osv.); driveradapteren må binde disse sikkert.
+`kind: chat` brukes for vanlig prat og avklaring. Tillatte verktøy er `games({})`, `standings({game})`, `history({game,player})` og `player_games({player})`. Eksakte felt valideres; SQL og ekstra identitetsargumenter avvises. `read_store` bruker fast SQL med native `$1`-binding, SQL-policy, `ai_reader` og uendrede DB-grenser. Svarstatus bestemmes av tjenesten, ikke av et modellfelt `status`.
+
+Bruk Ollamas `POST /api/chat` med `stream:false`, `format:"json"`, `options.num_ctx=16384`, `num_predict=512`, `temperature=0`. Adapteren tillater også vanlig ren tekst eller en JSON-streng som `chat`, fordi faktisk Qwen svarte slik på en hilsen. Ødelagt struktur, ukjente handlinger og ekstra felt godtas ikke som prat. Høyst fire modellkall deler en 60-sekundersfrist; ugyldig modellformat kan korrigeres innenfor den.
+
+Før hvert kall begrenses samlet meldingsinnhold til 12 288 UTF-8-byte. Eldre utvekslinger fjernes først med `notices`; nåværende spørsmål og data klippes ikke. Faktisk `prompt_eval_count` over 15 360, manglende `done` eller avbrutt generering gir teknisk feil. Kontekstvinduet er større for å støtte opptil 20 utvekslinger; full ny ressurs-/tidsmåling gjenstår.
+
+Intern forespørsel krever `request_id`, `player_id`, `player_name`, `conversation_id`, `question` og valgfri `game_id`. API-et utleder samtale-ID fra autentisert token med nøkkelsatt BLAKE2b og en tilfeldig prosessnøkkel. Ingen token/hash sendes videre. Testhjelperen `e.ai()` lager en ny samtale-ID som standard; tester av historikk gjenbruker den eksplisitt. API-tester bruker reell sesjonscookie. Minne, sletting og levetid beskrives i [kontrakt 1.5](../spec/contracts/backend-ai/contract.md).
+
+Kontrollversjon 3 endrer testen av fravær av historikk til kontroll av sesjonsbundet historikk. SQL-angrep avvises allerede som modellhandlinger; parser og databaseroller testes fortsatt direkte. Resultatgrensen på 1 000 rader testes med 1 001 faktiske rekordholdere gjennom `standings`. Grensen på 1 MiB testes direkte gjennom samme `read_store.query` som `ai_reader`, fordi modellen ikke lenger kan be om vilkårlig brede projeksjoner. SQL-tidsavbrudd testes ved å låse tabellen for den faste verktøyspørringen. Ingen grense, benchmarklast eller faktakrav er slakket. Tidligere rapporter tilhører tidligere kontrollgrunnlag.
 
 Under feiltester svarer et kontrollert HTTP-relé med avtalte meldinger. Ved virkelig AI-test videresender det til en egen Ollama-prosess og registrerer at faktiske modellkall ble utført. Testpakken setter `OLLAMA_NO_CLOUD=1`, bruker installerte modellfiler og foretar ingen nedlasting under testen. Se [Ollamas offisielle konfigurasjonsveiledning](https://github.com/ollama/ollama/blob/main/docs/faq.mdx).
 

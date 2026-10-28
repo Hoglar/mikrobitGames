@@ -1,6 +1,7 @@
 """Version 1 allowlist for PostgreSQL read expressions. Unknown syntax fails closed."""
 import sqlglot
 from sqlglot import exp
+from sqlglot.optimizer.qualify import qualify
 
 VIEWS = {'players', 'games', 'records'}
 NODES = frozenset('''Select From Table Identifier Column Star Alias TableAlias Where
@@ -11,6 +12,20 @@ NODES = frozenset('''Select From Table Identifier Column Star Alias TableAlias W
 FUNCTIONS = frozenset('''COUNT SUM MIN MAX AVG ABS ROUND LOWER UPPER LENGTH COALESCE
     NULLIF DATE_TRUNC EXTRACT LAG LEAD FIRST_VALUE LAST_VALUE ROW_NUMBER RANK DENSE_RANK'''.split())
 TYPES = frozenset('BIGINT INT SMALLINT DECIMAL DOUBLE FLOAT TEXT VARCHAR CHAR BOOLEAN DATE TIMESTAMP TIMESTAMPTZ UUID INTERVAL'.split())
+
+# Only the public view schema from contract 1.6. Never infer unknown columns
+# from model SQL, and never consult private tables or system catalogs.
+SCHEMA = {'ai_read': {
+    'players': {'id': 'UUID', 'username': 'TEXT', 'username_key': 'TEXT', 'created_at': 'TIMESTAMPTZ'},
+    'games': {'id': 'UUID', 'name': 'TEXT', 'score_unit': 'TEXT', 'ranking_direction': 'TEXT',
+              'min_value': 'BIGINT', 'max_value': 'BIGINT', 'is_active': 'BOOLEAN'},
+    'records': {'id': 'UUID', 'player_id': 'UUID', 'game_id': 'UUID', 'value': 'BIGINT', 'created_at': 'TIMESTAMPTZ'},
+}}
+
+
+class InvalidReferences(ValueError):
+    """An unresolved/ambiguous column or table alias; safe to correct locally."""
+    pass
 
 
 def parse_query(sql):
@@ -26,11 +41,15 @@ def parse_query(sql):
     ctes = {cte.alias for cte in tree.find_all(exp.CTE)}
     allowed_source = False
     for node in tree.walk():
-        if isinstance(node, exp.Func):
+        # SQLGlot also represents syntax such as AND, OR and EXISTS as Func.
+        # Check the explicit syntax allowlist before classifying function calls.
+        if type(node).__name__ in NODES:
+            pass
+        elif isinstance(node, exp.Func):
             name = node.name.upper() if isinstance(node, exp.Anonymous) else node.sql_name()
-            if name not in FUNCTIONS and type(node).__name__ not in ('Cast', 'Case', 'If'):
+            if name not in FUNCTIONS:
                 raise ValueError('Funksjonen er ikke tillatt.')
-        elif type(node).__name__ not in NODES:
+        else:
             raise ValueError('SQL-konstruksjonen er ikke tillatt.')
         if isinstance(node, exp.Select):
             if not node.expressions or node.args.get('into') or node.args.get('locks'):
@@ -55,6 +74,12 @@ def parse_query(sql):
             raise ValueError('Kolonner skal bruke tabellalias.')
     if not allowed_source:
         raise ValueError('Spørringen må lese tillatt datagrunnlag.')
+    try:
+        # Qualify a COPY for validation only. Execute the original parsed tree;
+        # no optimizer rewrite or automatic SQL repair reaches the database.
+        qualify(tree.copy(), dialect='postgres', schema=SCHEMA, infer_schema=False)
+    except sqlglot.errors.OptimizeError:
+        raise InvalidReferences('Ukjent eller tvetydig kolonne/tabellalias.') from None
     return tree
 
 

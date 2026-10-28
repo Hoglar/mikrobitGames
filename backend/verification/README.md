@@ -1,12 +1,12 @@
 # Testfasen – én kommando
 
-**Revisjon 2026-10-27:** Test-/kontrollkoden er tilpasset API 0.2.0, databasekontrakt 1.2 og modellformat 2. Kontrollversjon 2 bruker 24/4/4 modellpunkter og skiller måleserien fra den tidligere versjonen. Se [endringsoversikten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester). Kontrollverktøyenes egne tester er kjørt; produktimplementasjon og faktiske produktmålinger gjenstår.
+**Revisjon 2026-10-28:** Brukerbestilt samtaleassistent er integrert med API 0.3.0, intern AI-kontrakt 1.3 og AI–database-kontrakt 1.2. Frontendkontrakten er fortsatt et forslag til frontendgruppen. Kontrollversjon 3 beholder 24/4/4 modellpunkter og starter en egen måleserie. Full testfase og benchmark kjøres av brukeren; tidligere rapporter beholdes.
 
 **Vanlig bruk:** Kjør `./backend/check` fra prosjektroten. Den starter hele den automatiserte backend-testpakken. Du trenger ikke starte database, API, AI eller flere testprogrammer manuelt.
 
 Testkode og benchmark er skrevet før komponentene. Så lenge migreringer eller tjenester mangler, viser rapporten **BLOCKED**. Det er ikke en bestått test eller en baseline.
 
-Etter kontraktssamordningen kan `./backend/check selftest` kontrollere selve verktøyene uten ferdig backend. Det erstatter ikke `./backend/check`, som brukes til produktmåling etter implementering. Kontrollversjon 2 er allerede tatt i bruk; rapporter fra det tidligere 20/4/4-settet blandes ikke med de nye 24/4/4-målingene.
+Etter kontraktssamordningen kan `./backend/check selftest` kontrollere selve verktøyene uten ferdig backend. Det erstatter ikke `./backend/check`, som brukes til produktmåling etter implementering. Kontrollversjon 3 gjelder samtaleløsningen; tidligere serier fra kontrollversjon 1 og 2 beholdes separat.
 
 ## 1. Engangsoppsett på Parrot
 
@@ -91,7 +91,7 @@ FoM krever full kjøring, målbare kontroller og en ren git-versjon. Feil kan gi
 
 **Målerevisjon etter kjøringen `20261027T175640.430159Z`:** Sesjonstestens tidsintervaller er rettet til kontraktens sekunder, og rategrensetesten bruker et skjemagyldig feil passord. Forventede svar og produktkrav er beholdt. PSS-måleren håndterer prosesser som avsluttes under avlesning med avgrensede nye forsøk og rådiagnostikk; se [målemetoden](test-runtime.md#benchmark-og-gjenoppretting). Last, tidsgrenser, minnegrense og FoM-formel er uendret. Endringene gir ny `control_digest` og dermed en separat måleserie innen kontrollversjon 2. Behold tidligere rapporter; de skal ikke skrives om eller blandes inn i den nye kurven.
 
-Rapportmappene er ignorert av git. Behold kjøringene på maskinen. Til presentasjonen kan utvalgte rapporter/kurver kopieres til `results/fom/` og committes; inkluder også regresjoner. Sikkerhetsfeil blokkerer godkjenning uavhengig av FoM.
+Rapportmappene er ignorert av git. Behold kjøringene på maskinen. Gjennomgåtte fullkjøringer deles med gruppen i [resultatarkivet](../../results/fom/README.md), med rapporter, rå benchmarkdata og kurver. Nye kjøringer må arkiveres og committes/pushes etterpå; inkluder også regresjoner. Sikkerhetsfeil blokkerer godkjenning uavhengig av FoM.
 
 **Transportretting etter kjøringen `20261027T185538.809129Z`:** Begge samtidighetstestene feilet gjennom testens database-mellomledd, men bestod med direkte forbindelse mot samme backend. Med `TCP_NODELAY` på begge forbindelsene i mellomleddet består de også gjennom den vanlige testveien. Ingen testforventning, produktkode eller tidsgrense er endret. Rapporten fra `e21d82e` beholdes som en komplett historisk måling, med forbehold om transportfeilen i testoppsettet. Endret `control_digest` starter en ny serie. En eventuell forbedring i neste rapport skal derfor ikke tilskrives bedre backend-kode; den lange ytelsesmålingen må gjentas av brukeren.
 

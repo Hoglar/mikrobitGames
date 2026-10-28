@@ -32,7 +32,7 @@ async def lifespan(app):
     database.close()
 
 
-app = FastAPI(title='Mikrobit Games API', version='0.2.0', lifespan=lifespan, docs_url=None, redoc_url=None)
+app = FastAPI(title='Mikrobit Games API', version='0.3.0', lifespan=lifespan, docs_url=None, redoc_url=None)
 _declared = {}
 
 
@@ -240,10 +240,11 @@ def route(path, method, action, success, **options):
                 result = await run_in_threadpool(score_service.attempts, token, **query)
             elif action == 'attempt':
                 result = await run_in_threadpool(score_service.attempt, token, paths['attempt_id'])
-            elif action == 'ai':
+            elif action in ('ai', 'ai_reset'):
                 identity = await run_in_threadpool(auth_service.identity, token)
                 # The session operation has committed and released its pool slot.
-                result = await ai_gateway.answer(request.state.request_id, identity['id'], **body)
+                result = await ai_gateway.answer(request.state.request_id, identity['id'], token=token,
+                    player_name=identity['username'], reset=action == 'ai_reset', **body)
             elif action == 'health':
                 await run_in_threadpool(database.ready)
                 result = {'status': 'ok'}
@@ -292,6 +293,8 @@ route('/players/{player_id}', 'get', 'player', 'Player')
 route('/players/{player_id}/records', 'get', 'player_records', 'PlayerRecordPage', paged=True)
 route('/players/{player_id}/games/{game_id}/records', 'get', 'history', 'HistoryPage', paged=True)
 route('/ai/questions', 'post', 'ai', 'AIAnswer', body='AIQuestion', private=True,
+      extra_errors={503: ['SERVICE_UNAVAILABLE', 'AI_BUSY', 'AI_UNAVAILABLE'], 502: ['INVALID_AI_RESPONSE'], 504: ['AI_TIMEOUT']})
+route('/ai/conversation/reset', 'post', 'ai_reset', None, status=204, body='EmptyRequest', private=True,
       extra_errors={503: ['SERVICE_UNAVAILABLE', 'AI_BUSY', 'AI_UNAVAILABLE'], 502: ['INVALID_AI_RESPONSE'], 504: ['AI_TIMEOUT']})
 route('/health', 'get', 'health', 'Health')
 

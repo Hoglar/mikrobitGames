@@ -1,3 +1,6 @@
 # Felles resultater
 
-[verification/](verification/README.md) samler resultater fra systemtester. [fom/](fom/README.md) samler prosjektets måleplan, baseline, målepunkter og fremgangsdiagram. Lokale resultater ligger i hver modul; lenk til dem fremfor å kopiere dem.
+- [Backendens testrapporter, FoM og benchmarks](fom/README.md): arkiv med tidligere fullkjøringer, råmålinger og kurver for hele gruppen.
+- [Systemverifisering](verification/README.md): resultater fra samlede systemtester.
+
+Nye backendkjøringer lagres først lokalt i `backend/results/runs/`. Gjennomgåtte rapporter arkiveres under `results/fom/backend/` før commit og push. Arkivkopier beholdes uendret og knyttes til testet kodecommit; de lokale originalene beholdes også.

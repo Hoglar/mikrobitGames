@@ -1,5 +1,7 @@
 # Samordning av webapp og backend
 
+**Tillegg 2026-10-28:** Samtalerevisjon 0.3.0 erstatter den tidligere regelen om selvstendige AI-spørsmål. Opptil 20 utvekslinger per innlogging, reset-rute og valgfrie minnevarsler er beskrevet i [frontendguiden](contract.md). Intern kontrakt 1.5 har revisjon 1.3; AI–DB 1.6 har revisjon 1.2. Kontrollversjon 3 tester samtaleisolasjon, sletting, utløp og navngitte verktøy. Benchmarkgrenser, databaseprivilegier og faktakrav beholdes. Dette er brukerbestilt funksjonsendring, ikke justering av forventninger for å skjule feil. Se [ADR-009](../../decisions/adr-009-conversational-ai.md). Resten av dokumentet beskriver den historiske samordningen 2026-10-27.
+
 **Dato:** 2026-10-27. **Grunnlag:** Gjennomgang av eksisterende spesifikasjoner og brukerens eksplisitte valg. Den opprinnelige samordningen gjaldt kontrakter, spesifikasjoner, modeller og testplaner. Oppfølgingen tilpasser eksisterende testkode og verifiseringsverktøy. Tjenestene er ennå ikke implementert; ingen produktbaseline er målt.
 
 ## Konflikter og løsninger

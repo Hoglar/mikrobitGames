@@ -9,6 +9,8 @@ import psycopg
 from sqlglot import exp
 import query_policy
 
+InvalidReferences = query_policy.InvalidReferences
+
 
 class ResultTooLarge(ValueError):
     pass
@@ -86,3 +88,86 @@ def query(sql, parameters, deadline):
 
 def game_exists(game_id, deadline):
     return bool(query('SELECT id FROM ai_read.games WHERE id = $1', [game_id], deadline)['rows'])
+
+
+class InvalidTool(ValueError):
+    pass
+
+
+def text_arg(value):
+    if type(value) is not str or not 1 <= len(value.strip()) <= 100:
+        raise InvalidTool('Verktøyargumentet må være tekst med 1–100 tegn.')
+    return value.strip()
+
+
+class DataTools:
+    def __init__(self, player_id, query=query):
+        self.player_id = str(UUID(player_id))
+        self.query = query
+
+    def call(self, name, args, deadline):
+        allowed = {'games': set(), 'standings': {'game'},
+                   'history': {'game', 'player'}, 'player_games': {'player'}}
+        if type(name) is not str or name not in allowed or type(args) is not dict or set(args) != allowed[name]:
+            raise InvalidTool('Bruk et oppgitt verktøy med akkurat de oppgitte argumentene.')
+        args = {key: text_arg(value) for key, value in args.items()}
+        if name == 'games':
+            return self.query('SELECT id, name, score_unit, ranking_direction, is_active FROM ai_read.games ORDER BY name, id', [], deadline)
+        if name == 'player_games':
+            predicate, parameter = self.player(args['player'])
+            result = self.query('''SELECT DISTINCT g.id, g.name, g.score_unit, g.ranking_direction
+                FROM ai_read.games g JOIN ai_read.records r ON r.game_id=g.id
+                JOIN ai_read.players p ON p.id=r.player_id WHERE ''' + predicate + ' ORDER BY g.name, g.id', [parameter], deadline)
+            return {'player': args['player'], 'games': result}
+        if name == 'standings':
+            result = self.query('''WITH latest AS (
+                SELECT g.id AS game_id, g.name AS game, g.score_unit AS unit,
+                    g.ranking_direction AS direction, p.username AS player, r.value,
+                    ROW_NUMBER() OVER (PARTITION BY r.game_id, r.player_id ORDER BY r.created_at DESC, r.id DESC) AS position
+                FROM ai_read.games g JOIN ai_read.records r ON r.game_id=g.id
+                JOIN ai_read.players p ON p.id=r.player_id
+                WHERE LOWER(g.name)=LOWER($1) OR CAST(g.id AS TEXT)=$1)
+                SELECT game_id, game, unit, direction, player, value FROM latest WHERE position=1''', [args['game']], deadline)
+        else:
+            predicate, parameter = self.player(args['player'])
+            result = self.query('''SELECT g.id AS game_id, g.name AS game, g.score_unit AS unit,
+                g.ranking_direction AS direction, p.username AS player, r.value, r.created_at
+                FROM ai_read.games g JOIN ai_read.records r ON r.game_id=g.id
+                JOIN ai_read.players p ON p.id=r.player_id
+                WHERE (LOWER(g.name)=LOWER($1) OR CAST(g.id AS TEXT)=$1) AND ''' + predicate.replace('$1', '$2') +
+                ' ORDER BY r.created_at, r.id', [args['game'], parameter], deadline)
+        rows = [dict(zip(result['columns'], row)) for row in result['rows']]
+        if not rows:
+            return {'found': False, 'explanation': 'Ingen rekordhistorikk traff oppgitt spill/spiller.'}
+        if len({row['game_id'] for row in rows}) != 1:
+            return {'ambiguous_game': True, 'instruction': 'Flere spill har dette navnet. Bruk games og be om spill-ID.'}
+        header = {key: rows[0][key] for key in ('game', 'unit', 'direction')}
+        if name == 'standings':
+            reverse = header['direction'] == 'higher_is_better'
+            rows.sort(key=lambda row: ((-row['value'] if reverse else row['value']), row['player'].lower()))
+            records, rank, previous = [], 0, None
+            for index, row in enumerate(rows, 1):
+                if row['value'] != previous:
+                    rank = index
+                previous = row['value']
+                records.append({'player': row['player'], 'value': row['value'], 'rank': rank,
+                                'gap_to_best': abs(rows[0]['value'] - row['value'])})
+            return {**header, 'meaning': 'Gjeldende personlig rekord per spiller, beste først. Antallet gjelder spillere med offentlig rekord, ikke alle som kan ha prøvd spillet.',
+                    'players_with_records': len(records), 'total_participants': None,
+                    'total_participants_known': False, 'records': records}
+        change = rows[-1]['value'] - rows[0]['value']
+        improvement = change if header['direction'] == 'higher_is_better' else -change
+        return {**header, 'player': rows[0]['player'], 'meaning': 'Offentlig rekordhistorikk, ikke alle forsøk.',
+                'history': [{'value': row['value'], 'at': row['created_at']} for row in rows],
+                'improvement': improvement if len(rows) > 1 else None}
+
+    def player(self, value):
+        # Identity comes from the local session, never from a model-supplied UUID.
+        if value.lower() == 'me':
+            return 'p.id=$1', self.player_id
+        return 'p.username_key=$1', value.lower()
+
+
+def game_context(game_id, deadline):
+    rows = query('SELECT id, name FROM ai_read.games WHERE id=$1', [game_id], deadline)['rows']
+    return {'id': rows[0][0], 'name': rows[0][1]} if rows else None

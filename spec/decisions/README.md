@@ -9,4 +9,6 @@
 - [ADR-007: Backend API og nettside på hjemmemaskinen](adr-007-backend-web-hosting.md) (Godkjent; frontendkontrakt 1.3 er også godkjent).
 - [ADR-008: V2 C++ firmware on CODAL](adr-008-microbit-v2-cpp-codal.md) (Proposed; C++ and V2-only scope confirmed, runtime/build integration pending verification).
 
+- [ADR-009: Samtaleassistent med navngitte dataverktøy](adr-009-conversational-ai.md) (bestilt for backend; frontendkontrakt fortsatt forslag).
+
 Bruk [ADR-malen](adr-template.md) for nye beslutninger. Eksisterende beslutningsinnhold og statuser er bevart ved flytting.

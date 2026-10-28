@@ -1,6 +1,6 @@
 # Start her: grunnlaget for backend-implementeringen
 
-**Status 2026-10-27:** Krav og modeller er samordnet for API 0.2.0 og databasekontrakt 1.2. Kjørbar testkode er tilpasset revisjonen; se [endringsoversikten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester). Database, API og AI er ennå ikke implementert, og ingen produktbaseline er målt. Første implementasjon bestilles av brukeren; oppsett på Parrot inngår i klargjøringen.
+**Status 2026-10-28:** Database, API og AI er implementert. Brukeren har bestilt integrasjon av samtaleassistenten med opptil 20 utvekslinger og navngitte dataverktøy. API 0.3.0 er backendens arbeidsgrunnlag, fortsatt et forslag til frontendgruppen. Se [ADR-009](../../spec/decisions/adr-009-conversational-ai.md). Ny full måling kjøres av brukeren.
 
 Mappen `spec/` samler både spesifikasjon, teknisk design og planer. Dokumentenes rolle, ikke mappenavnet, avgjør hvordan de skal brukes. Denne siden er en leseveiledning; den definerer ingen nye funksjonskrav.
 
@@ -29,9 +29,9 @@ Tester avledes fra dette grunnlaget. Ved motstrid mellom kontrakt, modell og tes
 
 ## Beslutningsstatus for første implementasjon
 
-- **Frontendkontrakt:** 1.3 er godkjent, bekreftet av brukeren 2026-10-27. Godkjenningen gjaldt 0.1.0; gjeldende samordnede revisjon er 0.2.0 med privat forsøkshistorikk og oppdatert testgrunnlag.
-- **Sesjoner:** Fornyelsesreglene i 1.4 del 8 brukes i første implementasjon og testgrunnlaget. Frontendforløpet er beskrevet i samordnet API 0.2.0. Implementasjon og verifisering gjenstår.
+- **Frontendkontrakt WBS 1.3:** Gjeldende dokumentrevisjon er 0.3.0. Brukeren har godkjent den som arbeidsgrunnlag for backend; den er fortsatt et forslag overfor frontendgruppen.
+- **Sesjoner:** Fornyelsesreglene i 1.4 del 8 brukes i første implementasjon og testgrunnlaget. Frontendforløpet er beskrevet i samordnet API 0.3.0. Samtaleminne knyttes til innloggingen.
 - **Internt design:** Funksjonsnavn, modellmeldinger og oppstartsgrensesnitt i `test-runtime.md` er eksplisitte designvalg som implementasjonen og testene deler. De utvider ikke funksjonsomfanget.
 - **Klargjøres ved byggestart:** Applikasjonens bibliotekversjoner, PostgreSQL-hovedversjon, SQL-tillatelseslisten innenfor 1.6 og tjenestebrukere/målerettigheter på Parrot. Modellens faktiske egnethet må måles. Domene og offentlig nettverkstilgang avklares før publisering.
 
-Denne revisjonen utvider resultatlagringen og den private lesetilgangen. Benchmarkmål beholdes; kontrollversjon 2 bruker 24/4/4 modellpunkter og starter en egen måleserie. Historiske notater og korte sammendrag beholdes som lenker og forklaringer, ikke parallelle planer.
+Denne revisjonen utvider resultatlagringen og den private lesetilgangen. Benchmarkmål beholdes; kontrollversjon 3 bruker 24/4/4 modellpunkter og starter en egen måleserie. Historiske notater og korte sammendrag beholdes som lenker og forklaringer, ikke parallelle planer.

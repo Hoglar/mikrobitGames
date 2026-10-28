@@ -1,5 +1,7 @@
 # Direkte databasetilgang for AI-tjenesten
 
+**Oppfølging 2026-10-28:** [ADR-009](adr-009-conversational-ai.md) innfører samtaleminne og navngitte verktøy med fast SQL. Direkte DB-lesing og lokal Qwen beholdes; tidligere beskrivelser av modellgenerert SQL er erstattet.
+
 **Status:** Accepted – godkjent av prosjekteier som del av WBS 1.6, 2026-10-24.
 
 ## Kontekst

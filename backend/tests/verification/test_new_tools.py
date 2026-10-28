@@ -40,7 +40,7 @@ class ModelExtractionTests(unittest.TestCase):
     def test_effective_path_normalization(self):
         other=copy.deepcopy(self.document)
         other['servers']=[{'url':'http://127.0.0.1:8001/v1'}]
-        other['paths']={'/answer':other['paths'].pop('/v1/answer')}
+        other['paths']={path.removeprefix('/v1'): operation for path, operation in other['paths'].items()}
         self.assertTrue(all(x['status']=='PASS' for x in openapi_checks(self.document,other).values()))
 
     def test_request_bound_change_is_detected(self):

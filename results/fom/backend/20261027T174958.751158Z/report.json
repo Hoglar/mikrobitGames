@@ -1,0 +1,1421 @@
+{
+  "format_version": 2,
+  "control_version": 2,
+  "model_counts": [
+    24,
+    4,
+    4
+  ],
+  "mode": "full",
+  "timestamp": "2026-10-27T17:49:58.751158+00:00",
+  "code_commit": "5b41984244483b8fec6e2f85f3d847754ff2923d",
+  "working_tree_dirty": false,
+  "control_digest": "cff6c34f3d573118d542767d83b9213eb1dd6ebe5aa6dc4448583071ed7b34ab",
+  "python": "3.13.5",
+  "machine": "parrot",
+  "tool_tests": [
+    {
+      "id": "test_attempt_contract.AttemptContractTests.test_contradictory_status_record_and_outcome_fail",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_contradictory_status_record_and_outcome_fail (test_attempt_contract.AttemptContractTests.test_contradictory_status_record_and_outcome_fail) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.180s\n\nOK\n"
+    },
+    {
+      "id": "test_attempt_contract.AttemptContractTests.test_database_weight_is_one_third_with_24_checks",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_database_weight_is_one_third_with_24_checks (test_attempt_contract.AttemptContractTests.test_database_weight_is_one_third_with_24_checks) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_attempt_contract.AttemptContractTests.test_missing_identity_status_value_and_invalid_types_are_rejected",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_missing_identity_status_value_and_invalid_types_are_rejected (test_attempt_contract.AttemptContractTests.test_missing_identity_status_value_and_invalid_types_are_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n"
+    },
+    {
+      "id": "test_attempt_contract.AttemptContractTests.test_new_and_replayed_attempt_can_have_each_outcome",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_new_and_replayed_attempt_can_have_each_outcome (test_attempt_contract.AttemptContractTests.test_new_and_replayed_attempt_can_have_each_outcome) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.006s\n\nOK\n"
+    },
+    {
+      "id": "test_attempt_contract.AttemptContractTests.test_new_private_routes_and_auth_are_part_of_model_comparison",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_new_private_routes_and_auth_are_part_of_model_comparison (test_attempt_contract.AttemptContractTests.test_new_private_routes_and_auth_are_part_of_model_comparison) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.039s\n\nOK\n"
+    },
+    {
+      "id": "test_attempt_contract.AttemptContractTests.test_no_database_returns_24_blocked_checks",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_no_database_returns_24_blocked_checks (test_attempt_contract.AttemptContractTests.test_no_database_returns_24_blocked_checks) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.029s\n\nOK\n"
+    },
+    {
+      "id": "test_attempt_contract.AttemptContractTests.test_valid_requests_and_explicit_null",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_valid_requests_and_explicit_null (test_attempt_contract.AttemptContractTests.test_valid_requests_and_explicit_null) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_attempt_contract.AttemptFixtureTests.test_benchmark_creates_new_attempt_even_for_same_value",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_benchmark_creates_new_attempt_even_for_same_value (test_attempt_contract.AttemptFixtureTests.test_benchmark_creates_new_attempt_even_for_same_value) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n"
+    },
+    {
+      "id": "test_attempt_contract.AttemptFixtureTests.test_seed_links_each_record_to_one_completed_private_attempt",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_seed_links_each_record_to_one_completed_private_attempt (test_attempt_contract.AttemptFixtureTests.test_seed_links_each_record_to_one_completed_private_attempt) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_attempt_nullable_values_must_remain_nullable",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_attempt_nullable_values_must_remain_nullable (test_controls.DatabaseModelTests.test_attempt_nullable_values_must_remain_nullable) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_attempt_owner_is_part_of_primary_key",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_attempt_owner_is_part_of_primary_key (test_controls.DatabaseModelTests.test_attempt_owner_is_part_of_primary_key) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_attempt_reference_and_null_metadata_are_checked",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_attempt_reference_and_null_metadata_are_checked (test_controls.DatabaseModelTests.test_attempt_reference_and_null_metadata_are_checked) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_exact_synthetic_snapshot",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_exact_synthetic_snapshot (test_controls.DatabaseModelTests.test_exact_synthetic_snapshot) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_extra_column",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_extra_column (test_controls.DatabaseModelTests.test_extra_column) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_extra_join",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_extra_join (test_controls.DatabaseModelTests.test_extra_join) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_filtered_view",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_filtered_view (test_controls.DatabaseModelTests.test_filtered_view) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_json_object_order_does_not_change_control_ids",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_json_object_order_does_not_change_control_ids (test_controls.DatabaseModelTests.test_json_object_order_does_not_change_control_ids) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_legacy_model_requires_separate_control_version",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_legacy_model_requires_separate_control_version (test_controls.DatabaseModelTests.test_legacy_model_requires_separate_control_version) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_missing_attempt_table",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_missing_attempt_table (test_controls.DatabaseModelTests.test_missing_attempt_table) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_missing_foreign_key",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_missing_foreign_key (test_controls.DatabaseModelTests.test_missing_foreign_key) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_missing_metadata_not_hidden_by_type_failure",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_missing_metadata_not_hidden_by_type_failure (test_controls.DatabaseModelTests.test_missing_metadata_not_hidden_by_type_failure) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_missing_or_incomplete_extraction_is_blocked",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_missing_or_incomplete_extraction_is_blocked (test_controls.DatabaseModelTests.test_missing_or_incomplete_extraction_is_blocked) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_missing_table_fails_four_checks_and_object_set",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_missing_table_fails_four_checks_and_object_set (test_controls.DatabaseModelTests.test_missing_table_fails_four_checks_and_object_set) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_missing_unique_key",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_missing_unique_key (test_controls.DatabaseModelTests.test_missing_unique_key) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_missing_view",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_missing_view (test_controls.DatabaseModelTests.test_missing_view) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_nullable_column",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_nullable_column (test_controls.DatabaseModelTests.test_nullable_column) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_secret_projection",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_secret_projection (test_controls.DatabaseModelTests.test_secret_projection) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_type_aliases_and_constraint_order",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_type_aliases_and_constraint_order (test_controls.DatabaseModelTests.test_type_aliases_and_constraint_order) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_wrong_delete_rule",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_wrong_delete_rule (test_controls.DatabaseModelTests.test_wrong_delete_rule) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_wrong_generated_expression",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_wrong_generated_expression (test_controls.DatabaseModelTests.test_wrong_generated_expression) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.DatabaseModelTests.test_wrong_type",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_wrong_type (test_controls.DatabaseModelTests.test_wrong_type) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.FoMTests.test_all_pass_and_all_fail",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_all_pass_and_all_fail (test_controls.FoMTests.test_all_pass_and_all_fail) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.FoMTests.test_each_area_has_equal_weight",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_each_area_has_equal_weight (test_controls.FoMTests.test_each_area_has_equal_weight) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.FoMTests.test_missing_extra_and_invalid_controls_rejected",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_missing_extra_and_invalid_controls_rejected (test_controls.FoMTests.test_missing_extra_and_invalid_controls_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.FoMTests.test_quick_never_creates_point",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_quick_never_creates_point (test_controls.FoMTests.test_quick_never_creates_point) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.FoMTests.test_skipped_or_blocked_prevents_point",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_skipped_or_blocked_prevents_point (test_controls.FoMTests.test_skipped_or_blocked_prevents_point) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_controls.FoMTests.test_subtest_statuses_do_not_hide_missing_measurements",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_subtest_statuses_do_not_hide_missing_measurements (test_controls.FoMTests.test_subtest_statuses_do_not_hide_missing_measurements) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.BenchmarkToolsTests.test_complete_benchmark_is_measurable",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_complete_benchmark_is_measurable (test_new_tools.BenchmarkToolsTests.test_complete_benchmark_is_measurable) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.BenchmarkToolsTests.test_errors_and_missing_db_time_remain_visible",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_errors_and_missing_db_time_remain_visible (test_new_tools.BenchmarkToolsTests.test_errors_and_missing_db_time_remain_visible) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.BenchmarkToolsTests.test_failures_do_not_hide_missing_measurements",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_failures_do_not_hide_missing_measurements (test_new_tools.BenchmarkToolsTests.test_failures_do_not_hide_missing_measurements) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.BenchmarkToolsTests.test_http_clock_is_not_used_as_db_clock",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_http_clock_is_not_used_as_db_clock (test_new_tools.BenchmarkToolsTests.test_http_clock_is_not_used_as_db_clock) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.BenchmarkToolsTests.test_missing_phase_and_resources_cannot_pass",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_missing_phase_and_resources_cannot_pass (test_new_tools.BenchmarkToolsTests.test_missing_phase_and_resources_cannot_pass) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.BenchmarkToolsTests.test_nearest_rank_percentile",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_nearest_rank_percentile (test_new_tools.BenchmarkToolsTests.test_nearest_rank_percentile) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.HTTPHarnessTests.test_commit_fault_drops_ack_after_incomplete_attempt_insert",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_commit_fault_drops_ack_after_incomplete_attempt_insert (test_new_tools.HTTPHarnessTests.test_commit_fault_drops_ack_after_incomplete_attempt_insert) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.203s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.HTTPHarnessTests.test_commit_fault_drops_ack_after_record_insert",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_commit_fault_drops_ack_after_record_insert (test_new_tools.HTTPHarnessTests.test_commit_fault_drops_ack_after_record_insert) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.201s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.HTTPHarnessTests.test_http_contract_checks_actual_shape",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_http_contract_checks_actual_shape (test_new_tools.HTTPHarnessTests.test_http_contract_checks_actual_shape) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.HTTPHarnessTests.test_relay_and_script_are_real_http",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_relay_and_script_are_real_http (test_new_tools.HTTPHarnessTests.test_relay_and_script_are_real_http) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.504s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.ModelExtractionTests.test_dependency_and_unauthorized_io",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_dependency_and_unauthorized_io (test_new_tools.ModelExtractionTests.test_dependency_and_unauthorized_io) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.004s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.ModelExtractionTests.test_effective_path_normalization",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_effective_path_normalization (test_new_tools.ModelExtractionTests.test_effective_path_normalization) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.002s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.ModelExtractionTests.test_missing_error_status_is_detected",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_missing_error_status_is_detected (test_new_tools.ModelExtractionTests.test_missing_error_status_is_detected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.ModelExtractionTests.test_non_plain_views_cannot_pass",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_non_plain_views_cannot_pass (test_new_tools.ModelExtractionTests.test_non_plain_views_cannot_pass) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.088s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.ModelExtractionTests.test_openapi_same_document",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_openapi_same_document (test_new_tools.ModelExtractionTests.test_openapi_same_document) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.ModelExtractionTests.test_plain_projection",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_plain_projection (test_new_tools.ModelExtractionTests.test_plain_projection) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.ModelExtractionTests.test_request_bound_change_is_detected",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_request_bound_change_is_detected (test_new_tools.ModelExtractionTests.test_request_bound_change_is_detected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.ReportingTests.test_blocked_reason_is_visible_in_markdown",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_blocked_reason_is_visible_in_markdown (test_new_tools.ReportingTests.test_blocked_reason_is_visible_in_markdown) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.ReportingTests.test_changed_control_or_model_starts_new_series",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_changed_control_or_model_starts_new_series (test_new_tools.ReportingTests.test_changed_control_or_model_starts_new_series) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.ReportingTests.test_changed_control_version_never_joins_legacy_series",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_changed_control_version_never_joins_legacy_series (test_new_tools.ReportingTests.test_changed_control_version_never_joins_legacy_series) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.ReportingTests.test_curves_use_only_matching_real_report_points",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_curves_use_only_matching_real_report_points (test_new_tools.ReportingTests.test_curves_use_only_matching_real_report_points) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n"
+    },
+    {
+      "id": "test_new_tools.ReportingTests.test_no_curve_for_incomplete_run",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_no_curve_for_incomplete_run (test_new_tools.ReportingTests.test_no_curve_for_incomplete_run) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_runner.RunnerTests.test_exit_codes",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_exit_codes (test_runner.RunnerTests.test_exit_codes) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_runner.RunnerTests.test_known_failure_is_not_hidden_by_incomplete_run",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_known_failure_is_not_hidden_by_incomplete_run (test_runner.RunnerTests.test_known_failure_is_not_hidden_by_incomplete_run) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    },
+    {
+      "id": "test_runner.RunnerTests.test_report_reads_latest_without_modifying_it",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_report_reads_latest_without_modifying_it (test_runner.RunnerTests.test_report_reads_latest_without_modifying_it) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n"
+    },
+    {
+      "id": "test_runner.RunnerTests.test_report_without_runs_does_not_create_files",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_report_without_runs_does_not_create_files (test_runner.RunnerTests.test_report_without_runs_does_not_create_files) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+    }
+  ],
+  "product_tests": [
+    {
+      "id": "test_ai_response.AIResponse.test_each_required_field",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_each_required_field (test_ai_response.AIResponse.test_each_required_field) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.024s\n\nOK\n",
+      "group": "KAI-1"
+    },
+    {
+      "id": "test_ai_response.AIResponse.test_extra_field_rejected",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_extra_field_rejected (test_ai_response.AIResponse.test_extra_field_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAI-1"
+    },
+    {
+      "id": "test_ai_response.AIResponse.test_invalid_field_values",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_invalid_field_values (test_ai_response.AIResponse.test_invalid_field_values) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAI-1"
+    },
+    {
+      "id": "test_ai_response.AIResponse.test_non_object_rejected",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_non_object_rejected (test_ai_response.AIResponse.test_non_object_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAI-1"
+    },
+    {
+      "id": "test_ai_response.AIResponse.test_three_success_statuses",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_three_success_statuses (test_ai_response.AIResponse.test_three_success_statuses) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAI-1"
+    },
+    {
+      "id": "test_ai_response.AIResponse.test_unicode_codepoint_boundary",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_unicode_codepoint_boundary (test_ai_response.AIResponse.test_unicode_codepoint_boundary) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAI-1"
+    },
+    {
+      "id": "test_ai_response.AIResponse.test_wrong_request_id",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_wrong_request_id (test_ai_response.AIResponse.test_wrong_request_id) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAI-1"
+    },
+    {
+      "id": "test_auth_rules.AuthRules.test_absolute_boundary",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_absolute_boundary (test_auth_rules.AuthRules.test_absolute_boundary) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.109s\n\nOK\n",
+      "group": "KAPI-1"
+    },
+    {
+      "id": "test_auth_rules.AuthRules.test_absolute_expiry_caps_renewal",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_absolute_expiry_caps_renewal (test_auth_rules.AuthRules.test_absolute_expiry_caps_renewal) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.031s\n\nOK\n",
+      "group": "KAPI-1"
+    },
+    {
+      "id": "test_auth_rules.AuthRules.test_exact_expiry_boundary",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_exact_expiry_boundary (test_auth_rules.AuthRules.test_exact_expiry_boundary) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.029s\n\nOK\n",
+      "group": "KAPI-1"
+    },
+    {
+      "id": "test_auth_rules.AuthRules.test_initial_expiry",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_initial_expiry (test_auth_rules.AuthRules.test_initial_expiry) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.029s\n\nOK\n",
+      "group": "KAPI-1"
+    },
+    {
+      "id": "test_auth_rules.AuthRules.test_invalid_usernames",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_invalid_usernames (test_auth_rules.AuthRules.test_invalid_usernames) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.029s\n\nOK\n",
+      "group": "KAPI-1"
+    },
+    {
+      "id": "test_auth_rules.AuthRules.test_username_normalization",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_username_normalization (test_auth_rules.AuthRules.test_username_normalization) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.029s\n\nOK\n",
+      "group": "KAPI-1"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_catalog",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_catalog (test_query_policy.QueryPolicy.test_catalog)\nBare de tre avtalte visningene. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_copy_program",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_copy_program (test_query_policy.QueryPolicy.test_copy_program)\nIngen systemkommandoer. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_cross_game_join",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_cross_game_join (test_query_policy.QueryPolicy.test_cross_game_join)\nParametrisert eksempel fra kontrakt 1.6. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.002s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_delete",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_delete (test_query_policy.QueryPolicy.test_delete)\nIngen sletting. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_empty",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_empty (test_query_policy.QueryPolicy.test_empty)\nTom SQL er ugyldig. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_file_read",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_file_read (test_query_policy.QueryPolicy.test_file_read)\nIngen filtilgang. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_insert",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_insert (test_query_policy.QueryPolicy.test_insert)\nIngen innsetting. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_locking",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_locking (test_query_policy.QueryPolicy.test_locking)\nIngen låsende lesing. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_malformed",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_malformed (test_query_policy.QueryPolicy.test_malformed)\nParserfeil skal avvises. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_multiple",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_multiple (test_query_policy.QueryPolicy.test_multiple)\nBare én kommando. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_nested_attempts",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_nested_attempts (test_query_policy.QueryPolicy.test_nested_attempts)\nPrivate data er også forbudt i delspørringer. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_nested_secret",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_nested_secret (test_query_policy.QueryPolicy.test_nested_secret)\nKontroller også delspørringer. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_own_attempts",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_own_attempts (test_query_policy.QueryPolicy.test_own_attempts)\nHeller ikke spørsmålsstillerens egne forsøk er tilgjengelige. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_passwords",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_passwords (test_query_policy.QueryPolicy.test_passwords)\nGrunntabell og hemmelighet er forbudt. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_private_attempts",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_private_attempts (test_query_policy.QueryPolicy.test_private_attempts)\nPrivate forsøk er utenfor AI-grunnlaget. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_read_cte",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_read_cte (test_query_policy.QueryPolicy.test_read_cte)\nLesende CTE skal analyseres og tillates. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_read_games",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_read_games (test_query_policy.QueryPolicy.test_read_games)\nOgså inaktive spill er tilgjengelige. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_read_players",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_read_players (test_query_policy.QueryPolicy.test_read_players)\nTillatt spillerprojeksjon uten hemmeligheter. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_read_records",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_read_records (test_query_policy.QueryPolicy.test_read_records)\nTillatt rekordlesing. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_select_into",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_select_into (test_query_policy.QueryPolicy.test_select_into)\nSELECT INTO skriver. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_sessions",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_sessions (test_query_policy.QueryPolicy.test_sessions)\nIngen sesjonsdata. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_set_config",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_set_config (test_query_policy.QueryPolicy.test_set_config)\nModellen kan ikke endre grenser. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_set_role",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_set_role (test_query_policy.QueryPolicy.test_set_role)\nIngen rollebytte. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_sleep",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_sleep (test_query_policy.QueryPolicy.test_sleep)\nIkke en tillatt funksjon. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_unknown_function",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_unknown_function (test_query_policy.QueryPolicy.test_unknown_function)\nUkjente funksjoner avvises. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_update",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_update (test_query_policy.QueryPolicy.test_update)\nIngen endring. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_query_policy.QueryPolicy.test_write_cte",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_write_cte (test_query_policy.QueryPolicy.test_write_cte)\nSkriving skjult i CTE. ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAI-2"
+    },
+    {
+      "id": "test_score_rules.ScoreRules.test_competition_ranking_and_stable_tie_order",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_competition_ranking_and_stable_tie_order (test_score_rules.ScoreRules.test_competition_ranking_and_stable_tie_order) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAPI-3"
+    },
+    {
+      "id": "test_score_rules.ScoreRules.test_completed_attempt_uses_game_bounds",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_completed_attempt_uses_game_bounds (test_score_rules.ScoreRules.test_completed_attempt_uses_game_bounds) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAPI-2"
+    },
+    {
+      "id": "test_score_rules.ScoreRules.test_empty_ranking",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_empty_ranking (test_score_rules.ScoreRules.test_empty_ranking) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAPI-3"
+    },
+    {
+      "id": "test_score_rules.ScoreRules.test_first_record_for_both_directions",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_first_record_for_both_directions (test_score_rules.ScoreRules.test_first_record_for_both_directions) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAPI-2"
+    },
+    {
+      "id": "test_score_rules.ScoreRules.test_higher_must_be_strictly_better",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_higher_must_be_strictly_better (test_score_rules.ScoreRules.test_higher_must_be_strictly_better) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n",
+      "group": "KAPI-2"
+    },
+    {
+      "id": "test_score_rules.ScoreRules.test_incomplete_value_is_optional_and_not_a_final_score",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_incomplete_value_is_optional_and_not_a_final_score (test_score_rules.ScoreRules.test_incomplete_value_is_optional_and_not_a_final_score) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAPI-2"
+    },
+    {
+      "id": "test_score_rules.ScoreRules.test_invalid_scores_rejected",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_invalid_scores_rejected (test_score_rules.ScoreRules.test_invalid_scores_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAPI-2"
+    },
+    {
+      "id": "test_score_rules.ScoreRules.test_lower_must_be_strictly_better",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_lower_must_be_strictly_better (test_score_rules.ScoreRules.test_lower_must_be_strictly_better) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAPI-2"
+    },
+    {
+      "id": "test_score_rules.ScoreRules.test_lower_ranking",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_lower_ranking (test_score_rules.ScoreRules.test_lower_ranking) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAPI-3"
+    },
+    {
+      "id": "test_score_rules.ScoreRules.test_unknown_attempt_status_rejected",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_unknown_attempt_status_rejected (test_score_rules.ScoreRules.test_unknown_attempt_status_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAPI-2"
+    },
+    {
+      "id": "test_score_rules.ScoreRules.test_unknown_direction_rejected",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_unknown_direction_rejected (test_score_rules.ScoreRules.test_unknown_direction_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAPI-2"
+    },
+    {
+      "id": "test_score_rules.ScoreRules.test_valid_inclusive_bounds",
+      "status": "PASS",
+      "detail": "",
+      "observed_failures": 0,
+      "output": "test_valid_inclusive_bounds (test_score_rules.ScoreRules.test_valid_inclusive_bounds) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "group": "KAPI-2"
+    }
+  ],
+  "integration_tests": [
+    {
+      "id": "TDB-02-crud",
+      "group": "KDB-1",
+      "status": "PASS",
+      "detail": "",
+      "seconds": 1.09867849200009
+    },
+    {
+      "id": "TDB-03-constraints",
+      "group": "KDB-1",
+      "status": "PASS",
+      "detail": "",
+      "seconds": 1.405841214999782
+    },
+    {
+      "id": "TDB-03-valid-attempts",
+      "group": "KDB-1",
+      "status": "PASS",
+      "detail": "",
+      "seconds": 1.6299831910000648
+    },
+    {
+      "id": "TDB-04-cascade",
+      "group": "KDB-2",
+      "status": "PASS",
+      "detail": "",
+      "seconds": 0.9791177069996593
+    },
+    {
+      "id": "TDB-04-incomplete-game",
+      "group": "KDB-2",
+      "status": "PASS",
+      "detail": "",
+      "seconds": 0.8843869510001241
+    },
+    {
+      "id": "TDB-06-rollback",
+      "group": "KDB-2",
+      "status": "PASS",
+      "detail": "",
+      "seconds": 1.0351875920000566
+    },
+    {
+      "id": "TDB-05-reader",
+      "group": "KDB-3",
+      "status": "PASS",
+      "detail": "",
+      "seconds": 1.205171183999937
+    },
+    {
+      "id": "TDB-05-backend",
+      "group": "KDB-3",
+      "status": "PASS",
+      "detail": "",
+      "seconds": 1.6470968909998192
+    },
+    {
+      "id": "TDB-07-restart",
+      "group": "KDB-4",
+      "status": "PASS",
+      "detail": "",
+      "seconds": 1.1586184739999226
+    },
+    {
+      "id": "TDB-07-restore",
+      "group": "KDB-4",
+      "status": "PASS",
+      "detail": "",
+      "seconds": 1.313749648999874
+    },
+    {
+      "id": "TBE-02-account",
+      "group": "KAPI-1",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7145244439998351
+    },
+    {
+      "id": "TBE-02-renew-expiry",
+      "group": "KAPI-1",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7138540010000725
+    },
+    {
+      "id": "TBE-02-password-delete",
+      "group": "KAPI-1",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.6966559410002446
+    },
+    {
+      "id": "TBE-03-records",
+      "group": "KAPI-2",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7124229330001981
+    },
+    {
+      "id": "TBE-03-incomplete",
+      "group": "KAPI-2",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7135491699996237
+    },
+    {
+      "id": "TBE-05-retry-conflict",
+      "group": "KAPI-2",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7098692320000737
+    },
+    {
+      "id": "TBE-05-concurrent-records",
+      "group": "KAPI-2",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.706348356000035
+    },
+    {
+      "id": "TBE-05-concurrent-replay",
+      "group": "KAPI-2",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7087365540000974
+    },
+    {
+      "id": "TBE-05-atomic-attempt-record",
+      "group": "KAPI-2",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7121121620002668
+    },
+    {
+      "id": "TBE-04-private-history",
+      "group": "KAPI-3",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7111282969999593
+    },
+    {
+      "id": "TBE-04-public",
+      "group": "KAPI-3",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7117340260001583
+    },
+    {
+      "id": "TBE-01-07-input",
+      "group": "KAPI-4",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7132856639996135
+    },
+    {
+      "id": "TBE-07-rate-limit",
+      "group": "KAPI-4",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7162910590000138
+    },
+    {
+      "id": "TBE-05-unknown-commit",
+      "group": "KAPI-2",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7105536770000072
+    },
+    {
+      "id": "TBE-05-revocation-race",
+      "group": "KAPI-2",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7132164089998696
+    },
+    {
+      "id": "TBE-09-db-outage",
+      "group": "DRIFT",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.711644342999989
+    },
+    {
+      "id": "TBE-06-gateway",
+      "group": "KAI-1",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7124074419998578
+    },
+    {
+      "id": "TAI-01-05-transport",
+      "group": "KAI-1",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7109749389996978
+    },
+    {
+      "id": "TAI-03-04-sql-runtime",
+      "group": "KAI-2",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7103222789996835
+    },
+    {
+      "id": "TAI-04-private-attempts",
+      "group": "KAI-2",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.710972951000258
+    },
+    {
+      "id": "TAI-06-budgets",
+      "group": "KAI-3",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7113417169998684
+    },
+    {
+      "id": "TAI-06-busy",
+      "group": "KAI-3",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7102273679997779
+    },
+    {
+      "id": "TAI-07-history-outage",
+      "group": "KAI-3",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7140582860001814
+    },
+    {
+      "id": "TAI-06-large-result",
+      "group": "KAI-3",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7099174149998362
+    },
+    {
+      "id": "TBE-06-timeout",
+      "group": "KAI-1",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7114356080001016
+    },
+    {
+      "id": "TAI-07-process-isolation",
+      "group": "KAI-3",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.709698808000212
+    },
+    {
+      "id": "TAI-06-result-bytes",
+      "group": "KAI-3",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7140891970002485
+    },
+    {
+      "id": "TAI-06-sql-timeout",
+      "group": "KAI-3",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7090650199997981
+    },
+    {
+      "id": "BENCH-HTTP-DB",
+      "group": "BENCH",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7124109209999006
+    },
+    {
+      "id": "TAI-02-08-real-model",
+      "group": "KAI-4",
+      "status": "BLOCKED",
+      "detail": "Tjenesten startet ikke. Kontroller entrypoint, miljøvariabler og applikasjonsavhengigheter.",
+      "observed_failures": 0,
+      "seconds": 0.7117588490000344
+    },
+    {
+      "id": "cleanup",
+      "group": "ENV",
+      "status": "FAIL",
+      "detail": "Opprydding feilet: PermissionError"
+    }
+  ],
+  "models": {
+    "MDB-1": {
+      "status": "PASS",
+      "detail": "app.players: felt/typer/NOT NULL/genererte uttrykk"
+    },
+    "MDB-2": {
+      "status": "PASS",
+      "detail": "app.players: primærnøkkel"
+    },
+    "MDB-3": {
+      "status": "PASS",
+      "detail": "app.players: fremmednøkler"
+    },
+    "MDB-4": {
+      "status": "PASS",
+      "detail": "app.players: unike nøkler"
+    },
+    "MDB-5": {
+      "status": "PASS",
+      "detail": "app.sessions: felt/typer/NOT NULL/genererte uttrykk"
+    },
+    "MDB-6": {
+      "status": "PASS",
+      "detail": "app.sessions: primærnøkkel"
+    },
+    "MDB-7": {
+      "status": "PASS",
+      "detail": "app.sessions: fremmednøkler"
+    },
+    "MDB-8": {
+      "status": "PASS",
+      "detail": "app.sessions: unike nøkler"
+    },
+    "MDB-9": {
+      "status": "PASS",
+      "detail": "app.games: felt/typer/NOT NULL/genererte uttrykk"
+    },
+    "MDB-10": {
+      "status": "PASS",
+      "detail": "app.games: primærnøkkel"
+    },
+    "MDB-11": {
+      "status": "PASS",
+      "detail": "app.games: fremmednøkler"
+    },
+    "MDB-12": {
+      "status": "PASS",
+      "detail": "app.games: unike nøkler"
+    },
+    "MDB-13": {
+      "status": "PASS",
+      "detail": "app.records: felt/typer/NOT NULL/genererte uttrykk"
+    },
+    "MDB-14": {
+      "status": "PASS",
+      "detail": "app.records: primærnøkkel"
+    },
+    "MDB-15": {
+      "status": "PASS",
+      "detail": "app.records: fremmednøkler"
+    },
+    "MDB-16": {
+      "status": "PASS",
+      "detail": "app.records: unike nøkler"
+    },
+    "MDB-17": {
+      "status": "PASS",
+      "detail": "app.attempts: felt/typer/NOT NULL/genererte uttrykk"
+    },
+    "MDB-18": {
+      "status": "PASS",
+      "detail": "app.attempts: primærnøkkel"
+    },
+    "MDB-19": {
+      "status": "PASS",
+      "detail": "app.attempts: fremmednøkler"
+    },
+    "MDB-20": {
+      "status": "PASS",
+      "detail": "app.attempts: unike nøkler"
+    },
+    "MDB-21": {
+      "status": "PASS",
+      "detail": "ai_read.players: nøyaktig kilde og projeksjon"
+    },
+    "MDB-22": {
+      "status": "PASS",
+      "detail": "ai_read.games: nøyaktig kilde og projeksjon"
+    },
+    "MDB-23": {
+      "status": "PASS",
+      "detail": "ai_read.records: nøyaktig kilde og projeksjon"
+    },
+    "MDB-24": {
+      "status": "PASS",
+      "detail": "Nøyaktig tabell- og visningssett"
+    },
+    "MAPI-1": {
+      "status": "BLOCKED",
+      "detail": "API er ikke klart"
+    },
+    "MAPI-2": {
+      "status": "BLOCKED",
+      "detail": "API er ikke klart"
+    },
+    "MAPI-3": {
+      "status": "BLOCKED",
+      "detail": "API er ikke klart"
+    },
+    "MAPI-4": {
+      "status": "BLOCKED",
+      "detail": "API er ikke klart"
+    },
+    "MAI-3": {
+      "status": "PASS",
+      "detail": "Importgraf samsvarer. Kjøreatferd kontrolleres separat."
+    },
+    "MAI-4": {
+      "status": "PASS",
+      "detail": "Importgraf samsvarer. Kjøreatferd kontrolleres separat."
+    },
+    "MAI-1": {
+      "status": "BLOCKED",
+      "detail": "Internt AI-skjema kunne ikke hentes"
+    },
+    "MAI-2": {
+      "status": "BLOCKED",
+      "detail": "Internt AI-skjema kunne ikke hentes"
+    }
+  },
+  "measurements": {
+    "restore_seconds": 0.28948708000007173
+  },
+  "controls": {
+    "KDB-1": "PASS",
+    "KDB-2": "PASS",
+    "KDB-3": "PASS",
+    "KDB-4": "PASS",
+    "KAPI-1": "BLOCKED",
+    "KAPI-2": "BLOCKED",
+    "KAPI-3": "BLOCKED",
+    "KAPI-4": "BLOCKED",
+    "KAI-1": "BLOCKED",
+    "KAI-2": "BLOCKED",
+    "KAI-3": "BLOCKED",
+    "KAI-4": "BLOCKED",
+    "MDB-1": "PASS",
+    "MDB-2": "PASS",
+    "MDB-3": "PASS",
+    "MDB-4": "PASS",
+    "MDB-5": "PASS",
+    "MDB-6": "PASS",
+    "MDB-7": "PASS",
+    "MDB-8": "PASS",
+    "MDB-9": "PASS",
+    "MDB-10": "PASS",
+    "MDB-11": "PASS",
+    "MDB-12": "PASS",
+    "MDB-13": "PASS",
+    "MDB-14": "PASS",
+    "MDB-15": "PASS",
+    "MDB-16": "PASS",
+    "MDB-17": "PASS",
+    "MDB-18": "PASS",
+    "MDB-19": "PASS",
+    "MDB-20": "PASS",
+    "MDB-21": "PASS",
+    "MDB-22": "PASS",
+    "MDB-23": "PASS",
+    "MDB-24": "PASS",
+    "MAPI-1": "BLOCKED",
+    "MAPI-2": "BLOCKED",
+    "MAPI-3": "BLOCKED",
+    "MAPI-4": "BLOCKED",
+    "MAI-1": "BLOCKED",
+    "MAI-2": "BLOCKED",
+    "MAI-3": "PASS",
+    "MAI-4": "PASS"
+  },
+  "fom": null,
+  "blockers": [],
+  "environment": {
+    "postgresql": "17.11 (Debian 17.11-0+deb13u1)",
+    "model_digest": null,
+    "fixture_clock": "2026-10-27T17:50:36.137356+00:00",
+    "model": null,
+    "configuration_digest": "47091ff11cee3e44f02a44d7ebbb3ab2d5273f6961615cdfb3c8a038e9b9586f",
+    "packages": {
+      "pip": "25.1.1",
+      "sqlglot": "27.28.1",
+      "rpds-py": "2026.9.1",
+      "PyYAML": "6.0.3",
+      "pycparser": "3.12",
+      "psycopg-binary": "3.2.10",
+      "psycopg": "3.2.10",
+      "attrs": "26.1.0",
+      "referencing": "0.37.0",
+      "cffi": "2.1.1",
+      "jsonschema-specifications": "2025.9.1",
+      "argon2-cffi-bindings": "26.1.0",
+      "jsonschema": "4.25.1",
+      "argon2-cffi": "25.1.0",
+      "typing_extensions": "4.16.0",
+      "idna": "3.20",
+      "h11": "0.16.0",
+      "click": "8.5.0",
+      "certifi": "2026.10.23",
+      "annotated-types": "0.8.0",
+      "annotated-doc": "0.0.5",
+      "uvicorn": "0.54.0",
+      "typing-inspection": "0.4.4",
+      "pydantic_core": "2.50.1",
+      "psycopg-pool": "3.3.3",
+      "opentelemetry-api": "1.45.1",
+      "httpcore": "1.0.9",
+      "anyio": "4.15.1",
+      "starlette": "1.10.0",
+      "pydantic": "2.14.1",
+      "httpx": "0.28.1",
+      "fastapi": "0.162.0"
+    },
+    "cpu": "Intel(R) Core(TM) i7-5820K CPU @ 3.30GHz",
+    "memory_total": "MemTotal:       16266104 kB",
+    "platform": "Linux-7.0.13+parrot7-amd64-x86_64-with-glibc2.41"
+  },
+  "setup_error": null
+}

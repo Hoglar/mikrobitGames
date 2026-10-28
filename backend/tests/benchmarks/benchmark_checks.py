@@ -228,7 +228,7 @@ def real_ai(e):
     for call in e.model_relay.calls:
         if call['path']=='/api/chat':
             assert call['body']['model']==model
-            assert call['body']['options']['num_ctx']==4096
+            assert call['body']['options']['num_ctx']==16384
             assert call['body']['options']['num_predict']==512
     e.measurements['ollama_loaded']=request(url+'/api/ps',timeout=5)[2]
     assert all(s['valid'] and s['seconds']<=60 for s in samples)

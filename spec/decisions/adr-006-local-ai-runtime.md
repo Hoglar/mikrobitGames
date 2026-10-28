@@ -1,5 +1,7 @@
 # ADR-006: Lokal modellkjøring bak AI-tjenestens adapter
 
+**Oppfølging 2026-10-28:** [ADR-009](adr-009-conversational-ai.md) innfører samtaleminne og navngitte verktøy med fast SQL. Direkte DB-lesing og lokal Qwen beholdes; tidligere beskrivelser av modellgenerert SQL er erstattet.
+
 **Status:** Godkjent av brukeren som del av WBS 6.1, 2026-10-24. Modellvalget gjelder første kandidat til utprøving. Ikke installert eller ytelsestestet.
 
 ## Kontekst

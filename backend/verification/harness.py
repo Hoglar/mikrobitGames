@@ -387,7 +387,10 @@ class Environment:
         return response
 
     def ai(self, question='Hvordan har jeg utviklet meg i Poengjakt?', **changes):
-        payload = {'request_id':'33333333-3333-4333-8333-333333333333', 'player_id':ADA, 'question':question}
+        player = changes.get('player_id', ADA)
+        name = next((name for id, name in self.players if id == player), 'Ada')
+        payload = {'request_id':'33333333-3333-4333-8333-333333333333', 'player_id':player,
+                   'player_name':name, 'conversation_id':str(uuid4()), 'question':question}
         payload.update(changes)
         return request(self.ai_url+'/v1/answer','POST',payload)
 

@@ -1,24 +1,91 @@
 {
   "format_version": 1,
-  "status": "aligned_revision_2026_10_27",
-  "frontend_contract_status": "revision_0_2_0",
-  "source_documents": ["../backend-module.md", "../../../spec/contracts/webapp-backend/contract.md", "../../../spec/contracts/webapp-backend/openapi.yaml", "../contracts/backend-database/contract.md", "../contracts/backend-ai/contract.md"],
+  "status": "conversation_revision_2026_10_28",
+  "frontend_contract_status": "revision_0_3_0_proposal_to_frontend",
+  "source_documents": [
+    "../backend-module.md",
+    "../../../spec/contracts/webapp-backend/contract.md",
+    "../../../spec/contracts/webapp-backend/openapi.yaml",
+    "../contracts/backend-database/contract.md",
+    "../contracts/backend-ai/contract.md",
+    "../../../spec/decisions/adr-009-conversational-ai.md"
+  ],
   "service": "backend-api",
   "implementation_root": "backend/api/src",
   "components": {
-    "http_api": {"module": "http_api.py", "responsibility": "Routes, validation, identity dispatch, CSRF, rate limits and contract errors", "depends_on": ["auth_service", "score_service", "ai_gateway", "database"], "external_access": []},
-    "auth_service": {"module": "auth_service.py", "responsibility": "Passwords, sessions and account lifecycle", "depends_on": ["database"], "external_access": []},
-    "score_service": {"module": "score_service.py", "responsibility": "Public records and game/player data, owner-only attempt history, atomic attempt/record writes and retry identity", "depends_on": ["score_rules", "database"], "external_access": []},
-    "score_rules": {"module": "score_rules.py", "responsibility": "Pure validation, improvement and ranking rules", "depends_on": [], "external_access": []},
-    "database": {"module": "database.py", "responsibility": "PostgreSQL queries, transactions and bounded shared pool", "depends_on": [], "external_access": ["postgresql"]},
-    "ai_gateway": {"module": "ai_gateway.py", "responsibility": "AI contract adapter, timeout and response checks", "depends_on": [], "external_access": ["ai_service"]}
+    "http_api": {
+      "module": "http_api.py",
+      "responsibility": "Routes, validation, identity dispatch, CSRF, rate limits and contract errors",
+      "depends_on": [
+        "auth_service",
+        "score_service",
+        "ai_gateway",
+        "database"
+      ],
+      "external_access": []
+    },
+    "auth_service": {
+      "module": "auth_service.py",
+      "responsibility": "Passwords, sessions and account lifecycle",
+      "depends_on": [
+        "database"
+      ],
+      "external_access": []
+    },
+    "score_service": {
+      "module": "score_service.py",
+      "responsibility": "Public records and game/player data, owner-only attempt history, atomic attempt/record writes and retry identity",
+      "depends_on": [
+        "score_rules",
+        "database"
+      ],
+      "external_access": []
+    },
+    "score_rules": {
+      "module": "score_rules.py",
+      "responsibility": "Pure validation, improvement and ranking rules",
+      "depends_on": [],
+      "external_access": []
+    },
+    "database": {
+      "module": "database.py",
+      "responsibility": "PostgreSQL queries, transactions and bounded shared pool",
+      "depends_on": [],
+      "external_access": [
+        "postgresql"
+      ]
+    },
+    "ai_gateway": {
+      "module": "ai_gateway.py",
+      "responsibility": "Opaque per-login conversation identity, AI contract adapter, reset, timeout and response checks",
+      "depends_on": [],
+      "external_access": [
+        "ai_service"
+      ]
+    }
   },
   "external_systems": {
-    "webapp": {"calls": "http_api", "base_path": "/api/v1", "contract": "spec/contracts/webapp-backend/openapi.yaml"},
-    "postgresql": {"host": "127.0.0.1", "port": 5432, "database": "mikrobit_games", "role": "backend_app"},
-    "ai_service": {"host": "127.0.0.1", "method": "POST", "path": "/v1/answer", "contract": "backend/spec/contracts/backend-ai/contract.md"}
+    "webapp": {
+      "calls": "http_api",
+      "base_path": "/api/v1",
+      "contract": "spec/contracts/webapp-backend/openapi.yaml"
+    },
+    "postgresql": {
+      "host": "127.0.0.1",
+      "port": 5432,
+      "database": "mikrobit_games",
+      "role": "backend_app"
+    },
+    "ai_service": {
+      "host": "127.0.0.1",
+      "method": "POST",
+      "path": "/v1/answer",
+      "contract": "backend/spec/contracts/backend-ai/contract.md"
+    }
   },
-  "dependency_constraints": {"http_api_to_database": "readiness_check_only"},
+  "dependency_constraints": {
+    "http_api_to_database": "readiness_check_only"
+  },
   "verification_scope": {
     "dependency_direction": "caller_to_dependency",
     "unlisted_component_dependencies": "reject",

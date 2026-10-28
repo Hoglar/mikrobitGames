@@ -1,5 +1,7 @@
 # Testplan for databasedelen – WBS 5.1
 
+**Oppfølging 2026-10-28:** DB-struktur, roller og datakrav er uendret. Gjeldende samlet kontrollversjon er 3, med samtaleintegrasjon i API 0.3.0. Statusavsnittet nedenfor beskriver opprinnelig testplan før implementasjon; kjørte målinger finnes i rapportmappene.
+
 **Status:** Samordnet testplan 2026-10-27 for databasekontrakt 1.2, modellformat 2 og API 0.2.0. Testkode/modellverktøy er tilpasset som kontrollversjon 2; se [endringsoversikten](../../spec/contracts/webapp-backend/alignment.md#tilpasning-av-eksisterende-kjørbare-tester). Ingen produktkontroller er kjørt.
 
 ## Testing, verifisering og FoM

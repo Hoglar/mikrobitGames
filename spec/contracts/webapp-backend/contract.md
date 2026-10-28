@@ -1,6 +1,6 @@
 # Frontendguide: Webapp ↔ Backend API
 
-**Status:** Revisjon **0.2.0**, 2026-10-27, samordnet etter brukerens valg om alle spillforsøk, privat historikk og offentlig rekordgrunnlag for AI. Godkjenningen av versjon 0.1.0 gjaldt den tidligere dokumentasjonen. Denne revisjonen er implementeringsgrunnlag etter bestilt samordning; ingen tjenester eller produktkontroller er levert. Se [konfliktoversikten](alignment.md).
+**Status:** Revisjon **0.3.0**, 2026-10-28. Samtaleassistenten er integrert etter brukerens bestilling. Kontrakten er backendens arbeidsgrunnlag og fortsatt et forslag til frontendgruppen. Ingen frontendimplementasjon eller ny full testmåling hevdes levert her. Se [endringsoversikten](alignment.md).
 
 **Start her:** Frontend bruker `/api/v1` på samme HTTPS-adresse som nettsiden. Backend tilbyr konto/innlogging, spilloversikt, topplister, offentlig rekordhistorikk, privat forsøkshistorikk, innsending av resultater og AI-spørsmål. [openapi.yaml](openapi.yaml) er den maskinlesbare fasiten for endepunkter, felt, typer og HTTP-status. Denne guiden beskriver brukerforløp og oppførsel. Endringer oppdaterer begge dokumentene sammen.
 
@@ -27,6 +27,7 @@ Alle stier nedenfor har prefikset `/api/v1`. «Innlogging» betyr en gyldig sesj
 | `GET /players/{player_id}/records` | Nei | Sideparametere → 200 med spillerens gjeldende rekord per spill. |
 | `GET /players/{player_id}/games/{game_id}/records` | Nei | Sideparametere → 200 med rekordhistorikk i tidsrekkefølge. |
 | `POST /ai/questions` | Ja | `question`, valgfri `game_id` → 200 med `request_id`, `status`, `answer`. |
+| `POST /ai/conversation/reset` | Ja | `{}` → 204 uten body; slett denne innloggingens samtaleminne. |
 | `GET /health` | Nei | 200 med `{"status":"ok"}` når API og nødvendig databasetilgang er klare, ellers 503. AI er ikke et krav for denne kontrollen. |
 
 ¹ Utlogging er gjentakbar og gir 204 også uten en gyldig sesjon. Hvis en eksisterende sesjon ikke kan fjernes på grunn av databasefeil, gis feil; backend skal ikke påstå at den er avsluttet.
@@ -92,7 +93,13 @@ Launcher kobler backendens stabile `Game.id` til en spillmodul i den [samlede we
 
 Send bare `question` og eventuelt `game_id` (UUID, `null` eller utelatt). Frontend skal trimme spørsmålet; API-et godtar 1–1 000 kodepunkter i innsendt tekst, avviser bare blanktegn og trimmer før videresending. Backend setter spiller-ID og forespørsels-ID. Spillkontekst begrenser ikke spørsmål på tvers av spill.
 
-`status` er `ok`, `no_data` eller `cannot_answer`; alle tre er HTTP 200. Vis `answer` som ren tekst, aldri som HTML. Ett spørsmål behandles om gangen; 503 `AI_BUSY` betyr at brukeren kan prøve senere. AI-kallet har en backendfrist på 60 sekunder. Frontends ventetid må gi rom for dette og vanlig nettverkstid, eksempelvis 70 sekunder, og brukeren skal fortsatt kunne spille. Hvert spørsmål er selvstendig, uten samtalehistorikk eller automatiske omforsøk. AI kan sammenligne offentlige rekorder og rekordhistorikk på tvers av spillere og spill. «Utvikling» gjelder personlige rekorder; AI får ikke lese private spillforsøk, heller ikke spørsmålsstillerens egne.
+`status` er `ok`, `no_data` eller `cannot_answer`; alle tre er HTTP 200. Vis `answer` som ren tekst, aldri som HTML. Ett spørsmål behandles om gangen; 503 `AI_BUSY` betyr at brukeren kan prøve senere. AI-kallet har en backendfrist på 60 sekunder. Frontends ventetid må gi rom for dette og vanlig nettverkstid, eksempelvis 70 sekunder, og brukeren skal fortsatt kunne spille. Ingen automatiske omforsøk. Vanlig samtale trenger ikke dataoppslag og kan gi `ok`. AI kan sammenligne offentlige rekorder og rekordhistorikk på tvers av spillere og spill. «Utvikling» gjelder personlige rekorder; AI får ikke lese private spillforsøk, heller ikke spørsmålsstillerens egne.
+
+Samtalen husker opptil **20 fullførte utvekslinger per innlogging**, bare i serverens RAM. Samme cookie deler samtale mellom faner; en ny innlogging får tom samtale. Sesjonsfornyelse beholder den. Eldre utvekslinger kan fjernes tidligere ved plassmangel. Valgfritt `notices` i svaret inneholder minnevarsler som frontend viser som ren tekst (høyst 21 strenger, 1–200 tegn hver). Ingen historikk sendes fra frontend og ingen historikkleserute tilbys.
+
+Minnet utløper etter 30 minutter uten bruk og kan forsvinne ved omstart eller kapasitet (høyst 64 samtaler). «Ny samtale» kaller `POST /ai/conversation/reset` med `{}`, cookie og samme CSRF-header som øvrige POST-kall. Tøm lokal visning først etter 204; ved `AI_BUSY` eller feil må frontend ikke påstå at serverminnet er slettet. Utlogging/passordendring/kontosletting sperrer tilgangen, men RAM kan leve frem til utløp/kapasitet/omstart. Se [intern kontrakt](../../../backend/spec/contracts/backend-ai/contract.md) for livsløpet.
+
+AI-en bruker navngitte verktøy for spilloversikt, gjeldende rekorder, rekordutvikling og spillerens spill. Den kan fortsatt velge feil verktøy eller tolke data feil. Antall rekordholdere er ikke et sikkert antall personer som har spilt. Større kontekstvindu og samtaleminne er ingen garanti for bedre faktasvar eller svartid.
 
 ## Feil frontend må håndtere
 

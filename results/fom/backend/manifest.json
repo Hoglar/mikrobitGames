@@ -1,0 +1,104 @@
+{
+  "description": "Uendrede arkivkopier av tidligere backend-fullkjøringer. SHA-256 gjelder hvert originalt filinnhold.",
+  "source": "backend/results/runs",
+  "runs": [
+    {
+      "run": "20261027T174958.751158Z",
+      "timestamp": "2026-10-27T17:49:58.751158+00:00",
+      "code_commit": "5b41984244483b8fec6e2f85f3d847754ff2923d",
+      "working_tree_dirty": false,
+      "control_version": 2,
+      "control_digest": "cff6c34f3d573118d542767d83b9213eb1dd6ebe5aa6dc4448583071ed7b34ab",
+      "fom": null,
+      "files": {
+        "report.md": {
+          "bytes": 5691,
+          "sha256": "05ef2461fb0ed4e71ca3a842e4960c9bd5d3f26742d4a07cdf1412d79d0dda41"
+        },
+        "report.json": {
+          "bytes": 63187,
+          "sha256": "c3e7c436bc2c5a4c52fe4a58deb9d5e3b078dbbc460d3ec2e70f5c0941abf3fd"
+        }
+      }
+    },
+    {
+      "run": "20261027T175640.430159Z",
+      "timestamp": "2026-10-27T17:56:40.430159+00:00",
+      "code_commit": "5b41984244483b8fec6e2f85f3d847754ff2923d",
+      "working_tree_dirty": true,
+      "control_version": 2,
+      "control_digest": "cff6c34f3d573118d542767d83b9213eb1dd6ebe5aa6dc4448583071ed7b34ab",
+      "fom": null,
+      "files": {
+        "report.md": {
+          "bytes": 3439,
+          "sha256": "48986463128b03552fb0d7d34a8599975f329bbee5241dd9aa46201d10ff253b"
+        },
+        "report.json": {
+          "bytes": 4606147,
+          "sha256": "4e482eb702fc562ebaab02d0095d4842707431d9543d555dc2a5775729f4492f"
+        }
+      }
+    },
+    {
+      "run": "20261027T185538.809129Z",
+      "timestamp": "2026-10-27T18:55:38.809129+00:00",
+      "code_commit": "e21d82edc82301c1ef26b4e64a9771780db67291",
+      "working_tree_dirty": false,
+      "control_version": 2,
+      "control_digest": "c5131981ef48ca1a08118aad2e3560498135cf241891509a921e47f1a3bdf343",
+      "fom": {
+        "requirements_percent": 83.33333333333334,
+        "model_percent": 100.0
+      },
+      "files": {
+        "report.md": {
+          "bytes": 3165,
+          "sha256": "8279f91a1fb70dbb2cac7a81e3f695ee209ca917f45d915418cac297446db08f"
+        },
+        "report.json": {
+          "bytes": 10589702,
+          "sha256": "9a4ae90b6212a4d6f5639132feb3b5571299ca112b52df4ec43bd04717a003a7"
+        },
+        "requirements.svg": {
+          "bytes": 677,
+          "sha256": "abe674fbd21a543e762f6d0aa106fc16f1aa801abbfe992ef9deacd026fa1942"
+        },
+        "model.svg": {
+          "bytes": 680,
+          "sha256": "f2416e8d48c4e16c37e7f00aee88d3c6ebff93ae3f153b9fd23e9e15322f331b"
+        }
+      }
+    },
+    {
+      "run": "20261027T194827.319030Z",
+      "timestamp": "2026-10-27T19:48:27.319030+00:00",
+      "code_commit": "d70e9fa5d8944705060c716eea29a7c0fcd65ec3",
+      "working_tree_dirty": false,
+      "control_version": 2,
+      "control_digest": "6aacbdd902877f4b2403b3f654dbdfe29c2837b6fa347a870d8f222912ffae74",
+      "fom": {
+        "requirements_percent": 91.66666666666667,
+        "model_percent": 100.0
+      },
+      "files": {
+        "report.md": {
+          "bytes": 2731,
+          "sha256": "bb7f03c6db24f67ca1cd13be6cee1db7c2382d13832801f289629d30fecd3e02"
+        },
+        "report.json": {
+          "bytes": 9788806,
+          "sha256": "38a86a9bd3a31585073a2beccc5737146b6316dc7cb01129e52e675ea6dc9254"
+        },
+        "requirements.svg": {
+          "bytes": 677,
+          "sha256": "3e0d8718a45c60ced5727d5757688fe2364313bb7aa5eb6d120da4e5875856bb"
+        },
+        "model.svg": {
+          "bytes": 680,
+          "sha256": "84a8bddd5e8060919616e84c0da3344bd970fc70f1df71c60216f758cb856f5b"
+        }
+      }
+    }
+  ]
+}

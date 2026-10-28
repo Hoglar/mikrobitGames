@@ -19,6 +19,8 @@ def load_cases():
 
 
 def unit_group(id):
+    if 'test_ai_conversation' in id:return 'KAI-3'
+    if 'test_model_messages' in id:return 'KAI-1'
     if 'test_auth_rules' in id:return 'KAPI-1'
     if 'test_score_rules' in id:
         return 'KAPI-3' if 'ranking' in id or 'tie_order' in id else 'KAPI-2'

@@ -1,7 +1,9 @@
 # AI-kildekode
 
-Implementasjon og konfigurasjon for lokal AI, spillerforespørsler og kontrollert tilgang til highscore-data. Krav og modeller ligger under backend/spec, og tester under backend/tests. Modellvekter og lokale hemmeligheter skal ikke lagres her.
+Lokal samtaleassistent via `transport:app`, én aktiv oppgave, med Ollama og samme Qwen-modell. [Modulplanen](../../spec/ai-module.md) og [ADR-009](../../../spec/decisions/adr-009-conversational-ai.md) beskriver gjeldende design.
 
-[Modulplanen for WBS 6.1](../../spec/ai-module.md) samler krav og komponentmodell. Første implementasjon bruker `transport:app` som Uvicorn-inngang, én aktiv oppgave og en separat Ollama-adapter. `query_policy.py` eier SQL-tillatelseslisten; `read_store.py` er eneste PostgreSQL-adapter og bruker driverens native `$1`-binding.
+`orchestrator.py` eier samtaleminne per innlogging, 20-utvekslingsgrense, sletting, utløp og budsjetter. `model_client.py` validerer navngitte verktøyhandlinger og tillater naturlig tekst for prat. `read_store.py` eier fire dataverktøy med fast SQL og native `$1`-binding. `query_policy.py` kontrollerer hele SQL-treet og referanser mot de tre offentlige visningene før utførelse som `ai_reader`.
 
-Se [oppsett](../../SETUP.md). Ingen modellspørsmål eller produktmålinger er kjørt av utviklingsagenten. Faktakvalitet, tidsbruk og maskinens egnethet gjenstår å måle.
+SQLGlot kvalifiserer en kopi for skjemakontroll; kopien kjøres ikke. Modellen kan ikke sende egen SQL. Direkte SQL-policytester beholdes som ekstra sikkerhetskontroll. Rolle- og resultatgrenser er uendret.
+
+Samtalen er avgrenset kontekst, ikke trening eller varig lagring. Modellen kan fremdeles velge feil data eller formulere feil fakta. Format- og tilgangskontroller er ikke en godkjenning av faktakvaliteten. Full testfase kjøres av brukeren med `./backend/check`.
