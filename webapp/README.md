@@ -19,11 +19,11 @@ Frontendutviklere: bruk den samordnede [API-guiden](../spec/contracts/webapp-bac
 
 Planen dekker modulansvar, tilkobling og gjenoppretting, meldingsvalidering, input-hendelser, kommandoer, spillbytte og trinnvise leveranser med testkriterier. Spillplattformen har fortsatt ansvar for pause/gjenopptakelse, poeng og lagring av resultater. Se også [utviklergrensesnittet](../spec/contracts/microbit-webapp/web-page-developer-interface.md) og [testplanen](spec/game-input-test-plan.md).
 
-Adapterbibliotek og eksempel er ikke implementert ennå. Et kjørbart grunnlag for plattformregler og Testlab-opptak er etablert. Se [samlet implementasjonsplan](spec/implementation-plan.md) for leveranser og nøyaktig testdekning.
+Adapterbiblioteket og et lokalt eksempel med to små spill er implementert. Se [bibliotekets brukerveiledning](src/microbit-input/README.md) og [valideringsrapporten](results/game-input-validation.md). Plattformregler og Testlab-opptak er også etablert; full frontend og backendintegrasjon gjenstår.
 
-Fra `webapp/`, med Node 24.22.1 og npm 11.19.1: `npm ci`, `npm test`, `npm run benchmark`. Disse kommandoene trenger ingen fysisk enhet eller tredjepartsavhengigheter. Benchmarkrapporten lagres i `results/unit-benchmark.json`. Browser/adapter-skriptene i adapterplanen er fortsatt fremtidige leveranser.
+Fra `webapp/`, med Node 24.22.1 og npm 11.19.1: `npm ci`, `npm test`, `npm run benchmark` og `npm run benchmark:input`. Programvaretestene trenger ingen fysisk enhet. Playwright 1.64.1 er en låst utviklingsavhengighet; biblioteket har ingen kjøretidsavhengigheter. Installer Chromium med `npx playwright install chromium`, og kjør `npm run test:browser` for nettlesermock og browser-benchmark. Rapporter lagres under `results/`.
 
-Grunnlaget bruker JavaScript ES-moduler og Nodes native testkjører. Frontendvisninger, router, Web Serial-adapter og backendintegrasjon gjenstår. Se [felles prosjektstruktur](../docs/project-structure.md).
+`npm run dev:input` starter eksemplet på `http://127.0.0.1:4173/examples/microbit-input/`. Det bruker ekte Web Serial ved vanlig kjøring; automatiske nettlesertester erstatter bare nettleserens serial-API. Spillene deler ett input-/output-grensesnitt og venter på spillerens fortsettvalg etter inputbrudd. Reelle USB-/tillatelseskontroller og instrumentert fysisk latens er ikke verifisert. Se [felles prosjektstruktur](../docs/project-structure.md).
 
 ## Leveranse til hjemmeserveren
 

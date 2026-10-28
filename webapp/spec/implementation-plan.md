@@ -1,6 +1,6 @@
 # Implementasjonsplan for webapplikasjonen
 
-Dato: 2026-10-27. Planen omfatter hele webappen. Kun regel- og opptaksgrunnlaget beskrevet nedenfor er implementert; ingen ferdig frontend, seriell adapter eller backendintegrasjon foreligger.
+Dato: 2026-10-28. Planen omfatter hele webappen. Regel-/opptaksgrunnlaget og det serielle adapterbiblioteket med lokalt tospillseksempel er implementert. Full frontend og backendintegrasjon gjenstår. Adapterens kjørte kontroller og gjenstående fysiske verifikasjon står i [valideringsrapporten](../results/game-input-validation.md).
 
 ## Styrende grunnlag
 
@@ -17,7 +17,7 @@ Forslag for videre frontend er statiske ES-moduler med separat visningslag og ro
 | Trinn | Leveranse | Avhengighet og akseptanse |
 | --- | --- | --- |
 | 0 – testgrunnlag | Native Node-testkjører, låst miljø, rene plattformregler og opptak, benchmarkskript. | Levert i denne endringen. `npm ci`, `npm test`, `npm run benchmark`. Deldekning av TWEB/TLAB; ingen samlet produktgodkjenning. |
-| 1 – protokoll og adapter | Følg adapterplanens fase 1–5: framer, duplikatnøkkelkontroll, streng V2-validering, mapping, hendelser, én paced writer, kø/ID/resultat, recovery og disposal. | Gjenbruk alle relevante seksjoner i `conformance.json`. GI-01–14,16–20 med fake klokke/transport; ingen fysisk venting for tidsfristtester. Ingen spill eller Testlab oppretter egen serial-leser. |
+| 1 – protokoll og adapter | Levert: adapterplanens fase 1–5 samt lokalt eksempel fra fase 6; framer, duplikatnøkkelkontroll, streng V2-validering, mapping, hendelser, én paced writer, kø/ID/resultat, recovery og disposal. | Kjørte GI-programvarekontroller er dokumentert i valideringsrapporten. Ingen fysisk venting for tidsfristtester. Ingen spill eller Testlab oppretter egen serial-leser. Fysisk V2-akseptanse gjenstår. |
 | 2 – API og sesjon | Injiserbar fetch-klient, `/auth/session`, register/login/logout/renew, kontooperasjoner, spillkatalog og privat historikk. | TWEB-01/02/06/08. POST har JSON og `X-MBG-Request: 1`, credentials same-origin. Ingen JS-token/passordlagring. Registrering gir innloggingsskjema. GET fornyer ikke sesjon. Proxy-svar uten JSON og nettverksfeil bevarer lokale forsøk. |
 | 3 – skall, router og Launcher | Velg visningsteknologi; offentlige Launcher/Testlab, beskyttede konto-/spillsider. Katalog kobles til lokale moduler med stabil Game.id. | TWEB-01/02/10. Inaktive/ukjente moduler kan ikke startes. Lokal Testlab er tilgjengelig ved katalogfeil. Meny skjules under aktiv spilling. |
 | 4 – Spillplattform | Start krever innlogget spiller, aktivt kjent spill, connected/inputAvailable og vellykket renew. UUID opprettes én gang ved start. Pause ved utilgjengelig input, eksplisitt resume, exit/finish og minnebasert lagringskø. | TWEB-02–06. Nett-/sesjonsbrudd bevarer tilstand og eier. Forny omtrent hvert femte minutt bare ved aktiv spilling med input. Alle avsluttede forsøk sendes, også frivillig avbrutte. Disposal avventes ved spillbytte; lagringsvalg håndteres uavhengig av oppryddingsfeil. |
@@ -36,15 +36,16 @@ Kjørbare enhetstester ligger i `tests/unit/`. `src/platform/rules.js` gir rene 
 | TWEB-04 | Tallgrenser og skillet mellom lagringsbekreftelse og rekord. | Historikken 100,80,120,110 og rekordene 100→120 mot faktisk backend. |
 | TWEB-07/08 | Ingen produkttest levert. | Dashboard, profil, kontoendringer og sletting med backend. |
 | TLAB-09/10/11/13/16 | Opptakstilstander, avbrutt erstatning, pause/datavindu, 10 Hz, flere bufferomløp, eierskap, JSON/CSV og tapsmetadata. | Integrasjon med adapter, full UI, reset og faktisk minne-/rendertrend. |
-| GI-01–20 og øvrige TLAB | Ingen adapter-/nettleser-/maskinvaretest levert. | Implementeres i trinn 1,7,8. Fraværende kode skal ikke merkes bestått gjennom en referansemodell alene. |
+| GI-01–14/16–20 | Produksjonsadapteren testes med felles fixtures, fake klokke/transport, native Streams og Playwright-mock, inkludert tospillseksempelet. | Full produktintegrasjon, faktisk USB/nettlesertillatelse og fysisk måling; softwaretestene er ikke samlet maskinvareakseptanse. |
+| GI-15 og øvrige TLAB | Ingen ny fysisk test eller komplett Testlab-UI levert. | Fysisk V2 og Testlab-integrasjon i trinn 7,8. |
 
-Utvid enhetstestene ved hver implementasjon; installer og lås Playwright/browser ved første nettleserleveranse. Fake transport og klokke injiseres, med tester for sen chooser/open/write, resultat før write er ferdig, timeout/recovery, disponering under callback og null gjenværende timere/abonnementer. Frontendtester bruker kontrollerte API-svar; eierskap, atomisk rekordlagring og sletting må også testes mot faktisk backend.
+Utvid enhetstestene ved hver implementasjon. Playwright 1.64.1 er låst, og tilhørende Chromium er testet lokalt. Fake transport og klokke injiseres, med tester for sen chooser/open/write, resultat før write er ferdig, timeout/recovery, disponering under callback og null gjenværende timere/abonnementer. Frontendtester bruker kontrollerte API-svar; eierskap, atomisk rekordlagring og sletting må også testes mot faktisk backend.
 
 ## Benchmarks og akseptanse
 
 `npm run benchmark` måler de leverte modulene ved 50 Hz og 500 Hz stress med 600 sekunder akselerert logisk tid per profil. Rapporten inneholder p50/p95/p99/maksimum, operasjoner/s, CPU-tid/operasjon, eksportstørrelse/tid, buffergrenser, miljø og kildehasher. Oppvarming er inkludert i bufferomløp men ikke tidsstatistikken. Dette er ingen ti minutters faktisk soak eller måling av serial-throughput. Ingen ny tidsgrense for rene hjelpefunksjoner konstrueres; rapporten er en startbaseline. Kapasitetsbrudd gjør kjøringen feilende.
 
-Når adapter/UI finnes, utvid målerunneren med:
+`npm run benchmark:input` og browserpakken måler nå produksjonsadapterens framing/validering/normalisering og callbacks ved 50/500 Hz med én/fire abonnenter. [Node-rapporten](../results/input-benchmark.json) og [browserrapporten](../results/input-browser-benchmark.json) bruker 300 sekunder akselerert logisk tid per profil; dette er ikke fem minutters faktisk USB-langkjøring. Den automatiserte lifecycle-testen blander dessuten wrap, ugyldige/oversized linjer, recovery, output og spillbytte. Fullfør følgende ved produkt-/maskinvareverifikasjon:
 
 - Komplett råfixture-framing/validering/normalisering ved normal 50 Hz og dokumentert stressrate. Skill forventet avvisning fra tap av gyldige frames.
 - Komplett linje til state/event-callback med én og fire abonnenter: **p95 ≤ 5 ms ved 50 Hz**. Bruk host `performance.now`, ikke differanse mot enhetens `u`.
@@ -53,6 +54,6 @@ Når adapter/UI finnes, utvid målerunneren med:
 - Fysisk V2: first-byte→result og final-LF→result separat; pacing og timeoutstatistikk. ACK betyr startet/anvendt, aldri ferdig output.
 - Instrumentert fysisk knapp/tilt→spillcallback: **p95 ≤ 100 ms**, minst **20 forsøk**. Manuell omtrentlig timing kan ikke etablere PASS.
 
-Fake klokke kontrollerer eksakte 500 ms freshness-, 3000 ms handshake- og 1000 ms resultfrister. Én in-flight + 16 ventende kommandoer og høyst 16 byte per chunk med minst 5 ms mellom chunkstarter er obligatorisk. Disse grensene er krav, ikke målte resultater i denne leveransen.
+Fake klokke kontrollerer eksakte 500 ms freshness-, 3000 ms handshake- og 1000 ms resultfrister. Én in-flight + 16 ventende kommandoer og høyst 16 byte per chunk med minst 5 ms mellom chunkstarter er obligatorisk og dekkes av softwaretestene. Dette beviser ikke fysisk UART-/USB-timing.
 
 Rapporter kilde-/fixtureversjon, browser/OS, buildmodus, abonnenter, klokke, prøveantall og utstyr/runtime/firmware for fysisk test. Ikke senk grenser etter feil. Før full akseptanse må UI-teknologi, adapterdiagnostikk for faktisk målerate/siste snapshot, ordinært spillmodulgrensesnitt og reell browser/V2-kombinasjon konkretiseres uten å endre kontraktene.

@@ -1,6 +1,6 @@
 # Web-Page Developer Interface for micro:bit Inputs and Outputs
 
-This draft defines one framework-independent adapter shared by the page's games, supporting **micro:bit V2 only**. Games use this API; only the adapter reads/writes the [serial protocol](microbit-serial-protocol.md). V1/other board identities reject startup with an unsupported-board connection error; there is no reduced V1 state shape. The API is not implemented yet. The defaults, formulas, lifecycle, and event semantics below are requirements for that implementation.
+This draft defines one framework-independent adapter shared by the page's games, supporting **micro:bit V2 only**. Games use this API; only the adapter reads/writes the [serial protocol](microbit-serial-protocol.md). V1/other board identities reject startup with an unsupported-board connection error; there is no reduced V1 state shape. The [JavaScript implementation](../../../webapp/src/microbit-input/README.md) has software/browser-mock verification; real USB and instrumented physical latency remain unverified. Defaults, formulas, lifecycle, and event semantics below remain authoritative requirements.
 
 ## Page and Game Ownership
 

@@ -4,6 +4,6 @@
 
 [Spillspesifikasjoner](games/README.md) samles i `games/<game-name>/`. Første spill er [Micro:bit Testlab](games/microbit-testlab/README.md).
 
-[Implementeringsplanen for JavaScript-biblioteket](game-input-implementation-plan.md) beskriver modulstruktur, leveranserekkefølge, tester og integrasjon med spillplattformen. Planen følger [Micro:bit-grensesnittet](../../spec/contracts/microbit-webapp/web-page-developer-interface.md) og bruker V2-only ES-moduler uten frontendrammeverk som kjøretidsavhengighet. Bibliotek og verktøy er ennå ikke implementert.
+[Implementeringsplanen for JavaScript-biblioteket](game-input-implementation-plan.md) beskriver modulstruktur, tester og integrasjon med spillplattformen. Bibliotek, lokaleksempel, fake-transport-/nettlesertester og replay-benchmarks er implementert som V2-only ES-moduler uten kjøretidsavhengigheter. Fysisk V2-/USB- og latensakseptanse gjenstår; se [valideringsrapporten](../results/game-input-validation.md).
 
 [Samlet implementasjonsplan](implementation-plan.md) dekker leveranserekkefølge, avhengigheter, kjørbare enhetstester, benchmarks og gjenstående produktverifikasjon.

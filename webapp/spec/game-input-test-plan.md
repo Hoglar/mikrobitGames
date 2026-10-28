@@ -2,7 +2,7 @@
 
 ## Purpose and Scope
 
-Verify the shared adapter against the [serial contract](../../spec/contracts/microbit-webapp/microbit-serial-protocol.md), [public API](../../spec/contracts/microbit-webapp/web-page-developer-interface.md), and [shared fixtures](../../spec/contracts/microbit-webapp/fixtures/README.md). They own schemas, formulas, bounds, deadlines, error codes, and lifecycle policy. The library and its runner are not implemented yet; tests below specify expected behavior.
+Verify the shared adapter against the [serial contract](../../spec/contracts/microbit-webapp/microbit-serial-protocol.md), [public API](../../spec/contracts/microbit-webapp/web-page-developer-interface.md), and [shared fixtures](../../spec/contracts/microbit-webapp/fixtures/README.md). They own schemas, formulas, bounds, deadlines, error codes, and lifecycle policy. The library, Node/native-Streams tests, Playwright browser mocks and replay benchmarks are implemented. The [validation record](../results/game-input-validation.md) maps the executed software checks and remaining work; GI-15 physical browser/V2 interoperability and instrumented hardware latency remain unassessed. The cases below remain the acceptance requirements, including checks beyond mocked software tests.
 
 Follow the [JavaScript implementation plan](game-input-implementation-plan.md) for module boundaries and delivery order. The component specification's mandatory connection/pause/reconnect/exit flow is verified through the platform example; the library itself does not save scores or results.
 

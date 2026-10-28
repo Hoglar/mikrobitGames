@@ -2,7 +2,7 @@
 
 This is the shared specification for built-in **micro:bit V2** inputs and outputs. V1 boards are outside this release's support; the browser rejects their board identity during startup. Firmware is C++ with the CODAL design in [ADR-008](../../decisions/adr-008-microbit-v2-cpp-codal.md) and the [implementation guide](../../../microbit/spec/firmware-implementation.md). This is a draft, not hardware verification. GPIO-connected hardware is out of scope. The [browser interface](web-page-developer-interface.md) defines the public game API; [shared fixtures](fixtures/README.md) provide conformance examples.
 
-Protocol version 1 is still unimplemented. These additions complete that draft; deployed versions must increment the protocol version for incompatible changes. ADRs [002](../../decisions/adr-002-microbit-serial-communication.md) and [004](../../decisions/adr-004-microbit-command-encoding.md) record the architecture.
+Protocol version 1 has C++ firmware and JavaScript adapter implementations. See their module results for verification scope; a successful software run does not establish physical interoperability or timing. Deployed versions must increment the protocol version for incompatible changes. ADRs [002](../../decisions/adr-002-microbit-serial-communication.md) and [004](../../decisions/adr-004-microbit-command-encoding.md) record the architecture.
 
 ## Transport and Shared Limits
 

@@ -1,0 +1,34 @@
+name: webapp input library
+on:
+  push:
+    paths: ['webapp/**', 'spec/contracts/microbit-webapp/**', '.github/workflows/webapp-input.yml']
+  pull_request:
+    paths: ['webapp/**', 'spec/contracts/microbit-webapp/**', '.github/workflows/webapp-input.yml']
+permissions:
+  contents: read
+jobs:
+  input-library:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: webapp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+          cache: npm
+          cache-dependency-path: webapp/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - run: npm run benchmark:input
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: webapp-input-verification
+          path: |
+            webapp/build/browser-results/
+            webapp/results/input-benchmark.json
+            webapp/results/input-browser-benchmark.json

@@ -2,7 +2,7 @@
 
 ## Status and Scope
 
-This is an implementation plan, not a working library. The library, package configuration, runners, and example page are not implemented yet. Build a local, framework-independent **JavaScript ES module library** under `webapp/src/microbit-input`, supporting the current micro:bit V2 protocol. No npm publication or runtime framework dependency is required. Node.js and browser automation are development tools, not requirements installed by game players.
+Implemented 2026-10-28: a local, framework-independent **JavaScript ES module library** under `webapp/src/microbit-input`, supporting the current micro:bit V2 protocol, with software tests, browser mocks, replay benchmarks and a two-game example. See the [usage guide](../src/microbit-input/README.md) and [validation record](../results/game-input-validation.md). Physical browser/V2 verification remains outstanding. No npm publication or runtime framework dependency is required. Node.js and browser automation are development tools, not requirements installed by game players.
 
 The page owns one adapter and one serial port. Games receive the existing session-bound input/output facade. Include connection/recovery, framing/validation, normalized state, counted presses, derived inputs, commands/results, subscriptions, and disposal. Backend requests, authentication, scoring, saving results, router selection, and individual game rules remain outside the library.
 
@@ -13,7 +13,7 @@ Authoritative inputs:
 - [Component specification](Komponentspesifikasjon_webapplikasjon_forklart.md): mandatory connection before play, pause on lost input, user-controlled continuation, and result handling by Spillplattform.
 - [Test plan](game-input-test-plan.md) and [shared fixtures](../../spec/contracts/microbit-webapp/fixtures/README.md): verification cases and expected outcomes.
 
-Implement the shared definitions directly. Do not invent per-game wire formats, sensor-selection commands, a V1 fallback, or alternate timeout/gesture defaults. Keep a small code constants table traceable to the serial contract; change the contract, constants, and fixtures together when changing behavior. All phases below are pending.
+Implement the shared definitions directly. Do not invent per-game wire formats, sensor-selection commands, a V1 fallback, or alternate timeout/gesture defaults. Keep a small code constants table traceable to the serial contract; change the contract, constants, and fixtures together when changing behavior. Phases 1–6 have software implementations and passing automated checks. Phase 7 has replay benchmarks; real permission/USB/V2 checks, physical latency and a real-time soak remain unassessed.
 
 ## Delivery Approach and Tooling
 
@@ -21,13 +21,13 @@ Use `.js` modules with explicit relative imports/exports and JSDoc typedefs for 
 
 Use zero third-party runtime dependencies initially. In particular, the small bounded protocol does not require a framework, state-management package, or Node serial library. Keep internal functions testable with injected dependencies. TypeScript or a framework hook is a later wrapper/migration decision, not a prerequisite for this release.
 
-Development baseline: native Node.js test runner with `node:assert/strict` for unit/fake-transport tests, and Playwright for browser integration. Pin a tested Node release, package-manager version, Playwright version, and browser revision when creating the first runnable scaffold. Commit package/lock files then; do not describe uninstalled versions as verified. The [Node test runner](https://nodejs.org/api/test.html) and [Playwright browser API mocking guide](https://playwright.dev/docs/mock-browser-apis) document those capabilities.
+Development baseline: native Node.js test runner with `node:assert/strict` for unit/fake-transport tests, and Playwright for browser integration. Locally verified versions are Node 24.22.1, npm 11.19.1, Playwright 1.64.1 and Chromium 156.0.8078.4 (Playwright revision 1248); package/lock files pin the tools. The [Node test runner](https://nodejs.org/api/test.html) and [Playwright browser API mocking guide](https://playwright.dev/docs/mock-browser-apis) document those capabilities.
 
 Browser reference target is a recorded desktop Chromium-based browser with working Web Serial, tested on the team's actual OS/device combination. This is a verification target, not a compatibility claim for all Chromium browsers or mobile platforms. Feature-detect Web Serial/secure context and report unsupported environments clearly. The [Web Serial specification](https://wicg.github.io/serial/) and [Chrome integration guide](https://developer.chrome.com/docs/capabilities/serial) are implementation references; browser permission UI and real USB behavior still need manual checks.
 
-## Proposed Module Layout
+## Module Layout
 
-These are planned paths relative to `webapp/src/microbit-input`. Combine small helpers within a listed module where useful; preserve responsibility boundaries rather than creating a class for every row.
+These paths exist relative to `webapp/src/microbit-input`; `types.js` additionally holds JSDoc records. Preserve responsibility boundaries rather than creating a class for every row.
 
 | Module | Responsibility |
 |---|---|
@@ -81,7 +81,7 @@ Invoke `requestPort()` through the page's user action without awaiting unrelated
 
 Use a monotonically increasing internal connection epoch and game-session identity. Every asynchronous read/write continuation, deadline, chooser completion, and cleanup action checks the identity it belongs to. A stale completion may clean up its own resources, but cannot publish state or close a newer connection. Explicit disconnect invalidates recovery before cleanup. Do not wait indefinitely for an unabortable chooser: cancel the logical connect operation, fence its eventual result, and allow only one outstanding native chooser at a time.
 
-The protocol deadlines begin at their specified points, not when the caller clicks. In addition, use a proposed internal 3000 ms watchdog for selected-port open/write/teardown operations so a never-settling browser promise cannot leave startup or disposal hanging forever. This is a local transport safeguard, not a wire timeout replacement; do not time out a user while the chooser remains open. Fence late completions, retain their cleanup responsibility, and report incomplete resource release rather than claiming a successful close.
+The protocol deadlines begin at their specified points, not when the caller clicks. In addition, use the implemented internal 3000 ms watchdog for selected-port open/write/teardown operations so a never-settling browser promise cannot leave startup or disposal hanging forever. This is a local transport safeguard, not a wire timeout replacement; do not time out a user while the chooser remains open. Fence late completions, retain their cleanup responsibility, and report incomplete resource release rather than claiming a successful close.
 
 The reader loop must end/cancel before releasing its lock; the writer must drain or fail its current operation before release; only then close the port. Implement the actual ordering against the selected browser/Streams APIs. Account for EOF, read errors, unplug events, canceled reads, rejected writes, and close failures without double settlement or unhandled rejections. Do not rely on page-unload handlers completing asynchronous STOP/CLEAR; explicit user navigation/disconnect uses awaited cleanup, while abrupt page exit remains best effort.
 
@@ -123,11 +123,11 @@ Phases 1–6 can advance without firmware or a connected board. Phase 7 requires
 
 ## Test Layout, Scripts, and CI
 
-Planned test paths under `webapp/tests/microbit-input` are `unit/`, `transport/`, `browser/`, and `support/`. Keep the fake transport/clock/fixture loader in support, outside production source. Playwright mocks must be installed before the page imports the library. Those mocks test adapter integration, not the operating system permission chooser or real USB; manually verify those on supported hardware/browser combinations.
+Tests under `webapp/tests/microbit-input` are `protocol.test.js`, `lifecycle.test.js`, `native-streams.test.js`, `browser/`, and `support/`. Fake transport/clock/fixture helpers stay outside production source. Playwright mocks are installed before the page imports the library. Those mocks test adapter integration, not the operating system permission chooser or real USB; manually verify those on supported hardware/browser combinations.
 
-Define these scripts when the package and runners actually exist; **none are runnable in the current checkout**:
+These commands are runnable from `webapp` after installing the pinned development tools. Install Chromium once with `npx playwright install chromium` before browser tests:
 
-| Proposed command from `webapp` | Purpose |
+| Command from `webapp` | Purpose |
 |---|---|
 | `npm ci` | Install pinned development dependencies from the committed lockfile |
 | `npm test` | Native Node unit and fake-transport suites; no physical device |
@@ -135,15 +135,15 @@ Define these scripts when the package and runners actually exist; **none are run
 | `npm run dev:input` | Serve the standalone input-library example locally with the correct ES module MIME types |
 | `npm run benchmark:input` | Recorded-fixture normal/stress processing and propagation measurements |
 
-The development/example server is only a local development tool. The deployed page imports the static modules normally; this plan creates no production Node server or backend dependency. Choose and pin the small local-server implementation during phase 1 without coupling the runtime library to it.
+The development/example server uses Node's built-in HTTP/file APIs. It is only a local development tool. The deployed page imports the static modules normally; the runtime library has no production Node server or backend dependency.
 
-CI runs unit/fake-transport tests and browser mocks without hardware. A hardware job/manual run is separate. Missing hardware never skips software suites, while absent permission/API scenarios remain testable with mocks. Preserve failure reports/traces for browser cases and record source/fixture/tool/browser versions. Timing gates are the existing shared targets; do not reset them after a failing run. Browser event-loop delays/background suspension must mark input unavailable before the next game callback rather than processing a stale deadline as fresh state.
+The added `.github/workflows/webapp-input.yml` runs unit/fake-transport tests, browser mocks and replay benchmarks without hardware; its remote execution has not been verified in this local delivery. A hardware job/manual run is separate. Missing hardware never skips software suites, while absent permission/API scenarios remain testable with mocks. Preserve failure reports/traces for browser cases and record source/fixture/tool/browser versions. Timing gates are the existing shared targets; do not reset them after a failing run. Browser event-loop delays/background suspension must mark input unavailable before the next game callback rather than processing a stale deadline as fresh state.
 
 Before each implementation phase is accepted, exercise the relevant behavioral tests rather than only checking helper return values. Important races include disposal during a write, a result before write completion, disconnect while selecting/opening, an unresolved writer promise, callbacks that unsubscribe/dispose during notification, and recovery while old read completions are pending. Fake clocks must not leave pending timers/listeners when a case ends.
 
 ## Example and Platform Acceptance
 
-The planned example is `webapp/examples/microbit-input/index.html`, served from a local webapp-root server. It imports the same production entry used by games. It can display a recorded/mock stream in a clearly labeled developer mode; a mock connection must never satisfy the platform's real-device game-start requirement in production.
+The implemented example is `webapp/examples/microbit-input/index.html`, served from a local webapp-root server. It imports the same production entry used by games. Browser tests inject mock Web Serial before import; the normal example requests a real device. A mock connection must never satisfy the platform's real-device game-start requirement in production. The example demonstrates the input lifecycle; account/backend result flows remain outside this library delivery.
 
 Acceptance requires demonstrating:
 
