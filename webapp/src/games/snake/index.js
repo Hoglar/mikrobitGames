@@ -1,4 +1,4 @@
-import { randomGenerator } from './random.js';
+import { randomGenerator } from '../shared/random.js';
 export const encodeSnake = (food, steps) => food * 1000000 + 999999 - steps;
 const directions = [[0,-1],[1,0],[0,1],[-1,0]];
 export function createSnake({ config = {}, seed = 'snake-v1' } = {}) {

@@ -30,7 +30,10 @@ export function formatScore(game, value) {
   return `${value.toLocaleString('nb-NO')} ${game?.score_unit === 'meters' ? 'm' : game?.score_unit === 'points' ? 'poeng' : game?.score_unit ?? ''}`;
 }
 export async function loadGame(key) {
-  if (key === 'snake') return (await import('./snake.js')).createSnake;
-  if (key === 'viking') return (await import('./viking.js')).createViking;
-  return options => import('./arcade.js').then(m => m.createArcade({ ...options, kind: key }));
+  if (key === 'snake') return (await import('./snake/index.js')).createSnake;
+  if (key === 'viking') return (await import('./viking-dash/index.js')).createViking;
+  if (key === 'stars') return (await import('./stars/index.js')).createStars;
+  if (key === 'reaction') return (await import('./reaction/index.js')).createReaction;
+  if (key === 'balance') return (await import('./balance/index.js')).createBalance;
+  throw new RangeError(`Ukjent spill: ${key}`);
 }

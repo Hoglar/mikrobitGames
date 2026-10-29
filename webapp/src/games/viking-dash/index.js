@@ -1,6 +1,6 @@
-import { randomGenerator } from './random.js';
-import { createVikingRenderer, environmentNames } from './viking-scene.js';
-import { createVikingAudio } from './viking-audio.js';
+import { randomGenerator } from '../shared/random.js';
+import { createVikingRenderer, environmentNames } from './scene.js';
+import { createVikingAudio } from './audio.js';
 
 export const events = [
   ['Nordlys', 0, 3], ['Stjerneskudd', 0, 3], ['Meteorregn', 200, 2],

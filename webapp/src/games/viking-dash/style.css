@@ -1,0 +1,19 @@
+/* Viking Dash: framed pixel-art stage, with scenery visible behind the menus. */
+.viking-theme{border:1px solid #766c50;background:#182d30;box-shadow:0 15px 45px #24362c18}
+.viking-theme .game-toolbar{background:#182d30;border-color:#5b6350;color:#e8dfc4;gap:12px}
+.viking-theme .game-toolbar>span:first-child{margin-right:auto}
+.viking-theme .game-toolbar .button{color:#e3d8b9;border-color:#627364;min-height:32px;padding:6px 12px;white-space:nowrap}
+.viking-theme .game-toolbar .button:hover{background:#31463d}
+.viking-theme .controls-hint{background:#182d30;color:#b9c0ac;border-color:#5b6350;letter-spacing:.4px}
+.viking-theme .key{border-color:#82795b;color:#eddbac}
+.viking-theme .game-overlay{inset:76px auto auto 24px;width:320px;padding:24px;gap:12px;align-items:stretch;text-align:left;background:#172b2ef2;border:1px solid #8a825f;border-radius:4px;box-shadow:8px 8px 0 #15292e33;backdrop-filter:none}
+.viking-theme .game-overlay h2{color:#f0e3bf;font-size:31px;letter-spacing:-1px}
+.viking-theme .game-overlay p{font-size:12px;color:#bfccb8}
+.viking-theme .game-overlay input,.viking-theme .game-overlay select{font-size:12px;max-width:none;background:#e9e6d8;border-color:#8f967e}
+.viking-theme .game-overlay .button.light{background:#dfc798;border-color:#dfc798;color:#233a36}
+.viking-theme .game-overlay .button.secondary{color:#e3d8b9;border-color:#627364}
+.viking-theme[data-phase=countdown] .game-overlay{inset:45% auto auto 50%;transform:translate(-50%,-50%);width:auto;min-width:200px;background:#172b2ec9;text-align:center;align-items:center;padding:15px 24px}
+.viking-theme[data-phase=countdown] .game-overlay h2{font:64px monospace;color:#f0e3bf}
+.viking-theme[data-phase=countdown] .game-overlay p{font-size:10px;max-width:220px}
+.viking-theme[data-phase=result] .game-overlay,.viking-theme[data-phase=paused] .game-overlay,.viking-theme[data-phase=confirm] .game-overlay{max-height:calc(100% - 92px);overflow:auto}
+@media(max-width:620px){.viking-theme .game-toolbar{gap:7px;flex-wrap:wrap}.viking-theme .game-toolbar>span:first-child{flex-basis:60%}.viking-theme canvas{aspect-ratio:16/9}.viking-theme .game-overlay{position:relative;inset:auto;width:auto;max-height:none!important;border:0;border-top:1px solid #82795b;border-radius:0;box-shadow:none;min-height:0;padding:22px}.viking-theme[data-phase=countdown] .game-overlay{position:absolute;inset:44% auto auto 50%;width:160px;min-width:160px}.viking-theme .controls-hint{font-size:10px}}

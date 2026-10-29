@@ -8,8 +8,8 @@ test('Viking Dash draws five distinct environments and every event without chang
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Velg ditt neste eventyr.' })).toBeVisible();
   const result = await page.evaluate(async () => {
-    const { createVikingRenderer, environmentNames } = await import('/src/games/viking-scene.js');
-    const { createViking, events } = await import('/src/games/viking.js');
+    const { createVikingRenderer, environmentNames } = await import('/src/games/viking-dash/scene.js');
+    const { createViking, events } = await import('/src/games/viking-dash/index.js');
     const gallery = document.createElement('section'); gallery.id = 'viking-gallery';
     gallery.style.cssText = 'position:relative;background:#182d30;padding:20px;display:grid;grid-template-columns:repeat(2,480px);gap:16px;width:1016px;color:#e8dfc4;font:14px monospace';
     document.body.append(gallery);

@@ -1,3 +1,4 @@
+// Shared seeded randomness and numeric bounds for the game modules.
 export function randomGenerator(seed) {
   let state = 2166136261;
   for (const c of String(seed)) state = Math.imul(state ^ c.charCodeAt(0), 16777619) >>> 0;

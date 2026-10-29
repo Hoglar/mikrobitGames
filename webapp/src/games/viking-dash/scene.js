@@ -1,4 +1,4 @@
-// Pixel-art presentation only. World geometry and random choices belong to viking.js.
+// Viking Dash pixel art. World geometry and random choices belong to index.js.
 // Everything is drawn locally: no fonts, images or network resources are needed.
 const WIDTH = 480, HEIGHT = 270, GROUND = 214, SCALE = WIDTH / 32;
 export const environmentNames = ['Norsk skog', 'Fjord og kyst', 'Fjellandskap', 'Nordlysnatt', 'Mytologisk landskap'];

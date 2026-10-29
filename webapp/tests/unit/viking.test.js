@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createViking } from '../../src/games/viking.js';
+import { createViking } from '../../src/games/viking-dash/index.js';
 
 function advance(game, target, observe = () => {}) {
   while (!game.ended && game.state.distance < target) {

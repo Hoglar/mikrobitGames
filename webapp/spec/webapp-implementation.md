@@ -14,7 +14,7 @@ Ingen Sites-hosting, produksjonspublisering eller ekstern databaseendring inngå
 | `src/app/play.js` | Én spillramme; start, tre sekunders nedtelling, pause, menyer, øving, fornyelse og eierbundet forsøk. |
 | `src/platform/submissions.js` | Minnebaserte lagringsoppføringer; identisk omforsøk, én pågående innsending per ID og kontroll av eier/svar. |
 | `src/app/testlab.js` | Figur, sensorer, tre grafer, outputeditorer, lokal diagnostikk og opptak/eksport. |
-| `src/games/` | Stabilt register, spillmotorer, deterministisk tilfeldig generator og scoreformatering. |
+| `src/games/` | Stabilt register og scoreformatering; hvert spill har egen mappe med `index.js`, og hjelpefunksjoner ligger i `shared/`. |
 | `verification/build.js` | Hele den statiske offentlige pakken, uten kilde-README, tester eller backendfiler. |
 
 Spillmotorenes felles grensesnitt er `tick(seconds)`, `draw(context,width,height)`,
@@ -23,6 +23,11 @@ Spillmotorenes felles grensesnitt er `tick(seconds)`, `draw(context,width,height
 
 Alle ressurser er lokale CSS/Canvas og systemfonter. Ingen CDN eller eksternt
 bilde-/lyd-/fontkall. Det er ingen produktmodus som godtar mock som ekte enhet.
+
+[Spillkodens struktur](../src/games/README.md) samler Viking Dash i `viking-dash/`,
+Snake i `snake/` og de tre mindre spillene i `stars/`, `reaction/` og `balance/`.
+Stjernefangst, Reaksjonsjakt og Balanseløypa har hver sin motor; den tidligere
+samlede `arcade.js` er delt opp. Registeret beholder spillnøkler og katalog-ID-er.
 
 ## Forløp og avklarte valg
 
@@ -41,7 +46,7 @@ bilde-/lyd-/fontkall. Det er ingen produktmodus som godtar mock som ekte enhet.
   første spillversjon. Endring av rekordgrunnlag krever nye ID-er/avtalt versjon.
 - Viking bruker fast fysikksteg på 1/120 sekund. Hindringer kommer konservativt
   med minst 26 virtuelle meter mellom handlinger, også under Ragnarok. Alle fem
-  miljøer og femten hendelser finnes. `viking-scene.js` tegner pixel art i en lokal
+  miljøer og femten hendelser finnes. `viking-dash/scene.js` tegner pixel art i en lokal
   480×270-flate som skaleres uten utjevning: vikinganimasjon, ulike hindervarianter,
   parallaxskog, fjorder med skip/bosetninger, snøfjell, nordlys og norrøne scener.
   Miljøskifter tones over to aktive sekunder. Grafikk og lyd bruker ikke banens RNG.
@@ -49,7 +54,7 @@ bilde-/lyd-/fontkall. Det er ingen produktmodus som godtar mock som ekte enhet.
   og hinderutseende; gamle seeds lover derfor ikke samme bane som i første kode.
   Fart, poengenhet og katalog-ID er beholdt. Komplett fysisk spillbalanse og hele
   spesifikasjonens kontroll av vilkårlige hinderkombinasjoner er ikke verifisert.
-- Viking har valgfri, lav nettleserlyd via `viking-audio.js`, avslått som standard.
+- Viking har valgfri, lav nettleserlyd via `viking-dash/audio.js`, avslått som standard.
   Start/omstart og avslutning rydder lydressurser. Styring og varsler er visuelle.
   Viking sender ingen spillstyrt Micro:bit-output. Snake bruker displaybilder.
 - Uventet frakobling bevarer den logiske spillsesjonen. Eksplisitt fortsett kreves.

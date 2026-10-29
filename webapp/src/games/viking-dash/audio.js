@@ -1,4 +1,4 @@
-// Optional, quiet browser feedback. It never drives the simulation or uses micro:bit output.
+// Viking Dash's optional browser feedback never drives the simulation or uses micro:bit output.
 export function createVikingAudio() {
   let context = null, enabled = false;
   const voices = new Set();
