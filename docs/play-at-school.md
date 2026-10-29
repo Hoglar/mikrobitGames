@@ -11,8 +11,10 @@ Frontend og backend er publisert sammen. Dere trenger ingen Tailscale-konto og i
 5. Opprett en konto og logg inn. Passordet skal ha 12–128 tegn. Velg et spill og start når enheten er klar.
 6. Fullfør en runde. Se etter bekreftet lagring. **Dashboard** viser dine egne forsøk; **Topplister** i hovedmenyen viser rekorder fra alle spillere. På spillsiden følger **Toppliste for valgt variant** den Snake-varianten du har valgt. Øving lagrer ikke resultater.
 
-Micro Snake, Viking Dash, Stjernefangst, Reaksjonsjakt og Balanseløypa er publisert. Snake har seks varianter med separate rekorder. To gamle demospill finnes fortsatt i katalogen; en melding om to katalogoppføringer uten kompatibel modul gjelder disse.
+Micro Snake, Viking Dash rev. 3, Stjernefangst, Reaksjonsjakt, Balanseløypa og Micro Tetris er publisert. Snake har seks varianter med separate rekorder. To gamle demospill finnes fortsatt i katalogen; en melding om to katalogoppføringer uten kompatibel modul gjelder disse.
 
 Hvis siden ikke åpner, prøv [helseendepunktet](https://parrot.tail106c62.ts.net/api/v1/health). `{"status":"ok"}` bekrefter kontakt med backend, men sier ikke at USB eller AI fungerer. Hvis siden åpner og micro:bit ikke blir klar, kontroller firmware, datakabel, valgt enhet og nettleserens tillatelse. Ved sperret USB-tilgang på administrert skole-PC må skolens IT-ansvarlige tillate den.
 
 [Publiseringskontrollen](../results/verification/frontend-publication-2026-10-29.md) dokumenterer hva som er kontrollert. En faktisk fullført runde med fysisk micro:bit fra skolen gjenstår å dokumentere.
+
+[Oppdateringen med Tetris og Viking Dash rev. 3](../results/verification/games-update-publication-2026-10-29.md) er publisert fra `852e43d`. Oppdater siden etter en avsluttet spillrunde for å laste den nye versjonen.

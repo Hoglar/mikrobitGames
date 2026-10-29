@@ -4,3 +4,4 @@ Lagre utvalgte resultater fra integrasjons- og ende-til-ende-tester. Oppgi dato,
 
 - [Frontendpublisering 2026-10-29](frontend-publication-2026-10-29.md): offentlig webbygg, ti registrerte spillvarianter, faktisk frontend-/API-lagring og bekreftet tilgang fra skolen. Fysisk USB-/spillrunde gjenstår.
 - [Topplister, AI-oppslag og Git-rettigheter 2026-10-29](score-visibility-fix-2026-10-29.md): publisert rettelse med målrettede kontroller, bevarte testavvik og gjenopprettet Git-indeks.
+- [Tetris og Viking Dash rev. 3 publisert 2026-10-29](games-update-publication-2026-10-29.md): elleve aktive spillvarianter, kontroll av offentlig webpakke og topplister.
