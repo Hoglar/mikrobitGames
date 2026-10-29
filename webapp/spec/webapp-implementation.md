@@ -4,6 +4,46 @@ Implementert som lokale JavaScript ES-moduler med egen hashrouter og Canvas.
 Dette notatet beskriver den leverte koden; kravdokumentene er fortsatt fasit.
 Ingen Sites-hosting, produksjonspublisering eller ekstern databaseendring inngår.
 
+## Lokalt spill – unntak for utvikling 2026-10-29
+
+`npm run dev` og `npm run preview` gir nå lokal øving for alle spillfamilier uten
+konto, database eller AI. Lokalserveren injiserer en markør i HTML-responsen;
+appen krever også loopback-hostnavn. Byggets faktiske HTML har ingen slik markør,
+så publisert modus beholder sine vanlige start-/sesjons-/katalogkrav.
+
+Lokalmodusen bruker spillregisteret som katalog, ekte Micro:bit-adapter og bare
+øving. Den oppretter ingen konto eller resultatforsøk, køer ingen innsending og
+lagrer ingen runder. Felles spillramme beholder nedtelling, pause, gjenoppkobling,
+restart og output-opprydding, uten session-renew. Konto, topplister og AI skjules
+og avvises også ved direkte ruteåpning. Klientens API-inngang avviser lokalt uten
+fetch, og serverens `/api/` gir 403 uten proxy/database-/AI-forbindelse.
+
+Dette er brukerens avklarte lokale unntak fra de ordinære startkravene; det er
+ingen anonym rangert modus på det publiserte nettstedet. Se
+[valideringen](../results/local-play-validation.md) og [kjøreveiledningen](../README.md#kjør-lokalt-og-bygg).
+
+## Micro Tetris – lokal utvidelse 2026-10-29
+
+Arbeidskopien har nå seks spillfamilier og elleve varianter. Den tidligere
+publiserte ti-variantpakken er dokumentert i [webappens README](../README.md);
+Tetris er foreløpig en lokal utvidelse. [Kodeveiledningen](../src/games/tetris/README.md)
+beskriver ny UUID/katalogkommando, moduler og styring. Profilen er
+`micro-tetris-v1`, med poengenheten `tetris_score_v1`.
+
+Motoren bruker den felles spillrammen med injiserte `session.outputs`, fast
+120 Hz-simulering, seedet 7-bag, SRS, hold, T-spins/Mini og score-/bonusregler.
+Rammen gir seedfelt i øving, Escape-pause, A-restart og to separate lydvalg med
+volum. Nettleserens AudioContext eies av siden gjennom restart og aktiveres i
+Start-/lydhandlingen før asynkrone kall. Hold-visning og en nivåstyrt åttetakters
+Korobeiniki-løkke bruker eksisterende adapterkommandoer med avgrensede køer.
+Valgfri `finishRound()` rydder output også når en operatør avslutter en runde fra
+menyen; pause beholder hold-bildet. Gamle callbacks kan ikke skrive i ny runde.
+
+[Valideringsrapporten](../results/tetris-validation.md) dokumenterer 97 Node-tester
+og 18 appnettlesertester, inkludert 23 + 4 Tetris-tester. CI kjører nå også
+`npm run test:app`. Fysisk display-/speaker-/latensakseptanse og langkjøring,
+samt katalogregistrering og publisering av denne utvidelsen, gjenstår.
+
 ## Ansvar
 
 | Modul | Ansvar |

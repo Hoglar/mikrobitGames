@@ -15,11 +15,18 @@ npm ci
 npm run dev
 ```
 
-Åpne `http://127.0.0.1:4174/`. Lokal forhåndsvisning gir 503 på API-kall;
-Testlab bruker faktisk Web Serial og er tilgjengelig uten backend eller konto.
-Ordinære spill krever innlogging, aktive katalogoppføringer, klar micro:bit og
-vellykket sesjonsfornyelse, også i øving. Ingen falsk produktinnlogging eller
-simulerte sensorer er inkludert.
+Åpne `http://127.0.0.1:4174/`. `dev` og `preview` aktiverer **lokalt spill**:
+alle seks spillfamilier er tilgjengelige som øving uten konto, database eller AI.
+Koble til en fysisk micro:bit V2 og velg Start; input, display og lyd bruker den
+vanlige adapteren. Snake har alle seks modusvariantene. Øvingsseed kan angis for
+Snake, Viking og Tetris. Poeng vises for runden, men lagres ikke og sendes aldri
+til backend. Pause, fortsett, restart og Testlab fungerer lokalt.
+
+Innlogging, registrering, Dashboard, Profil, topplister og AI er deaktivert i
+lokalmodusen. Appen sender ingen API-kall; lokalserveren avviser også direkte
+`/api/`-kall med 403. Det finnes ingen proxy til produksjonsdatabase eller lokal AI.
+Start lokalserveren på nytt og last siden på nytt hvis den allerede kjører med
+eldre kode. Ingen falsk produktinnlogging eller simulerte sensorer er inkludert.
 
 ```sh
 npm run build
@@ -32,15 +39,20 @@ SHA-256-filoversikt. `npm run preview` serverer dette bygget på port 4174.
 Hashruter (`/#/testlab`, `/#/play/snake`, `/#/dashboard`) fungerer ved direkte
 åpning og oppdatering uten SPA-omskriving av API-ruter.
 
+Local-play-markøren settes bare i HTML-responsen fra utviklingsserveren på
+loopback-adressen, ikke i filene i `dist/`. Et publisert bygg beholder derfor
+kravene om innlogging, aktiv backendkatalog, klar micro:bit og sesjonsfornyelse,
+også i øving. Lokalmodus endrer ikke backendens tilgangskontroll.
+
 ## Spill og registrering i backend
 
-Fem spillfamilier følger med: **Micro Snake**, **Viking Dash**, **Stjernefangst**,
-**Reaksjonsjakt** og **Balanseløypa**. Snake har seks separate kombinasjoner av
+Seks spillfamilier følger med i arbeidskopien: **Micro Snake**, **Viking Dash**, **Stjernefangst**,
+**Reaksjonsjakt**, **Balanseløypa** og **Micro Tetris**. Snake har seks separate kombinasjoner av
 Standard/Hurtig/Labyrint og Competitive/Random. Felles ramme eier startkrav,
 Micro:bit-økt, pause/nedtelling, avslutning og resultatlagring; spillmodulene eier
 regler og tegning. Alle bruker adapteren i `src/microbit-input/`.
 
-[Spillregisteret](src/games/registry.js) inneholder ti stabile UUID-er og eksakte
+[Spillregisteret](src/games/registry.js) inneholder elleve stabile UUID-er og eksakte
 resultatregler. Navn er aldri koblingsnøkkel. Ukjente ID-er, inaktive spill eller
 avvikende poengregler kan ikke startes. Dagens backend-demospill blir ikke koblet
 til andre regler. Disse nye oppføringene må registreres av driftsansvarlig:
@@ -56,14 +68,25 @@ Kommandoene kjøres fra repo-roten på backendverten med vedlikeholdsrollens
 kontrolleres databasen før omforsøk. Alle ti variantene i `fdfdbca` er nå registrert;
 ikke kjør de samme `create`-kommandoene på nytt.
 
+Tetris er den ellevte varianten og er implementert lokalt etter denne publiseringen.
+Det krever en ny katalogoppføring og oppdatert frontend før det kan startes på
+det publiserte nettstedet. Lokal øving bruker det innebygde registeret og trenger
+ingen registrering. Den ene nye kommandoen står i [Tetris-veiledningen](src/games/tetris/README.md#catalog-and-deployment).
+
 Snake viser kodet `snake_rank_v1` som «mat · steg» i spillet, Dashboard og
 rekordlistene. Viking bruker meter. Stjernefangst varer 60 sekunder, gir 100 poeng
 per stjerne og trekker 50 ved treff av en hindring. Reaksjonsjakt bruker snittet av
 fem signaler med tillegg for tidlige/feil trykk. Balanseløypa bruker tid gjennom
 seks kontrollpunkter, maksimalt ti minutter; tidsavbrudd er ufullført.
 
+Micro Tetris har SRS-rotasjon, hold, T-spins, combo/B2B/perfect clear og økende
+poengstyrt fart. Vipp flytter, B roterer, A hard-dropper og logo bytter hold.
+Micro:bit viser hold og spiller nivåstyrt musikk; nettleseren spiller separate
+handlingseffekter. Begge lydkanalene har egne valg og volum. Pause/Escape stanser
+lyden. Se [reglene](spec/games/tetris/game-design.md) og [testresultatene](results/tetris-validation.md).
+
 Øving sender ingen resultater. Selvvalgte seeds er lokale innstillinger som
-aldri sendes til resultat-API-et. Snake/Viking følger sine spillspesifikasjoners
+aldri sendes til resultat-API-et. Snake/Viking/Tetris følger sine spillspesifikasjoners
 unntak med direkte restart og lokal øving. Se [implementasjonsnotatet](spec/webapp-implementation.md)
 for valg, ansvar og gjenstående akseptanse.
 
@@ -93,12 +116,18 @@ npm run test:app
 npm run test:browser
 ```
 
-`test:app` bygger automatisk og tester bare `dist/` med kontrollerte API-svar og
-Web Serial. `test:browser` beholder adapterens eksisterende nettlesertester.
+`test:app` bygger automatisk og tester bare `dist/`. De vanlige testene bruker
+kontrollerte API-svar og Web Serial; lokale spilltester bruker ekte lokalmodus
+uten mock-backend og kontrollerer at ingen API-kall sendes. Testserverne bruker
+4175/4176 slik at utviklingsserveren på 4174 kan fortsette å kjøre.
+`test:browser` beholder adapterens eksisterende nettlesertester.
 `npm run benchmark` og `npm run benchmark:input` er de eksisterende Node-målingene.
 Se [verifikasjonsrapport](results/webapp-validation.md) for faktisk dekning og
 begrensninger. Mocktester beviser ikke fysisk USB/tillatelsesdialog, backendens
 eierskapskontroll, spillbalanse eller fysisk latens.
+
+Se også [lokalspill-valideringen](results/local-play-validation.md) for den nye
+øvingstilgangen og sperrene mot database/AI.
 
 Adapterens separate eksempel: `npm run dev:input`, deretter
 `http://127.0.0.1:4173/examples/microbit-input/`.

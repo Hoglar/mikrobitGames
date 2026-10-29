@@ -1,0 +1,11 @@
+.tetris-theme{background:#101522;border-color:#2a364b;color:#dce5f4}
+.tetris-theme .game-toolbar{background:#172235;color:#dce5f4;flex-wrap:wrap;gap:12px}
+.game-frame.tetris-theme canvas{aspect-ratio:3/2;background:#101522}
+.tetris-theme .controls-hint{background:#172235;color:#a0afc5;flex-wrap:wrap}
+.tetris-theme .game-overlay{background:#101522ed;color:#dce5f4}
+.tetris-theme .game-overlay .button.secondary,.tetris-theme .game-toolbar .button.secondary{color:#dce5f4;border-color:#60718c}
+.tetris-audio{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:12px 20px;background:#172235;font-size:12px}
+.tetris-audio label{display:flex;gap:7px;align-items:center}
+.tetris-audio input[type=range]{max-width:95px;accent-color:#d9f0a8}
+.tetris-audio-status{width:100%;color:#a0afc5;font-size:11px}
+@media(max-width:620px){.game-frame.tetris-theme canvas{aspect-ratio:9/17}.tetris-audio{padding:12px}.tetris-theme .game-toolbar{font-size:11px}.tetris-theme .game-overlay{min-height:260px}}

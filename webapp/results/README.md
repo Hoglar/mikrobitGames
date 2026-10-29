@@ -1,5 +1,14 @@
 # Resultater
 
+[Lokalspill-valideringen](local-play-validation.md) beskriver anonym lokal øving
+med faktisk adapter, uten database- eller AI-tilgang. Den bygger videre på
+Tetris-leveransen og tester både lokalmodus og ordinære startkrav.
+
+[Micro Tetris-valideringen](tetris-validation.md) dokumenterer den lokale
+2026-10-29-utvidelsen: 97 Node-tester og 18 appnettlesertester, inkludert 23 + 4
+Tetris-tester. Rapporten skiller softwaredekning fra gjenstående fysisk akseptanse
+og utrulling. Tidligere rapporter nedenfor er historiske kjøringer.
+
 [unit-benchmark.json](unit-benchmark.json) er en faktisk lokal kjøring av regel-/opptaksbenchmarken. Filen inneholder kildehasher og miljø; ikke tolk HEAD alene som den målte kodeversjonen når endringene ikke er committet.
 
 17 enhetstester for regel-/opptaksgrunnlaget bestod lokalt 2026-10-27 med Node 24.22.1/npm 11.19.1. Dette var deldekning av TWEB/TLAB, ikke ferdig produktverifikasjon.

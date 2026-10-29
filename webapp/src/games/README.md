@@ -14,6 +14,14 @@ games/
 │   ├── scene.js
 │   ├── audio.js
 │   └── style.css
+├── tetris/
+│   ├── index.js
+│   ├── rules.js
+│   ├── model.js
+│   ├── scene.js
+│   ├── audio.js
+│   ├── device-output.js
+│   └── style.css
 ├── snake/index.js
 ├── stars/index.js
 ├── reaction/index.js
@@ -26,3 +34,6 @@ det felles grensesnittet beskrevet i [implementasjonsnotatet](../../spec/webapp-
 Spillets CSS ligger også i spillmappen og importeres fra appens stilark.
 Spesifikasjoner ligger under [spec/games](../../spec/games/README.md), og tester
 under `webapp/tests/`.
+
+[Micro Tetris-veiledningen](tetris/README.md) beskriver styring, modulansvar,
+hold-/musikkoutput, katalogregistrering og kjørbare tester.

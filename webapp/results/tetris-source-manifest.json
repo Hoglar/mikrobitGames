@@ -1,0 +1,81 @@
+{
+    "schema_version":  1,
+    "generated_at":  "2026-10-29T15:44:39.2509990Z",
+    "source_base":  "3781f9824a90456763cedb4468810e8bea850137",
+    "working_tree_changes":  true,
+    "rule_profile":  "micro-tetris-v1",
+    "environment":  {
+                        "os":  "Windows x64",
+                        "node":  "24.22.1",
+                        "npm":  "11.19.1",
+                        "playwright":  "1.64.1",
+                        "chromium":  "156.0.8078.4",
+                        "chromium_revision":  "1248"
+                    },
+    "files":  [
+                  {
+                      "path":  ".github/workflows/webapp-input.yml",
+                      "sha256":  "192341d0047834f4259a1feaf2b180bf9152b97c862827714013d06a7b351f22"
+                  },
+                  {
+                      "path":  "webapp/src/app/pages.js",
+                      "sha256":  "0a2ab54f12d858f25573709600e8ade34ce629774aeaa22153eb5d3b8497c4be"
+                  },
+                  {
+                      "path":  "webapp/src/app/play.js",
+                      "sha256":  "3f0b722440378b4ba9175c7000202ecc7ffca38e9deb381ef48900f4c9119553"
+                  },
+                  {
+                      "path":  "webapp/src/app/style.css",
+                      "sha256":  "225adebeb4740d32abf2e50ec42180c198719c306ae6b092d407d071a137d568"
+                  },
+                  {
+                      "path":  "webapp/src/games/registry.js",
+                      "sha256":  "40c7642a07bba4da06e86313d231213c866496c9bc77254f2e5b4a0ae749dd92"
+                  },
+                  {
+                      "path":  "webapp/src/games/tetris/audio.js",
+                      "sha256":  "350533c2aa5e63800a3ebced78c93037033c05d6df8f561963926338be9f9108"
+                  },
+                  {
+                      "path":  "webapp/src/games/tetris/device-output.js",
+                      "sha256":  "ec5a73a731e69fedbe926e5ce29867bca4c80192f7d1bf89b63b4e357074b155"
+                  },
+                  {
+                      "path":  "webapp/src/games/tetris/index.js",
+                      "sha256":  "86102824fafcddf65e82f5d14019c9178574598380a8fbd1c1903c5db06eaf3b"
+                  },
+                  {
+                      "path":  "webapp/src/games/tetris/model.js",
+                      "sha256":  "fb81c7b7238d34fd67a2aadf840aaffe4a61dfb95851c2f85ba59debdc5d4de3"
+                  },
+                  {
+                      "path":  "webapp/src/games/tetris/rules.js",
+                      "sha256":  "b27e4045c97ea52751aa4effcaaf39bc4b189343a2fd712cca30d74e3e00b720"
+                  },
+                  {
+                      "path":  "webapp/src/games/tetris/scene.js",
+                      "sha256":  "6527c19a50b2a01e8ebd4da3919a5d633b340acbaafea9978f64cfce5938d937"
+                  },
+                  {
+                      "path":  "webapp/src/games/tetris/style.css",
+                      "sha256":  "43c34fbbe470192f51123b21987d673ef862d9ab468b45fc08aae00deb891719"
+                  },
+                  {
+                      "path":  "webapp/tests/app/browser/app.spec.js",
+                      "sha256":  "ffdf937e2456a28944bca6d94fa518c053b7c038369f8a6669f24becce2b3160"
+                  },
+                  {
+                      "path":  "webapp/tests/app/browser/tetris.spec.js",
+                      "sha256":  "67a51e79b970c7c8f31f6e75f1e39fad579584fa913b056f259c24082bf60feb"
+                  },
+                  {
+                      "path":  "webapp/tests/unit/tetris.test.js",
+                      "sha256":  "59bc48d9d95be9c7d17fbfc290dd201ad51335c88adf010c299371c6a69ee149"
+                  },
+                  {
+                      "path":  "webapp/tests/unit/tetris-output.test.js",
+                      "sha256":  "60d75394b7d19116bc42f86bad547b4036fca1e538c8f4f88612df6ded095656"
+                  }
+              ]
+}

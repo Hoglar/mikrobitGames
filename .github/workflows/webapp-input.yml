@@ -23,6 +23,7 @@ jobs:
       - run: npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
+      - run: npm run test:app
       - run: npm run benchmark:input
       - uses: actions/upload-artifact@v4
         if: always()
@@ -30,5 +31,6 @@ jobs:
           name: webapp-input-verification
           path: |
             webapp/build/browser-results/
+            webapp/build/app-browser-results/
             webapp/results/input-benchmark.json
             webapp/results/input-browser-benchmark.json
