@@ -1,5 +1,7 @@
 # Viking Dash – spesifikasjon
 
+**Implementasjon 2026-10-29:** Kode er levert i webappen. Se [implementasjonsnotatet](../../webapp-implementation.md) og [verifikasjonsrapporten](../../../results/webapp-validation.md). Statuslinjen nedenfor beskriver spesifikasjonens opprinnelige baseline; full produkt-/maskinvareakseptanse gjenstår.
+
 **Status:** Avklart funksjonelt omfang og foreslått design, 2026-10-28. Ingen implementasjon eller målinger foreligger.
 
 ## Formål og grensesnitt

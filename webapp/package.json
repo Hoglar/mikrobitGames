@@ -12,7 +12,13 @@
     "test:browser": "playwright test",
     "dev:input": "node verification/serve-input.js",
     "benchmark": "node verification/benchmark.js",
-    "benchmark:input": "node verification/benchmark-input.js"
+    "benchmark:input": "node verification/benchmark-input.js",
+    "dev": "node verification/serve-app.js",
+    "build": "node verification/build.js",
+    "preview": "node verification/serve-app.js --dist",
+    "catalog:commands": "node verification/catalog-commands.mjs",
+    "test:app": "playwright test --config playwright.app.config.js",
+    "pretest:app": "npm run build"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1"

@@ -5,7 +5,7 @@ export function canStartGame({ player, game, moduleRegistered, input, renewed })
 }
 
 export function requiresSession(route) {
-  return !['launcher', 'testlab', 'login', 'register'].includes(route);
+  return !['launcher', 'testlab', 'login', 'register', 'leaderboard', 'history'].includes(route);
 }
 
 export function shouldRenew({ active, visible, hasUserInput, elapsedMs }) {

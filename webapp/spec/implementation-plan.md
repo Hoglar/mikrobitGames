@@ -1,5 +1,13 @@
 # Implementasjonsplan for webapplikasjonen
 
+**Oppdatert 2026-10-29:** Frontend, felles spillramme, fem spillfamilier, Testlab,
+API 0.3.0-klient og statisk bygg er implementert. Se
+[implementasjonsnotatet](webapp-implementation.md) og
+[verifikasjonsrapporten](../results/webapp-validation.md) for faktisk status,
+arkitekturvalg og gjenstående katalog-/backend-/maskinvareakseptanse.
+Planen og dekningsoversikten nedenfor er beholdt som **baseline fra 2026-10-28**;
+beskrivelser av manglende frontend gjelder denne tidligere baselinen.
+
 Dato: 2026-10-28. Planen omfatter hele webappen. Regel-/opptaksgrunnlaget og det serielle adapterbiblioteket med lokalt tospillseksempel er implementert. Full frontend og backendintegrasjon gjenstår. Adapterens kjørte kontroller og gjenstående fysiske verifikasjon står i [valideringsrapporten](../results/game-input-validation.md).
 
 ## Styrende grunnlag

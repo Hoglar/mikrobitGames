@@ -1,30 +1,104 @@
-# Webapp
+# bit:arcade – Webapp
 
-**[Implementasjonsplan for hele websiden](spec/implementation-plan.md)** – arkitektur, leveranserekkefølge, tester og benchmarks.
+Statisk spillplattform for micro:bit V2, med felles spillramme, spillvelger, Testlab,
+innlogging/registrering, privat Dashboard, Profil, offentlige topplister og AI-chat.
+JavaScript ES-moduler og Canvas; ingen eksterne ressurser eller runtimepakker.
 
-Spill, launcher, dashboard, felles Web Serial-adapter og kommunikasjon med backend.
+## Kjør lokalt og bygg
 
-Kontrakter: [Micro:bit–webapp](../spec/contracts/microbit-webapp/README.md) og [webapp–backend](../spec/contracts/webapp-backend/README.md).
+Node **24.22.1**, npm **11.19.1** og låst Playwright **1.64.1**:
 
-Frontendutviklere: bruk den samordnede [API-guiden](../spec/contracts/webapp-backend/contract.md) og [OpenAPI 0.2.0](../spec/contracts/webapp-backend/openapi.yaml) for innlogging, spilldata, private forsøk, offentlige rekorder og AI-spørsmål. Se [konflikter og beslutninger](../spec/contracts/webapp-backend/alignment.md). Godkjenningen av 0.1.0 gjaldt den tidligere revisjonen.
+```sh
+npm ci
+npm run dev
+```
 
-- [spec/](spec/README.md): krav, modeller og testplan.
-- [tests/](tests/README.md): lokale tester.
-- [verification/](verification/README.md): verifikasjonsverktøy.
-- [results/](results/README.md): dokumenterte resultater.
+Åpne `http://127.0.0.1:4174/`. Lokal forhåndsvisning gir 503 på API-kall;
+Testlab bruker faktisk Web Serial og er tilgjengelig uten backend eller konto.
+Ordinære spill krever innlogging, aktive katalogoppføringer, klar micro:bit og
+vellykket sesjonsfornyelse, også i øving. Ingen falsk produktinnlogging eller
+simulerte sensorer er inkludert.
 
-## Felles Micro:bit-bibliotek
+```sh
+npm run build
+npm run preview
+```
 
-[Implementeringsplanen](spec/game-input-implementation-plan.md) beskriver et lokalt JavaScript-bibliotek med ES-moduler for Micro:bit V2. Biblioteket skal eie Web Serial-forbindelsen og tilby det samme input-/output-grensesnittet til alle spill, uten avhengighet til et bestemt frontendrammeverk eller backend.
+`dist/` er hele den offentlige leveransen: HTML, CSS, alle spill, Testlab og det
+felles Micro:bit-biblioteket. Bygget rydder bare generert `dist/` og skriver en
+SHA-256-filoversikt. `npm run preview` serverer dette bygget på port 4174.
+Hashruter (`/#/testlab`, `/#/play/snake`, `/#/dashboard`) fungerer ved direkte
+åpning og oppdatering uten SPA-omskriving av API-ruter.
 
-Planen dekker modulansvar, tilkobling og gjenoppretting, meldingsvalidering, input-hendelser, kommandoer, spillbytte og trinnvise leveranser med testkriterier. Spillplattformen har fortsatt ansvar for pause/gjenopptakelse, poeng og lagring av resultater. Se også [utviklergrensesnittet](../spec/contracts/microbit-webapp/web-page-developer-interface.md) og [testplanen](spec/game-input-test-plan.md).
+## Spill og registrering i backend
 
-Adapterbiblioteket og et lokalt eksempel med to små spill er implementert. Se [bibliotekets brukerveiledning](src/microbit-input/README.md) og [valideringsrapporten](results/game-input-validation.md). Plattformregler og Testlab-opptak er også etablert; full frontend og backendintegrasjon gjenstår.
+Fem spillfamilier følger med: **Micro Snake**, **Viking Dash**, **Stjernefangst**,
+**Reaksjonsjakt** og **Balanseløypa**. Snake har seks separate kombinasjoner av
+Standard/Hurtig/Labyrint og Competitive/Random. Felles ramme eier startkrav,
+Micro:bit-økt, pause/nedtelling, avslutning og resultatlagring; spillmodulene eier
+regler og tegning. Alle bruker adapteren i `src/microbit-input/`.
 
-Fra `webapp/`, med Node 24.22.1 og npm 11.19.1: `npm ci`, `npm test`, `npm run benchmark` og `npm run benchmark:input`. Programvaretestene trenger ingen fysisk enhet. Playwright 1.64.1 er en låst utviklingsavhengighet; biblioteket har ingen kjøretidsavhengigheter. Installer Chromium med `npx playwright install chromium`, og kjør `npm run test:browser` for nettlesermock og browser-benchmark. Rapporter lagres under `results/`.
+[Spillregisteret](src/games/registry.js) inneholder ti stabile UUID-er og eksakte
+resultatregler. Navn er aldri koblingsnøkkel. Ukjente ID-er, inaktive spill eller
+avvikende poengregler kan ikke startes. Dagens backend-demospill blir ikke koblet
+til andre regler. Disse nye oppføringene må registreres av driftsansvarlig:
 
-`npm run dev:input` starter eksemplet på `http://127.0.0.1:4173/examples/microbit-input/`. Det bruker ekte Web Serial ved vanlig kjøring; automatiske nettlesertester erstatter bare nettleserens serial-API. Spillene deler ett input-/output-grensesnitt og venter på spillerens fortsettvalg etter inputbrudd. Reelle USB-/tillatelseskontroller og instrumentert fysisk latens er ikke verifisert. Se [felles prosjektstruktur](../docs/project-structure.md).
+```sh
+npm run catalog:commands
+```
 
-## Leveranse til hjemmeserveren
+Dette **skriver bare kommandoene** for eksisterende
+`backend/database/manage-game.py`; det kontakter ikke serveren eller databasen.
+Kommandoene kjøres fra repo-roten på backendverten med vedlikeholdsrollens
+`MBG_ADMIN_DSN`. Kontroller eksisterende spill før kjøring; ved ukjent utfall
+kontrolleres databasen før omforsøk. Registrering og publisering er ikke utført.
 
-Frontend og alle spill skal bygges som én [samlet webpakke](spec/Komponentspesifikasjon_webapplikasjon_forklart.md#samlet-webpakke). Planlagt byggegrensesnitt er `npm ci` og `npm run build` fra `webapp/`, med hele leveransen i `webapp/dist/`. Byggekommandoen etableres ved implementering. Backend-/driftsgruppen publiserer pakken gjennom Caddy på Parrot; nettleseren henter frontend, spill og ressurser fra samme adresse som API-et. Se [publiseringsplanen](../backend/spec/implementation-plan.md#publisering-av-webpakken).
+Snake viser kodet `snake_rank_v1` som «mat · steg» i spillet, Dashboard og
+rekordlistene. Viking bruker meter. Stjernefangst varer 60 sekunder, gir 100 poeng
+per stjerne og trekker 50 ved treff av en hindring. Reaksjonsjakt bruker snittet av
+fem signaler med tillegg for tidlige/feil trykk. Balanseløypa bruker tid gjennom
+seks kontrollpunkter, maksimalt ti minutter; tidsavbrudd er ufullført.
+
+Øving sender ingen resultater. Selvvalgte seeds er lokale innstillinger som
+aldri sendes til resultat-API-et. Snake/Viking følger sine spillspesifikasjoners
+unntak med direkte restart og lokal øving. Se [implementasjonsnotatet](spec/webapp-implementation.md)
+for valg, ansvar og gjenstående akseptanse.
+
+## Backend og publisering
+
+Bruk [API 0.3.0](../spec/contracts/webapp-backend/contract.md),
+[OpenAPI](../spec/contracts/webapp-backend/openapi.yaml) og
+[backendens quickstart](../spec/contracts/webapp-backend/quickstart.md).
+Alle kall bruker relativ `/api/v1`, cookie, JSON og avtalt CSRF-header.
+AI følger 0.3.0 med serverstyrt samtaleminne og «Ny samtale».
+
+Backend-/driftsgruppen publiserer hele `dist/` via eksisterende
+[publiseringsskript](../backend/ops/runtime/README.md#4-publiser-frontendpakken)
+på samme HTTPS-adresse som API-et. Ingen utviklingsserver trengs i drift.
+Ikke bruk lokal proxy som omskriver Origin eller fjerner cookieflagg.
+
+Resultater beholder opprinnelig eier og forsøks-ID gjennom omforsøk. Ubekreftede
+forsøk er bare i minnet og kan gå tapt ved lukking/oppdatering. Passord og tokens
+lagres ikke i localStorage. Kontosletting krever bekreftelse og gjeldende passord.
+
+## Verifikasjon
+
+```sh
+npm test
+npx playwright install chromium
+npm run test:app
+npm run test:browser
+```
+
+`test:app` bygger automatisk og tester bare `dist/` med kontrollerte API-svar og
+Web Serial. `test:browser` beholder adapterens eksisterende nettlesertester.
+`npm run benchmark` og `npm run benchmark:input` er de eksisterende Node-målingene.
+Se [verifikasjonsrapport](results/webapp-validation.md) for faktisk dekning og
+begrensninger. Mocktester beviser ikke fysisk USB/tillatelsesdialog, backendens
+eierskapskontroll, spillbalanse eller fysisk latens.
+
+Adapterens separate eksempel: `npm run dev:input`, deretter
+`http://127.0.0.1:4173/examples/microbit-input/`.
+Se [adapterveiledningen](src/microbit-input/README.md),
+[komponentspesifikasjonen](spec/Komponentspesifikasjon_webapplikasjon_forklart.md)
+og [Testlab-spesifikasjonen](spec/games/microbit-testlab/specification.md).

@@ -1,10 +1,10 @@
 {
-  "recordedAt": "2026-10-28T16:06:51.445Z",
+  "recordedAt": "2026-10-29T12:14:31.187Z",
   "browser": "156.0.8078.4",
   "playwright": "1.64.1",
-  "platform": "win32",
-  "release": "10.0.26200",
-  "fixtureSha256": "3a1c3cbc695f4e83be937e667c97dfbc4111eb82e2b21f246cad0fe85da5229a",
+  "platform": "darwin",
+  "release": "27.0.0",
+  "fixtureSha256": "6c1112bb4a20eeb1c3f9f55e29e04487fc1b05427f7a8485eeb82dbbe9bf2f32",
   "measurements": [
     {
       "rateHz": 50,
@@ -12,13 +12,13 @@
       "logicalDurationSeconds": 300,
       "snapshots": 15000,
       "callbacks": 15000,
-      "elapsedMs": 244.90000000037253,
-      "messagesPerSecond": 61249.4895874936,
+      "elapsedMs": 210.60000000009313,
+      "messagesPerSecond": 71225.07122503973,
       "propagationMs": {
         "p50": 0,
-        "p95": 0.09999999962747097,
-        "p99": 0.10000000149011612,
-        "max": 0.8000000007450581
+        "p95": 0.09999999986030161,
+        "p99": 0.10000000009313226,
+        "max": 0.8000000000465661
       }
     },
     {
@@ -27,13 +27,13 @@
       "logicalDurationSeconds": 300,
       "snapshots": 15000,
       "callbacks": 60000,
-      "elapsedMs": 280.09999999962747,
-      "messagesPerSecond": 53552.30274908944,
+      "elapsedMs": 223.19999999995343,
+      "messagesPerSecond": 67204.30107528284,
       "propagationMs": {
         "p50": 0,
-        "p95": 0.09999999962747097,
-        "p99": 0.10000000149011612,
-        "max": 1.300000000745058
+        "p95": 0.09999999986030161,
+        "p99": 0.10000000009313226,
+        "max": 1
       }
     },
     {
@@ -42,13 +42,13 @@
       "logicalDurationSeconds": 300,
       "snapshots": 150000,
       "callbacks": 150000,
-      "elapsedMs": 3030.2999999988824,
-      "messagesPerSecond": 49500.049500067755,
+      "elapsedMs": 1957.8000000000466,
+      "messagesPerSecond": 76616.61048115049,
       "propagationMs": {
         "p50": 0,
-        "p95": 0.09999999962747097,
-        "p99": 0.10000000149011612,
-        "max": 8.400000000372529
+        "p95": 0.09999999986030161,
+        "p99": 0.10000000009313226,
+        "max": 7.800000000046566
       }
     },
     {
@@ -57,13 +57,13 @@
       "logicalDurationSeconds": 300,
       "snapshots": 150000,
       "callbacks": 600000,
-      "elapsedMs": 2044.199999999255,
-      "messagesPerSecond": 73378.33871443826,
+      "elapsedMs": 2014.6999999999534,
+      "messagesPerSecond": 74452.77212488384,
       "propagationMs": {
         "p50": 0,
-        "p95": 0.09999999962747097,
-        "p99": 0.10000000149011612,
-        "max": 7.400000000372529
+        "p95": 0.09999999986030161,
+        "p99": 0.10000000009313226,
+        "max": 2.8999999999068677
       }
     }
   ],

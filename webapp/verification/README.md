@@ -11,3 +11,14 @@ Rapporten inneholder miljø, kildehasher, metode, prøveantall, CPU-tid, through
 Replay med akselerert logisk tid er ikke en faktisk femminutters USB-soak. Reelle tillatelsesdialoger, hardware-roundtrip, kontinuerlig heap-/stack-topp og fysisk knapp/tilt til spillcallback er fortsatt umålt. Manuell timing kan ikke etablere fysisk latens-PASS. Se [valideringsrapporten](../results/game-input-validation.md) og [planen](../spec/implementation-plan.md).
 
 Sett eventuelt `INPUT_BENCHMARK_REPORT` eller `INPUT_BROWSER_BENCHMARK_REPORT` til en annen filsti før kjøring for å bevare tidligere rapporter. Relative stier tolkes fra arbeidsmappen (`webapp/` ved npm-kommandoene). [Sensoroppfølgingen](../results/input-sensor-follow-up.md) bruker separate rapporter etter endringen av ristklassifikatoren.
+
+## Webapp og samlet leveranse
+
+- `npm run dev`: lokal kildeforhåndsvisning, port 4174.
+- `npm run build`: rydder generert `dist/`, kopierer hele den offentlige appen og skriver SHA-256-manifest.
+- `npm run preview`: serverer bare `dist/`, port 4174.
+- `npm run test:app`: bygger og tester den statiske pakken med mockede eksterne grensesnitt.
+- `npm run catalog:commands`: skriver backendens registreringskommandoer uten å kjøre dem.
+
+Lokal server videresender ingen cookies til produksjon og omskriver ikke Origin.
+Faktisk innlogging testes ved at bygget serveres fra samme HTTPS-origin som API-et.

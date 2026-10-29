@@ -1,0 +1,2 @@
+import { defineConfig } from '@playwright/test';
+export default defineConfig({testDir:'./tests/app/browser',timeout:25000,fullyParallel:true,workers:2,use:{baseURL:'http://127.0.0.1:4174',headless:true,trace:'retain-on-failure'},outputDir:'build/app-browser-results',reporter:[['list']],webServer:{command:`"${process.execPath}" verification/serve-app.js --dist`,url:'http://127.0.0.1:4174',reuseExistingServer:!process.env.CI}});
