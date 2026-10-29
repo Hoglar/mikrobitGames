@@ -10,15 +10,29 @@ export async function gamePage({root,ctx,parts,view}) {
  const notice=el('div',{'aria-live':'polite'}),canvas=el('canvas',{width:960,height:key==='snake'?660:540,'aria-label':family.title+' spillflate'}),score=el('span',{},'Klar for en ny runde'),phaseLabel=el('span',{},'KLAR'),overlay=el('div',{class:'game-overlay'}),frame=el('section',{class:'game-frame'},el('div',{class:'game-toolbar'},score,phaseLabel,button('Pause',()=>pause('Spillet er satt på pause.'),'button secondary')),canvas,overlay,el('div',{class:'controls-hint'},key==='snake'?el('span',{},el('b',{class:'key'},'A'),' venstre · ',el('b',{class:'key'},'B'),' høyre · ',el('b',{class:'key'},'LOGO'),' pause'):key==='viking'?el('span',{},el('b',{class:'key'},'A'),' hopp · Hold ',el('b',{class:'key'},'B'),' for å dukke'):key==='reaction'?el('span',{},el('b',{class:'key'},'A / B'),' følg signalet'):el('span',{},el('b',{class:'key'},'VIPP'),' styr i alle retninger')));
  root.append(notice,frame,el('div',{class:'toolbar'},link('← Spillvelgeren','#/','text-button'),link('Mine resultater','#/dashboard','text-button')));
  let alive=true,session=null,engine=null,phase='ready',countdown=3,attempt=null,ranked=true,round=0,selectedIndex=0,chordArmed=false,previousButtons={a:false,b:false},menuAction=null,menuIndex=0,lastInput=0,lastRenew=performance.now(),renewing=false,lastFrame=performance.now(),raf,personalRecord=null;
+ let soundEnabled=false;
  let selected=games.find(g=>g.key===key),remote=null,catalogReady=false;
- const factory=await loadGame(key);engine=await factory({config:selected.config,seed:'preview'});if(!view.active)return;engine.draw(canvas.getContext('2d'),960,canvas.height);
+ const factory=await loadGame(key);engine=await factory({config:selected.config,seed:'preview'});if(!view.active){engine.dispose?.();return;}engine.draw(canvas.getContext('2d'),960,canvas.height);
+ if(key==='viking'){
+  frame.classList.add('viking-theme');frame.dataset.phase='ready';
+  const sound=button('Lyd: av',()=>{soundEnabled=engine.setSoundEnabled?.(!soundEnabled)??false;sound.textContent=soundEnabled?'Lyd: på':'Lyd: av';sound.setAttribute('aria-pressed',String(soundEnabled));},'button secondary viking-sound');
+  sound.setAttribute('aria-pressed','false');frame.querySelector('.game-toolbar').insertBefore(sound,frame.querySelector('.game-toolbar').lastElementChild);
+ }
  const choice=el('select',{'aria-label':'Spillmodus'},games.filter(g=>g.key===key).map(g=>el('option',{value:g.id},key==='snake'?g.name.replace('Micro Snake · ',''):g.name)));
  const practice=el('select',{'aria-label':'Rangert eller øving'},el('option',{value:'ranked'},'Rangert · lagres på kontoen'),el('option',{value:'practice'},'Øving · bare lokalt'));
  const seed=el('input',{placeholder:'Valgfri seed for øving',maxlength:100,'aria-label':'Seed for øving'});seed.disabled=true;
  practice.onchange=()=>{seed.disabled=practice.value!=='practice';};
  choice.onchange=()=>{selected=games.find(g=>g.id===choice.value);remote=ctx.catalog.find(g=>g.id===selected.id);personalRecord=null;refreshReady();void fetchRecord();};
  let startButton;
- function showReady(){phase='ready';document.body.classList.remove('playing');startButton=button('Start spill →',()=>{void start().catch(report);},'button light');overlay.hidden=false;overlay.replaceChildren(el('h2',{},'Din neste rekord?'),el('p',{},key==='snake'?'A/B velger modus. A+B starter. A svinger venstre, B svinger høyre. Logo åpner pausemenyen.':key==='viking'?'Løp gjennom norsk natur. Trykk A for et hopp, hold B for å dukke.':'Koble til micro:bit og gjør deg klar.'),key==='snake'?choice:null,practice,key==='viking'||key==='snake'?seed:null,startButton,el('p',{id:'start-requirements'},'Kontrollerer spillkatalog …'));refreshReady();}
+ function showReady(){
+  phase='ready';document.body.classList.remove('playing');startButton=button('Start spill →',()=>{void start().catch(report);},'button light');overlay.hidden=false;
+  overlay.replaceChildren(...[
+   el('h2',{},key==='viking'?'En ny ferd venter.':'Din neste rekord?'),
+   el('p',{},key==='snake'?'A/B velger modus. A+B starter. A svinger venstre, B svinger høyre. Logo åpner pausemenyen.':key==='viking'?'Løp gjennom norsk natur. Trykk A for et hopp, hold B for å dukke.':'Koble til micro:bit og gjør deg klar.'),
+   key==='snake'?choice:null,practice,key==='viking'||key==='snake'?seed:null,startButton,
+   el('p',{id:'start-requirements'},'Kontrollerer spillkatalog …')
+  ].filter(child=>child!=null));refreshReady();
+ }
  function refreshReady(){if(phase!=='ready')return;remote=ctx.catalog.find(g=>g.id===selected.id);const ready=ctx.microbit.getState().inputAvailable;startButton.disabled=!catalogReady||!remote?.is_active||!registeredGame(remote)||!ready||!ctx.session;const reason=!catalogReady?'Kontrollerer spillkatalog …':!remote?'Spillet følger med i webpakken, men er ikke registrert i backend ennå.':!registeredGame(remote)?'Spillreglene i katalogen samsvarer ikke med denne versjonen.':!remote.is_active?'Spillet er deaktivert.':!ready?'Koble til en micro:bit V2 for å starte.':`Klar. ${personalRecord===null?'Personlig rekord utilgjengelig.':personalRecord==='none'?'Ingen personlig rekord ennå.':`Personlig rekord: ${formatScore(remote,personalRecord)}`}`;overlay.querySelector('#start-requirements').textContent=reason;}
  async function fetchRecord(){const id=selected.id;try{const data=(await ctx.api(`/players/${ctx.session.player.id}/records?page=0&page_size=100`)).data;if(alive&&id===selected.id){personalRecord=data.items.find(x=>x.game.id===id)?.record.value??'none';refreshReady();}}catch{}}
  function report(e){if(alive)notice.replaceChildren(errorBox(e.message));}
@@ -49,7 +63,7 @@ export async function gamePage({root,ctx,parts,view}) {
    await ctx.api('/auth/renew',{method:'POST'});if(!alive)return;if(ctx.session?.player.id!==owner||!ctx.microbit.getState().inputAvailable)throw new Error('Konto eller tilkobling ble endret før start.');
    if(session){const old=session;session=null;await old.dispose();}ensureSession();
    ranked=practice.value==='ranked';const roundSeed=ranked?crypto.randomUUID():seed.value.trim().normalize('NFC')||crypto.randomUUID();
-   engine=await factory({config:selected.config,seed:roundSeed});if(!alive)return;
+   engine.dispose?.();engine=await factory({config:selected.config,seed:roundSeed});if(!alive){engine.dispose?.();return;}if(soundEnabled)engine.setSoundEnabled?.(true);
    attempt=createAttempt({playerId:owner,game:remote,attemptId:crypto.randomUUID()});round++;lastRenew=performance.now();lastInput=lastRenew;chordArmed=false;previousButtons={a:false,b:false};
    if(key==='snake')void session.outputs.display.clear().catch(report);
    beginCountdown();notice.replaceChildren();
@@ -97,7 +111,7 @@ export async function gamePage({root,ctx,parts,view}) {
   if(dt>.25&&['playing','countdown'].includes(phase))pause('Spillet ble satt på pause etter et opphold i nettleseren.');
   if(phase==='countdown'&&dt<=.25){countdown-=dt;overlay.querySelector('h2').textContent=String(Math.max(1,Math.ceil(countdown)));if(countdown<=0){phase='playing';overlay.hidden=true;engine.releaseControls?.();}}
   if(phase==='playing'&&dt<=.25){if(!ctx.microbit.getState().inputAvailable)pause('Input er utilgjengelig.');else{engine.tick(dt);if(engine.ended)finish(engine.completed===false?'incomplete':'completed');}}
-  engine.draw(canvas.getContext('2d'),960,canvas.height);score.textContent=engine.label;phaseLabel.textContent={ready:'KLAR',playing:'SPILLER',countdown:'NEDTELLING',paused:'PAUSE',confirm:'BEKREFT',result:'RESULTAT',starting:'FORBEREDER'}[phase]??phase;
+  frame.dataset.phase=phase;engine.draw(canvas.getContext('2d'),960,canvas.height);score.textContent=engine.label;phaseLabel.textContent={ready:'KLAR',playing:'SPILLER',countdown:'NEDTELLING',paused:'PAUSE',confirm:'BEKREFT',result:'RESULTAT',starting:'FORBEREDER'}[phase]??phase;
   raf=requestAnimationFrame(draw);
  }
  showReady();raf=requestAnimationFrame(draw);
@@ -105,6 +119,6 @@ export async function gamePage({root,ctx,parts,view}) {
   if(shouldRenew({active:phase==='playing',visible:!document.hidden,hasUserInput:performance.now()-lastInput<300000,elapsedMs:performance.now()-lastRenew})&&!renewing){renewing=true;ctx.api('/auth/renew',{method:'POST'}).then(()=>{lastRenew=performance.now();},e=>{if(e.status===401)ctx.setSession(null);pause('Sesjonen kunne ikke fornyes. Runden er beholdt.');report(e);}).finally(()=>{renewing=false;});}
  },150);
  view.canLeave=()=>!['playing','countdown','paused','confirm','starting'].includes(phase)||confirm('Avslutte runden og gå videre? Et startet rangert forsøk lagres som ufullført.');
- view.dispose=async()=>{if(!alive)return;if(['playing','countdown','paused','confirm'].includes(phase))finish('incomplete');alive=false;round++;phase='closed';cancelAnimationFrame(raf);clearInterval(poll);document.removeEventListener('visibilitychange',visibility);document.body.classList.remove('playing');const old=session;session=null;if(old)await old.dispose();};
+ view.dispose=async()=>{if(!alive)return;if(['playing','countdown','paused','confirm'].includes(phase))finish('incomplete');alive=false;round++;phase='closed';cancelAnimationFrame(raf);clearInterval(poll);document.removeEventListener('visibilitychange',visibility);document.body.classList.remove('playing');engine.dispose?.();const old=session;session=null;if(old)await old.dispose();};
  try{await getCatalog(ctx);if(!alive)return;catalogReady=true;refreshReady();void fetchRecord();}catch(e){if(alive){catalogReady=true;refreshReady();report(e);}}
 }

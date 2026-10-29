@@ -41,9 +41,16 @@ bilde-/lyd-/fontkall. Det er ingen produktmodus som godtar mock som ekte enhet.
   første spillversjon. Endring av rekordgrunnlag krever nye ID-er/avtalt versjon.
 - Viking bruker fast fysikksteg på 1/120 sekund. Hindringer kommer konservativt
   med minst 26 virtuelle meter mellom handlinger, også under Ragnarok. Alle fem
-  miljøer og femten hendelser finnes; grafikken er Canvas-pikselformer og enkle
-  bakgrunnseffekter. Komplett fysisk spillbalanse er ikke verifisert.
-- Valgfri nettleserlyd er utelatt i første leveranse; styring og varsler er visuelle.
+  miljøer og femten hendelser finnes. `viking-scene.js` tegner pixel art i en lokal
+  480×270-flate som skaleres uten utjevning: vikinganimasjon, ulike hindervarianter,
+  parallaxskog, fjorder med skip/bosetninger, snøfjell, nordlys og norrøne scener.
+  Miljøskifter tones over to aktive sekunder. Grafikk og lyd bruker ikke banens RNG.
+  Seedversjonen er `viking-v2`, med separate strømmer for bane, miljø, hendelser
+  og hinderutseende; gamle seeds lover derfor ikke samme bane som i første kode.
+  Fart, poengenhet og katalog-ID er beholdt. Komplett fysisk spillbalanse og hele
+  spesifikasjonens kontroll av vilkårlige hinderkombinasjoner er ikke verifisert.
+- Viking har valgfri, lav nettleserlyd via `viking-audio.js`, avslått som standard.
+  Start/omstart og avslutning rydder lydressurser. Styring og varsler er visuelle.
   Viking sender ingen spillstyrt Micro:bit-output. Snake bruker displaybilder.
 - Uventet frakobling bevarer den logiske spillsesjonen. Eksplisitt fortsett kreves.
   Faneskygging eller framegap over 250 ms pauser fremfor usett catch-up.
@@ -51,6 +58,13 @@ bilde-/lyd-/fontkall. Det er ingen produktmodus som godtar mock som ekte enhet.
   Ferdige forsøk kan også lagres fra Dashboard etter ny innlogging.
 - Sene lagringssvar kan oppdatere gammel lagringsstatus, men gir ingen displayeffekt
   i en nyere runde. Dispose avventes ved side-/spillbytte.
+
+Vikings revisjon kontrolleres med `tests/unit/viking.test.js` og
+`tests/app/browser/viking.spec.js`: hoppbuffer, B-prioritet, seed-gjentakbarhet,
+progresjonsgrenser, miljøoverganger, alle femten hendelser, tegning uten endring av
+spilltilstand, lydvalg og pause. Nettlesertesten lager sceneoversikt og skjermbilder
+i den ignorerte `build/`-mappen. Disse er visuell kontroll med testdata, ikke fysisk
+Micro:bit-verifisering eller en ny full akseptanserapport.
 
 ## Testlab
 
