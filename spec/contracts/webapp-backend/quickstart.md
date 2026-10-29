@@ -9,7 +9,7 @@
 
 Tailscale Funnel er aktivert 2026-10-29. HTTPS og API er kontrollert fra Parrot; brukeren har også bekreftet `{"status":"ok"}` fra helseendepunktet på mobilnett. Besøkende trenger vanlig nettleser, ikke Tailscale-konto eller VPN. Parrot må være på og ha internett. Se [driftskontrollen](../../../backend/results/runtime-2026-10-29.md) for kontrollert flyt og begrensninger.
 
-Rotadressen viser foreløpig en velkomstside. Frontendgruppen leverer et statisk bygg med `index.html`; driftsansvarlig publiserer det med [publiseringsskriptet](../../../backend/ops/runtime/README.md#4-publiser-frontendpakken). Repoets frontend har ennå ingen `npm run build`-kommando. Backend er tilgjengelig nå, mens den ferdige spillnettsiden fortsatt må bygges og publiseres.
+**Frontend er publisert 2026-10-29**, fra commit `fdfdbca`, på samme adresse som API-et. Brukeren har bekreftet at gruppen kommer inn fra skolen. Se [skoleveiledningen](../../../docs/play-at-school.md) og [publiseringskontrollen](../../../results/verification/frontend-publication-2026-10-29.md). Frontend bygges med `npm run build` fra `webapp/` og publiseres med [publiseringsskriptet](../../../backend/ops/runtime/README.md#4-publiser-frontendpakken).
 
 Nettsiden og API-et skal ha **samme HTTPS-adresse**. Bruk `/api/v1` som base i frontend, eksempelvis `fetch('/api/v1/games')`. Åpne `/api/v1/health` i nettleseren for å kontrollere forbindelsen; forvent `{"status":"ok"}`. AI kan være nede selv om denne kontrollen er grønn.
 
@@ -25,7 +25,7 @@ Ikke kall serverens URL direkte fra en annen nettside eller fra `http://localhos
 6. Send sluttresultatet med samme ID, og vis lagringsbekreftelse først når backend har svart.
 7. Prøv AI via `/ai/questions`. Vanlig spilling skal fortsette mens AI arbeider.
 
-Driftsdatabasen er adskilt fra testdatabasen. Den har ikke testkontoene Ada/Nora eller benchmarkens rekorder. Den publiserte katalogen inneholder foreløpig **Poengjakt (demo)** og **Sprint (demo)**. Hent ID og regler fra `/games`. Virkelige spill-ID-er og poengregler avtales med frontendgruppen før spillene publiseres. Det finnes ingen offentlig administrasjonsrute for spill.
+Driftsdatabasen er adskilt fra testdatabasen. Den har ikke testkontoene Ada/Nora eller benchmarkens rekorder. Ti aktive spillvarianter er registrert etter [frontendens register](../../../webapp/src/games/registry.js): seks Snake-varianter, Viking Dash, Stjernefangst, Reaksjonsjakt og Balanseløypa. **Poengjakt (demo)** og **Sprint (demo)** er beholdt som eldre katalogoppføringer, uten spillmoduler i den nye frontenden. Hent ID og regler fra `/games`; nye eller endrede spillregler må samordnes før publisering. Det finnes ingen offentlig administrasjonsrute for spill.
 
 ## Kopierbar JavaScript-klient
 

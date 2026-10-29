@@ -67,11 +67,24 @@ Dette siste steget gjør nettsiden/API-et offentlig. Følg eventuell lenke for �
 
 Åpne den viste HTTPS-adressen og `/api/v1/health` fra mobilnett eller en annen PC uten Tailscale. Ingen sertifikatadvarsel skal godtas. Gjennomfør [frontendens integrasjonsflyt](../../../spec/contracts/webapp-backend/quickstart.md). Lokal oppstart alene beviser ikke ekstern tilgjengelighet eller femminuttersmålet etter fysisk reboot.
 
-Før frontend er publisert vises bare en kort velkomstside. Det er ikke den ferdige spillplattformen. API-rutene er likevel tilgjengelige for integrasjon.
+Ved første backendoppsett vises en velkomstside. Den er nå erstattet av frontend fra commit `fdfdbca`, publisert 2026-10-29. Ti spillvarianter er registrert med frontendens eksakte ID-er og regler. Se [publiseringskontrollen](../../../results/verification/frontend-publication-2026-10-29.md).
 
 ## 4. Publiser frontendpakken
 
-Frontendgruppen lager én komplett statisk pakke med `index.html`, spill og ressurser. Den planlagte leveransen er `webapp/dist/`; `npm run build` er ennå ikke etablert i repoets frontend. Publiser først et ferdig bygg:
+Frontendgruppen leverer én komplett statisk pakke med `index.html`, spill og ressurser. Bygg fra repo-roten:
+
+```bash
+npm --prefix webapp run build
+npm --prefix webapp run catalog:commands
+```
+
+Første kommando lager `webapp/dist/` med SHA-256-filoversikt. Den andre skriver vedlikeholdskommandoer for spillregisteret, uten å kjøre dem. Kontroller eksisterende spill mot registeret før du registrerer manglende ID-er. Ikke kjør `create` på ID-er som allerede finnes, og ikke endre regler for spill med historikk. På Parrot kjøres hver gjennomgåtte `create`-kommando med eksisterende administrasjonsverktøy og lokal vedlikeholdsrolle, slik (erstatt argumentene med den genererte kommandoens verdier):
+
+```bash
+sudo -u mbg-db env MBG_ADMIN_DSN='host=/run/mbg-db port=5433 dbname=mikrobit_games user=mbg-db' /opt/mikrobit-games/current/.venv/bin/python /opt/mikrobit-games/current/backend/database/manage-game.py create --id UUID --name NAVN --unit ENHET --direction RETNING --min MIN --max MAX
+```
+
+De ti variantene i `fdfdbca` er allerede registrert. Ved samme register trengs bare ny publisering av det ferdige bygget:
 
 ```bash
 sudo /usr/bin/python3 backend/ops/runtime/publish-web.py webapp/dist

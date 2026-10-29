@@ -1,0 +1,58 @@
+{
+  "publication": {
+    "source_commit": "fdfdbca1ffbd2c5c7abb6703400e706308f7123a",
+    "url": "https://parrot.tail106c62.ts.net",
+    "assets_verified": 35,
+    "registered_games_verified": 10,
+    "catalog_total": 12,
+    "health": "ok",
+    "checks": "sha256, JavaScript/CSS MIME, exact game IDs/rules/active state"
+  },
+  "frontend_api": {
+    "checked_at": "2026-10-29T13:15:37.042Z",
+    "method": "Node frontend modules with real HTTPS and in-memory cookie transport; no browser or USB simulation",
+    "checks": [
+      {
+        "name": "Frontend registry accepts all 10 live game variants",
+        "status": "PASS"
+      },
+      {
+        "name": "Registration using frontend API client",
+        "status": "PASS"
+      },
+      {
+        "name": "Login, session validation and renewal",
+        "status": "PASS"
+      },
+      {
+        "name": "snake: frontend queue accepts result/record, identical replay and leaderboard",
+        "status": "PASS"
+      },
+      {
+        "name": "viking: frontend queue accepts result/record, identical replay and leaderboard",
+        "status": "PASS"
+      },
+      {
+        "name": "reaction: frontend queue accepts result/record, identical replay and leaderboard",
+        "status": "PASS"
+      },
+      {
+        "name": "Private history contains exactly three synthetic attempts",
+        "status": "PASS"
+      },
+      {
+        "name": "Logout invalidates session",
+        "status": "PASS"
+      },
+      {
+        "name": "Synthetic account, attempts and records removed",
+        "status": "PASS"
+      }
+    ]
+  },
+  "school_access": {
+    "source": "user",
+    "statement": "de kommer inn",
+    "physical_usb_verified": false
+  }
+}

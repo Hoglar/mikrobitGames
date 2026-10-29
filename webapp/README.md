@@ -4,6 +4,8 @@ Statisk spillplattform for micro:bit V2, med felles spillramme, spillvelger, Tes
 innlogging/registrering, privat Dashboard, Profil, offentlige topplister og AI-chat.
 JavaScript ES-moduler og Canvas; ingen eksterne ressurser eller runtimepakker.
 
+**Publisert 2026-10-29:** https://parrot.tail106c62.ts.net, frontend fra `fdfdbca` og ti registrerte spillvarianter. Se [spill fra skolen](../docs/play-at-school.md) og [publiseringskontrollen](../results/verification/frontend-publication-2026-10-29.md). Fysisk spillrunde med micro:bit fra skolen gjenstår å dokumentere.
+
 ## Kjør lokalt og bygg
 
 Node **24.22.1**, npm **11.19.1** og låst Playwright **1.64.1**:
@@ -51,7 +53,8 @@ Dette **skriver bare kommandoene** for eksisterende
 `backend/database/manage-game.py`; det kontakter ikke serveren eller databasen.
 Kommandoene kjøres fra repo-roten på backendverten med vedlikeholdsrollens
 `MBG_ADMIN_DSN`. Kontroller eksisterende spill før kjøring; ved ukjent utfall
-kontrolleres databasen før omforsøk. Registrering og publisering er ikke utført.
+kontrolleres databasen før omforsøk. Alle ti variantene i `fdfdbca` er nå registrert;
+ikke kjør de samme `create`-kommandoene på nytt.
 
 Snake viser kodet `snake_rank_v1` som «mat · steg» i spillet, Dashboard og
 rekordlistene. Viking bruker meter. Stjernefangst varer 60 sekunder, gir 100 poeng
