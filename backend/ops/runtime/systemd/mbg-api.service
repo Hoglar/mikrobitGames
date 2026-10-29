@@ -1,0 +1,27 @@
+[Unit]
+Description=Mikrobit Games API
+Wants=mbg-db.service
+After=network.target mbg-db.service
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+User=mbg-api
+Group=mbg-api
+WorkingDirectory=/opt/mikrobit-games/current/backend/api/src
+EnvironmentFile=/etc/mikrobit-games/api.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/mikrobit-games/current/.venv/bin/python -m uvicorn http_api:app --host 127.0.0.1 --port 8000 --workers 1 --no-access-log --proxy-headers --forwarded-allow-ips 127.0.0.1
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=70
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+
+[Install]
+WantedBy=multi-user.target

@@ -1,6 +1,8 @@
 # ADR-007: Backend API og nettside på hjemmemaskinen
 
-**Status:** Godkjent av brukeren som del av WBS 4.1, 2026-10-24. Hjemmemaskinen er planlagt vert for både nettside og backend. Tunnel er en reserveplan uten valgt leverandør. Godkjenning av frontendkontrakten 1.3 er bekreftet 2026-10-27. Ingen publisering er utført.
+**Driftsvalg 2026-10-29:** Brukeren har valgt reserveplanen Tailscale Funnel etter at hjemmeruterens WAN-adresse viste en privat adresse bak enda en ruter. Dette er påvist dobbel NAT, ikke dokumentert CGNAT hos leverandøren. Funnel terminerer offentlig HTTPS og sender til lokal Caddy på 127.0.0.1:8080. Nettside og API bruker **https://parrot.tail106c62.ts.net**; opennote.no endres ikke. [Driftsoppsettet](../../backend/ops/runtime/README.md) er installert med egne systemd-tjenester og vedvarende data. Funnel er aktivert, og brukeren har bekreftet helseendepunktet fra mobilnett. [Driftskontrollen](../../backend/results/runtime-2026-10-29.md) beskriver dokumentasjonen. Fysisk reboot og samlet frontend-/Micro:bit-flyt gjenstår.
+
+**Opprinnelig status 2026-10-24–27:** Godkjent av brukeren som del av WBS 4.1. Hjemmemaskinen ble valgt som vert for både nettside og backend, med tunnel som reserveplan uten valgt leverandør. Frontendkontrakten 1.3 ble godkjent som arbeidsgrunnlag for backend, fortsatt et forslag overfor frontendgruppen. Publisering var da ikke utført; gjeldende driftsvalg står over.
 
 ## Kontekst
 

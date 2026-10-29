@@ -1,10 +1,10 @@
 # Testresultater og Figure of Merit
 
-Her ligger arkiverte backendrapporter som skal deles med hele gruppen gjennom Git. Alle fire tidligere fullkjøringer fra 2026-10-27 er tatt med, inkludert feil og ufullstendige målinger. Filene er uendrede kopier av de lokale rapportene. Oversikten gjelder den daværende implementasjonen, før samtaleintegrasjonen 2026-10-28.
+Her ligger arkiverte backendrapporter som skal deles med hele gruppen gjennom Git. Fem fullkjøringer fra 2026-10-27–28 er tatt med, inkludert feil og ufullstendige målinger. Filene er uendrede kopier av de lokale rapportene. Siste kjøring, på commit `3bd5d07`, tester den integrerte samtaleløsningen og har **100 % krav-FoM og 100 % modell-FoM**.
 
-[Kort arbeidsrapport: AI-rettingen og den nye samtaleløsningen, 2026-10-28](ai-work-summary-2026-10-28.md) forklarer problemet, endringene og hva som er kontrollert før neste fullkjøring.
+[Kort arbeidsrapport: AI-rettingen og den nye samtaleløsningen, 2026-10-28](ai-work-summary-2026-10-28.md) forklarer problemet, endringene og hva som er kontrollert, inkludert den fullførte testfasen.
 
-## Tidligere kjøringer
+## Kjøringer
 
 Tidspunktene i mappenavn og rapporter er UTC. Resultatkolonnen gjelder integrasjon og benchmark; kontrollverktøy og enhetstester står i hver rapport. FoM-kolonnen viser krav / modell.
 
@@ -14,22 +14,26 @@ Tidspunktene i mappenavn og rapporter er UTC. Resultatkolonnen gjelder integrasj
 | [20261027T175640.430159Z](backend/20261027T175640.430159Z/report.md) | `5b41984` + lokale endringer | 34 PASS, 5 FAIL, 1 BLOCKED | Ingen komplett FoM |
 | [20261027T185538.809129Z](backend/20261027T185538.809129Z/report.md) | `e21d82e` | 36 PASS, 4 FAIL | 83.33 % / 100.00 % |
 | [20261027T194827.319030Z](backend/20261027T194827.319030Z/report.md) | `d70e9fa` | 39 PASS, 1 FAIL | 91.67 % / 100.00 % |
+| [20261028T185422.473900Z](backend/20261028T185422.473900Z/report.md) | `3bd5d07` | 42 PASS | 100.00 % / 100.00 % |
 
 - **17:49:** Flere tjenester startet ikke. Mange kontroller var blokkert; ingen FoM.
 - **17:56:** Flere kontroller og benchmark ble utført, men kjøringen hadde feil, en blokkert kontroll og lokale kodeendringer. Den er foreløpig og gir ikke FoM.
 - **18:55:** Første komplette FoM-måling i dette arkivet: 83,33 % / 100 %. Testens database-mellomledd hadde en senere påvist transportfeil som påvirket samtidighet og kunne påvirke ytelse. Rapporten er bevart med dette forbeholdet; se [diagnosen i kjøreguiden](../../backend/verification/README.md).
-- **19:48:** 91,67 % / 100 %. HTTP-/DB-benchmark bestod; virkelig AI feilet fortsatt. Dette er siste tidligere fullkjøring i arkivet, ikke en måling av dagens samtaleløsning.
+- **19:48:** 91,67 % / 100 %. HTTP-/DB-benchmark bestod; virkelig AI feilet fortsatt. Dette er siste kjøring før samtaleintegrasjonen.
+
+- **28. oktober, 18:54 UTC:** Samtaleløsningen bestod alle kontroller, inkludert ekte Qwen og benchmark. Dette er første målepunkt for kontrollversjon 3. Et avvik i rapportens registrerte kontekststørrelse er forklart i [arkivnotatet](backend/20261028T185422.473900Z/archive-notes.md); originalrapporten er uendret.
 
 ## Kurver
 
 | Måling | Krav-FoM | Modell-FoM |
 | --- | --- | --- |
-| 18:55 | [Vis kurve](backend/20261027T185538.809129Z/requirements.svg) | [Vis kurve](backend/20261027T185538.809129Z/model.svg) |
-| 19:48 | [Vis kurve](backend/20261027T194827.319030Z/requirements.svg) | [Vis kurve](backend/20261027T194827.319030Z/model.svg) |
+| 27. oktober 18:55 | [Vis kurve](backend/20261027T185538.809129Z/requirements.svg) | [Vis kurve](backend/20261027T185538.809129Z/model.svg) |
+| 27. oktober 19:48 | [Vis kurve](backend/20261027T194827.319030Z/requirements.svg) | [Vis kurve](backend/20261027T194827.319030Z/model.svg) |
+| 28. oktober 18:54 | [Vis kurve](backend/20261028T185422.473900Z/requirements.svg) | [Vis kurve](backend/20261028T185422.473900Z/model.svg) |
 
-**Målingene er ikke én sammenhengende, sammenlignbar kurveserie.** De to komplette målingene har forskjellig `control_digest`. Samtaleintegrasjonen bruker dessuten kontrollversjon 3 og større modellkontekst. Endret kontrollgrunnlag eller miljø gir en ny serie; prosentendringen alene kan ikke tilskrives bedre produktkode. De opprinnelige SVG-filene viser bare sammenlignbare kjøringer.
+**Målingene er ikke én sammenhengende, sammenlignbar kurveserie.** De tre komplette målingene har forskjellig `control_digest`. Samtaleintegrasjonen bruker dessuten kontrollversjon 3 og større modellkontekst. Endret kontrollgrunnlag eller miljø gir en ny serie; prosentendringen alene kan ikke tilskrives bedre produktkode. De opprinnelige SVG-filene viser bare sammenlignbare kjøringer.
 
-Krav-FoM måler oppfyllelse av de faste kontrollgruppene. Modell-FoM måler samsvar med data-, komponent- og grensesnittmodellene. **100 % modell-FoM betyr ikke at AI-en svarer 100 % riktig.** [Implementeringsplanen](../../backend/spec/implementation-plan.md) beskriver formel, vekter og vilkår. Kravet om minst tre målepunkter over tid er ikke oppfylt av to komplette punkter i ulike serier.
+Krav-FoM måler oppfyllelse av de faste kontrollgruppene. Modell-FoM måler samsvar med data-, komponent- og grensesnittmodellene. **100 % modell-FoM betyr ikke at AI-en svarer 100 % riktig.** [Implementeringsplanen](../../backend/spec/implementation-plan.md) beskriver formel, vekter og vilkår. Arkivet har nå tre komplette FoM-punkter over tid, fordelt på ulike måleserier. Kontrollversjon 3 har foreløpig ett målepunkt; arkivet viser ikke tre direkte sammenlignbare målinger av samme kontrollgrunnlag.
 
 ## Benchmark og rådata
 

@@ -1,6 +1,8 @@
 # Frontendguide: Webapp ↔ Backend API
 
-**Status:** Revisjon **0.3.0**, 2026-10-28. Samtaleassistenten er integrert etter brukerens bestilling. Kontrakten er backendens arbeidsgrunnlag og fortsatt et forslag til frontendgruppen. Ingen frontendimplementasjon eller ny full testmåling hevdes levert her. Se [endringsoversikten](alignment.md).
+**Status:** Revisjon **0.3.0**, 2026-10-28. Samtaleassistenten er integrert etter brukerens bestilling. Kontrakten er backendens arbeidsgrunnlag og fortsatt et forslag til frontendgruppen. Backend bestod full testfase 2026-10-28 på commit `3bd5d07`; faktisk frontendintegrasjon gjenstår. Se [endringsoversikten](alignment.md).
+
+**Praktisk start:** Se [hurtigguiden med JavaScript-eksempler](quickstart.md).
 
 **Start her:** Frontend bruker `/api/v1` på samme HTTPS-adresse som nettsiden. Backend tilbyr konto/innlogging, spilloversikt, topplister, offentlig rekordhistorikk, privat forsøkshistorikk, innsending av resultater og AI-spørsmål. [openapi.yaml](openapi.yaml) er den maskinlesbare fasiten for endepunkter, felt, typer og HTTP-status. Denne guiden beskriver brukerforløp og oppførsel. Endringer oppdaterer begge dokumentene sammen.
 
@@ -126,6 +128,6 @@ Hvis PC-en, hjemmenettet eller API-et er nede, kan nettleseren få nettverksfeil
 
 ## Publisering og videre gjennomgang
 
-Nettsiden og API-et skal nås fra internett på samme HTTPS-adresse, med hjemmemaskinen som vert. Domene, DNS og faktisk ekstern tilgjengelighet er ennå ikke avklart. Ved lokal utvikling brukes en proxy fra frontendserveren til `/api`, slik at nettleseren fortsatt ser én adresse. Test cookieinnlogging med lokal HTTPS også; sikkerhetsflaggene skal ikke fjernes fra produksjonsoppsettet for å få utviklingsmiljøet til å virke. GitHub Pages med en separat API-adresse krever en ny vurdering av cookies/CORS og er ikke grunnlaget her.
+Nettsiden og API-et skal nås fra internett på samme HTTPS-adresse, med hjemmemaskinen som vert. Tailscale Funnel er valgt som offentlig inngang 2026-10-29. Den konkrete HTTPS-adressen og kontrollert ekstern tilgjengelighet dokumenteres i hurtigguiden. Opennote.no endres ikke. Ved lokal utvikling brukes en proxy fra frontendserveren til `/api`, slik at nettleseren fortsatt ser én adresse. Test cookieinnlogging med lokal HTTPS også; sikkerhetsflaggene skal ikke fjernes fra produksjonsoppsettet for å få utviklingsmiljøet til å virke. GitHub Pages med en separat API-adresse krever en ny vurdering av cookies/CORS og er ikke grunnlaget her.
 
 Det finnes ikke offentlige endepunkter for spilladministrasjon, vilkårlig SQL eller redigering av historiske rekorder. Backendplanen og driftskravene står i [WBS 4.1](../../../backend/spec/backend-module.md). Funksjonen følger [databasekontrakten 1.4](../../../backend/spec/contracts/backend-database/contract.md) og [AI-kontrakten 1.5](../../../backend/spec/contracts/backend-ai/contract.md).

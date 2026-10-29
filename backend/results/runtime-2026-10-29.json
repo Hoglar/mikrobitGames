@@ -1,0 +1,328 @@
+{
+  "kind": "bounded_runtime_check_not_fom",
+  "source_commit": "3bd5d07f3ec92375c55cf3695e15a4e21516cdfc",
+  "source_worktree_dirty": true,
+  "release": "20261029T074458144159Z-3bd5d07f",
+  "public_url": "https://parrot.tail106c62.ts.net",
+  "external_health": {
+    "method": "user confirmed over mobile network",
+    "result": {
+      "status": "ok"
+    }
+  },
+  "observations": [
+    {
+      "name": "initial_script_error",
+      "limitation": "Ufullstendig: engangsskriptet brukte attempt_id i stedet for kontraktens id i privat svar.",
+      "data": {
+        "checked_at": "2026-10-29T07:54:49.842442+00:00",
+        "url": "https://parrot.tail106c62.ts.net",
+        "checks": [
+          {
+            "check": "HTTPS health (system CA verification)",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 2.01
+          },
+          {
+            "check": "Web welcome page",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 1.88
+          },
+          {
+            "check": "Unknown API remains JSON 404",
+            "status": "PASS",
+            "http": 404,
+            "seconds": 2.89
+          },
+          {
+            "check": "Private history requires login",
+            "status": "PASS",
+            "http": 401,
+            "seconds": 3.87
+          },
+          {
+            "check": "Game catalog",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 3.42
+          },
+          {
+            "check": "Register synthetic account",
+            "status": "PASS",
+            "http": 201,
+            "seconds": 4.59
+          },
+          {
+            "check": "Login with Secure/HttpOnly/SameSite cookie",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 1.31
+          },
+          {
+            "check": "Session",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 5.19
+          },
+          {
+            "check": "Session renewal",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 0.97
+          },
+          {
+            "check": "Wrong Origin rejected",
+            "status": "PASS",
+            "http": 403,
+            "seconds": 1.28
+          },
+          {
+            "check": "Save result",
+            "status": "PASS",
+            "http": 201,
+            "seconds": 1.13
+          },
+          {
+            "check": "Replay same result",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 0.92
+          },
+          {
+            "check": "Result visible in public leaderboard",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 0.92
+          },
+          {
+            "check": "Login for cleanup",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 2.54
+          },
+          {
+            "check": "Delete synthetic account and its data",
+            "status": "PASS",
+            "http": 204,
+            "seconds": 3.36
+          },
+          {
+            "check": "Synthetic record removed",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 5.3
+          }
+        ]
+      }
+    },
+    {
+      "name": "https_flow_with_ai_deviation",
+      "limitation": "Ufullstendig: rekordspørsmål etter hilsen bestod ikke kontrollen av status ok og ikke-tom tekst. Svarobjektet ble ikke bevart.",
+      "data": {
+        "checked_at": "2026-10-29T07:57:47.311736+00:00",
+        "url": "https://parrot.tail106c62.ts.net",
+        "checks": [
+          {
+            "check": "HTTPS health (system CA verification)",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 3.35
+          },
+          {
+            "check": "Web welcome page",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 4.48
+          },
+          {
+            "check": "Unknown API remains JSON 404",
+            "status": "PASS",
+            "http": 404,
+            "seconds": 3.72
+          },
+          {
+            "check": "Private history requires login",
+            "status": "PASS",
+            "http": 401,
+            "seconds": 3.55
+          },
+          {
+            "check": "Game catalog",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 6.54
+          },
+          {
+            "check": "Register synthetic account",
+            "status": "PASS",
+            "http": 201,
+            "seconds": 3.0
+          },
+          {
+            "check": "Login with Secure/HttpOnly/SameSite cookie",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 0.55
+          },
+          {
+            "check": "Session",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 0.95
+          },
+          {
+            "check": "Session renewal",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 1.15
+          },
+          {
+            "check": "Wrong Origin rejected",
+            "status": "PASS",
+            "http": 403,
+            "seconds": 1.46
+          },
+          {
+            "check": "Save result",
+            "status": "PASS",
+            "http": 201,
+            "seconds": 0.7
+          },
+          {
+            "check": "Replay same result",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 0.45
+          },
+          {
+            "check": "Result visible in public leaderboard",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 0.68
+          },
+          {
+            "check": "Own attempt visible once in private history",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 1.14
+          },
+          {
+            "check": "AI greeting",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 32.45,
+            "answer": "Hei! Hvordan kan jeg hjelpe deg i dag?"
+          },
+          {
+            "check": "AI own result lookup",
+            "status": "FAIL",
+            "http": 200,
+            "seconds": 17.61
+          },
+          {
+            "check": "Login for cleanup",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 3.42
+          },
+          {
+            "check": "Delete synthetic account and its data",
+            "status": "PASS",
+            "http": 204,
+            "seconds": 1.16
+          },
+          {
+            "check": "Synthetic record removed",
+            "status": "PASS",
+            "http": 200,
+            "seconds": 1.77
+          }
+        ]
+      }
+    },
+    {
+      "name": "fresh_conversation_and_cleanup",
+      "limitation": "Fullført avgrenset observasjon; HTTP-status og AI-svar må vurderes separat. Rekordverdi 123 kontrollert manuelt.",
+      "data": {
+        "checked_at": "2026-10-29T07:59:25.456163+00:00",
+        "url": "https://parrot.tail106c62.ts.net",
+        "checks": [
+          {
+            "check": "Register synthetic account",
+            "http": 201,
+            "status": "PASS",
+            "seconds": 0.55
+          },
+          {
+            "check": "Login",
+            "http": 200,
+            "status": "PASS",
+            "seconds": 0.55
+          },
+          {
+            "check": "Catalog",
+            "http": 200,
+            "status": "PASS",
+            "seconds": 0.58
+          },
+          {
+            "check": "Save synthetic result",
+            "http": 201,
+            "status": "PASS",
+            "seconds": 0.46
+          },
+          {
+            "check": "AI own result observation",
+            "http": 200,
+            "status": "PASS",
+            "seconds": 13.69,
+            "response": {
+              "request_id": "24c59ffd-b2f2-4ada-953b-e005bea2c712",
+              "status": "ok",
+              "answer": "Ditt offentlige rekord i Poengjakt (demo) er 123 poeng, oppnådd den 29. okt. 2026 kl. 08:59. Det er ikke alle forsøk – kun det offentlige rekordet er vises."
+            },
+            "record_answer_expected": "Egen rekord er 123 poeng."
+          },
+          {
+            "check": "Reset conversation",
+            "http": 204,
+            "status": "PASS",
+            "seconds": 0.57
+          },
+          {
+            "check": "Logout",
+            "http": 204,
+            "status": "PASS",
+            "seconds": 0.54
+          },
+          {
+            "check": "Session unavailable after logout",
+            "http": 401,
+            "status": "PASS",
+            "seconds": 0.45
+          },
+          {
+            "check": "Login for cleanup",
+            "http": 200,
+            "status": "PASS",
+            "seconds": 0.53
+          },
+          {
+            "check": "Delete synthetic account",
+            "http": 204,
+            "status": "PASS",
+            "seconds": 0.66
+          },
+          {
+            "check": "Check cleaned leaderboard",
+            "http": 200,
+            "status": "PASS",
+            "seconds": 0.43
+          }
+        ]
+      }
+    }
+  ]
+}

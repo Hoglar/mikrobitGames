@@ -1,0 +1,30 @@
+[Unit]
+Description=Mikrobit Games local Ollama
+After=network.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+User=mbg-model
+Group=mbg-model
+Environment=OLLAMA_HOST=127.0.0.1:11435
+Environment=OLLAMA_MODELS=/var/lib/mikrobit-games/models
+Environment=OLLAMA_NO_CLOUD=1
+Environment=OLLAMA_NOPRUNE=1
+Environment=OLLAMA_NUM_PARALLEL=1
+Environment=OLLAMA_MAX_LOADED_MODELS=1
+UnsetEnvironment=DISPLAY WAYLAND_DISPLAY XAUTHORITY
+ExecStart=/usr/local/bin/ollama serve
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=70
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/mikrobit-games/models /var/lib/mikrobit-games/model-home
+CapabilityBoundingSet=
+
+[Install]
+WantedBy=multi-user.target

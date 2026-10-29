@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="740" height="360" viewBox="0 0 740 360">
+<rect width="740" height="360" fill="white"/><text x="70" y="30" font-size="22">Modell-FoM</text>
+<path d="M70 60V290H690" fill="none" stroke="#64748b"/><text x="20" y="65">100%</text><text x="35" y="290">0%</text>
+<polyline points="70.0,60.0" fill="none" stroke="#2563eb" stroke-width="2"/><circle cx="70.0" cy="60.0" r="5" fill="#2563eb"><title>2026-10-28T18:54:22.473900+00:00: 100.00%</title></circle><text x="70.0" y="315" text-anchor="middle" font-size="12">1</text>
+<text x="70" y="345" font-size="13">Målepunkt 1 er baseline. Bare samme kontrollgrunnlag og miljø vises.</text></svg>

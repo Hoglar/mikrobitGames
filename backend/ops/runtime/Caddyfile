@@ -1,0 +1,22 @@
+{
+	admin off
+	auto_https off
+}
+
+http://:8080 {
+	bind 127.0.0.1
+	@api path /api /api/*
+	handle @api {
+		reverse_proxy 127.0.0.1:8000 {
+			# Do not trust visitor-supplied forwarding headers through the tunnel.
+			header_up X-Forwarded-For {http.request.remote.host}
+			header_up X-Forwarded-Proto https
+		}
+	}
+	handle {
+		root * /var/www/mikrobit-games/current
+		try_files {path} /index.html
+		file_server
+	}
+	header X-Content-Type-Options nosniff
+}

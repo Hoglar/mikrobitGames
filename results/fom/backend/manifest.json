@@ -99,6 +99,36 @@
           "sha256": "84a8bddd5e8060919616e84c0da3344bd970fc70f1df71c60216f758cb856f5b"
         }
       }
+    },
+    {
+      "run": "20261028T185422.473900Z",
+      "timestamp": "2026-10-28T18:54:22.473900+00:00",
+      "code_commit": "3bd5d07f3ec92375c55cf3695e15a4e21516cdfc",
+      "working_tree_dirty": false,
+      "control_version": 3,
+      "control_digest": "7f450c381ece240c0c870561096eacb8535e403aa44ad754ea54bd53192c68ef",
+      "fom": {
+        "requirements_percent": 100.0,
+        "model_percent": 100.0
+      },
+      "files": {
+        "report.md": {
+          "bytes": 2657,
+          "sha256": "79c0b189a75e647c9d855e6fd061ef1ebf4b711480af5ec25e37948dd6dd68e0"
+        },
+        "report.json": {
+          "bytes": 9718068,
+          "sha256": "baedd09e6f557c7171db1111e6b4dd6095a41046957ab249d3ca03a37ab83902"
+        },
+        "requirements.svg": {
+          "bytes": 678,
+          "sha256": "f984c82ead4fb499686bcf5d351846cd7573153bd3499f7c8680ebd07cc0d00c"
+        },
+        "model.svg": {
+          "bytes": 680,
+          "sha256": "1eb4dae516ccbea18d397ab61d35fbaee9ebd9e38c314e23504cea9b52c90556"
+        }
+      }
     }
   ]
 }

@@ -1,0 +1,27 @@
+[Unit]
+Description=Mikrobit Games conversation service
+Wants=mbg-db.service mbg-model.service
+After=network.target mbg-db.service
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+User=mbg-ai
+Group=mbg-ai
+WorkingDirectory=/opt/mikrobit-games/current/backend/ai-service/src
+EnvironmentFile=/etc/mikrobit-games/ai.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/mikrobit-games/current/.venv/bin/python -m uvicorn transport:app --host 127.0.0.1 --port 8001 --workers 1 --no-access-log --no-proxy-headers
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=70
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+
+[Install]
+WantedBy=multi-user.target

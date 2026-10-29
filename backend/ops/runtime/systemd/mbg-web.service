@@ -1,0 +1,23 @@
+[Unit]
+Description=Mikrobit Games local web entrance for Funnel
+Wants=mbg-api.service
+After=network.target mbg-api.service
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+User=mbg-web
+Group=mbg-web
+ExecStart=/usr/bin/caddy run --config /etc/mikrobit-games/Caddyfile --adapter caddyfile
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/mikrobit-games/web-home
+CapabilityBoundingSet=
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,27 @@
+[Unit]
+Description=Mikrobit Games PostgreSQL 17
+After=network.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=mbg-db
+Group=mbg-db
+RuntimeDirectory=mbg-db
+RuntimeDirectoryMode=0700
+ExecStart=/usr/lib/postgresql/17/bin/postgres -D /var/lib/mikrobit-games/postgresql
+ExecStartPost=/opt/mikrobit-games/current/.venv/bin/python /opt/mikrobit-games/current/backend/ops/runtime/wait-db.py
+KillSignal=SIGINT
+TimeoutStopSec=60
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/mikrobit-games/postgresql /run/mbg-db
+
+[Install]
+WantedBy=multi-user.target
