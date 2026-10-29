@@ -12,6 +12,7 @@ export async function launcher({root,ctx,view}){
  section.append(catalogNotice,grid);root.append(section);
  const cards=[];
  for(const f of families){const canvas=el('canvas',{width:600,height:330,'aria-hidden':'true'}),foot=el('div',{class:'card-foot'},el('span',{},`${f.control} · MICRO:BIT V2`),link('Se spill →',`#/play/${f.key}`,''));cards.push({f,foot});grid.append(el('article',{class:'game-card'},el('div',{class:`game-art ${f.color}`},canvas,el('span',{class:'art-label'},`${f.number} / ${f.genre}`)),el('div',{class:'card-body'},el('h3',{},f.title),el('p',{},f.description),foot)));
+  if(!ctx.localPlay)foot.insertBefore(link('Toppliste',f.key==='snake'?'#/leaderboard':`#/leaderboard/${games.find(g=>g.key===f.key).id}`,'text-button'),foot.lastChild);
   const factory=await loadGame(f.key),engine=await factory({config:{mode:'standard',food:'competitive'},seed:'cover'});if(!view.active)return;engine.draw(canvas.getContext('2d'),600,330);
  }
  root.append(el('aside',{class:'lab-banner'},el('div',{class:'lab-icon','aria-hidden':'true'},'⌘'),el('div',{},el('p',{class:'eyebrow'},'FOR DEG SOM ER NYSGJERRIG'),el('h3',{},'Bli kjent med din micro:bit.'),el('p',{},'Utforsk sensorene, tegn med lys og lag din egen lyd. Ingen konto nødvendig.')),link('Prøv Testlab ↗','#/testlab')));
@@ -32,14 +33,21 @@ export async function authentication({root,ctx,url,parts}){
 export function pagination(data,onPage){const previous=button('← Forrige',()=>onPage(data.page-1),'button secondary'),next=button('Neste →',()=>onPage(data.page+1),'button secondary');previous.disabled=data.page===0;next.disabled=(data.page+1)*data.page_size>=data.total;return el('div',{class:'pagination'},previous,el('span',{class:'muted'},`${data.total} totalt · Side ${data.page+1}`),next);}
 export async function leaderboard({root,ctx,url,parts}){
  const id=parts[1],player=url.searchParams.get('player'),page=Math.max(0,Number(url.searchParams.get('page'))||0),history=parts[0]==='history';
+ if(!id&&!history){
+  root.append(heading('OFFENTLIGE REKORDER','Topplister','Se rekorder fra alle spillere. Hver spillvariant har sin egen toppliste.'));
+  const catalog=await getCatalog(ctx),available=catalog.filter(g=>registeredGame(g));
+  root.append(available.length?el('div',{class:'stat-grid'},available.map(g=>el('div',{class:'stat'},el('h2',{},g.name),link('Åpne toppliste →',`#/leaderboard/${g.id}`,'text-button')))):el('p',{class:'notice'},'Ingen kompatible spill i katalogen ennå.'));
+  return;
+ }
  root.append(heading(history?'OFFENTLIG REKORDHISTORIKK':'OFFENTLIG TOPPLISTE',history?'Veien til rekorden.':'Litt vennlig konkurranse.','Bare fullførte forsøk som har gitt rekord vises offentlig.'));
  const path=history?`/players/${encodeURIComponent(player)}/games/${encodeURIComponent(id)}/records`:`/games/${encodeURIComponent(id)}/leaderboard`,data=(await ctx.api(`${path}?page=${page}&page_size=30`)).data;
  root.append(el('h2',{},data.game.name),history?el('p',{class:'muted'},data.player.username):null);
  const table=el('table',{},el('thead',{},el('tr',{},['Plass / dato','Spiller','Resultat'].map(x=>el('th',{},x)))),el('tbody',{},data.items.map(row=>history?el('tr',{},el('td',{},date(row.created_at)),el('td',{},data.player.username),el('td',{},formatScore(data.game,row.value))):el('tr',{},el('td',{},`#${row.rank}`),el('td',{},link(row.player.username,`#/history/${id}?player=${row.player.id}`,'text-button')),el('td',{},formatScore(data.game,row.record.value))))));
- root.append(data.items.length?el('div',{class:'table-wrap panel'},table):el('p',{class:'notice'},'Ingen rekorder ennå.'),pagination(data,n=>{location.hash=`#/${history?'history':'leaderboard'}/${id}?page=${n}${player?`&player=${player}`:''}`;}),link('← Spillvelgeren','#/','text-button'));
+ root.append(data.items.length?el('div',{class:'table-wrap panel'},table):el('p',{class:'notice'},'Ingen rekorder ennå.'),pagination(data,n=>{location.hash=`#/${history?'history':'leaderboard'}/${id}?page=${n}${player?`&player=${player}`:''}`;}),link('← Alle topplister','#/leaderboard','text-button'),link('← Spillvelgeren','#/','text-button'));
 }
 export async function dashboard({root,ctx,url}){
  root.append(heading('DITT DASHBOARD','Hver runde teller.','Private forsøk og personlige rekorder. Ufullførte forsøk påvirker aldri topplisten.'));
+ root.append(link('Se topplister for alle spillere →','#/leaderboard','text-button'));
  const pending=ctx.queue.list().filter(e=>e.attempt.playerId===ctx.session.player.id&&e.state!=='saved');
  for(const entry of pending){const status=el('p',{},entry.error?.message??'Dette forsøket er ikke bekreftet lagret.');const retry=button('Prøv lagring igjen',async()=>{retry.disabled=true;try{await ctx.queue.send(entry.attempt.attemptId);status.textContent='Lagring bekreftet.';retry.remove();}catch(e){status.textContent=e.message;}finally{retry.disabled=false;}});root.append(el('div',{class:'notice'},el('strong',{},'Ubekreftet lokalt forsøk'),status,el('p',{},formatScore(ctx.catalog.find(g=>g.id===entry.attempt.gameId),entry.attempt.value)),retry));}
  let catalog=ctx.catalog;try{if(!catalog.length)catalog=await getCatalog(ctx);}catch{}

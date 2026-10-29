@@ -1,0 +1,221 @@
+{
+  "source_commit": "a0a56ea16b79ed71bccad6e244966d3ac4abfba9",
+  "source_worktree_dirty": true,
+  "final_model_instruction": "unchanged from source commit",
+  "final_qwen_observations": [
+    {
+      "question": "Hvem har rekorden i Viking Dash?",
+      "seconds": 14.6,
+      "result": {
+        "status": "answer",
+        "kind": "chat",
+        "outcome": "ok",
+        "answer": "I Viking Dash har Ada rekorden med 120 poeng, og Nora har 115 poeng. Det er to spillere med offentlig rekord.",
+        "notices": [],
+        "tools": [
+          {
+            "name": "standings",
+            "args": {
+              "game": "Viking Dash"
+            },
+            "result": {
+              "game": "Viking Dash",
+              "unit": "points",
+              "direction": "higher_is_better",
+              "meaning": "Gjeldende personlig rekord per spiller, beste først. Antallet gjelder spillere med offentlig rekord, ikke alle som kan ha prøvd spillet.",
+              "players_with_records": 2,
+              "total_participants": null,
+              "total_participants_known": false,
+              "records": [
+                {
+                  "player": "Ada",
+                  "value": 120,
+                  "rank": 1,
+                  "gap_to_best": 0
+                },
+                {
+                  "player": "Nora",
+                  "value": 115,
+                  "rank": 2,
+                  "gap_to_best": 5
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "question": "Hvem leder i Snake?",
+      "seconds": 10.4,
+      "result": {
+        "status": "answer",
+        "kind": "chat",
+        "outcome": "ok",
+        "answer": "Jeg kan ikke finne spillet 'Snake' i katalogen. Prøv med et annet spillnavn eller gi mer detaljer om hvilket spill du mener.",
+        "notices": [],
+        "tools": [
+          {
+            "name": "standings",
+            "args": {
+              "game": "Snake"
+            },
+            "result": {
+              "unknown_game": true,
+              "instruction": "Spillnavnet eller ID-en traff ikke katalogen. Dette betyr ikke at rekorder mangler. Bruk games for nøyaktig navn/ID; spør om variant ved flere muligheter."
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "discarded_prompt_observations": [
+    [
+      {
+        "question": "Hvem har rekorden i Viking Dash?",
+        "seconds": 23.43,
+        "result": {
+          "status": "answer",
+          "kind": "chat",
+          "outcome": "ok",
+          "answer": "Jeg kan ikke finne rekorden i Viking Dash uten å vite hvilken variant eller spilleform som er ment. Kan du gi mer detaljer eller bekrefte at det er Viking Dash som spillet?",
+          "notices": [],
+          "tools": []
+        }
+      },
+      {
+        "question": "Hvem leder i Snake?",
+        "seconds": 7.41,
+        "result": {
+          "status": "answer",
+          "kind": "chat",
+          "outcome": "ok",
+          "answer": "Jeg kan ikke si hvem som leder i Snake uten å vite hvilken variant eller spillestil du mener. Snake har flere varianter (f.eks. Classic, iOS, Android osv.), og jeg må vite hvilken du spiller. Kan du gi mer detaljer?",
+          "notices": [],
+          "tools": []
+        }
+      }
+    ],
+    [
+      {
+        "question": "Hvem har rekorden i Viking Dash?",
+        "seconds": 24.95,
+        "result": {
+          "status": "answer",
+          "kind": "chat",
+          "outcome": "ok",
+          "answer": "Jeg kan ikke finne rekorden i Viking Dash uten å vite hvilket spillet du mener. Vennligst bekreft at du mener spillet 'Viking Dash' eller gi et mer presist navn. Hvis du vil, kan jeg hjelpe deg med å finne riktig spillnavn eller se rekorder for et annet spill.",
+          "notices": [],
+          "tools": []
+        }
+      },
+      {
+        "question": "Hvem leder i Snake?",
+        "seconds": 14.88,
+        "result": {
+          "status": "answer",
+          "kind": "chat",
+          "outcome": "ok",
+          "answer": "Det er to spill med \"Micro Snake\" i navnet. Vil du vite hvem som leder i **Micro Snake · Hurtig Random** eller **Micro Snake · Labyrint Random**? Velg ett av disse for å få informasjon om rekorder.",
+          "notices": [],
+          "tools": [
+            {
+              "name": "games",
+              "args": {},
+              "result": {
+                "columns": [
+                  "id",
+                  "name",
+                  "score_unit",
+                  "ranking_direction",
+                  "is_active"
+                ],
+                "rows": [
+                  [
+                    "6a990001-165b-4e1d-8a20-000000000001",
+                    "Micro Snake · Hurtig Random",
+                    "snake_rank_v1",
+                    "higher_is_better",
+                    true
+                  ],
+                  [
+                    "6a990001-165b-4e1d-8a20-000000000002",
+                    "Micro Snake · Labyrint Random",
+                    "snake_rank_v1",
+                    "higher_is_better",
+                    true
+                  ],
+                  [
+                    "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+                    "Sprint",
+                    "milliseconds",
+                    "lower_is_better",
+                    true
+                  ],
+                  [
+                    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+                    "Viking Dash",
+                    "points",
+                    "higher_is_better",
+                    true
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ],
+    [
+      {
+        "question": "Hvem har rekorden i Viking Dash?",
+        "seconds": 24.16,
+        "result": {
+          "status": "answer",
+          "kind": "chat",
+          "outcome": "ok",
+          "answer": "Jeg kan ikke finne informasjon om rekorden i Viking Dash. Det er mulig at spillet ikke eksisterer i systemet eller at det ikke har offentlig rekord. La meg vite om du vil prøve et annet spill eller om du ønsker hjelp til å finne riktig spillnavn.",
+          "notices": [],
+          "tools": []
+        }
+      },
+      {
+        "question": "Hvem leder i Snake?",
+        "seconds": 13.74,
+        "result": {
+          "status": "answer",
+          "kind": "chat",
+          "outcome": "ok",
+          "answer": "Jeg kan ikke finne informasjon om hvem som leder i Snake, fordi det ikke er et offentlig registrert spill med offentlig rekord i systemet. Hvis du mener et spesifikt spill eller variant, kan jeg hjelpe deg med å sjekke det!",
+          "notices": [],
+          "tools": []
+        }
+      }
+    ]
+  ],
+  "public_browser_check": {
+    "passed": true,
+    "catalog_variants": 10,
+    "viking_record_holders": 2,
+    "anonymous": true,
+    "page_errors": 0
+  },
+  "mobile_test": {
+    "passed": false,
+    "cause": "five-second card loading timeout; also seen with unchanged launcher in separate diagnosis",
+    "baseline_ms": 8130,
+    "modified_ms_after_warmup": 213,
+    "viewport_width": 390,
+    "baseline_width": 390,
+    "modified_width": 390
+  },
+  "source_hashes": {
+    "backend/ai-service/src/read_store.py": "1ef8b623cada4e2404fae9c6eadca132bd47ee266cba4e362e0f20f56ed66aec",
+    "backend/ai-service/src/orchestrator.py": "a13c59eb67202791d78fe11dfdcbcecbde89d7bb36b2e826205db5b0075d3171",
+    "backend/ai-service/src/model_client.py": "c4fc647ca2c66b9e97100e40e94c5ff722b0dd40fe39c2a7a97bee8da9d3c6ca",
+    "backend/ops/runtime/setup.py": "2e6c0cf45959e4f0aacebc6e3e39236ed6725a78d05b381f2e516fe12590bf81",
+    "webapp/src/app/main.js": "a412f85cc92a75e469041f4f7eb3c7e998d1a51ebbbe79eff6806d71bfaeae1c",
+    "webapp/src/app/pages.js": "e144b805406aa9f0fd6ede85d67ae2e39756952e6184c477a38419c1b72eb097",
+    "webapp/src/app/play.js": "f7a53330c472c86c48caa937e3560e28a5e5e3e7f2932a35566374dcf6b382db"
+  }
+}

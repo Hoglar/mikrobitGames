@@ -20,6 +20,40 @@ QUERY={'type':'tool','name':'history','args':{'player':'me','game':'Poengjakt'}}
 ANSWER={'type':'answer','kind':'records','answer':'Ada har registrerte rekorder.'}
 
 
+@check('TAI-03-game-resolution','KAI-2',('db','ai'))
+def game_resolution(e):
+    """An unknown/ambiguous name is not proof of an empty leaderboard."""
+    def lookup(name, args, expected):
+        e.model_relay.reset(model_script([{'type':'tool','name':name,'args':args},ANSWER]))
+        response=status(e.ai('Kontroller offentlig rekordgrunnlag.'),200)
+        assert response['status']==expected
+        messages=e.model_relay.calls[-1]['body']['messages']
+        results=[]
+        for message in messages:
+            try: body=json.loads(message['content'])
+            except (ValueError,TypeError): continue
+            if isinstance(body,dict) and 'tool_result' in body: results.append(body['tool_result'])
+        assert results
+        return results[-1]
+
+    assert lookup('standings',{'game':'Snake'},'cannot_answer')['unknown_game']
+    empty=str(uuid4())
+    e.rows('INSERT INTO app.games(id,name,score_unit,ranking_direction,min_value,max_value,is_active) VALUES (%s,%s,%s,%s,0,1000,true)',
+           (empty,'Tomt spill','points','higher_is_better'))
+    assert lookup('standings',{'game':empty},'no_data')['found'] is False
+    assert lookup('history',{'game':empty,'player':'me'},'no_data')['found'] is False
+    board=lookup('standings',{'game':'poengjakt'},'ok')
+    assert board['players_with_records']==2 and board['records'][0]['value']==120
+    own=lookup('history',{'game':POINTS,'player':'me'},'ok')
+    assert own['player']=='Ada' and own['history'][-1]['value']==120
+    assert lookup('history',{'game':POINTS,'player':'IngenSlikSpiller'},'no_data')['found'] is False
+    # Even an empty second game makes a name ambiguous; never silently select the populated one.
+    e.rows('UPDATE app.games SET name=%s WHERE id=%s',('Poengjakt',empty))
+    assert lookup('standings',{'game':'Poengjakt'},'cannot_answer')['ambiguous_game']
+    assert lookup('history',{'game':'Poengjakt','player':'me'},'cannot_answer')['ambiguous_game']
+    assert lookup('standings',{'game':POINTS},'ok')['players_with_records']==2
+
+
 @check('TBE-06-gateway','KAI-1',('db','api'))
 def gateway(e):
     observed=[]

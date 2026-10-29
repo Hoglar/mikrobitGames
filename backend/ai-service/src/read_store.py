@@ -124,24 +124,30 @@ class DataTools:
                 SELECT g.id AS game_id, g.name AS game, g.score_unit AS unit,
                     g.ranking_direction AS direction, p.username AS player, r.value,
                     ROW_NUMBER() OVER (PARTITION BY r.game_id, r.player_id ORDER BY r.created_at DESC, r.id DESC) AS position
-                FROM ai_read.games g JOIN ai_read.records r ON r.game_id=g.id
-                JOIN ai_read.players p ON p.id=r.player_id
+                FROM ai_read.games g LEFT JOIN ai_read.records r ON r.game_id=g.id
+                LEFT JOIN ai_read.players p ON p.id=r.player_id
                 WHERE LOWER(g.name)=LOWER($1) OR CAST(g.id AS TEXT)=$1)
                 SELECT game_id, game, unit, direction, player, value FROM latest WHERE position=1''', [args['game']], deadline)
         else:
             predicate, parameter = self.player(args['player'])
-            result = self.query('''SELECT g.id AS game_id, g.name AS game, g.score_unit AS unit,
-                g.ranking_direction AS direction, p.username AS player, r.value, r.created_at
-                FROM ai_read.games g JOIN ai_read.records r ON r.game_id=g.id
-                JOIN ai_read.players p ON p.id=r.player_id
-                WHERE (LOWER(g.name)=LOWER($1) OR CAST(g.id AS TEXT)=$1) AND ''' + predicate.replace('$1', '$2') +
-                ' ORDER BY r.created_at, r.id', [args['game'], parameter], deadline)
+            result = self.query('''WITH selected_records AS (
+                SELECT r.game_id, r.value, r.created_at, r.id, p.username AS player
+                FROM ai_read.records r JOIN ai_read.players p ON p.id=r.player_id
+                WHERE ''' + predicate.replace('$1', '$2') + ''')
+                SELECT g.id AS game_id, g.name AS game, g.score_unit AS unit,
+                g.ranking_direction AS direction, r.player, r.value, r.created_at
+                FROM ai_read.games g LEFT JOIN selected_records r ON r.game_id=g.id
+                WHERE LOWER(g.name)=LOWER($1) OR CAST(g.id AS TEXT)=$1
+                ORDER BY r.created_at, r.id''', [args['game'], parameter], deadline)
         rows = [dict(zip(result['columns'], row)) for row in result['rows']]
         if not rows:
-            return {'found': False, 'explanation': 'Ingen rekordhistorikk traff oppgitt spill/spiller.'}
+            return {'unknown_game': True, 'instruction': 'Spillnavnet eller ID-en traff ikke katalogen. Dette betyr ikke at rekorder mangler. Bruk games for nøyaktig navn/ID; spør om variant ved flere muligheter.'}
         if len({row['game_id'] for row in rows}) != 1:
             return {'ambiguous_game': True, 'instruction': 'Flere spill har dette navnet. Bruk games og be om spill-ID.'}
         header = {key: rows[0][key] for key in ('game', 'unit', 'direction')}
+        rows = [row for row in rows if row['player'] is not None]
+        if not rows:
+            return {**header, 'found': False, 'explanation': 'Spillet finnes, men ingen offentlig rekord traff oppgitt spill/spiller. Dette viser ikke om private forsøk finnes.'}
         if name == 'standings':
             reverse = header['direction'] == 'higher_is_better'
             rows.sort(key=lambda row: ((-row['value'] if reverse else row['value']), row['player'].lower()))

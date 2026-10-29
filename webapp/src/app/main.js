@@ -21,7 +21,7 @@ const offError=microbit.onError(e=>{if(!['protocol'].includes(e.kind))toast(e.me
 function refreshConnection(){const s=microbit.getState();connect.classList.toggle('ready',s.inputAvailable);document.querySelector('#connection-label').textContent=s.inputAvailable?'Micro:bit er tilkoblet':s.connection==='connecting'?'Kobler til …':'Koble til micro:bit';connect.disabled=s.connection==='connecting';}
 function renderNavigation(){
  if(localPlay){document.querySelector('#navigation').replaceChildren(link('Spill','#/'),link('Testlab','#/testlab'),el('span',{class:'pill'},'LOKALT · UTEN LAGRING'));return;}
- const nav=document.querySelector('#navigation');nav.replaceChildren(...[['Spill','#/'],['Dashboard','#/dashboard'],['AI-chat','#/ai'],['Profil','#/profile']].map(([name,href])=>link(name,href,location.hash===href?'active':'')));
+ const nav=document.querySelector('#navigation');nav.replaceChildren(...[['Spill','#/'],['Topplister','#/leaderboard'],['Dashboard','#/dashboard'],['AI-chat','#/ai'],['Profil','#/profile']].map(([name,href])=>link(name,href,location.hash===href?'active':'')));
  if(context.session)nav.append(button('Logg ut',async()=>{try{await api('/auth/logout',{method:'POST'});context.setSession(null);context.chat=[];location.hash='#/';toast('Du er logget ut.');}catch(e){toast(e.message);}},'text-button'));else nav.append(link('Logg inn','#/login',''));
 }
 let current=null,navigation=Promise.resolve();

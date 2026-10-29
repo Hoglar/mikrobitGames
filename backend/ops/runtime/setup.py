@@ -113,7 +113,8 @@ def main():
     run(['/usr/bin/python3','-m','venv',release/'.venv'])
     run([release/'.venv/bin/python','-m','pip','install','--disable-pip-version-check','-r',release/'backend/requirements.txt'])
     run([release/'.venv/bin/python','-m','pip','check'])
-    dirty=bool(run(['git','-C',ROOT,'status','--porcelain'],capture_output=True,text=True).stdout)
+    # Root must not refresh/rewrite the developer's index with root ownership/0600.
+    dirty=bool(run(['git','--no-optional-locks','-C',ROOT,'status','--porcelain'],capture_output=True,text=True).stdout)
     write(release/'deployment.json',json.dumps({'source_commit':commit,'source_worktree_dirty':dirty,'release':revision})+'\n',0o644)
     # Services get read-only code. They cannot modify or deploy their own implementation.
     for path in release.rglob('*'):

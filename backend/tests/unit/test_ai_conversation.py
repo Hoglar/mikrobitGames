@@ -70,6 +70,44 @@ class ConversationChecks(unittest.TestCase):
         self.assertEqual(chat.turns, [])
         self.assertFalse(chat.busy.locked())
 
+    def test_unresolved_game_cannot_support_a_missing_records_claim(self):
+        for marker in ('unknown_game', 'ambiguous_game'):
+            with self.subTest(marker=marker):
+                model = Mock(side_effect=[
+                    {'type': 'tool', 'name': 'standings', 'args': {'game': 'Snake'}},
+                    answer('Ingen har rekorder.', 'records'),
+                    answer('Hvilken Snake-variant mener du?'),
+                ])
+                tools = Mock()
+                tools.call.return_value = {marker: True}
+                result = Conversation(model, tools, 'Ada').ask('Hvem leder i Snake?')
+                self.assertEqual(result['answer'], 'Hvilken Snake-variant mener du?')
+                self.assertEqual(result['outcome'], 'ok')
+                self.assertFalse(orchestrator.empty_result({marker: True}))
+
+    def test_failed_game_lookup_invalidates_earlier_evidence(self):
+        model = Mock(side_effect=[
+            {'type': 'tool', 'name': 'games', 'args': {}},
+            {'type': 'tool', 'name': 'standings', 'args': {'game': 'Snake'}},
+            answer('Ingen rekorder.', 'records'),
+            answer('Hvilken variant mener du?'),
+        ])
+        tools = Mock()
+        tools.call.side_effect = [{'rows': [['Micro Snake · Hurtig Random']]}, {'unknown_game': True}]
+        result = Conversation(model, tools, 'Ada').ask('Rekorder i Snake?')
+        self.assertEqual(result['answer'], 'Hvilken variant mener du?')
+
+    def test_known_empty_game_is_different_from_unknown_game(self):
+        query = Mock(return_value={'columns': [], 'rows': []})
+        tools = DataTools(ADA, query)
+        self.assertTrue(tools.call('standings', {'game': 'Snake'}, 100)['unknown_game'])
+        query.return_value = {'columns': ['game_id', 'game', 'unit', 'direction', 'player', 'value'],
+                              'rows': [['game-id', 'Sprint', 'milliseconds', 'lower_is_better', None, None]]}
+        result = tools.call('standings', {'game': 'Sprint'}, 100)
+        self.assertFalse(result['found'])
+        self.assertEqual(result['game'], 'Sprint')
+        self.assertTrue(orchestrator.empty_result(result))
+
     def test_history_limit_notifies_and_does_not_keep_tool_data(self):
         model = Mock(return_value=answer('Hei'))
         chat = Conversation(model, Mock(), 'Ada')

@@ -74,3 +74,28 @@ test('public top list formats snake food and steps and opens player record histo
  await page.route('**/api/v1/players/*/games/*/records?**',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({game,player,items:[record],page:0,page_size:30,total:1})}));
  await page.goto(`/#/leaderboard/${game.id}`);await expect(page.locator('table')).toContainText('120 mat · 850 steg');await page.getByRole('link',{name:player.username,exact:true}).click();await expect(page.getByRole('heading',{name:'Veien til rekorden.'})).toBeVisible();await expect(page.locator('table')).toContainText('120 mat · 850 steg');
 });
+
+test('top lists are discoverable without login and include every Snake variant',async({page})=>{
+ await setup(page,{signedIn:false});
+ await page.goto('/');
+ await page.getByRole('navigation').getByRole('link',{name:'Topplister',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Topplister',exact:true})).toBeVisible();
+ await expect(page.getByRole('link',{name:'Åpne toppliste →'})).toHaveCount(11);
+ const game=games.find(g=>g.key==='viking');
+ await page.route(`**/api/v1/games/${game.id}/leaderboard?**`,route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({game,items:[],page:0,page_size:30,total:0})}));
+ await page.locator('.stat').filter({has:page.getByRole('heading',{name:'Viking Dash',exact:true})}).getByRole('link').click();
+ await expect(page).toHaveURL(new RegExp(game.id));
+ await expect(page.getByText('Ingen rekorder ennå.')).toBeVisible();
+ await page.getByRole('link',{name:'← Alle topplister',exact:true}).click();
+ await expect(page.getByRole('link',{name:'Åpne toppliste →'})).toHaveCount(11);
+});
+
+test('game top list follows the selected Snake variant',async({page})=>{
+ await setup(page);
+ await page.goto('/#/play/snake');
+ const link=page.getByRole('link',{name:'Toppliste for valgt variant',exact:true});
+ await expect(link).toHaveAttribute('href',`#/leaderboard/${games[0].id}`);
+ const alternative=games.find(g=>g.key==='snake'&&g.config.mode==='maze'&&g.config.food==='random');
+ await page.getByRole('combobox',{name:'Spillmodus',exact:true}).selectOption(alternative.id);
+ await expect(link).toHaveAttribute('href',`#/leaderboard/${alternative.id}`);
+});

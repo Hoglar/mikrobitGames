@@ -90,7 +90,7 @@ class Conversation:
                 attempts += 1
                 try:
                     result = self.tools.call(message['name'], message['args'], deadline)
-                    evidence = True
+                    evidence = not (result.get('unknown_game') or result.get('ambiguous_game'))
                     no_data = empty_result(result)
                 except read_store.InvalidTool as exc:
                     result = {'error': 'INVALID_TOOL', 'instruction': str(exc)}
