@@ -44,6 +44,16 @@ test('Viking Dash draws five distinct environments and every event without chang
 
 test('Viking stage keeps its scenery visible and supports optional sound through start and pause', async ({ page }) => {
   const errors = [], requests = []; page.on('pageerror', error => errors.push(error.message));
+  await page.addInitScript(() => {
+    const NativeAudio = globalThis.AudioContext;
+    globalThis.vikingAudioProbe = { sources: 0, contexts: [] };
+    if (!NativeAudio) return;
+    globalThis.AudioContext = class extends NativeAudio {
+      constructor(...args) { super(...args); globalThis.vikingAudioProbe.contexts.push(this); }
+      createOscillator() { globalThis.vikingAudioProbe.sources++; return super.createOscillator(); }
+      createBufferSource() { globalThis.vikingAudioProbe.sources++; return super.createBufferSource(); }
+    };
+  });
   const fixture = JSON.parse(readFileSync(new URL('../../../../spec/contracts/microbit-webapp/fixtures/conformance.json', import.meta.url)));
   const session = { player: { id: '11111111-1111-4111-8111-111111111111', username: 'Viking', created_at: '2026-10-01T12:00:00Z' }, expires_at: '2026-11-01T12:00:00Z', absolute_expires_at: '2026-11-20T12:00:00Z' };
   await page.addInitScript(installSerialMock, { info: fixture.deviceInfo.v2, snapshot: fixture.snapshots.v2 });
@@ -63,17 +73,22 @@ test('Viking stage keeps its scenery visible and supports optional sound through
   await page.getByRole('combobox', { name: 'Rangert eller øving' }).selectOption('practice');
   await page.getByRole('textbox', { name: 'Seed for øving' }).fill('midgard');
   await page.locator('.game-frame').screenshot({ path: 'build/viking-ready.png' });
-  await page.getByRole('button', { name: 'Lyd: av', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Lyd: på', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Musikk og lyd: av', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Musikk og lyd: på', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: 'Start spill →' }).click();
   await expect(page.locator('.game-toolbar')).toContainText('SPILLER', { timeout: 6000 });
+  await expect.poll(() => page.evaluate(() => globalThis.vikingAudioProbe.sources)).toBeGreaterThan(5);
+  expect(await page.evaluate(() => globalThis.vikingAudioProbe.contexts.at(-1).state)).toBe('running');
   await page.evaluate(() => window.serialMock.port.sample({ a: 1, ac: 1 }));
   await page.waitForTimeout(150);
   await page.getByRole('button', { name: 'Pause', exact: true }).click();
   await expect(page.locator('.game-toolbar')).toContainText('PAUSE');
+  const pausedSources = await page.evaluate(() => globalThis.vikingAudioProbe.sources);
+  await page.waitForTimeout(300);
+  expect(await page.evaluate(() => globalThis.vikingAudioProbe.sources)).toBe(pausedSources);
   await page.locator('.game-frame').screenshot({ path: 'build/viking-gameplay.png' });
-  await page.getByRole('button', { name: 'Lyd: på', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Lyd: av', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  await page.getByRole('button', { name: 'Musikk og lyd: på', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Musikk og lyd: av', exact: true })).toHaveAttribute('aria-pressed', 'false');
   await page.getByRole('button', { name: '→ Fortsett', exact: true }).click();
   await expect(page.locator('.game-toolbar')).toContainText('NEDTELLING');
   await page.setViewportSize({ width: 390, height: 844 });

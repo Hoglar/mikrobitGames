@@ -44,18 +44,25 @@ samlede `arcade.js` er delt opp. Registeret beholder spillnøkler og katalog-ID-
   ruter gjennom versjonert Fisher–Yates; Random bruker rundens seed. Den faktiske
   generatoren er FNV-basert nøkkelhash og Mulberry32; generatoren fryses som del av
   første spillversjon. Endring av rekordgrunnlag krever nye ID-er/avtalt versjon.
-- Viking bruker fast fysikksteg på 1/120 sekund. Hindringer kommer konservativt
-  med minst 26 virtuelle meter mellom handlinger, også under Ragnarok. Alle fem
-  miljøer og femten hendelser finnes. `viking-dash/scene.js` tegner pixel art i en lokal
-  480×270-flate som skaleres uten utjevning: vikinganimasjon, ulike hindervarianter,
-  parallaxskog, fjorder med skip/bosetninger, snøfjell, nordlys og norrøne scener.
-  Miljøskifter tones over to aktive sekunder. Grafikk og lyd bruker ikke banens RNG.
-  Seedversjonen er `viking-v2`, med separate strømmer for bane, miljø, hendelser
-  og hinderutseende; gamle seeds lover derfor ikke samme bane som i første kode.
-  Fart, poengenhet og katalog-ID er beholdt. Komplett fysisk spillbalanse og hele
-  spesifikasjonens kontroll av vilkårlige hinderkombinasjoner er ikke verifisert.
-- Viking har valgfri, lav nettleserlyd via `viking-dash/audio.js`, avslått som standard.
-  Start/omstart og avslutning rydder lydressurser. Styring og varsler er visuelle.
+- Viking bruker fast fysikksteg på 1/120 sekund og `viking-v3`-balansen i
+  `viking-dash/config.js`: fart øker fra 12 til 24 m/s over 1 200 meter, og
+  synsfeltet er 40 meter. Hinderavstand beregnes etter forventet fart og et
+  tidsintervall, med 28,8 meter som absolutt minimum. Alle fem miljøer og femten
+  hendelser finnes. Miljø trekkes hver 250. meter og tones over to aktive sekunder.
+  Første hendelse kommer etter 3–5 sekunder; senere pauser er 2–3,5 sekunder,
+  eller 3–5 etter intense hendelser. Grafikk og lyd bruker ikke banens RNG.
+  Seedversjonen har separate strømmer for bane, miljø, hendelser og hinderutseende;
+  samme seed lover ikke samme bane som i tidligere versjoner. Poengenhet og
+  katalog-ID er beholdt. Komplett fysisk spillbalanse og hele spesifikasjonens
+  kontroll av vilkårlige hinderkombinasjoner er ikke verifisert.
+- `viking-dash/scene.js` tegner pikselformer direkte med Canvas-flaten tilpasset
+  skjermstørrelse og pikseltetthet, uten oppskalering fra en 480×270-bitmap. Tekst
+  og varsler tegnes separat i aktuell oppløsning med lesbar størrelse på mobil.
+- Viking har valgfri musikk og lydeffekter via `viking-dash/audio.js`, avslått som
+  standard. Et lokalt syntetisert lydspor med melodi, bass og rytme går under
+  aktiv spilling; pause, nedtelling og slutt stopper musikken. Hopp, landing,
+  dukking, kollisjon og hendelser har egne effekter. Omstart og avslutning rydder
+  lydressurser. Styring og varsler er visuelle.
   Viking sender ingen spillstyrt Micro:bit-output. Snake bruker displaybilder.
 - Uventet frakobling bevarer den logiske spillsesjonen. Eksplisitt fortsett kreves.
   Faneskygging eller framegap over 250 ms pauser fremfor usett catch-up.

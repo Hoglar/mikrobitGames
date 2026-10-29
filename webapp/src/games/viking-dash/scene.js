@@ -1,6 +1,6 @@
 // Viking Dash pixel art. World geometry and random choices belong to index.js.
 // Everything is drawn locally: no fonts, images or network resources are needed.
-const WIDTH = 480, HEIGHT = 270, GROUND = 214, SCALE = WIDTH / 32;
+const WIDTH = 480, HEIGHT = 270, GROUND = 214;
 export const environmentNames = ['Norsk skog', 'Fjord og kyst', 'Fjellandskap', 'Nordlysnatt', 'Mytologisk landskap'];
 const places = ['SKOGHEIM', 'FJORDVIK', 'JOTUNFJELL', 'NORDLYSNATT', 'YGGDRASILS RIKE'];
 const palettes = [
@@ -18,14 +18,15 @@ const mix = (a, b, t) => {
   const c = [1, 3, 5].map(i => Math.round(parseInt(a.slice(i, i + 2), 16) * (1 - t) + parseInt(b.slice(i, i + 2), 16) * t));
   return `rgb(${c.join(',')})`;
 };
-function rect(c, color, x, y, w, h) { c.fillStyle = color; c.fillRect(Math.round(x), Math.round(y), Math.max(1, Math.round(w)), Math.max(1, Math.round(h))); }
+const snap = n => Math.round(n * 2) / 2;
+function rect(c, color, x, y, w, h) { c.fillStyle = color; c.fillRect(snap(x), snap(y), Math.max(.5, snap(w)), Math.max(.5, snap(h))); }
 function poly(c, color, points) {
-  c.fillStyle = color; c.beginPath(); points.forEach(([x, y], i) => i ? c.lineTo(Math.round(x), Math.round(y)) : c.moveTo(Math.round(x), Math.round(y))); c.closePath(); c.fill();
+  c.fillStyle = color; c.beginPath(); points.forEach(([x, y], i) => i ? c.lineTo(snap(x), snap(y)) : c.moveTo(snap(x), snap(y))); c.closePath(); c.fill();
 }
 function line(c, color, points, width = 1) {
-  c.strokeStyle = color; c.lineWidth = width; c.beginPath(); points.forEach(([x, y], i) => i ? c.lineTo(Math.round(x), Math.round(y)) : c.moveTo(Math.round(x), Math.round(y))); c.stroke();
+  c.strokeStyle = color; c.lineWidth = width; c.beginPath(); points.forEach(([x, y], i) => i ? c.lineTo(snap(x), snap(y)) : c.moveTo(snap(x), snap(y))); c.stroke();
 }
-function circle(c, color, x, y, r) { c.fillStyle = color; c.beginPath(); c.arc(Math.round(x), Math.round(y), r, 0, Math.PI * 2); c.fill(); }
+function circle(c, color, x, y, r) { c.fillStyle = color; c.beginPath(); c.arc(snap(x), snap(y), r, 0, Math.PI * 2); c.fill(); }
 function alpha(c, opacity, draw) { c.save(); c.globalAlpha *= clamp(opacity); draw(); c.restore(); }
 
 function pine(c, x, base, height, color, highlight) {
@@ -231,10 +232,10 @@ function weather(c, p, t, event, strength) {
   c.restore();
 }
 
-function ground(c, p, d, biome) {
+function ground(c, p, d, biome, worldScale) {
   rect(c, p.dark, 0, GROUND, WIDTH, HEIGHT - GROUND);
   rect(c, p.edge, 0, GROUND, WIDTH, 2); rect(c, p.soil, 0, GROUND + 3, WIDTH, 16);
-  const shift = d * SCALE;
+  const shift = d * worldScale;
   for (let i = Math.floor(shift / 17) - 1; i < Math.floor(shift / 17) + 31; i++) {
     const x = i * 17 - shift, n = noise(i + 61);
     rect(c, n > .5 ? p.edge : p.near, x, GROUND + 4 + n * 7, 2 + n * 5, 1);
@@ -246,8 +247,8 @@ function ground(c, p, d, biome) {
   for (let i = 0; i < 40; i++) rect(c, p.soil, (noise(i + Math.floor(d / 40)) * WIDTH + d * 2) % WIDTH, GROUND + 29 + noise(i + 12) * 23, 2, 1);
 }
 
-function obstacle(c, o, x, p, biome, t) {
-  const w = o.width * SCALE, h = o.height * SCALE, base = GROUND;
+function obstacle(c, o, x, p, biome, t, worldScale) {
+  const w = o.width * worldScale, h = o.height * worldScale, base = GROUND;
   if (o.type === 'pit') {
     rect(c, '#101e22', x, base, w, HEIGHT - base);
     poly(c, p.near, [[x, base + 2], [x + 3, base + 5], [x + 2, base + 12], [x + 5, base + 17], [x + 3, base + 29], [x, base + 37]]);
@@ -256,7 +257,7 @@ function obstacle(c, o, x, p, biome, t) {
     return;
   }
   if (o.type === 'branch') {
-    const top = base - 1.8 * SCALE, low = base - .9 * SCALE;
+    const top = base - 1.8 * worldScale, low = base - .9 * worldScale;
     if (o.skin === 'raven') {
       // Keep the full obstacle silhouette visible, including its hanging tail.
       raven(c, x + w * .5, top + 4, w / 22, t, '#25333a');
@@ -298,11 +299,11 @@ function obstacle(c, o, x, p, biome, t) {
   }
 }
 
-function viking(c, x, foot, t, y, duck, ended, p) {
+function viking(c, x, foot, t, y, duck, ended, p, spriteScale) {
   const crouch = y === 0 && duck, run = Math.floor(t * 10) % 4;
   const leg = y > 0 ? [2, -2] : [[-3, 3], [0, 0], [3, -3], [0, 0]][run];
   const headY = crouch ? -13 : -27, bodyY = crouch ? -9 : -18;
-  c.save(); c.translate(Math.round(x), Math.round(foot));
+  c.save(); c.translate(snap(x), snap(foot)); c.scale(spriteScale, spriteScale);
   if (ended) { c.translate(1, -7); c.rotate(-.32); }
   // Boots and alternating legs; cloak, round shield, belt and braided beard.
   rect(c, '#263137', -4, -6, 3, 5 + (crouch ? 0 : leg[0])); rect(c, '#263137', 2, -6, 3, 5 + (crouch ? 0 : leg[1]));
@@ -326,47 +327,70 @@ function viking(c, x, foot, t, y, duck, ended, p) {
   }
 }
 
-function hud(c, s, p) {
-  c.save(); c.font = '8px monospace'; c.textBaseline = 'top';
-  alpha(c, .82, () => { rect(c, '#172b2e', 12, 12, 146, 26); rect(c, p.accent, 12, 12, 2, 26); });
-  c.fillStyle = '#e7e2cb'; c.fillText(places[s.environment], 22, 17); c.fillStyle = '#acb9aa'; c.font = '6px monospace'; c.fillText('MIDGARD / ' + String(s.section + 1).padStart(2, '0'), 22, 29);
+// Text is measured in CSS pixels and drawn directly into the high-DPI backing
+// store, independently of the scene's retro coordinate grid.
+function hud(c, s, p, width, height) {
+  const compact = width < 640, margin = compact ? 10 : 20;
+  const titleSize = compact ? 13 : 15, labelSize = compact ? 11 : 12;
+  const panelHeight = compact ? 41 : 46;
+  c.save(); c.textBaseline = 'top'; c.textAlign = 'left';
+  c.font = `600 ${titleSize}px monospace`;
+  const place = places[s.environment], panelWidth = Math.min(width - margin * 2, Math.max(compact ? 174 : 202, c.measureText(place).width + 28));
+  alpha(c, .91, () => {
+    rect(c, '#172b2e', margin, margin, panelWidth, panelHeight);
+    rect(c, p.accent, margin, margin, 3, panelHeight);
+  });
+  c.fillStyle = '#f2ead3'; c.fillText(place, margin + 13, margin + 7);
+  c.font = `${labelSize}px monospace`; c.fillStyle = '#c3d0be';
+  c.fillText('MIDGARD / ' + String((s.section ?? 0) + 1).padStart(2, '0'), margin + 13, margin + titleSize + 13);
   if (s.event) {
-    const age = s.time - s.event.start, affecting = ['Odin', 'Ragnarok'].includes(s.event.name), title = affecting && age < 2 ? 'VARSEL: ' + s.event.name.toUpperCase() : s.event.name.toUpperCase();
-    c.font = '8px monospace'; const w = c.measureText(title).width + 24;
-    alpha(c, .88, () => rect(c, '#172b2e', WIDTH - w - 12, 12, w, 26));
-    c.fillStyle = p.accent; c.fillText(title, WIDTH - w, 18);
-    rect(c, '#41514c', WIDTH - w, 31, w - 24, 1); rect(c, p.accent, WIDTH - w, 31, (w - 24) * clamp((s.event.until - s.time) / (s.event.until - s.event.start)), 1);
+    const age = s.time - s.event.start, affecting = ['Odin', 'Ragnarok'].includes(s.event.name);
+    const title = affecting && age < 2 ? 'VARSEL: ' + s.event.name.toUpperCase() : s.event.name.toUpperCase();
+    c.font = `600 ${compact ? 12 : 14}px monospace`;
+    const eventWidth = Math.min(width - margin * 2, c.measureText(title).width + 28);
+    const x = width - margin - eventWidth;
+    const top = compact ? margin + panelHeight + 8 : margin, eventHeight = compact ? 34 : 40;
+    alpha(c, .94, () => rect(c, '#172b2e', x, top, eventWidth, eventHeight));
+    c.fillStyle = '#f2dbac'; c.fillText(title, x + 14, top + 7);
+    const remaining = clamp((s.event.until - s.time) / (s.event.until - s.event.start));
+    rect(c, '#526159', x + 14, top + eventHeight - 7, eventWidth - 28, 2);
+    if (remaining > 0) rect(c, p.accent, x + 14, top + eventHeight - 7, (eventWidth - 28) * remaining, 2);
   }
-  // A small trail marker gives distance a place in the landscape.
-  c.font = '6px monospace'; c.fillStyle = p.edge; c.fillText('ᚠ  VIKING DASH  ᚱ', 16, HEIGHT - 13);
-  const speed = 8 + 8 * Math.min(s.distance / 1500, 1); c.textAlign = 'right'; c.fillStyle = p.edge; c.fillText(`${Math.floor(s.distance).toLocaleString('nb-NO')} M  /  ${speed.toFixed(1)} M/S`, WIDTH - 14, HEIGHT - 13);
+  c.font = `600 ${compact ? 11 : 12}px monospace`; c.fillStyle = '#e0d8bc';
+  c.fillText('VIKING DASH', margin, height - (compact ? 18 : 25));
+  const speed = s.speed ?? 12 + 12 * Math.min(s.distance / 1200, 1);
+  c.textAlign = 'right'; c.fillStyle = '#f0ead5';
+  c.fillText(`${Math.floor(s.distance).toLocaleString('nb-NO')} M  /  ${speed.toFixed(1)} M/S`, width - margin, height - (compact ? 18 : 25));
   c.restore();
 }
 
 export function createVikingRenderer() {
-  let surface, context;
   return function draw(ctx, w, h, s) {
-    if (!surface) {
-      surface = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(WIDTH, HEIGHT) : ctx.canvas.ownerDocument.createElement('canvas');
-      surface.width = WIDTH; surface.height = HEIGHT; context = surface.getContext('2d');
-    }
-    const c = context, p = palettes[s.environment], transition = clamp(s.transition ?? 1);
+    if (w <= 0 || h <= 0) return;
+    const bounds = ctx.canvas.getBoundingClientRect?.();
+    const cssWidth = bounds?.width || w, cssHeight = bounds?.height || h;
+    const p = palettes[s.environment], transition = clamp(s.transition ?? 1);
+    const worldScale = WIDTH / (s.viewMeters ?? 40), spriteScale = worldScale / 15;
     const strength = s.event ? Math.min(clamp((s.time - s.event.start) / 1.5), clamp((s.event.until - s.time) / 1.5)) : 0;
-    c.clearRect(0, 0, WIDTH, HEIGHT); c.imageSmoothingEnabled = false;
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, w, h);
+    // Every path is rasterised at the actual display/backing resolution. There
+    // is no low-resolution intermediate bitmap to enlarge, including on retina.
+    ctx.scale(w / WIDTH, h / HEIGHT);
     if (transition < 1 && s.previousEnvironment !== undefined && s.previousEnvironment !== s.environment) {
-      const previous = palettes[s.previousEnvironment]; backdrop(c, previous, s.previousEnvironment, s.distance, s.time, s.event, strength);
-      alpha(c, transition, () => backdrop(c, p, s.environment, s.distance, s.time, s.event, strength));
-    } else backdrop(c, p, s.environment, s.distance, s.time, s.event, strength);
+      const previous = palettes[s.previousEnvironment]; backdrop(ctx, previous, s.previousEnvironment, s.distance, s.time, s.event, strength);
+      alpha(ctx, transition, () => backdrop(ctx, p, s.environment, s.distance, s.time, s.event, strength));
+    } else backdrop(ctx, p, s.environment, s.distance, s.time, s.event, strength);
     const terrain = transition < 1 ? Object.fromEntries(Object.keys(p).map(key => [key, mix(palettes[s.previousEnvironment ?? s.environment][key], p[key], transition)])) : p;
-    ground(c, terrain, s.distance, s.environment);
+    ground(ctx, terrain, s.distance, s.environment, worldScale);
     const px = WIDTH * .18;
     for (const o of s.objects) {
-      const x = px + (o.x - s.distance) * SCALE;
-      if (x + o.width * SCALE >= -8 && x < WIDTH + 8) obstacle(c, o, x, terrain, s.environment, s.time);
+      const x = px + (o.x - s.distance) * worldScale;
+      if (x + o.width * worldScale >= -8 && x < WIDTH + 8) obstacle(ctx, o, x, terrain, s.environment, s.time, worldScale);
     }
-    if (s.y < .04) alpha(c, .25, () => rect(c, '#111e24', px - 8, GROUND - 1, 17, 2));
-    viking(c, px, GROUND - s.y * SCALE, s.time, s.y, s.duck, s.ended, terrain);
-    hud(c, s, p);
-    ctx.save(); ctx.imageSmoothingEnabled = false; ctx.clearRect(0, 0, w, h); ctx.drawImage(surface, 0, 0, w, h); ctx.restore();
+    if (s.y < .04) alpha(ctx, .25, () => rect(ctx, '#111e24', px - 8 * spriteScale, GROUND - 1, 17 * spriteScale, 2));
+    viking(ctx, px, GROUND - s.y * worldScale, s.time, s.y, s.duck, s.ended, terrain, spriteScale);
+    ctx.setTransform(w / cssWidth, 0, 0, h / cssHeight, 0, 0);
+    hud(ctx, s, p, cssWidth, cssHeight);
+    ctx.restore();
   };
 }

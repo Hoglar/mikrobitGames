@@ -17,7 +17,7 @@ Bruk styrt simuleringstid, faste seed og tidsbestemte inputsekvenser for enhetst
 | VD-03 | WEB-019 | Distanse 123,9 gir score 123. Nedtelling, pause og resultatskjerm øker ikke distansen. Ingen poengbonus for hindringer, og kollisjonsanimasjonen endrer ikke sluttverdien. |
 | VD-04 | WEB-020 | Rangert får ny tilfeldig seed uten manuelt seedvalg. Øving tar ord/tall og sender ingen resultater, heller ikke ved tap eller avbrudd. Modus kan ikke byttes etter start. |
 | VD-05 | WEB-021 | Samme seed/versjon gir samme bane og hendelsesplan ved ulik tegningsfrekvens, lydinnstilling og pausevarighet. Faste testvektorer kontrollerer seednormalisering og generator. |
-| VD-06 | WEB-022 | Kontroller fart ved 0, 750 og 1 500 m mot designet, og at den ikke øker videre. Hoppets toppunkt/flytid og treffområder er like i alle miljøer og hendelser. |
+| VD-06 | WEB-022 | Kontroller fart ved 0, 600 og 1 200 m mot designets 12/18/24 m/s, og at den ikke øker videre. Hoppets toppunkt/flytid og treffområder er like i alle miljøer og hendelser. |
 | VD-07 | WEB-023 | Test alle hindervarianter ved start- og maksimal fart, inkludert grøft etter hopp og dukking etter landing. Generatoren avviser for brede grøfter, utilstrekkelig handlingsskifte og umulige sekvenser. Kandidatgrensen gir trygg bakke, ikke heng eller ugyldig bane. |
 | VD-08 | WEB-024 | Kontroller distansene rett før/på hver progresjonsgrense. Ingen dukking, grøfter eller kombinasjoner kreves før de introduseres. Etter maksimal fart beholdes alle sikkerhetsmarginer. |
 | VD-09 | WEB-025 | Skog er startområdet. Faste seed dekker alle fem miljøer og runder som utelater sjeldne miljøer. Overganger skjer ved riktige grenser uten fysisk brudd, reset eller endring av aktive hindringer. |

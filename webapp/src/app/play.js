@@ -12,12 +12,21 @@ export async function gamePage({root,ctx,parts,view}) {
  let alive=true,session=null,engine=null,phase='ready',countdown=3,attempt=null,ranked=true,round=0,selectedIndex=0,chordArmed=false,previousButtons={a:false,b:false},menuAction=null,menuIndex=0,lastInput=0,lastRenew=performance.now(),renewing=false,lastFrame=performance.now(),raf,personalRecord=null;
  let soundEnabled=false;
  let selected=games.find(g=>g.key===key),remote=null,catalogReady=false;
- const factory=await loadGame(key);engine=await factory({config:selected.config,seed:'preview'});if(!view.active){engine.dispose?.();return;}engine.draw(canvas.getContext('2d'),960,canvas.height);
+ const factory=await loadGame(key);engine=await factory({config:selected.config,seed:'preview'});if(!view.active){engine.dispose?.();return;}
  if(key==='viking'){
   frame.classList.add('viking-theme');frame.dataset.phase='ready';
-  const sound=button('Lyd: av',()=>{soundEnabled=engine.setSoundEnabled?.(!soundEnabled)??false;sound.textContent=soundEnabled?'Lyd: på':'Lyd: av';sound.setAttribute('aria-pressed',String(soundEnabled));},'button secondary viking-sound');
+  const sound=button('Musikk og lyd: av',()=>{soundEnabled=engine.setSoundEnabled?.(!soundEnabled)??false;engine.setPlaying?.(phase==='playing');sound.textContent=soundEnabled?'Musikk og lyd: på':'Musikk og lyd: av';sound.setAttribute('aria-pressed',String(soundEnabled));},'button secondary viking-sound');
   sound.setAttribute('aria-pressed','false');frame.querySelector('.game-toolbar').insertBefore(sound,frame.querySelector('.game-toolbar').lastElementChild);
  }
+ function renderEngine(){
+  if(key==='viking'){
+   const bounds=canvas.getBoundingClientRect(),ratio=Math.min(2,Math.max(1,globalThis.devicePixelRatio||1));
+   const width=Math.round((bounds.width||960)*ratio),height=Math.round((bounds.height||540)*ratio);
+   if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}
+  }
+  engine.draw(canvas.getContext('2d'),canvas.width,canvas.height);
+ }
+ renderEngine();
  const choice=el('select',{'aria-label':'Spillmodus'},games.filter(g=>g.key===key).map(g=>el('option',{value:g.id},key==='snake'?g.name.replace('Micro Snake · ',''):g.name)));
  const practice=el('select',{'aria-label':'Rangert eller øving'},el('option',{value:'ranked'},'Rangert · lagres på kontoen'),el('option',{value:'practice'},'Øving · bare lokalt'));
  const seed=el('input',{placeholder:'Valgfri seed for øving',maxlength:100,'aria-label':'Seed for øving'});seed.disabled=true;
@@ -69,8 +78,8 @@ export async function gamePage({root,ctx,parts,view}) {
    beginCountdown();notice.replaceChildren();
   }catch(e){if(e.status===401)ctx.setSession(null);showReady();throw e;}
  }
- function beginCountdown(){phase='countdown';countdown=3;engine.releaseControls?.();overlay.hidden=false;overlay.replaceChildren(el('h2',{},'3'),el('p',{},ranked?'Rangert runde · gjør deg klar':'Øving · resultatet lagres bare lokalt'));document.body.classList.add('playing');chordArmed=false;}
- function pause(reason){if(!['playing','countdown','paused','confirm'].includes(phase))return;phase='paused';engine.releaseControls?.();menuIndex=0;menuAction=null;chordArmed=false;previousButtons={a:false,b:false};renderPause(reason);}
+ function beginCountdown(){phase='countdown';countdown=3;engine.setPlaying?.(false);engine.releaseControls?.();overlay.hidden=false;overlay.replaceChildren(el('h2',{},'3'),el('p',{},ranked?'Rangert runde · gjør deg klar':'Øving · resultatet lagres bare lokalt'));document.body.classList.add('playing');chordArmed=false;lastFrame=performance.now();}
+ function pause(reason){if(!['playing','countdown','paused','confirm'].includes(phase))return;phase='paused';engine.setPlaying?.(false);engine.releaseControls?.();menuIndex=0;menuAction=null;chordArmed=false;previousButtons={a:false,b:false};renderPause(reason);}
  function renderPause(reason='Velg hva du vil gjøre videre.'){
   overlay.hidden=false;const labels=['Fortsett','Restart','Hovedmeny'];overlay.replaceChildren(el('h2',{},'Pause'),el('p',{},reason),...labels.map((label,i)=>button(`${menuIndex===i?'→ ':''}${label}`,()=>{menuIndex=i;menuSelect();},i===menuIndex?'button light':'button secondary')));
   if (!ctx.session || ctx.session.player.id !== attempt?.playerId) {
@@ -94,7 +103,7 @@ export async function gamePage({root,ctx,parts,view}) {
  function resume(){if(phase!=='paused')return;if(!ctx.microbit.getState().inputAvailable){report(new Error('Micro:bit er ikke klar ennå.'));return;}if(!ctx.session||ctx.session.player.id!==attempt.playerId){report(new Error('Logg inn med samme konto før du fortsetter.'));return;}beginCountdown();}
  function finish(status){
   if(!attempt||['result','ready','closed'].includes(phase))return;
-  phase='result';document.body.classList.remove('playing');engine.releaseControls?.();chordArmed=false;const finished=finishAttempt(attempt,status,engine.value),thisRound=round,outputSession=session,localGame=remote;
+  phase='result';engine.setPlaying?.(false);document.body.classList.remove('playing');engine.releaseControls?.();chordArmed=false;const finished=finishAttempt(attempt,status,engine.value),thisRound=round,outputSession=session,localGame=remote;
   const saveStatus=el('p',{class:'notice'},ranked?'Avventer lagringsbekreftelse …':'Øving · resultatet lagres ikke i backend.');
   const retry=button('Prøv lagring igjen',()=>{void save();},'button secondary');retry.hidden=true;
   overlay.hidden=false;overlay.replaceChildren(el('h2',{},status==='completed'?'Godt spilt!':'Runden er avsluttet'),el('p',{},formatScore(localGame,finished.value)),el('p',{},engine.resultText),saveStatus,el('div',{class:'actions'},button('Spill igjen →',()=>{void start().catch(report);},'button light'),retry,link('Se Dashboard',`#/dashboard?attempt=${finished.attemptId}`,'button secondary')),button('Til modusvelger',showReady,'text-button'));
@@ -110,8 +119,9 @@ export async function gamePage({root,ctx,parts,view}) {
  function draw(now){if(!alive)return;const dt=(now-lastFrame)/1000;lastFrame=now;
   if(dt>.25&&['playing','countdown'].includes(phase))pause('Spillet ble satt på pause etter et opphold i nettleseren.');
   if(phase==='countdown'&&dt<=.25){countdown-=dt;overlay.querySelector('h2').textContent=String(Math.max(1,Math.ceil(countdown)));if(countdown<=0){phase='playing';overlay.hidden=true;engine.releaseControls?.();}}
+  engine.setPlaying?.(phase==='playing');
   if(phase==='playing'&&dt<=.25){if(!ctx.microbit.getState().inputAvailable)pause('Input er utilgjengelig.');else{engine.tick(dt);if(engine.ended)finish(engine.completed===false?'incomplete':'completed');}}
-  frame.dataset.phase=phase;engine.draw(canvas.getContext('2d'),960,canvas.height);score.textContent=engine.label;phaseLabel.textContent={ready:'KLAR',playing:'SPILLER',countdown:'NEDTELLING',paused:'PAUSE',confirm:'BEKREFT',result:'RESULTAT',starting:'FORBEREDER'}[phase]??phase;
+  frame.dataset.phase=phase;renderEngine();score.textContent=engine.label;phaseLabel.textContent={ready:'KLAR',playing:'SPILLER',countdown:'NEDTELLING',paused:'PAUSE',confirm:'BEKREFT',result:'RESULTAT',starting:'FORBEREDER'}[phase]??phase;
   raf=requestAnimationFrame(draw);
  }
  showReady();raf=requestAnimationFrame(draw);

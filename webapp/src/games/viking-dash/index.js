@@ -1,13 +1,14 @@
 import { randomGenerator } from '../shared/random.js';
 import { createVikingRenderer, environmentNames } from './scene.js';
 import { createVikingAudio } from './audio.js';
+import { VIKING_VERSION, VIKING_TUNING as tuning, speedAtDistance, randomBetween } from './config.js';
 
 export const events = [
-  ['Nordlys', 0, 3], ['Stjerneskudd', 0, 3], ['Meteorregn', 200, 2],
-  ['Solformørkelse', 400, 1], ['Måneformørkelse', 400, 1], ['Tordenvær', 200, 2],
-  ['Snøstorm', 200, 2], ['Tåke', 200, 2], ['Solnedgang', 0, 3],
-  ['Tor', 400, 2], ['Odin', 400, 2], ['Bivrost', 400, 2],
-  ['Yggdrasil', 600, 1], ['Fenrisulven', 800, 1], ['Ragnarok', 1200, .5]
+  ['Nordlys', 0, 3], ['Stjerneskudd', 0, 3], ['Meteorregn', 80, 2],
+  ['Solformørkelse', 180, 1], ['Måneformørkelse', 180, 1], ['Tordenvær', 80, 2],
+  ['Snøstorm', 80, 2], ['Tåke', 80, 2], ['Solnedgang', 0, 3],
+  ['Tor', 180, 2], ['Odin', 240, 2], ['Bivrost', 180, 2],
+  ['Yggdrasil', 300, 1], ['Fenrisulven', 450, 1], ['Ragnarok', 600, .5]
 ];
 const STEP = 1 / 120;
 const intense = name => name === 'Odin' || name === 'Ragnarok';
@@ -16,25 +17,25 @@ function weighted(rng, items) {
   return items.find(item => (n -= item[2]) < 0) ?? items.at(-1);
 }
 
-export function createViking({ seed = 'viking-v2' } = {}) {
+export function createViking({ seed = VIKING_VERSION } = {}) {
   // Separate streams keep the lane independent of weather, scenery and rendering.
-  const version = 'viking-v2', normalizedSeed = String(seed).trim().normalize('NFC');
+  const version = VIKING_VERSION, normalizedSeed = String(seed).trim().normalize('NFC');
   const laneRandom = randomGenerator(`${version}:lane:${normalizedSeed}`);
   const environmentRandom = randomGenerator(`${version}:environment:${normalizedSeed}`);
   const eventRandom = randomGenerator(`${version}:events:${normalizedSeed}`);
   const skinRandom = randomGenerator(`${version}:skins:${normalizedSeed}`);
   const render = createVikingRenderer(), audio = createVikingAudio();
-  let distance = 0, time = 0, y = 0, velocity = 0, duck = false, ended = false;
+  let distance = 0, time = 0, y = 0, velocity = 0, duck = false, ended = false, playing = false;
   let jumpBuffer = 0, nextObstacle = 28, objects = [], remainder = 0;
   let environment = 0, previousEnvironment = 0, environmentStarted = -2, section = 0;
-  let event = null, lastEvent = null, nextEvent = 10 + eventRandom() * 5;
+  let event = null, lastEvent = null, nextEvent = randomBetween(eventRandom, tuning.firstEvent);
 
   function spawn() {
     // Use the obstacle's location, rather than lookahead time, for unlock gates.
     const location = nextObstacle;
-    let types = location < 100 ? ['rock'] : location < 200 ? ['rock', 'branch'] : ['rock', 'branch', 'pit'];
-    const influenced = event && time - event.start >= 2;
-    if (influenced && event.name === 'Odin' && location >= 400) types = ['branch', 'branch', 'rock', 'pit'];
+    let types = location < tuning.duckMeters ? ['rock'] : location < tuning.pitMeters ? ['rock', 'branch'] : ['rock', 'branch', 'pit'];
+    const influenced = event && time - event.start >= tuning.eventWarningSeconds;
+    if (influenced && event.name === 'Odin' && location >= tuning.combinationMeters) types = ['branch', 'branch', 'rock', 'pit'];
     const type = types[Math.floor(laneRandom() * types.length)];
     const width = type === 'pit' ? (laneRandom() < .5 ? 1.5 : 2.5) :
       type === 'branch' ? (laneRandom() < .5 ? 1 : 1.5) : (laneRandom() < .5 ? .6 : 1);
@@ -43,14 +44,16 @@ export function createViking({ seed = 'viking-v2' } = {}) {
     const skin = influenced && event.name === 'Odin' && type === 'branch' ? 'raven' :
       skins[Math.floor(skinRandom() * skins.length)];
     objects.push({ x: location, type, width, height: width === .6 ? .4 : .7, skin });
-    // At maximum speed even the shortest interval leaves room for a full jump,
-    // recovery and the next action. Events never tighten the physics margins.
-    nextObstacle += influenced && event.name === 'Ragnarok' && location >= 1200 ?
-      26 + laneRandom() * 6 : 32 + laneRandom() * 16;
+    // Bound the travel time rather than reusing old metre gaps at a faster speed.
+    // The upper-bound future speed preserves the requested gap while accelerating.
+    const ragnarok = influenced && event.name === 'Ragnarok' && location >= tuning.combinationMeters;
+    const seconds = randomBetween(laneRandom, ragnarok ? tuning.intenseObstacleGap : tuning.obstacleGap);
+    const futureSpeed = speedAtDistance(location + tuning.maxSpeed * seconds);
+    nextObstacle += Math.max(futureSpeed * seconds, tuning.maxSpeed * tuning.minimumActionSeconds);
   }
 
   function updateWorld(dt, previousDistance) {
-    const nextSection = Math.floor(distance / 500);
+    const nextSection = Math.floor(distance / tuning.environmentMeters);
     if (nextSection > section) {
       section = nextSection;
       previousEnvironment = environment;
@@ -59,15 +62,15 @@ export function createViking({ seed = 'viking-v2' } = {}) {
     }
     if (event && time >= event.until) {
       lastEvent = event.name;
-      nextEvent = time + (intense(lastEvent) ? 12 : 6) + eventRandom() * (intense(lastEvent) ? 8 : 6);
+      nextEvent = time + randomBetween(eventRandom, intense(lastEvent) ? tuning.intenseGap : tuning.visualGap);
       event = null;
     }
     if (!event && time >= nextEvent) {
       const chosen = weighted(eventRandom, events.filter(e => distance >= e[1] && e[0] !== lastEvent));
-      event = { name: chosen[0], start: time, until: time + (intense(chosen[0]) ? 12 : 10) + eventRandom() * 8 };
+      event = { name: chosen[0], start: time, until: time + randomBetween(eventRandom, intense(chosen[0]) ? tuning.intenseDuration : tuning.visualDuration) };
       audio.play('event', event.name);
     }
-    while (distance + 55 >= nextObstacle) spawn();
+    while (distance + tuning.lookaheadMeters >= nextObstacle) spawn();
 
     const wasAirborne = y > 0 || velocity > 0;
     if (!wasAirborne && jumpBuffer > 0 && !duck) {
@@ -94,6 +97,7 @@ export function createViking({ seed = 'viking-v2' } = {}) {
       // The buffered press is consumed on the landing step, not one tick later.
       velocity = 8; jumpBuffer = 0; audio.play('jump');
     }
+    else if (wasAirborne && y === 0) audio.play('land');
     jumpBuffer = Math.max(0, jumpBuffer - dt);
     objects = objects.filter(o => o.x + o.width > distance - 5);
   }
@@ -101,6 +105,7 @@ export function createViking({ seed = 'viking-v2' } = {}) {
   function state() {
     return {
       version, distance, time, y, duck, environment, previousEnvironment, section,
+      speed: speedAtDistance(distance), viewMeters: tuning.viewMeters,
       transition: Math.min(1, Math.max(0, (time - environmentStarted) / 2)),
       event: event && { ...event }, objects: objects.map(o => ({ ...o })), ended
     };
@@ -113,19 +118,24 @@ export function createViking({ seed = 'viking-v2' } = {}) {
       const landingIn = y > 0 ? (velocity + Math.sqrt(velocity * velocity + 40 * y)) / 20 : 0;
       if (landingIn <= .1 + 1e-9) jumpBuffer = .1;
     },
-    input(input) { duck = input.buttons.bPressed; if (duck) jumpBuffer = 0; },
+    input(input) {
+      const nextDuck = input.buttons.bPressed;
+      if (nextDuck && !duck && y === 0 && !ended && playing) audio.play('duck');
+      duck = nextDuck; if (duck) jumpBuffer = 0;
+    },
     releaseControls() { duck = false; jumpBuffer = 0; },
     tick(dt) {
       if (!Number.isFinite(dt) || dt <= 0 || ended) return;
       remainder += dt;
       while (!ended && remainder + 1e-12 >= STEP) {
-        const speed = 8 + 8 * Math.min(distance / 1500, 1);
+        const speed = speedAtDistance(distance);
         const previousDistance = distance;
         time += STEP; distance += speed * STEP; updateWorld(STEP, previousDistance);
         remainder = Math.max(0, remainder - STEP);
       }
     },
     setSoundEnabled(enabled) { return audio.setEnabled(enabled); },
+    setPlaying(active) { playing = active && !ended; audio.setPlaying(playing); },
     dispose() { audio.dispose(); },
     get ended() { return ended; },
     get value() { return Math.floor(distance); },
