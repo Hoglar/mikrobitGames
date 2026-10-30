@@ -1,0 +1,25 @@
+<!doctype html><html lang="nb"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>App-FoM</title><style>body{font:16px system-ui,sans-serif;color:#14263b;background:#f4f7fb;max-width:1160px;margin:40px auto;padding:0 24px}h1{font-size:32px}h2{font-size:23px}a{color:#1459a6}section,.card{background:white;border:1px solid #d9e2ed;border-radius:12px;padding:24px;margin:20px 0}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:12px 8px;border-bottom:1px solid #d9e2ed;text-align:left;vertical-align:top}pre{white-space:pre-wrap;overflow-wrap:anywhere}svg{width:100%;height:auto}.scroll{overflow:auto}.score{font-size:28px;font-weight:700}.muted{color:#526174}code{overflow-wrap:anywhere}input{font:inherit;padding:9px;width:min(100%,440px)}.FAIL,.BLOCKED{color:#a12222}.PASS{color:#086143}</style><body><h1>Appens utvikling gjennom iterasjoner</h1><p>FoM kombinerer F – funksjonelle tester, P – ytelsesbenchmarks og U – brukeropplevelse. Hver kjøring bruker sine lagrede vekter, vist som F/P/U nedenfor.</p>
+<p>F er gjennomsnitt av funksjonsgruppene: enhetstester, integrasjon, nettleserforløp og kapasitetskorrekthet. P er gjennomsnitt av ytelsesgruppene. U er siste fullførte UX-skår × 10. Alle har skala 0–100. Klikk på rapporten for inndata, vekter og bidrag til FoM. Ved blokkering kan F og P være delgjennomsnitt; samlet FoM holdes tilbake.</p>
+<section><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="chart-title" aria-describedby="chart-description"><title id="chart-title">FoM per iterasjon. Heltrukket: samlet FoM. Stiplet: teknisk skår uten UX.</title><desc id="chart-description">Skala fra 0 til 100. Punktene lenker til rapportene. Bare sammenlignbare kjøringer kobles sammen; manglende målinger gir hull. BLOCKED under aksen markerer en kjøring uten skår.</desc><rect width="960" height="400" fill="white"/><path d="M55 310.0H920" stroke="#e2e8f0"/><text x="15" y="315.0" font-size="13">0</text><path d="M55 247.5H920" stroke="#e2e8f0"/><text x="15" y="252.5" font-size="13">25</text><path d="M55 185.0H920" stroke="#e2e8f0"/><text x="15" y="190.0" font-size="13">50</text><path d="M55 122.5H920" stroke="#e2e8f0"/><text x="15" y="127.5" font-size="13">75</text><path d="M55 60.0H920" stroke="#e2e8f0"/><text x="15" y="65.0" font-size="13">100</text><text x="70.0" y="337" text-anchor="middle" font-size="12">1</text><a href="runs/20261030T120722.830254Z/report.html" target="_top" aria-label="test av test · BLOCKED · Ingen FoM-skår; åpne rapporten for feil og manglende målinger."><text x="70.0" y="355" text-anchor="middle" font-size="10" fill="#a12222">BLOCKED<title>test av test · BLOCKED · Ingen FoM-skår; åpne rapporten for feil og manglende målinger.</title></text></a><text x="480" y="180" text-anchor="middle" font-size="16">Ingen komplette målepunkter ennå</text><text x="55" y="385" font-size="14">Iterasjon · Fylt: FoM · Åpent: teknisk skår · BLOCKED: ingen skår</text></svg><p class="muted">Bare samme testgrunnlag, profil og miljø kobles sammen. Manglende målinger gir hull. Åpne punkter er tekniske resultater før UX-vurdering. BLOCKED er en statusmarkør uten skår; feil og blokkeringer beholdes i historikken.</p><a href="history.svg">Åpne graf som SVG</a> · <a href="history.md">GitHub / Markdown</a></section>
+<section><h2>Historikk og kommentarer</h2><label>Filtrer navn eller tilbakemelding <input id="filter" type="search"></label><div class="scroll"><table><thead><tr><th>#</th><th>Iterasjon</th><th>Profil / serie / vekter</th><th>F / 100</th><th>P / 100</th><th>U / 100</th><th>Teknisk</th><th>FoM</th><th>Status, feil og kommentar</th></tr></thead><tbody><tr data-search="test av test 2026-10-30t12:12:03.733484+00:00 · lars johan / martin · 6.0/10
+
+
+det som fungerte: inputs
+
+det som bør forbedres: touch knappen er overfølsom
+
+prioritet til neste iterasjon: at spillene er fullscreen
+
+- finn et spill og forstå kontrollene uten hjelp.: gjennomført
+  viking dash er for lett
+
+- koble til micro:bit, spill, og prøv pause, frakobling og fortsettelse.: gjennomført
+
+- prøv alle seks spillfamilier kort; vurder lesbarhet og respons.: ikke prøvd
+  ikke nå
+
+- i tilkoblet app: logg inn, fullfør en runde, finn resultatet og prøv ai-chat.: problem
+  ai chat gir ikke noe svar knyttet til data"><td>1</td><td><a href="runs/20261030T120722.830254Z/report.html">test av test</a><br>2026-10-30T12:07:23.417469+00:00</td><td>local-browser<br><code>169ea2d92805</code><br>Vekter F/P/U: 50 % / 30 % / 20 %</td><td>100.00</td><td>100.00</td><td>60.00</td><td>—</td><td>—</td><td>BLOCKED<br><strong>0 FAIL · 6 BLOCKED · Selvtest: PASS</strong><br>Fungerte godt: inputs
+Forbedringsbehov: touch knappen er overfølsom
+Prioritet neste iterasjon: at spillene er fullscreen</td></tr></tbody></table></div></section>
+<script>document.getElementById('filter').addEventListener('input', e => {for (const row of document.querySelectorAll('tr[data-search]')) row.hidden = !row.dataset.search.includes(e.target.value.toLowerCase());});</script></body></html>

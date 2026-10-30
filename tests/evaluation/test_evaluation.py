@@ -61,13 +61,14 @@ class ScoringTests(unittest.TestCase):
                 latency_score(value, 5)
 
     def test_feedback_requires_finite_score_and_comment(self):
-        for score in (-1, 11, float('nan'), float('inf'), True):
+        for score in (-1, 0, .9, 11, float('nan'), float('inf'), True):
             with self.assertRaises(ValueError):
                 validate_feedback(score, 'comment', 'team')
         for comment, reviewer in [('', 'team'), ('   ', 'team'), ('comment', '')]:
             with self.assertRaises(ValueError):
                 validate_feedback(7, comment, reviewer)
-        validate_feedback(0, 'Broken flow', 'Team')
+        validate_feedback(1, 'Broken flow', 'Team')
+        validate_feedback(10, 'Smooth flow', 'Team')
 
 
 class EvidenceTests(unittest.TestCase):
@@ -123,9 +124,9 @@ class PersistenceTests(unittest.TestCase):
             loaded = load_runs(root)[0]
             self.assertEqual(len(loaded['reviews']), 2)
             self.assertEqual(loaded['summary']['fom'], 90)
-            self.assertIn('&lt;script&gt;', (folder / 'report.html').read_text())
-            self.assertNotIn('<script>alert(1)</script>', (folder / 'report.html').read_text())
-            self.assertIn('Corrected group score', (folder / 'next-iteration.md').read_text())
+            self.assertIn('&lt;script&gt;', (folder / 'report.html').read_text(encoding='utf-8'))
+            self.assertNotIn('<script>alert(1)</script>', (folder / 'report.html').read_text(encoding='utf-8'))
+            self.assertIn('Corrected group score', (folder / 'next-iteration.md').read_text(encoding='utf-8'))
 
     def test_invalid_or_unknown_feedback_does_not_write(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -152,7 +153,7 @@ class PersistenceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             self.assertEqual(render(root), [])
-            self.assertIn('<svg', (root / 'history.svg').read_text())
+            self.assertIn('<svg', (root / 'history.svg').read_text(encoding='utf-8'))
 
 
 if __name__ == '__main__':

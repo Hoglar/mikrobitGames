@@ -12,8 +12,8 @@ def latency_score(value, budget):
 
 
 def validate_feedback(score, comment, reviewer):
-    if isinstance(score, bool) or not isinstance(score, (int, float)) or not math.isfinite(score) or not 0 <= score <= 10:
-        raise ValueError('UX-skår må være et endelig tall fra 0 til 10.')
+    if isinstance(score, bool) or not isinstance(score, (int, float)) or not math.isfinite(score) or not 1 <= score <= 10:
+        raise ValueError('UX-skår må være et endelig tall fra 1 til 10.')
     if not comment.strip() or not reviewer.strip():
         raise ValueError('Både kommentar og vurderer/gruppe må fylles ut.')
 

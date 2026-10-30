@@ -42,7 +42,6 @@ node_modules/
 backend/results/runs/
 backend/check.local.json
 
-# Local whole-application evaluations and UX feedback
-/results/fom/app/runs/
-/results/fom/app/index.html
-/results/fom/app/history.svg
+# Shared whole-application reports, measurements, graphs and diagnostic logs
+!/results/fom/app/runs/**/*.log
+!/results/fom/app/runs/**/*.log.*
