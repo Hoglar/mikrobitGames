@@ -1,0 +1,107 @@
+'SET ROLE backend_app' contains unsupported syntax. Falling back to parsing as a 'Command'.
+test_failed_game_lookup_invalidates_earlier_evidence (test_ai_conversation.ConversationChecks.test_failed_game_lookup_invalidates_earlier_evidence) ... ok
+test_greeting_does_not_require_database_and_followup_sees_history (test_ai_conversation.ConversationChecks.test_greeting_does_not_require_database_and_followup_sees_history) ... ok
+test_history_is_session_local_and_clear_removes_it (test_ai_conversation.ConversationChecks.test_history_is_session_local_and_clear_removes_it) ... ok
+test_history_limit_notifies_and_does_not_keep_tool_data (test_ai_conversation.ConversationChecks.test_history_limit_notifies_and_does_not_keep_tool_data) ... ok
+test_known_empty_game_is_different_from_unknown_game (test_ai_conversation.ConversationChecks.test_known_empty_game_is_different_from_unknown_game) ... ok
+test_model_text_is_bound_as_data (test_ai_conversation.ConversationChecks.test_model_text_is_bound_as_data) ... ok
+test_oversized_current_tool_result_is_not_silently_truncated (test_ai_conversation.ConversationChecks.test_oversized_current_tool_result_is_not_silently_truncated) ... ok
+test_record_answer_requires_fresh_tool_result_each_turn (test_ai_conversation.ConversationChecks.test_record_answer_requires_fresh_tool_result_each_turn) ... ok
+test_technical_error_is_not_no_data (test_ai_conversation.ConversationChecks.test_technical_error_is_not_no_data) ... ok
+test_tool_and_model_budgets (test_ai_conversation.ConversationChecks.test_tool_and_model_budgets) ... ok
+test_tools_reject_sql_or_extra_identity_arguments_before_database (test_ai_conversation.ConversationChecks.test_tools_reject_sql_or_extra_identity_arguments_before_database) ... ok
+test_unresolved_game_cannot_support_a_missing_records_claim (test_ai_conversation.ConversationChecks.test_unresolved_game_cannot_support_a_missing_records_claim) ... ok
+test_capacity_and_ownership (test_ai_conversation.SessionLifecycle.test_capacity_and_ownership) ... ok
+test_idle_expiry_removes_memory (test_ai_conversation.SessionLifecycle.test_idle_expiry_removes_memory) ... ok
+test_reset_does_not_claim_success_while_worker_is_active (test_ai_conversation.SessionLifecycle.test_reset_does_not_claim_success_while_worker_is_active) ... ok
+test_each_required_field (test_ai_response.AIResponse.test_each_required_field) ... ok
+test_extra_field_rejected (test_ai_response.AIResponse.test_extra_field_rejected) ... ok
+test_invalid_field_values (test_ai_response.AIResponse.test_invalid_field_values) ... ok
+test_memory_notices_are_bounded_and_optional (test_ai_response.AIResponse.test_memory_notices_are_bounded_and_optional) ... ok
+test_non_object_rejected (test_ai_response.AIResponse.test_non_object_rejected) ... ok
+test_three_success_statuses (test_ai_response.AIResponse.test_three_success_statuses) ... ok
+test_unicode_codepoint_boundary (test_ai_response.AIResponse.test_unicode_codepoint_boundary) ... ok
+test_wrong_request_id (test_ai_response.AIResponse.test_wrong_request_id) ... ok
+test_absolute_boundary (test_auth_rules.AuthRules.test_absolute_boundary) ... ok
+test_absolute_expiry_caps_renewal (test_auth_rules.AuthRules.test_absolute_expiry_caps_renewal) ... ok
+test_exact_expiry_boundary (test_auth_rules.AuthRules.test_exact_expiry_boundary) ... ok
+test_initial_expiry (test_auth_rules.AuthRules.test_initial_expiry) ... ok
+test_invalid_usernames (test_auth_rules.AuthRules.test_invalid_usernames) ... ok
+test_username_normalization (test_auth_rules.AuthRules.test_username_normalization) ... ok
+test_broken_structures_are_not_converted_to_chat (test_model_messages.ModelMessages.test_broken_structures_are_not_converted_to_chat) ... ok
+test_incomplete_and_oversized_context_do_not_succeed (test_model_messages.ModelMessages.test_incomplete_and_oversized_context_do_not_succeed) ... ok
+test_plain_and_json_string_greetings (test_model_messages.ModelMessages.test_plain_and_json_string_greetings) ... ok
+test_structured_tools_remain_strict (test_model_messages.ModelMessages.test_structured_tools_remain_strict) ... ok
+test_catalog (test_query_policy.QueryPolicy.test_catalog)
+Bare de tre avtalte visningene. ... ok
+test_copy_program (test_query_policy.QueryPolicy.test_copy_program)
+Ingen systemkommandoer. ... ok
+test_cross_game_join (test_query_policy.QueryPolicy.test_cross_game_join)
+Parametrisert eksempel fra kontrakt 1.6. ... ok
+test_delete (test_query_policy.QueryPolicy.test_delete)
+Ingen sletting. ... ok
+test_empty (test_query_policy.QueryPolicy.test_empty)
+Tom SQL er ugyldig. ... ok
+test_file_read (test_query_policy.QueryPolicy.test_file_read)
+Ingen filtilgang. ... ok
+test_insert (test_query_policy.QueryPolicy.test_insert)
+Ingen innsetting. ... ok
+test_locking (test_query_policy.QueryPolicy.test_locking)
+Ingen låsende lesing. ... ok
+test_malformed (test_query_policy.QueryPolicy.test_malformed)
+Parserfeil skal avvises. ... ok
+test_multiple (test_query_policy.QueryPolicy.test_multiple)
+Bare én kommando. ... ok
+test_nested_attempts (test_query_policy.QueryPolicy.test_nested_attempts)
+Private data er også forbudt i delspørringer. ... ok
+test_nested_secret (test_query_policy.QueryPolicy.test_nested_secret)
+Kontroller også delspørringer. ... ok
+test_own_attempts (test_query_policy.QueryPolicy.test_own_attempts)
+Heller ikke spørsmålsstillerens egne forsøk er tilgjengelige. ... ok
+test_passwords (test_query_policy.QueryPolicy.test_passwords)
+Grunntabell og hemmelighet er forbudt. ... ok
+test_private_attempts (test_query_policy.QueryPolicy.test_private_attempts)
+Private forsøk er utenfor AI-grunnlaget. ... ok
+test_read_cte (test_query_policy.QueryPolicy.test_read_cte)
+Lesende CTE skal analyseres og tillates. ... ok
+test_read_games (test_query_policy.QueryPolicy.test_read_games)
+Også inaktive spill er tilgjengelige. ... ok
+test_read_players (test_query_policy.QueryPolicy.test_read_players)
+Tillatt spillerprojeksjon uten hemmeligheter. ... ok
+test_read_records (test_query_policy.QueryPolicy.test_read_records)
+Tillatt rekordlesing. ... ok
+test_select_into (test_query_policy.QueryPolicy.test_select_into)
+SELECT INTO skriver. ... ok
+test_sessions (test_query_policy.QueryPolicy.test_sessions)
+Ingen sesjonsdata. ... ok
+test_set_config (test_query_policy.QueryPolicy.test_set_config)
+Modellen kan ikke endre grenser. ... ok
+test_set_role (test_query_policy.QueryPolicy.test_set_role)
+Ingen rollebytte. ... ok
+test_sleep (test_query_policy.QueryPolicy.test_sleep)
+Ikke en tillatt funksjon. ... ok
+test_unknown_function (test_query_policy.QueryPolicy.test_unknown_function)
+Ukjente funksjoner avvises. ... ok
+test_update (test_query_policy.QueryPolicy.test_update)
+Ingen endring. ... ok
+test_write_cte (test_query_policy.QueryPolicy.test_write_cte)
+Skriving skjult i CTE. ... ok
+test_competition_ranking_and_stable_tie_order (test_score_rules.ScoreRules.test_competition_ranking_and_stable_tie_order) ... ok
+test_completed_attempt_uses_game_bounds (test_score_rules.ScoreRules.test_completed_attempt_uses_game_bounds) ... ok
+test_empty_ranking (test_score_rules.ScoreRules.test_empty_ranking) ... ok
+test_first_record_for_both_directions (test_score_rules.ScoreRules.test_first_record_for_both_directions) ... ok
+test_higher_must_be_strictly_better (test_score_rules.ScoreRules.test_higher_must_be_strictly_better) ... ok
+test_incomplete_value_is_optional_and_not_a_final_score (test_score_rules.ScoreRules.test_incomplete_value_is_optional_and_not_a_final_score) ... ok
+test_invalid_scores_rejected (test_score_rules.ScoreRules.test_invalid_scores_rejected) ... ok
+test_lower_must_be_strictly_better (test_score_rules.ScoreRules.test_lower_must_be_strictly_better) ... ok
+test_lower_ranking (test_score_rules.ScoreRules.test_lower_ranking) ... ok
+test_unknown_attempt_status_rejected (test_score_rules.ScoreRules.test_unknown_attempt_status_rejected) ... ok
+test_unknown_direction_rejected (test_score_rules.ScoreRules.test_unknown_direction_rejected) ... ok
+test_valid_inclusive_bounds (test_score_rules.ScoreRules.test_valid_inclusive_bounds) ... ok
+
+----------------------------------------------------------------------
+Ran 72 tests in 0.136s
+
+OK
+
+{"tests": 72, "passed": 72, "failed": 0, "skipped": 0}

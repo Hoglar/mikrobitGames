@@ -8,4 +8,5 @@ F = funksjonstester, P = benchmarkytelse, U = brukeropplevelse (alle 0–100). V
 
 | # | Iterasjon / rapport | Tid (UTC) | F | P | U | FoM | Status |
 | --- | --- | --- | ---: | ---: | ---: | ---: | --- |
-| 1 | [test av test](runs/20261030T120722.830254Z/report.md) | 2026-10-30T12:07:23.417469+00:00 | 100.00 | 100.00 | 60.00 | — | BLOCKED |
+| 1 | [02 test fførste iterasjon](runs/20261030T134157.523334Z/report.md) | 2026-10-30T13:41:57.880693+00:00 | 100.00 | 100.00 | — | — | BLOCKED |
+| 2 | [funker ikke](runs/20261030T134504.669991Z/report.md) | 2026-10-30T13:45:04.832725+00:00 | 100.00 | 100.00 | — | — | BLOCKED |

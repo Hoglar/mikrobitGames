@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Linux-c++"
+	tests="3"
+	failures="0"
+	disabled="0"
+	skipped="0"
+	hostname="parrot"
+	time="0"
+	timestamp="2026-10-30T14:42:06"
+	>
+	<testcase name="firmware_core" classname="firmware_core" time="0.00667065" status="run">
+		<properties/>
+		<system-out>PASS framing_boundaries
+PASS parser_boundaries_and_precedence
+PASS handshake_and_ids
+PASS malformed_and_overflow_recovery
+PASS partial_tx_and_session_barrier
+PASS snapshots_and_failure
+PASS debounce_and_deadlines
+PASS output_replacement_and_cancellation
+PASS invalid_commands_preserve_outputs_and_faults
+PASS deterministic_framing_fuzz
+PASS bounded_backpressure_and_ordering
+PASS output_deadlines_and_failed_replacement
+</system-out>
+	</testcase>
+	<testcase name="shared_fixtures" classname="shared_fixtures" time="0.122844" status="run">
+		<properties/>
+		<system-out>....
+----------------------------------------------------------------------
+Ran 4 tests in 0.051s
+
+OK
+</system-out>
+	</testcase>
+	<testcase name="serial_harness" classname="serial_harness" time="0.0706094" status="run">
+		<properties/>
+		<system-out>....
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+OK
+</system-out>
+	</testcase>
+</testsuite>

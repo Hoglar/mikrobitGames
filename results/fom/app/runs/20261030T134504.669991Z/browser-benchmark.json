@@ -1,0 +1,75 @@
+{
+  "recordedAt": "2026-10-30T13:45:44.543Z",
+  "browser": "156.0.8078.4",
+  "playwright": "1.64.1",
+  "platform": "linux",
+  "release": "7.0.13+parrot7-amd64",
+  "fixtureSha256": "6c1112bb4a20eeb1c3f9f55e29e04487fc1b05427f7a8485eeb82dbbe9bf2f32",
+  "measurements": [
+    {
+      "rateHz": 50,
+      "subscribers": 1,
+      "logicalDurationSeconds": 300,
+      "snapshots": 15000,
+      "callbacks": 15000,
+      "elapsedMs": 571.9000000022352,
+      "messagesPerSecond": 26228.361601576107,
+      "propagationMs": {
+        "p50": 0,
+        "p95": 0.10000000149011612,
+        "p99": 0.10000000149011612,
+        "max": 1.300000000745058
+      }
+    },
+    {
+      "rateHz": 50,
+      "subscribers": 4,
+      "logicalDurationSeconds": 300,
+      "snapshots": 15000,
+      "callbacks": 60000,
+      "elapsedMs": 544.5999999977648,
+      "messagesPerSecond": 27543.150936580176,
+      "propagationMs": {
+        "p50": 0,
+        "p95": 0.10000000149011612,
+        "p99": 0.10000000149011612,
+        "max": 3
+      }
+    },
+    {
+      "rateHz": 500,
+      "subscribers": 1,
+      "logicalDurationSeconds": 300,
+      "snapshots": 150000,
+      "callbacks": 150000,
+      "elapsedMs": 4998.199999999255,
+      "messagesPerSecond": 30010.80388940466,
+      "propagationMs": {
+        "p50": 0,
+        "p95": 0.10000000149011612,
+        "p99": 0.10000000149011612,
+        "max": 4.199999999254942
+      }
+    },
+    {
+      "rateHz": 500,
+      "subscribers": 4,
+      "logicalDurationSeconds": 300,
+      "snapshots": 150000,
+      "callbacks": 600000,
+      "elapsedMs": 5121.5,
+      "messagesPerSecond": 29288.294444986823,
+      "propagationMs": {
+        "p50": 0,
+        "p95": 0.10000000149011612,
+        "p99": 0.10000000149011612,
+        "max": 4.399999998509884
+      }
+    }
+  ],
+  "method": "Production library with native browser Streams and a Web Serial mock; accelerated device timestamps; performance.now from complete-line handling to callbacks; 1000 warmup frames; nearest-rank percentiles.",
+  "limitations": [
+    "Logical replay time is not real-time USB soak.",
+    "No real permission dialog, USB hardware, physical end-to-end latency or continuous memory peak measured."
+  ]
+}
