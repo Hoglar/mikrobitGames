@@ -5,18 +5,19 @@ import { createAttempt, finishAttempt, shouldRenew } from '../platform/rules.js'
 import { validateSession } from './api.js';
 import { createTetrisAudio } from '../games/tetris/audio.js';
 const faces={win:[0,9,0,9,0,0,9,0,9,0,0,0,0,0,0,9,0,0,0,9,0,9,9,9,0],lose:[0,9,0,9,0,0,9,0,9,0,0,0,0,0,0,0,9,9,9,0,9,0,0,0,9],trophy:[9,0,0,0,9,9,9,9,9,9,0,9,9,9,0,0,0,9,0,0,0,9,9,9,0]};
-export async function gamePage({root,ctx,parts,view}) {
+export async function gamePage({root,ctx,parts,view,onSelectedGame=()=>{},onResultSaved=()=>{}}) {
  const key=parts[1],family=families.find(f=>f.key===key);if(!family)throw new Error('Ukjent spill.');
  root.append(heading('SPILLHALL / '+family.genre,family.title,family.description));
  const notice=el('div',{'aria-live':'polite'}),canvas=el('canvas',{width:960,height:key==='snake'?660:540,'aria-label':family.title+' spillflate'}),score=el('span',{},'Klar for en ny runde'),phaseLabel=el('span',{},'KLAR'),overlay=el('div',{class:'game-overlay'}),frame=el('section',{class:'game-frame'},el('div',{class:'game-toolbar'},score,phaseLabel,button('Pause',()=>pause('Spillet er satt på pause.'),'button secondary')),canvas,overlay,el('div',{class:'controls-hint'},key==='snake'?el('span',{},el('b',{class:'key'},'A'),' venstre · ',el('b',{class:'key'},'B'),' høyre · ',el('b',{class:'key'},'LOGO'),' pause'):key==='viking'?el('span',{},el('b',{class:'key'},'A'),' hopp · Hold ',el('b',{class:'key'},'B'),' for å dukke'):key==='reaction'?el('span',{},el('b',{class:'key'},'A / B'),' følg signalet'):el('span',{},el('b',{class:'key'},'VIPP'),' styr i alle retninger')));
  const topList=link('Toppliste for valgt variant','#/leaderboard','text-button');
- root.append(notice,frame,el('div',{class:'toolbar'},link('← Spillvelgeren','#/','text-button'),ctx.localPlay?null:topList,ctx.localPlay?el('span',{class:'notice'},'Lokal øving · ingen lagring'):link('Mine resultater','#/dashboard','text-button')));
+ root.append(notice,frame,el('div',{class:'toolbar'},ctx.localPlay?null:topList,ctx.localPlay?el('span',{class:'notice'},'Lokal øving · ingen lagring'):link('Mine resultater','#/dashboard','text-button')));
  let alive=true,session=null,engine=null,phase='ready',countdown=3,attempt=null,ranked=!ctx.localPlay,round=0,selectedIndex=0,chordArmed=false,previousButtons={a:false,b:false},menuAction=null,menuIndex=0,lastInput=0,lastRenew=performance.now(),renewing=false,lastFrame=performance.now(),raf,personalRecord=null;
  let soundEnabled=false;
  const tetrisAudio=key==='tetris'?createTetrisAudio():null;
  const tetrisSettings={musicEnabled:true,musicVolume:96,effectsEnabled:true,effectsVolume:.2};
  let tetrisStatus=null;
  let selected=games.find(g=>g.key===key),remote=null,catalogReady=false;
+ onSelectedGame(selected);
  const factory=await loadGame(key);engine=await factory({config:selected.config,seed:'preview'});if(!view.active){engine.dispose?.();return;}
  if(key==='viking'){
   frame.classList.add('viking-theme');frame.dataset.phase='ready';
@@ -33,10 +34,14 @@ export async function gamePage({root,ctx,parts,view}) {
   for(const node of [music,effects,musicVolume,effectsVolume])node.addEventListener('input',update);
   frame.insertBefore(el('div',{class:'tetris-audio'},el('label',{},music,'Micro:bit-musikk'),musicVolume,el('label',{},effects,'Nettlesereffekter'),effectsVolume,tetrisStatus),canvas);
  }
+ const disposeFullscreen=attachFullscreen(frame);
  function renderEngine(){
   if(key==='viking'||key==='tetris'){
    const bounds=canvas.getBoundingClientRect(),ratio=Math.min(2,Math.max(1,globalThis.devicePixelRatio||1));
-   const width=Math.round((bounds.width||960)*ratio),height=Math.round((bounds.height||540)*ratio);
+   const aspect=key==='tetris'?(bounds.width<=620?9/17:3/2):16/9;
+   const fittedWidth=document.fullscreenElement===frame?Math.min(bounds.width,bounds.height*aspect):bounds.width;
+   const fittedHeight=document.fullscreenElement===frame?fittedWidth/aspect:bounds.height;
+   const width=Math.round((fittedWidth||960)*ratio),height=Math.round((fittedHeight||540)*ratio);
    if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}
   }
   engine.draw(canvas.getContext('2d'),canvas.width,canvas.height);
@@ -46,7 +51,7 @@ export async function gamePage({root,ctx,parts,view}) {
  const practice=el('select',{'aria-label':'Rangert eller øving'},...(ctx.localPlay?[el('option',{value:'practice'},'Lokal øving · ingen lagring')]:[el('option',{value:'ranked'},'Rangert · lagres på kontoen'),el('option',{value:'practice'},'Øving · bare lokalt')]));practice.disabled=!!ctx.localPlay;
  const seed=el('input',{placeholder:'Valgfri seed for øving',maxlength:100,'aria-label':'Seed for øving'});seed.disabled=!ctx.localPlay;
  practice.onchange=()=>{seed.disabled=practice.value!=='practice';};
- choice.onchange=()=>{selected=games.find(g=>g.id===choice.value);remote=ctx.catalog.find(g=>g.id===selected.id);personalRecord=null;refreshReady();void fetchRecord();};
+ choice.onchange=()=>{selected=games.find(g=>g.id===choice.value);selectedIndex=choice.selectedIndex;remote=ctx.catalog.find(g=>g.id===selected.id);personalRecord=null;onSelectedGame(selected);refreshReady();void fetchRecord();};
  let startButton;
  function showReady(){
   phase='ready';document.body.classList.remove('playing');startButton=button('Start spill →',()=>{void start().catch(report);},'button light');overlay.hidden=false;
@@ -77,7 +82,7 @@ export async function gamePage({root,ctx,parts,view}) {
   if(e.input==='logo' && key==='snake') {if(phase==='playing'||phase==='countdown')pause('Ta en liten pust i bakken.');else if(phase==='paused')resume();else if(phase==='confirm')pause('Ta en liten pust i bakken.');return;}
   if(phase==='playing'&&!(key==='snake'&&(s.touch.logoPressed||s.buttons.aPressed&&s.buttons.bPressed)))engine.press(e);
  }
- function ensureSession(){if(!session&&ctx.microbit.getState().inputAvailable){session=ctx.microbit.createGameSession();session.inputs.subscribe(onState);session.inputs.onPress(onPress);}}
+ function ensureSession(){if(alive&&!session&&ctx.microbit.getState().inputAvailable){session=ctx.microbit.createGameSession();session.inputs.subscribe(onState);session.inputs.onPress(onPress);}}
  async function start(){
   if(!alive||!['ready','result'].includes(phase))return;
   selected=games.find(g=>g.id===choice.value)||selected;remote=ctx.catalog.find(g=>g.id===selected.id);
@@ -87,7 +92,7 @@ export async function gamePage({root,ctx,parts,view}) {
   try{
    if(!ctx.localPlay)await ctx.api('/auth/renew',{method:'POST'});if(!alive)return;if((!ctx.localPlay&&ctx.session?.player.id!==owner)||!ctx.microbit.getState().inputAvailable)throw new Error('Konto eller tilkobling ble endret før start.');
    engine.setPlaying?.(false);if(key==='tetris')engine.dispose?.();
-   if(session){const old=session;session=null;await old.dispose();}ensureSession();
+   if(session){const old=session;session=null;await old.dispose();}if(!alive)return;ensureSession();
    if(!session||!ctx.microbit.getState().inputAvailable)throw new Error('Micro:bit-tilkoblingen ble endret før rundestart. Koble til og prøv igjen.');
    ranked=!ctx.localPlay&&practice.value==='ranked';const roundSeed=ranked?crypto.randomUUID():seed.value.trim().normalize('NFC')||crypto.randomUUID();
    engine.dispose?.();engine=await factory({config:selected.config,seed:roundSeed,outputs:session?.outputs,browserAudio:tetrisAudio,reportOutputError:report});if(!alive){engine.dispose?.();return;}if(soundEnabled)engine.setSoundEnabled?.(true);engine.setAudioSettings?.(tetrisSettings);
@@ -128,7 +133,7 @@ export async function gamePage({root,ctx,parts,view}) {
   if(key==='snake'&&status==='completed'&&ctx.microbit.getState().inputAvailable){const image=engine.state.won?faces.win:faces.lose;if(engine.state.steps<999999)void outputSession.outputs.display.showImage(image).catch(report);}
   if(!ranked)return;
   ctx.queue.add(finished);let trophyShown=false;
-  async function save(){retry.disabled=true;saveStatus.textContent='Avventer lagringsbekreftelse …';try{const data=await ctx.queue.send(finished.attemptId);saveStatus.textContent=data.outcome==='created'?'Lagret · ny personlig rekord!':'Forsøket er lagret.';retry.hidden=true;
+  async function save(){retry.disabled=true;saveStatus.textContent='Avventer lagringsbekreftelse …';try{const data=await ctx.queue.send(finished.attemptId);saveStatus.textContent=data.outcome==='created'?'Lagret · ny personlig rekord!':'Forsøket er lagret.';retry.hidden=true;if(alive)onResultSaved();
     if(alive&&round===thisRound&&phase==='result'&&key==='snake'&&data.outcome==='created'&&!trophyShown&&session===outputSession&&ctx.microbit.getState().inputAvailable){trophyShown=true;void outputSession.outputs.display.showImage(faces.trophy).catch(report);}
   }catch(e){saveStatus.textContent=`Ikke bekreftet lagret. ${e.message} Data beholdes i minnet. Oppdatering kan miste dem.`;retry.hidden=false;}finally{retry.disabled=false;}}
   void save();
@@ -147,9 +152,30 @@ export async function gamePage({root,ctx,parts,view}) {
  }
  showReady();raf=requestAnimationFrame(draw);
  const poll=setInterval(()=>{if(!alive)return;try{ensureSession();refreshReady();}catch(e){report(e);}
+  if(!ctx.localPlay&&['playing','countdown'].includes(phase)&&ctx.session?.player.id!==attempt?.playerId)pause('Logg inn med samme konto for å fortsette. Runden er beholdt.');
   if(!ctx.localPlay&&shouldRenew({active:phase==='playing',visible:!document.hidden,hasUserInput:performance.now()-lastInput<300000,elapsedMs:performance.now()-lastRenew})&&!renewing){renewing=true;ctx.api('/auth/renew',{method:'POST'}).then(()=>{lastRenew=performance.now();},e=>{if(e.status===401)ctx.setSession(null);pause('Sesjonen kunne ikke fornyes. Runden er beholdt.');report(e);}).finally(()=>{renewing=false;});}
  },150);
  view.canLeave=()=>!['playing','countdown','paused','confirm','starting'].includes(phase)||confirm(ranked?'Avslutte runden og gå videre? Et startet rangert forsøk lagres som ufullført.':'Avslutte øvingsrunden og gå videre?');
- view.dispose=async()=>{if(!alive)return;if(['playing','countdown','paused','confirm'].includes(phase))finish('incomplete');alive=false;round++;phase='closed';cancelAnimationFrame(raf);clearInterval(poll);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('keydown',escape);document.body.classList.remove('playing');engine.dispose?.();tetrisAudio?.dispose();const old=session;session=null;if(old)await old.dispose();};
+ view.dispose=async()=>{if(!alive)return;if(['playing','countdown','paused','confirm'].includes(phase))finish('incomplete');alive=false;round++;phase='closed';cancelAnimationFrame(raf);clearInterval(poll);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('keydown',escape);document.body.classList.remove('playing');engine.dispose?.();tetrisAudio?.dispose();const old=session;session=null;await disposeFullscreen();if(old)await old.dispose();};
  try{await getCatalog(ctx);if(!alive)return;catalogReady=true;refreshReady();void fetchRecord();}catch(e){if(alive){catalogReady=true;refreshReady();report(e);}}
+}
+
+function attachFullscreen(frame){
+ const supported=typeof frame.requestFullscreen==='function'&&document.fullscreenEnabled!==false;
+ const status=el('span',{class:'fullscreen-status',role:'status',hidden:true});
+ let pending=null,disposed=false;
+ const toggle=button('Fullskjerm ⛶',()=>{
+  if(pending||disposed||!supported)return;
+  status.hidden=true;
+  // Call directly from the click so the browser retains the user gesture.
+  pending=(document.fullscreenElement===frame?document.exitFullscreen():frame.requestFullscreen())
+   .catch(()=>{if(!disposed){status.textContent='Kunne ikke åpne eller avslutte fullskjerm. Prøv igjen.';status.hidden=false;}})
+   .finally(()=>{pending=null;if(!disposed)sync();});
+  sync();
+ },'button secondary fullscreen-toggle');
+ function sync(){const active=document.fullscreenElement===frame;toggle.textContent=active?'Avslutt fullskjerm ⛶':'Fullskjerm ⛶';toggle.setAttribute('aria-pressed',String(active));toggle.disabled=!supported||!!pending;}
+ if(!supported)toggle.title='Nettleseren støtter ikke fullskjerm for spill.';
+ frame.querySelector('.game-toolbar').append(toggle,status);
+ document.addEventListener('fullscreenchange',sync);sync();
+ return async()=>{disposed=true;document.removeEventListener('fullscreenchange',sync);await pending;if(document.fullscreenElement===frame)try{await document.exitFullscreen();}catch{}};
 }

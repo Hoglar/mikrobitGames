@@ -85,10 +85,14 @@ test('local account, database and AI routes are blocked in the UI, API client an
   expect(readFileSync(new URL('../../../dist/index.html',import.meta.url),'utf8')).not.toContain('microbit-local-play');
   expect(await (await request.get('/index.html')).text()).toContain('name="microbit-local-play" content="true"');
   expect(await (await request.get('http://127.0.0.1:4176/index.html')).text()).not.toContain('microbit-local-play');
-  for(const route of ['login','register','dashboard','profile','ai','leaderboard/anything','history/anything']){
+  for(const route of ['login','register','dashboard','profile','leaderboard/anything','history/anything']){
     await page.goto(`/#/${route}`);await expect(page.getByRole('heading',{name:'Bare lokalt spill'})).toBeVisible();
     await expect(page.locator('form')).toHaveCount(0);
   }
+  await page.goto('/#/ai');
+  await expect(page.locator('.arcade-chat')).toContainText('AI-chat er deaktivert i lokal øving.');
+  await expect(page.locator('.arcade-chat textarea')).toBeDisabled();
+  await expect(page.locator('form')).toHaveCount(0);
   const codes=await page.evaluate(async()=>{
     const {context}=await import('/src/app/main.js'),codes=[];
     for(const path of ['/auth/session','/games','/ai/questions'])try{await context.api(path,{method:'POST'});}catch(e){codes.push(e.code);}

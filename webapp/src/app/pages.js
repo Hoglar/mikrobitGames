@@ -69,10 +69,11 @@ export async function profile({root,ctx}){
  }
 }
 export async function chat({root,ctx,view}){
- root.append(heading('SPØR SPILLASSISTENTEN','Bak hver rekord er en historie.','Spør om offentlige rekorder og sammenligninger. Assistenten får ikke lese private spillforsøk.'));
- const list=el('div',{class:'chat-list'}),message=el('div',{'aria-live':'polite'}),question=el('textarea',{required:true,maxlength:2000,placeholder:'Hvem har rekorden i Viking Dash?','aria-label':'Ditt spørsmål'}),submit=el('button',{type:'submit',class:'button'},'Send spørsmål ↗'),reset=button('Ny samtale',async()=>{reset.disabled=true;try{await ctx.api('/ai/conversation/reset',{method:'POST'});ctx.chat=[];render();}catch(e){message.replaceChildren(errorBox(e.message));}finally{reset.disabled=false;}});
+ const chatHeading=heading('03 / SPILLASSISTENTEN','AI-chat','Spør om offentlige rekorder og sammenligninger. Assistenten får ikke lese private spillforsøk.');
+ const title=chatHeading.querySelector('h1'),smallTitle=el('h2',{},title.textContent);title.replaceWith(smallTitle);root.append(chatHeading);
+ const list=el('div',{class:'chat-list',role:'log','aria-label':'Samtale','aria-live':'polite'}),message=el('div',{'aria-live':'polite'}),question=el('textarea',{required:true,maxlength:2000,placeholder:'Hvem har rekorden i Viking Dash?','aria-label':'Ditt spørsmål'}),submit=el('button',{type:'submit',class:'button'},'Send spørsmål ↗'),reset=button('Ny samtale',async()=>{reset.disabled=true;try{await ctx.api('/ai/conversation/reset',{method:'POST'});ctx.chat=[];render();}catch(e){message.replaceChildren(errorBox(e.message));}finally{reset.disabled=false;}});
  let alive=true;view.dispose=()=>{alive=false;};
- function render(){list.replaceChildren(...ctx.chat.map(m=>el('div',{class:`chat-message ${m.role}`},el('small',{},m.role==='user'?'DU':'SPILLASSISTENTEN'),m.text)));submit.disabled=ctx.aiBusy;reset.disabled=ctx.aiBusy;question.disabled=ctx.aiBusy;}
+ let rendered='';function render(){const content=JSON.stringify(ctx.chat);if(content!==rendered){list.replaceChildren(...ctx.chat.map(m=>el('div',{class:`chat-message ${m.role}`},el('small',{},m.role==='user'?'DU':'SPILLASSISTENTEN'),m.text)));rendered=content;list.scrollTop=list.scrollHeight;}submit.disabled=ctx.aiBusy;reset.disabled=ctx.aiBusy;question.disabled=ctx.aiBusy;}
  const form=el('form',{class:'panel'},field('Hva lurer du på?',question),message,el('div',{class:'actions'},submit,reset));
  root.append(el('p',{class:'notice'},'Samtalen huskes midlertidig på serveren, opptil 20 utvekslinger. Ny innlogging, inaktivitet eller omstart kan tømme minnet.'),list,form);
  // A request may finish while the player is on another page.

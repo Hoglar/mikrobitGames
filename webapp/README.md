@@ -4,6 +4,17 @@ Statisk spillplattform for micro:bit V2, med felles spillramme, spillvelger, Tes
 innlogging/registrering, privat Dashboard, Profil, offentlige topplister og AI-chat.
 JavaScript ES-moduler og Canvas; ingen eksterne ressurser eller runtimepakker.
 
+Appen er samlet på én side som en retro spillmaskin: spillhyllen øverst kan blas
+med musehjul, styreflate, berøring, piltaster eller knappene ved hyllen. Velg en
+kassett for å laste den animert inn i spillrammen. Ved redusert bevegelse lastes
+spillet direkte. Topplisten står til høyre på desktop og under spillet på mindre
+skjermer; den følger valgt spillvariant, også når Snake-modusen endres med
+micro:bit. AI-chatten ligger nederst og beholder utkast og samtale ved spillbytte.
+Konto, Dashboard og rekordhistorikk åpnes i et panel på samme side. Testlab bruker
+spillrammen og avslutter en eventuell aktiv spilløkt på vanlig måte. Åpne Testlab
+fra hovedmenyen. Knappen «Fullskjerm» i spillverktøylinjen fyller skjermen med
+spillet og kontrollene; bruk «Avslutt fullskjerm» eller Escape for å gå tilbake.
+
 **Publisert 2026-10-29:** https://parrot.tail106c62.ts.net, frontend fra `852e43d` og elleve registrerte spillvarianter. Se [spill fra skolen](../docs/play-at-school.md) og [publiseringskontrollen](../results/verification/games-update-publication-2026-10-29.md). Fysisk spillrunde med micro:bit fra skolen gjenstår å dokumentere.
 
 ## Kjør lokalt og bygg
