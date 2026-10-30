@@ -1,0 +1,258 @@
+{
+  "id": "20261030T114311.199639Z",
+  "timestamp": "2026-10-30T11:43:11.387637+00:00",
+  "label": "01 – verifisert lokal baseline",
+  "profile": "local-browser",
+  "commit": "11aaab1e529c4b8f9d7307cef5d7c0f2bdae033b",
+  "dirty": true,
+  "source_digest": "b318b0de83ca842438ac20a0481ae16ffe48ab87b17196e8cb9dd603a72992b2",
+  "control_digest": "898805095ea90d1eac5bfdc58aefa7664b916993829365cd122432a7b944bfab",
+  "series": "bd5ccb891863",
+  "policy": {
+    "version": 1,
+    "weights": {
+      "function": 0.5,
+      "performance": 0.3,
+      "ux": 0.2
+    },
+    "input_p95_ms": 5.0,
+    "game_workload_p95_ms": 16.666666666666668
+  },
+  "metrics": [
+    {
+      "name": "input-50Hz-1-abonnenter",
+      "value": 0.023715000000038344,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "input-50Hz-4-abonnenter",
+      "value": 0.02486700000008568,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "input-500Hz-1-abonnenter",
+      "value": 0.022853999999824737,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "input-500Hz-4-abonnenter",
+      "value": 0.022451999999248073,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "snake",
+      "value": 0.07279800000000591,
+      "budget": 16.666666666666668,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "viking",
+      "value": 0.044234000000017204,
+      "budget": 16.666666666666668,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "stars",
+      "value": 0.017262999999985595,
+      "budget": 16.666666666666668,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "reaction",
+      "value": 0.003136000000012018,
+      "budget": 16.666666666666668,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "balance",
+      "value": 0.009688000000011243,
+      "budget": 16.666666666666668,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "tetris",
+      "value": 0.1034569999999917,
+      "budget": 16.666666666666668,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "browser-input-50Hz-1-abonnenter",
+      "value": 0.10000000009313226,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "browser-input-50Hz-4-abonnenter",
+      "value": 0.10000000009313226,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "browser-input-500Hz-1-abonnenter",
+      "value": 0.09999999986030161,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "browser-input-500Hz-4-abonnenter",
+      "value": 0.10000000009313226,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    }
+  ],
+  "limitations": [
+    "Firmware kjøres på vertsmaskinen med simulert maskinvare; USB, fysisk knapp-til-piksel-latens og tillatelsesdialog er ikke målt.",
+    "Nettlesertester bruker mockede API-svar og Web Serial. Lokal backendkontroll tester reglene, ikke database eller AI-runtime.",
+    "Benchmark måler input-replay og spillenes simulering; FPS, tegning/GPU og nettverkslatens inngår ikke.",
+    "Maskinlast kan påvirke ytelsen. Kjør på samme maskin uten andre tunge oppgaver.",
+    "Levende API, PostgreSQL og lokal AI er ikke kjørt. Bruk --backend-full i konfigurert backend-testmiljø for en egen utvidet serie."
+  ],
+  "environment": {
+    "node": "v20.19.2",
+    "python": "Python 3.13.5",
+    "browser": "156.0.8078.4",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+    "cpu": "AMD Ryzen 7 7435HS",
+    "compiler": "c++ (Debian 14.2.0-19) 14.2.0",
+    "cmake": "cmake version 3.31.6"
+  },
+  "checks": [
+    {
+      "id": "web-unit",
+      "category": "function",
+      "status": "PASS",
+      "score": 100.0,
+      "counts": {
+        "tests": 58,
+        "passed": 58,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "input-unit",
+      "category": "function",
+      "status": "PASS",
+      "score": 100.0,
+      "counts": {
+        "tests": 39,
+        "passed": 39,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "backend-unit",
+      "category": "function",
+      "status": "PASS",
+      "score": 100.0,
+      "counts": {
+        "tests": 72,
+        "passed": 72,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "firmware",
+      "category": "function",
+      "status": "PASS",
+      "score": 100.0,
+      "counts": {
+        "tests": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "cross-component",
+      "category": "function",
+      "status": "PASS",
+      "score": 100.0,
+      "counts": {
+        "tests": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "platform-capacity",
+      "category": "function",
+      "status": "PASS",
+      "score": 100
+    },
+    {
+      "id": "input-benchmark",
+      "category": "performance",
+      "status": "PASS",
+      "score": 100.0
+    },
+    {
+      "id": "games-benchmark",
+      "category": "performance",
+      "status": "PASS",
+      "score": 100.0
+    },
+    {
+      "id": "browser-app",
+      "category": "function",
+      "status": "PASS",
+      "score": 100.0,
+      "counts": {
+        "tests": 29,
+        "passed": 29,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "browser-input",
+      "category": "function",
+      "status": "PASS",
+      "score": 100.0,
+      "counts": {
+        "tests": 10,
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "browser-performance",
+      "category": "performance",
+      "status": "PASS",
+      "score": 100.0
+    }
+  ],
+  "selftests": 17,
+  "summary": {
+    "function": 100.0,
+    "performance": 100.0,
+    "technical": 100.0,
+    "ux": null,
+    "fom": null,
+    "status": "AWAITING_UX"
+  },
+  "original_report_sha256": "1172900f2da31ba86139ce621e46358ae739173b883fa8781e09a680c928c3de",
+  "note": "Gjennomgått sammendrag av lokal verifisering; ikke en ny kjøring. Ingen UX-vurdering er registrert."
+}

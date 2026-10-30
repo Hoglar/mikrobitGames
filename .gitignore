@@ -41,3 +41,8 @@ node_modules/
 # Raw test runs and machine-specific test configuration
 backend/results/runs/
 backend/check.local.json
+
+# Local whole-application evaluations and UX feedback
+/results/fom/app/runs/
+/results/fom/app/index.html
+/results/fom/app/history.svg

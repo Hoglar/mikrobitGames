@@ -51,5 +51,5 @@ const report = { version: 1, timestamp: new Date().toISOString(),
     'No serial parsing, callbacks, browser rendering, real-time soak or heap trend measured.',
     'GI propagation budget p95 <=5ms at 50Hz for 1/4 subscribers remains BLOCKED until adapter exists.',
     'Physical input budget p95 <=100ms over >=20 instrumented trials remains BLOCKED without V2/instrumentation.'] };
-writeFileSync(new URL('../results/unit-benchmark.json', import.meta.url), JSON.stringify(report, null, 2) + '\n');
+writeFileSync(process.env.UNIT_BENCHMARK_REPORT ?? new URL('../results/unit-benchmark.json', import.meta.url), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report, null, 2));

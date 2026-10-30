@@ -1,5 +1,9 @@
 # Testresultater og Figure of Merit
 
+**Ny felles appevaluering:** [App-FoM, benchmarks, graf og UX-tilbakemelding](app/README.md).
+Kjør `python3 tests/evaluate.py run --label "01 – baseline"` fra prosjektroten.
+Appmålingen har egen formel og historikk; backendarkivet nedenfor er bevart.
+
 Her ligger arkiverte backendrapporter som skal deles med hele gruppen gjennom Git. Fem fullkjøringer fra 2026-10-27–28 er tatt med, inkludert feil og ufullstendige målinger. Filene er uendrede kopier av de lokale rapportene. Siste kjøring, på commit `3bd5d07`, tester den integrerte samtaleløsningen og har **100 % krav-FoM og 100 % modell-FoM**.
 
 [Kort arbeidsrapport: AI-rettingen og den nye samtaleløsningen, 2026-10-28](ai-work-summary-2026-10-28.md) forklarer problemet, endringene og hva som er kontrollert, inkludert den fullførte testfasen.

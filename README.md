@@ -19,3 +19,11 @@ Krav, modeller og lokale tester ligger sammen med hver modul. Strukturen er etab
 - [Systemtester](tests/README.md).
 - [Testresultater og FoM](results/README.md).
 - [Presentasjon og demonstrasjon](docs/presentation/README.md).
+
+## Evaluering mellom iterasjoner
+
+`python3 tests/evaluate.py run --label "01 – baseline"` kjører enhetstester,
+komponentkoblinger, nettlesertester og benchmarks. Åpne
+`results/fom/app/index.html` for historikkgrafen. Legg til gruppens UX-skår og
+kommentar med `python3 tests/evaluate.py feedback latest --score 7 --reviewer "Gruppen" --comment "Vår vurdering og neste prioritet"`.
+Se [oppsett, FoM-formel og arbeidsflyt](results/fom/app/README.md).
