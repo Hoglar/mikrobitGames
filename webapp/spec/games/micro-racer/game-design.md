@@ -1,6 +1,6 @@
 # Micro Racer – spilldesign og første balanseprofil
 
-**Profilforslag:** `micro-racer-v1`, 2026-10-30. Tallene er spillverdier til implementasjon og utprøving, ikke målinger eller realistiske bildata. [Spesifikasjonen](specification.md) eier funksjon og rangering. Banefiler og kjørefysikk skal fryses som et samlet konkurransegrunnlag før tellende publisering.
+**Første profil:** `micro-racer-v1`, implementert lokalt 2026-10-30. Tallene er spillverdier til utprøving, ikke realistiske bildata eller fysisk kalibrerte målinger. [Spesifikasjonen](specification.md) eier funksjon og rangering. Banefiler og kjørefysikk skal fryses som et samlet konkurransegrunnlag før tellende publisering; [valideringsrapporten](../../../results/racing-validation.md) beskriver observert programvaredekning.
 
 ## Baneforslag
 

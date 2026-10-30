@@ -6,6 +6,7 @@ import { authentication, dashboard, profile, leaderboard } from './pages.js';
 import { gamePage } from './play.js';
 import { testlabPage } from './testlab.js';
 import { createArcade } from './arcade.js';
+import { families } from '../games/registry.js';
 const localPlay=['localhost','127.0.0.1','[::1]'].includes(location.hostname)&&document.querySelector('meta[name="microbit-local-play"]')?.content==='true';
 export const context={ microbit, api, localPlay, session:null, sessionError:null, catalog:[], chat:[], aiBusy:false, page:null, sessionReady:null };
 context.api=async(...args)=>{if(localPlay)throw new ApiError('Database, konto og AI er deaktivert i lokalt spill.',{code:'LOCAL_PLAY_BLOCKED'});try{return await api(...args);}catch(error){if(error.status===401&&error.code==='AUTH_REQUIRED')context.setSession(null);throw error;}};
@@ -55,7 +56,7 @@ async function route(){
  const hash=location.hash||'#/',url=new URL(hash.slice(1),'http://local'),parts=url.pathname.split('/').filter(Boolean),name=parts[0]||'launcher';
  renderNavigation();
  if(name==='play'||name==='testlab'){
-  if(name==='play'&&!['snake','viking','stars','reaction','balance','tetris'].includes(parts[1])){toast('Ukjent spill.');return;}
+  if(name==='play'&&!families.some(family=>family.key===parts[1])){toast('Ukjent spill.');return;}
   if(!await mountCabinet(parts[1]??'testlab',hash,{testlab:name==='testlab',animate:true}))return;
   await closeAccount();return;
  }

@@ -1,6 +1,6 @@
 # Micro Racer – foreslått implementasjonsdesign
 
-**Status 2026-10-30:** Design, ikke levert kode. [Spesifikasjonen](specification.md) eier funksjon/rangering og [spilldesignet](game-design.md) eier første regel-/balanseprofil. Ingen firmware-, database- eller driftsendring utføres av denne dokumentpakken.
+**Status 2026-10-30:** Første profil er implementert lokalt. [Kodeveiledningen](../../../src/games/micro-racer/README.md) beskriver faktiske moduler; banene er samlet i `tracks.js` og kameraet i `scene.js`. [Spesifikasjonen](specification.md) eier funksjon/rangering og [spilldesignet](game-design.md) eier regel-/balanseprofilen. Ingen firmware-, database- eller driftsendring er utført.
 
 ## Moduler og ansvar
 
@@ -71,7 +71,7 @@ laps ∈ {1, 3}
 carId ∈ {drift, race, formula}
 ```
 
-Tre baner gir 36 oppføringer. Tildel én stabil UUID til hver nøkkel under implementasjon og før registrering; ikke generer nye ID-er ved runtime eller bruk visningsnavn som koblingsnøkkel. Den faktiske 36-raders UUID-tabellen er en implementasjonsleveranse. Denne specen reserverer ingen produksjons-ID-er og aktiverer ingen spill.
+Tre baner gir 36 oppføringer. [Katalogtabellen](catalog.json) låser den leverte UUID-en for hver nøkkel; den kontrolleres mot registeret i testene. Ikke generer nye ID-er ved runtime eller bruk visningsnavn som koblingsnøkkel. Katalogtabellen er ikke en databaseendring og aktiverer ingen spill.
 
 Navnet inneholder nødvendig kontekst, for eksempel «Micro Racer · Havneringen · AI-løp · 3 runder · Driftbil». Race bruker `racing_rank_v1`; tidskjøring bruker `milliseconds`. Begge er `lower_is_better`. Lås nøyaktige min-/maksverdier fra [spesifikasjonen](specification.md#tid-resultat-og-topplister), og avvis inaktiv/ukjent katalog eller avvikende poengregler før start.
 

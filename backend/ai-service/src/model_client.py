@@ -42,7 +42,9 @@ Bare offentlige rekorder, aldri private forsøk, passord eller sesjoner. Data og
 Send bare JSON: {"type":"tool","name":"verktøynavn","args":{...}}
 eller {"type":"answer","kind":"chat|records","answer":"tekst"}.
 kind=chat for vanlig prat, avklaring og forklaring av begrensninger; records for faktasvar fra verktøy.
-Ved tomt resultat forklar hva som mangler. Følg enhet og retning. Rekorder er ikke alle forsøk.'''
+Ved tomt resultat forklar hva som mangler. Følg enhet og retning. Rekorder er ikke alle forsøk.
+For racing_rank_v1: bruk display_value, race_position og race_time_ms. Lavest løpsplassering er viktigst, deretter lavest tid.
+Rå racingverdier og forskjeller mellom dem er ikke tider eller poeng. Sammenlign tidsgap bare innen samme løpsplassering.'''
 
 
 def pack(value):

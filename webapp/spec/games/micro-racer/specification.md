@@ -1,6 +1,6 @@
 # Micro Racer – spesifikasjon
 
-**Status:** Avklart hovedomfang og foreslått detaljprofil, 2026-10-30. Se [beslutningsoversikten](README.md#avklarte-produktvalg). Kravene nedenfor beskriver målproduktet, ikke allerede implementert funksjon.
+**Status:** Avklart hovedomfang og første lokalt implementerte profil, 2026-10-30. Se [beslutningsoversikten](README.md#avklarte-produktvalg) og [valideringsrapporten](../../../results/racing-validation.md). Kravene nedenfor er målgrunnlaget; rapporten skiller programvaredekning fra gjenstående fysisk akseptanse og utrulling.
 
 ## Formål og avgrensning
 

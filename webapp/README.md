@@ -27,7 +27,7 @@ npm run dev
 ```
 
 Åpne `http://127.0.0.1:4174/`. `dev` og `preview` aktiverer **lokalt spill**:
-alle seks spillfamilier er tilgjengelige som øving uten konto, database eller AI.
+alle spillfamilier er tilgjengelige som øving uten konto, database eller AI-chat.
 Koble til en fysisk micro:bit V2 og velg Start; input, display og lyd bruker den
 vanlige adapteren. Snake har alle seks modusvariantene. Øvingsseed kan angis for
 Snake, Viking og Tetris. Poeng vises for runden, men lagres ikke og sendes aldri
@@ -57,13 +57,13 @@ også i øving. Lokalmodus endrer ikke backendens tilgangskontroll.
 
 ## Spill og registrering i backend
 
-Seks spillfamilier følger med i arbeidskopien: **Micro Snake**, **Viking Dash**, **Stjernefangst**,
-**Reaksjonsjakt**, **Balanseløypa** og **Micro Tetris**. Snake har seks separate kombinasjoner av
+Sju spillfamilier følger med i arbeidskopien: **Micro Snake**, **Viking Dash**, **Stjernefangst**,
+**Reaksjonsjakt**, **Balanseløypa**, **Micro Tetris** og **Micro Racer**. Snake har seks separate kombinasjoner av
 Standard/Hurtig/Labyrint og Competitive/Random. Felles ramme eier startkrav,
 Micro:bit-økt, pause/nedtelling, avslutning og resultatlagring; spillmodulene eier
 regler og tegning. Alle bruker adapteren i `src/microbit-input/`.
 
-[Spillregisteret](src/games/registry.js) inneholder elleve stabile UUID-er og eksakte
+[Spillregisteret](src/games/registry.js) inneholder 47 stabile UUID-er og eksakte
 resultatregler. Navn er aldri koblingsnøkkel. Ukjente ID-er, inaktive spill eller
 avvikende poengregler kan ikke startes. Dagens backend-demospill blir ikke koblet
 til andre regler. Disse nye oppføringene må registreres av driftsansvarlig:
@@ -95,6 +95,14 @@ poengstyrt fart. Vipp flytter, B roterer, A hard-dropper og logo bytter hold.
 Micro:bit viser hold og spiller nivåstyrt musikk; nettleseren spiller separate
 handlingseffekter. Begge lydkanalene har egne valg og volum. Pause/Escape stanser
 lyden. Se [reglene](spec/games/tetris/game-design.md) og [testresultatene](results/tetris-validation.md).
+
+Micro Racer har tre baner, tre bilklasser, tidskjøring og løp mot tre lokale
+AI-biler, med én eller tre runder. Tilt styrer relativt; kameraet følger/roterer
+med bilen, B gir gass og A bremser. De 36 variantene har egne topplister. De er
+klare i lokal øving, men må registreres før de kan startes rangert i tilkoblet
+modus. `node verification/catalog-commands.mjs --family=racing` skriver bare
+de nye kommandoene. Se [kjøreveiledningen](src/games/micro-racer/README.md) og
+[valideringen](results/racing-validation.md).
 
 Øving sender ingen resultater. Selvvalgte seeds er lokale innstillinger som
 aldri sendes til resultat-API-et. Snake/Viking/Tetris følger sine spillspesifikasjoners

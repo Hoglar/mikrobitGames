@@ -1,0 +1,617 @@
+{
+  "profile": "micro-racer-v1",
+  "games": [
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000012",
+      "key": "racing",
+      "name": "Micro Racer · Havneringen · Tidskjøring · 1 runde · Driftbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000013",
+      "key": "racing",
+      "name": "Micro Racer · Havneringen · Tidskjøring · 1 runde · Racerbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000014",
+      "key": "racing",
+      "name": "Micro Racer · Havneringen · Tidskjøring · 1 runde · Formelbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000015",
+      "key": "racing",
+      "name": "Micro Racer · Havneringen · Tidskjøring · 3 runder · Driftbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000016",
+      "key": "racing",
+      "name": "Micro Racer · Havneringen · Tidskjøring · 3 runder · Racerbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000017",
+      "key": "racing",
+      "name": "Micro Racer · Havneringen · Tidskjøring · 3 runder · Formelbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000018",
+      "key": "racing",
+      "name": "Micro Racer · Havneringen · AI-løp · 1 runde · Driftbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000019",
+      "key": "racing",
+      "name": "Micro Racer · Havneringen · AI-løp · 1 runde · Racerbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000020",
+      "key": "racing",
+      "name": "Micro Racer · Havneringen · AI-løp · 1 runde · Formelbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000021",
+      "key": "racing",
+      "name": "Micro Racer · Havneringen · AI-løp · 3 runder · Driftbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000022",
+      "key": "racing",
+      "name": "Micro Racer · Havneringen · AI-løp · 3 runder · Racerbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000023",
+      "key": "racing",
+      "name": "Micro Racer · Havneringen · AI-løp · 3 runder · Formelbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000024",
+      "key": "racing",
+      "name": "Micro Racer · Furudalen · Tidskjøring · 1 runde · Driftbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000025",
+      "key": "racing",
+      "name": "Micro Racer · Furudalen · Tidskjøring · 1 runde · Racerbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000026",
+      "key": "racing",
+      "name": "Micro Racer · Furudalen · Tidskjøring · 1 runde · Formelbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000027",
+      "key": "racing",
+      "name": "Micro Racer · Furudalen · Tidskjøring · 3 runder · Driftbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000028",
+      "key": "racing",
+      "name": "Micro Racer · Furudalen · Tidskjøring · 3 runder · Racerbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000029",
+      "key": "racing",
+      "name": "Micro Racer · Furudalen · Tidskjøring · 3 runder · Formelbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000030",
+      "key": "racing",
+      "name": "Micro Racer · Furudalen · AI-løp · 1 runde · Driftbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000031",
+      "key": "racing",
+      "name": "Micro Racer · Furudalen · AI-løp · 1 runde · Racerbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000032",
+      "key": "racing",
+      "name": "Micro Racer · Furudalen · AI-løp · 1 runde · Formelbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000033",
+      "key": "racing",
+      "name": "Micro Racer · Furudalen · AI-løp · 3 runder · Driftbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000034",
+      "key": "racing",
+      "name": "Micro Racer · Furudalen · AI-løp · 3 runder · Racerbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000035",
+      "key": "racing",
+      "name": "Micro Racer · Furudalen · AI-løp · 3 runder · Formelbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000036",
+      "key": "racing",
+      "name": "Micro Racer · Neonhavna · Tidskjøring · 1 runde · Driftbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000037",
+      "key": "racing",
+      "name": "Micro Racer · Neonhavna · Tidskjøring · 1 runde · Racerbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000038",
+      "key": "racing",
+      "name": "Micro Racer · Neonhavna · Tidskjøring · 1 runde · Formelbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000039",
+      "key": "racing",
+      "name": "Micro Racer · Neonhavna · Tidskjøring · 3 runder · Driftbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000040",
+      "key": "racing",
+      "name": "Micro Racer · Neonhavna · Tidskjøring · 3 runder · Racerbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000041",
+      "key": "racing",
+      "name": "Micro Racer · Neonhavna · Tidskjøring · 3 runder · Formelbil",
+      "score_unit": "milliseconds",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 600000,
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000042",
+      "key": "racing",
+      "name": "Micro Racer · Neonhavna · AI-løp · 1 runde · Driftbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000043",
+      "key": "racing",
+      "name": "Micro Racer · Neonhavna · AI-løp · 1 runde · Racerbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000044",
+      "key": "racing",
+      "name": "Micro Racer · Neonhavna · AI-løp · 1 runde · Formelbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000045",
+      "key": "racing",
+      "name": "Micro Racer · Neonhavna · AI-løp · 3 runder · Driftbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000046",
+      "key": "racing",
+      "name": "Micro Racer · Neonhavna · AI-løp · 3 runder · Racerbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      }
+    },
+    {
+      "id": "6a990001-165b-4e1d-8a20-000000000047",
+      "key": "racing",
+      "name": "Micro Racer · Neonhavna · AI-løp · 3 runder · Formelbil",
+      "score_unit": "racing_rank_v1",
+      "ranking_direction": "lower_is_better",
+      "min_value": 1,
+      "max_value": 3600000,
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      }
+    }
+  ]
+}

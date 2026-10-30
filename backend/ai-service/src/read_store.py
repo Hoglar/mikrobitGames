@@ -8,6 +8,7 @@ from uuid import UUID
 import psycopg
 from sqlglot import exp
 import query_policy
+from score_presentation import describe_racing
 
 InvalidReferences = query_policy.InvalidReferences
 
@@ -158,14 +159,14 @@ class DataTools:
                 previous = row['value']
                 records.append({'player': row['player'], 'value': row['value'], 'rank': rank,
                                 'gap_to_best': abs(rows[0]['value'] - row['value'])})
-            return {**header, 'meaning': 'Gjeldende personlig rekord per spiller, beste først. Antallet gjelder spillere med offentlig rekord, ikke alle som kan ha prøvd spillet.',
+            return describe_racing({**header, 'meaning': 'Gjeldende personlig rekord per spiller, beste først. Antallet gjelder spillere med offentlig rekord, ikke alle som kan ha prøvd spillet.',
                     'players_with_records': len(records), 'total_participants': None,
-                    'total_participants_known': False, 'records': records}
+                    'total_participants_known': False, 'records': records})
         change = rows[-1]['value'] - rows[0]['value']
         improvement = change if header['direction'] == 'higher_is_better' else -change
-        return {**header, 'player': rows[0]['player'], 'meaning': 'Offentlig rekordhistorikk, ikke alle forsøk.',
+        return describe_racing({**header, 'player': rows[0]['player'], 'meaning': 'Offentlig rekordhistorikk, ikke alle forsøk.',
                 'history': [{'value': row['value'], 'at': row['created_at']} for row in rows],
-                'improvement': improvement if len(rows) > 1 else None}
+                'improvement': improvement if len(rows) > 1 else None})
 
     def player(self, value):
         # Identity comes from the local session, never from a model-supplied UUID.

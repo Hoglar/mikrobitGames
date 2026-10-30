@@ -22,6 +22,13 @@ games/
 │   ├── audio.js
 │   ├── device-output.js
 │   └── style.css
+├── micro-racer/
+│   ├── index.js
+│   ├── model.js
+│   ├── physics.js
+│   ├── tracks.js
+│   ├── ai.js
+│   └── scene.js
 ├── snake/index.js
 ├── stars/index.js
 ├── reaction/index.js
@@ -37,3 +44,6 @@ under `webapp/tests/`.
 
 [Micro Tetris-veiledningen](tetris/README.md) beskriver styring, modulansvar,
 hold-/musikkoutput, katalogregistrering og kjørbare tester.
+
+[Micro Racer-veiledningen](micro-racer/README.md) beskriver bilfysikk, baner,
+36 konkurransevarianter, lokale AI-biler og verifikasjon.

@@ -1,7 +1,7 @@
 import { test,expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { installSerialMock } from '../../microbit-input/browser/serial-mock.js';
-import { games } from '../../../src/games/registry.js';
+import { games, families } from '../../../src/games/registry.js';
 const fixture=JSON.parse(readFileSync(new URL('../../../../spec/contracts/microbit-webapp/fixtures/conformance.json',import.meta.url)));
 const player={id:'11111111-1111-4111-8111-111111111111',username:'Spiller',created_at:'2026-10-01T12:00:00Z'},session={player,expires_at:'2026-11-01T12:00:00Z',absolute_expires_at:'2026-11-20T12:00:00Z'};
 async function setup(page,{signedIn=true,catalogFailure=false}={}){
@@ -22,7 +22,7 @@ async function setup(page,{signedIn=true,catalogFailure=false}={}){
  });return calls;
 }
 test('launcher loads all bundled games; public Testlab works during API failure and never renews or saves',async({page})=>{
- const errors=[];page.on('pageerror',e=>errors.push(e.message));const calls=await setup(page,{signedIn:false,catalogFailure:true});await page.goto('/');await expect(page.getByRole('heading',{name:'Velg ditt neste eventyr.'})).toBeVisible();await expect(page.locator('.game-card')).toHaveCount(6);await page.screenshot({path:'build/app-desktop.png',fullPage:true});await page.getByRole('navigation').getByRole('link',{name:'Testlab',exact:true}).click();await expect(page.getByRole('heading',{name:'En liten lab. Store muligheter.'})).toBeVisible();await expect(page.getByText('Ingen gyldige data ennå',{exact:false})).toBeVisible();expect(calls.filter(c=>c.path.includes('renew')||c.path.includes('results'))).toEqual([]);expect(errors).toEqual([]);
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));const calls=await setup(page,{signedIn:false,catalogFailure:true});await page.goto('/');await expect(page.getByRole('heading',{name:'Velg ditt neste eventyr.'})).toBeVisible();await expect(page.locator('.game-card')).toHaveCount(families.length);await page.screenshot({path:'build/app-desktop.png',fullPage:true});await page.getByRole('navigation').getByRole('link',{name:'Testlab',exact:true}).click();await expect(page.getByRole('heading',{name:'En liten lab. Store muligheter.'})).toBeVisible();await expect(page.getByText('Ingen gyldige data ennå',{exact:false})).toBeVisible();expect(calls.filter(c=>c.path.includes('renew')||c.path.includes('results'))).toEqual([]);expect(errors).toEqual([]);
 });
 test('Testlab receives sensors, counts recovered presses, edits without sending, sends image and resets',async({page})=>{
  const calls=await setup(page,{signedIn:false});await page.goto('/#/testlab');await page.locator('#main').getByRole('button',{name:'Koble til micro:bit',exact:true}).click();await expect(page.locator('#connection-label')).toHaveText('Micro:bit er tilkoblet');await page.waitForTimeout(100);
@@ -41,7 +41,7 @@ test('protected routes require login; registration does not log in; AI renders t
  await page.getByLabel('Brukernavn',{exact:true}).fill('Spiller');await page.getByLabel('Passord · 12–128 tegn').fill('langtnokpassord123');await page.getByRole('button',{name:'Logg inn',exact:true}).click();await page.getByRole('link',{name:'AI-chat',exact:true}).click();await page.getByRole('textbox',{name:'Ditt spørsmål'}).fill('Hei');await page.getByRole('button',{name:'Send spørsmål ↗'}).click();await expect(page.locator('.chat-message.assistant')).toContainText('<img');await expect(page.locator('.chat-message img')).toHaveCount(0);await page.getByRole('button',{name:'Ny samtale',exact:true}).click();await expect(page.locator('.chat-message')).toHaveCount(0);expect(calls.some(c=>c.path==='/ai/conversation/reset')).toBe(true);
 });
 test('mobile layout stays within viewport and all assets load from this build',async({page})=>{
- await setup(page);await page.setViewportSize({width:390,height:844});const failures=[];page.on('response',r=>{if(!r.url().includes('/api/')&&r.status()>=400)failures.push(r.url());});await page.goto('/');await expect(page.locator('.game-card')).toHaveCount(6);expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);await page.screenshot({path:'build/app-mobile.png',fullPage:true});await page.getByRole('navigation').getByRole('link',{name:'Testlab',exact:true}).click();expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);expect(failures).toEqual([]);
+ await setup(page);await page.setViewportSize({width:390,height:844});const failures=[];page.on('response',r=>{if(!r.url().includes('/api/')&&r.status()>=400)failures.push(r.url());});await page.goto('/');await expect(page.locator('.game-card')).toHaveCount(families.length);expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);await page.screenshot({path:'build/app-mobile.png',fullPage:true});await page.getByRole('navigation').getByRole('link',{name:'Testlab',exact:true}).click();expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);expect(failures).toEqual([]);
 });
 test('snake completes exactly once, shows decoded score, confirms record and restarts without replay',async({page})=>{
  const calls=await setup(page);const saved=[];
@@ -80,14 +80,14 @@ test('top lists are discoverable without login and include every Snake variant',
  await page.goto('/');
  await page.getByRole('navigation').getByRole('link',{name:'Topplister',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Topplister',exact:true})).toBeVisible();
- await expect(page.getByRole('link',{name:'Åpne toppliste →'})).toHaveCount(11);
+ await expect(page.getByRole('link',{name:'Åpne toppliste →'})).toHaveCount(games.length);
  const game=games.find(g=>g.key==='viking');
  await page.route(`**/api/v1/games/${game.id}/leaderboard?**`,route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({game,items:[],page:0,page_size:30,total:0})}));
  await page.locator('.stat').filter({has:page.getByRole('heading',{name:'Viking Dash',exact:true})}).getByRole('link').click();
  await expect(page).toHaveURL(new RegExp(game.id));
  await expect(page.getByText('Ingen rekorder ennå.')).toBeVisible();
  await page.getByRole('link',{name:'← Alle topplister',exact:true}).click();
- await expect(page.getByRole('link',{name:'Åpne toppliste →'})).toHaveCount(11);
+ await expect(page.getByRole('link',{name:'Åpne toppliste →'})).toHaveCount(games.length);
 });
 
 test('game top list follows the selected Snake variant',async({page})=>{

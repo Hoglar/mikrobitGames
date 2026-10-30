@@ -23,7 +23,7 @@ export function createArcade({ root, ctx, selectGame }) {
   root.append(el('div', { class: 'arcade-shell' },
     el('section', { class: 'arcade-intro' }, el('div', {},
       el('p', { class: 'eyebrow' }, 'BIT:ARCADE / PLAYER ONE'), el('h1', {}, 'Din egen spillhall.'),
-      el('p', {}, 'Seks spill. Én micro:bit. Jakten på neste rekord starter her.')),
+      el('p', {}, `${families.length} spill. Én micro:bit. Jakten på neste rekord starter her.`)),
       el('span', { class: 'arcade-status' }, ctx.localPlay ? 'FREE PLAY · LOKAL ØVING' : 'INSERT MICRO:BIT · PRESS START')),
     el('section', { class: 'game-selector', id: 'games' },
       el('div', { class: 'selector-heading' }, el('div', {}, el('p', { class: 'eyebrow' }, '01 / VELG KASSETT'),

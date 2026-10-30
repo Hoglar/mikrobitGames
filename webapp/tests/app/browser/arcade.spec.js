@@ -31,7 +31,7 @@ async function setup(page,{signedIn=true}={}){
 
 test('cartridges switch inside the same cabinet and preserve the chat draft',async({page})=>{
   const errors=[];page.on('pageerror',error=>errors.push(error.message));await setup(page);
-  await page.goto('/');await expect(page.locator('.game-cartridge')).toHaveCount(6);
+  await page.goto('/');await expect(page.locator('.game-cartridge')).toHaveCount(families.length);
   await expect(page.locator('.arcade-chat textarea')).toBeEnabled();
   await page.locator('.arcade-chat textarea').fill('Hvem har rekorden?');
   await page.locator('.arcade-shell').evaluate(node=>{node.dataset.persistentCheck='same-shell';});
@@ -85,7 +85,7 @@ test('Snake leaderboard follows mode selection and ignores a late response for a
 
 test('mobile rack scrolls horizontally without overflowing the page and reduced motion skips loading flight',async({page})=>{
   await page.setViewportSize({width:390,height:844});await page.emulateMedia({reducedMotion:'reduce'});await setup(page);await page.goto('/');
-  await expect(page.locator('.game-cartridge')).toHaveCount(6);
+  await expect(page.locator('.game-cartridge')).toHaveCount(families.length);
   const track=page.locator('.cartridge-track');
   expect(await track.evaluate(node=>node.scrollWidth>node.clientWidth)).toBe(true);
   await track.dispatchEvent('wheel',{deltaY:240,deltaX:0,bubbles:true,cancelable:true});
@@ -106,7 +106,7 @@ test('mobile rack scrolls horizontally without overflowing the page and reduced 
 
 test('public arcade shows the leaderboard and explains sign-in inside the bottom chat',async({page})=>{
   await setup(page,{signedIn:false});await page.goto('/');
-  await expect(page.locator('.game-cartridge')).toHaveCount(6);
+  await expect(page.locator('.game-cartridge')).toHaveCount(families.length);
   await page.locator('.game-cartridge[data-game="snake"]').click();
   await expect(page.locator('.arcade-leaderboard')).toContainText('Rekordholder');
   await expect(page.locator('.arcade-chat')).toContainText(/Logg inn/i);

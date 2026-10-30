@@ -6,7 +6,7 @@
 
 [Micro Tetris](games/tetris/README.md) har en egen spesifikasjon, regel-/lydprofil, implementasjonsdesign og testplan. Spillet er implementert lokalt med automatiserte tester; [valideringsrapporten](../results/tetris-validation.md) beskriver dekning og gjenstående fysisk akseptanse/utrulling.
 
-[Micro Racer](games/micro-racer/README.md) spesifiserer et nytt top-down racingspill med relativ tiltstyring, roterende følgekamera, tre bilklasser, flere baner, tidskjøring og firebilers AI-løp. Pakken inneholder foreslått spill-/implementasjonsdesign og sporbar testplan; spillet er ikke implementert.
+[Micro Racer](games/micro-racer/README.md) er lokalt implementert med relativ tiltstyring, roterende følgekamera, tre bilklasser/baner, tidskjøring og firebilers AI-løp. Pakken inneholder spill-/implementasjonsdesign og sporbar testplan; [valideringsrapporten](../results/racing-validation.md) skiller programvaretester fra gjenstående fysisk akseptanse og utrulling.
 
 [Implementeringsplanen for JavaScript-biblioteket](game-input-implementation-plan.md) beskriver modulstruktur, tester og integrasjon med spillplattformen. Bibliotek, lokaleksempel, fake-transport-/nettlesertester og replay-benchmarks er implementert som V2-only ES-moduler uten kjøretidsavhengigheter. Fysisk V2-/USB- og latensakseptanse gjenstår; se [valideringsrapporten](../results/game-input-validation.md).
 

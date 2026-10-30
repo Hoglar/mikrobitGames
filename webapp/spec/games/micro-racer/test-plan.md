@@ -1,6 +1,6 @@
 # Micro Racer – testplan
 
-**Status 2026-10-30:** Planlagte tester. Ingen testkjøring, kjørefysikk, banelengde, rundetid eller fysisk Micro:bit-akseptanse er dokumentert som bestått av denne specleveransen.
+**Status 2026-10-30:** Testgrunnlag for den lokale implementasjonen. Programvaretester og frosne kontrolltracer er levert; se [valideringsrapporten](../../../results/racing-validation.md) for faktisk kjøring og begrensninger. Fysisk Micro:bit-akseptanse er fortsatt planlagt, ikke dokumentert som bestått.
 
 Test [spesifikasjonen](specification.md), den versjonerte [spillprofilen](game-design.md) og [implementasjonsdesignet](implementation-design.md). Bruk rene enhetstester til fysikk/regler, integrasjonstester til input/motor/ramme og nettlesertester til brukerflyt. API-/Web Serial-mocker beviser ikke faktisk maskinvare eller produksjonssystem.
 

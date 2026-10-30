@@ -16,3 +16,12 @@ Kjør fra prosjektroten:
 De kjøres separat fra det faste, versjonerte FoM-kontrollsettet under
 `backend/tests/`. De gir ingen FoM-poeng og endrer ikke nevneren eller
 forventningene i baseline. `./backend/check` brukes fortsatt for full måling.
+
+`test_racing_scores.py` kontrollerer separat dekoding/presentasjon av
+`racing_rank_v1`: løpsplassering prioriteres over tid, og forskjeller mellom
+kodede plasseringer omtales ikke som tidsdifferanser. Denne rene testen kan
+kjøres med vanlig Python uten database-/modellavhengigheter:
+
+```bash
+python -m unittest discover -s backend/ai-service/tests -p test_racing_scores.py -v
+```

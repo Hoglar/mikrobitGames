@@ -8,7 +8,8 @@ test('every registered game family loads its own playable module', async () => {
     const game = create({ seed: 'module-loading', config: {} });
     for (const method of ['tick', 'draw', 'press']) assert.equal(typeof game[method], 'function', `${family.key}.${method}`);
     assert.equal(game.ended, false);
-    assert.ok(Number.isSafeInteger(game.value));
+    if(family.key==='racing')assert.equal(game.value,null);
+    else assert.ok(Number.isSafeInteger(game.value));
     assert.equal(typeof game.label, 'string');
     game.tick(.01);
     game.dispose?.();
