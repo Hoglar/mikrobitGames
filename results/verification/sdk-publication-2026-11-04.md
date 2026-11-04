@@ -86,3 +86,14 @@ kontrollgrunnlag gir egen serie etter eksisterende regler.
 
 [Maskinlesbar publiseringskontroll](sdk-publication-2026-11-04.json) ·
 [Samlet utviklingsoversikt](../fom/app/overview.md)
+
+## Etterfølgende komplett appevaluering
+
+På brukerens bestilling ble den lokale appprofilen kjørt etter publiseringen,
+fra ren commit `b48b42e`. [Målingen 20261104T190015.637939Z](../fom/app/runs/20261104T190015.637939Z/report.md)
+har 210/210 enhetstester, 45/46 app-/nettlesertester, 10/10 input-/nettlesertester
+og beståtte benchmarkgrupper. Det kjente Viking-avviket er beholdt.
+Martin ga 9/10 med kommentaren «Nå er alt nesten helt bra, funksjonalitet virker
+som planlagt». Samlet FoM er **97,86/100**. Dette er et separat målepunkt,
+ikke en omberegning av publiseringskontrollen. Kontrollgrunnlaget er endret
+siden forrige komplette måling, så punktene har ulike serier.

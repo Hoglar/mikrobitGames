@@ -1,0 +1,143 @@
+<testsuites id="" name="" tests="46" failures="1" skipped="0" errors="0" time="125.282646">
+<testsuite name="app.spec.js" timestamp="2026-11-04T19:00:51.863Z" hostname="" tests="13" failures="0" skipped="0" time="53.888" errors="0">
+<testcase name="launcher loads all bundled games; public Testlab works during API failure and never renews or saves" classname="app.spec.js" time="15.035">
+</testcase>
+<testcase name="Testlab receives sensors, counts recovered presses, edits without sending, sends image and resets" classname="app.spec.js" time="18.047">
+</testcase>
+<testcase name="game start requires connection and renew; physical loss freezes, recovery requires continuation and exit keeps attempt" classname="app.spec.js" time="1.62">
+</testcase>
+<testcase name="protected routes require login; registration does not log in; AI renders text and reset calls backend" classname="app.spec.js" time="3.589">
+</testcase>
+<testcase name="mobile layout stays within viewport and all assets load from this build" classname="app.spec.js" time="0.64">
+</testcase>
+<testcase name="snake completes exactly once, shows decoded score, confirms record and restarts without replay" classname="app.spec.js" time="6.057">
+</testcase>
+<testcase name="dashboard separates private incomplete attempts and public records, and highlights exact attempt" classname="app.spec.js" time="0.358">
+</testcase>
+<testcase name="profile changes password with exact fields and returns to login without retaining password" classname="app.spec.js" time="1.27">
+</testcase>
+<testcase name="each bundled game opens in the same frame and custom seed practice never submits results" classname="app.spec.js" time="3.807">
+</testcase>
+<testcase name="pending backend requests cannot delay access to local Testlab" classname="app.spec.js" time="0.4">
+</testcase>
+<testcase name="public top list formats snake food and steps and opens player record history without login" classname="app.spec.js" time="1.299">
+</testcase>
+<testcase name="top lists are discoverable without login and include every Snake variant" classname="app.spec.js" time="1.482">
+</testcase>
+<testcase name="game top list follows the selected Snake variant" classname="app.spec.js" time="0.284">
+</testcase>
+</testsuite>
+<testsuite name="arcade.spec.js" timestamp="2026-11-04T19:00:51.863Z" hostname="" tests="11" failures="0" skipped="0" time="25.717" errors="0">
+<testcase name="cartridges switch inside the same cabinet and preserve the chat draft" classname="arcade.spec.js" time="3.326">
+</testcase>
+<testcase name="the selected cartridge loads with an animation and desktop leaderboard sits beside the game" classname="arcade.spec.js" time="1.291">
+</testcase>
+<testcase name="Snake leaderboard follows mode selection and ignores a late response for an older mode" classname="arcade.spec.js" time="0.544">
+</testcase>
+<testcase name="mobile rack scrolls horizontally without overflowing the page and reduced motion skips loading flight" classname="arcade.spec.js" time="0.589">
+</testcase>
+<testcase name="public arcade shows the leaderboard and explains sign-in inside the bottom chat" classname="arcade.spec.js" time="0.367">
+</testcase>
+<testcase name="the micro:bit mode selector updates the same leaderboard and chat navigation retains the game" classname="arcade.spec.js" time="1.025">
+</testcase>
+<testcase name="logout pauses the mounted round and the same account can restore it without losing the game" classname="arcade.spec.js" time="2.227">
+</testcase>
+<testcase name="every game supports native fullscreen without replacing its canvas or clipping controls" classname="arcade.spec.js" time="9.023">
+</testcase>
+<testcase name="fullscreen preserves an active round and exits cleanly when another game is loaded" classname="arcade.spec.js" time="4.29">
+</testcase>
+<testcase name="a rejected fullscreen request shows a recoverable message inside the frame" classname="arcade.spec.js" time="0.378">
+</testcase>
+<testcase name="fullscreen fits mobile Tetris and Viking menus and keeps the exit control visible" classname="arcade.spec.js" time="2.657">
+</testcase>
+</testsuite>
+<testsuite name="local-play.spec.js" timestamp="2026-11-04T19:00:51.863Z" hostname="" tests="10" failures="0" skipped="0" time="45.915" errors="0">
+<testcase name="local snake starts without an account or backend, using the production input adapter" classname="local-play.spec.js" time="4.131">
+</testcase>
+<testcase name="local viking starts without an account or backend, using the production input adapter" classname="local-play.spec.js" time="4.1">
+</testcase>
+<testcase name="local stars starts without an account or backend, using the production input adapter" classname="local-play.spec.js" time="4.078">
+</testcase>
+<testcase name="local reaction starts without an account or backend, using the production input adapter" classname="local-play.spec.js" time="3.957">
+</testcase>
+<testcase name="local balance starts without an account or backend, using the production input adapter" classname="local-play.spec.js" time="4.091">
+</testcase>
+<testcase name="local tetris starts without an account or backend, using the production input adapter" classname="local-play.spec.js" time="6.206">
+</testcase>
+<testcase name="local racing starts without an account or backend, using the production input adapter" classname="local-play.spec.js" time="4.149">
+</testcase>
+<testcase name="local Tetris processes inputs/output, reconnects, resumes and restarts without saving" classname="local-play.spec.js" time="8.899">
+</testcase>
+<testcase name="local completed round shows its score and can restart without account/results links" classname="local-play.spec.js" time="5.784">
+</testcase>
+<testcase name="local account, database and AI routes are blocked in the UI, API client and server" classname="local-play.spec.js" time="0.52">
+</testcase>
+</testsuite>
+<testsuite name="racing.spec.js" timestamp="2026-11-04T19:00:51.863Z" hostname="" tests="5" failures="0" skipped="0" time="71.483" errors="0">
+<testcase name="MR-02/16 all four choices update the preview and exact mode leaderboard" classname="racing.spec.js" time="1.178">
+</testcase>
+<testcase name="MR-05/06/17 local real-adapter controls arm safely, steer, brake and freeze on reconnect" classname="racing.spec.js" time="8.588">
+</testcase>
+<testcase name="MR-19 a ranked restart stores exactly one DNF with null instead of a false record time" classname="racing.spec.js" time="4.515">
+</testcase>
+<testcase name="MR-09/21 recovery, mobile presentation, sound and fullscreen remain inside the arcade" classname="racing.spec.js" time="7.788">
+</testcase>
+<testcase name="MR-10/14/19 a full driven lap through Web Serial submits a real completed result once" classname="racing.spec.js" time="49.414">
+</testcase>
+</testsuite>
+<testsuite name="tetris.spec.js" timestamp="2026-11-04T19:00:51.863Z" hostname="" tests="4" failures="0" skipped="0" time="20.956" errors="0">
+<testcase name="TT-03/06/13/15/17 Tetris practice accepts real adapter inputs, displays hold and plays separate audio" classname="tetris.spec.js" time="4.968">
+</testcase>
+<testcase name="TT-14/16 pause, mute, physical reconnect and mobile layout preserve the game and its hold" classname="tetris.spec.js" time="8.738">
+</testcase>
+<testcase name="TT-18 ranked top-out submits exactly one completed result; restart creates a fresh bounded sandbox audio context" classname="tetris.spec.js" time="6.835">
+</testcase>
+<testcase name="TT-09/11/12 render gallery shows a normal clear and a perfect-clear celebration without changing simulation" classname="tetris.spec.js" time="0.415">
+</testcase>
+</testsuite>
+<testsuite name="viking-resolution.spec.js" timestamp="2026-11-04T19:00:51.863Z" hostname="" tests="1" failures="0" skipped="0" time="0.742" errors="0">
+<testcase name="Viking HUD is drawn at native display resolution with readable text on desktop and mobile" classname="viking-resolution.spec.js" time="0.742">
+</testcase>
+</testsuite>
+<testsuite name="viking.spec.js" timestamp="2026-11-04T19:00:51.863Z" hostname="" tests="2" failures="1" skipped="0" time="8.72" errors="0">
+<testcase name="Viking Dash draws five distinct environments and every event without changing the simulation" classname="viking.spec.js" time="0.852">
+</testcase>
+<testcase name="Viking stage keeps its scenery visible and supports optional sound through start and pause" classname="viking.spec.js" time="7.868">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../../../../webapp/build/app-browser-results/viking-Viking-stage-keeps--157cf-und-through-start-and-pause/error-context.md]]
+
+[[ATTACHMENT|../../../../../webapp/build/app-browser-results/viking-Viking-stage-keeps--157cf-und-through-start-and-pause/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  viking.spec.js:45:1 › Viking stage keeps its scenery visible and supports optional sound through start and pause 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "running"
+    Received: "closed"
+
+      78 |   await expect(page.locator('.game-toolbar')).toContainText('SPILLER', { timeout: 6000 });await page.getByRole('checkbox',{name:'Musikk og lyd',exact:true}).check();await page.frameLocator('.cartridge-runtime').getByRole('button',{name:'Aktiver lyd'}).click();
+      79 |   await expect.poll(() => page.frames().find(f=>f.parentFrame()).evaluate(() => globalThis.vikingAudioProbe.sources)).toBeGreaterThan(5);
+    > 80 |   expect(await page.frames().find(f=>f.parentFrame()).evaluate(() => globalThis.vikingAudioProbe.contexts.at(-1).state)).toBe('running');
+         |                                                                                                                          ^
+      81 |   await page.evaluate(() => window.serialMock.port.sample({ a: 1, ac: 1 }));
+      82 |   await page.waitForTimeout(150);
+      83 |   await page.getByRole('button', { name: 'Pause', exact: true }).click();
+        at /home/hoglar/arcade/mikrobitGames/webapp/tests/app/browser/viking.spec.js:80:122
+
+    Error Context: ../../../build/app-browser-results/viking-Viking-stage-keeps--157cf-und-through-start-and-pause/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../../build/app-browser-results/viking-Viking-stage-keeps--157cf-und-through-start-and-pause/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../../build/app-browser-results/viking-Viking-stage-keeps--157cf-und-through-start-and-pause/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+</testsuite>
+</testsuites>

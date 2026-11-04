@@ -30,5 +30,5 @@
     }
   ],
   "deviation": "Publisert med brukerens uttrykkelige godkjenning av Viking-avviket. Runden var avsluttet ved lydkontrollen; feilen er beholdt uten endrede testforventninger.",
-  "limitations": "Ingen ny FoM eller lang benchmarkkjøring. Fysisk USB, spilling fra skolen og ekte AI-svar er ikke målt her. Full evaluering og brukerskår gjenstår."
+  "limitations": "Selve publiseringskontrollen målte ikke fysisk USB, spilling fra skolen eller ekte AI-svar. En etterfølgende komplett lokal appevaluering er nå lagret som 20261104T190015.637939Z og vises separat i FoM-historikken."
 }

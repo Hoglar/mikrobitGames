@@ -1,0 +1,37 @@
+[WebServer] (node:22535) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:22547) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 46 tests using 2 workers
+············································F·
+
+  1) tests/app/browser/viking.spec.js:45:1 › Viking stage keeps its scenery visible and supports optional sound through start and pause 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "running"
+    Received: "closed"
+
+      78 |   await expect(page.locator('.game-toolbar')).toContainText('SPILLER', { timeout: 6000 });await page.getByRole('checkbox',{name:'Musikk og lyd',exact:true}).check();await page.frameLocator('.cartridge-runtime').getByRole('button',{name:'Aktiver lyd'}).click();
+      79 |   await expect.poll(() => page.frames().find(f=>f.parentFrame()).evaluate(() => globalThis.vikingAudioProbe.sources)).toBeGreaterThan(5);
+    > 80 |   expect(await page.frames().find(f=>f.parentFrame()).evaluate(() => globalThis.vikingAudioProbe.contexts.at(-1).state)).toBe('running');
+         |                                                                                                                          ^
+      81 |   await page.evaluate(() => window.serialMock.port.sample({ a: 1, ac: 1 }));
+      82 |   await page.waitForTimeout(150);
+      83 |   await page.getByRole('button', { name: 'Pause', exact: true }).click();
+        at /home/hoglar/arcade/mikrobitGames/webapp/tests/app/browser/viking.spec.js:80:122
+
+    Error Context: build/app-browser-results/viking-Viking-stage-keeps--157cf-und-through-start-and-pause/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    build/app-browser-results/viking-Viking-stage-keeps--157cf-und-through-start-and-pause/trace.zip
+    Usage:
+
+        npx playwright show-trace build/app-browser-results/viking-Viking-stage-keeps--157cf-und-through-start-and-pause/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/app/browser/viking.spec.js:45:1 › Viking stage keeps its scenery visible and supports optional sound through start and pause 
+  45 passed (2.1m)
