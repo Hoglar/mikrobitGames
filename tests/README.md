@@ -21,6 +21,10 @@ automatiske resultater beholdes.
 I GitHub kan dere lese [historikken og Markdown-rapportene](../results/fom/app/history.md).
 FoM krever både komplette automatiske målinger og en faktisk UX-vurdering.
 
+Rapporten viser nå testområder med miljø/avgrensning, individuelle testnavn fra
+lagrede logger og benchmarkenes arbeidsmengde, prøveantall og percentiler.
+Se [rapportforklaring og hjelp ved opptatte testporter](../results/fom/app/README.md#les-rapporten).
+
 Rapporten skiller mellom enhetstester, integrasjonstester, benchmarks og
 brukervurdering. **FoM = 0,50 × funksjon + 0,30 × ytelse + 0,20 × UX**, med alle
 delskårer fra 0 til 100. Enhets- og integrasjonstestene inngår i funksjon,

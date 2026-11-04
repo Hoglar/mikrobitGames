@@ -4,6 +4,7 @@ import json
 from collections import defaultdict
 from pathlib import Path
 from scoring import summarize
+from evidence import scope, cases, benchmark_details
 
 
 def save_json(path, data):
@@ -215,6 +216,33 @@ def check_table(checks, folder):
     return '<table><thead><tr><th>Kontroll</th><th>Status</th><th>Skår / 100</th><th>Bidrar til</th><th>Detaljer og bevis</th></tr></thead><tbody>' + ''.join(rows) + '</tbody></table>'
 
 
+def coverage_html(report, folder):
+    rows, inventories = [], []
+    for check in report['checks']:
+        title, purpose, environment = scope(check)
+        rows.append(f'<tr><td>{esc(title)}<br><code>{esc(check["id"])}</code></td><td>{esc(check["status"])}</td><td>{esc(purpose)}</td><td>{esc(environment)}</td></tr>')
+        recorded = cases(check, folder)
+        if recorded:
+            values = ''.join(f'<tr><td>{esc(c.get("suite", ""))}</td><td>{esc(c["name"])}</td><td>{esc(c["status"])}</td></tr>' for c in recorded)
+            inventories.append(f'<details><summary>{esc(title)}: {len(recorded)} registrerte testtilfeller</summary><table><tr><th>Fil / suite</th><th>Testnavn</th><th>Resultat</th></tr>{values}</table></details>')
+    live = next((c['status'] for c in report['checks'] if c['id'] == 'backend-full'), 'IKKE KJØRT')
+    return f'''<section id="test-coverage" class="scroll"><h2>Hva ble faktisk testet?</h2>
+<p>Levende API, PostgreSQL og Qwen i backend-testmiljø: <strong>{esc(live)}</strong>. Fysisk micro:bit/USB og produksjonsnettverk inngår ikke i standardkjøringen.</p>
+<table><thead><tr><th>Område</th><th>Status</th><th>Hva kontrolleres?</th><th>Testmiljø og avgrensning</th></tr></thead><tbody>{''.join(rows)}</tbody></table>
+<h3>Testnavn fra lagrede resultater</h3><p>Åpne en gruppe for navn og resultat per test. En avbrutt kjøring kan ha ufullstendige logger; listen er ikke et mål på kravdekning. Gruppestatusen og skåren beholdes fra målingen.</p>{''.join(inventories) or '<p>Ingen individuelle testresultater lagret.</p>'}</section>'''
+
+
+def benchmark_detail_html(report, folder):
+    parts = []
+    def value(v):
+        return '—' if v is None else f'{v:.4f}' if isinstance(v, float) else esc(str(v))
+    for item in benchmark_details(report, folder):
+        rows = ''.join('<tr>' + ''.join(f'<td>{value(row[k])}</td>' for k in
+            ('name', 'count', 'logical_seconds', 'p50', 'p95', 'p99', 'maximum', 'throughput')) + '</tr>' for row in item['rows'])
+        parts.append(f'<h3>{esc(item["title"])} · {esc(item["status"])}</h3><p>Lagret metode: {esc(str(item["method"]))}</p><p><a href="{item["filename"]}">Rådata og individuelle prøver der de er lagret</a></p><table><tr><th>Profil</th><th>Prøver / meldinger</th><th>Logisk tid (s)</th><th>p50 ms</th><th>p95 ms</th><th>p99 ms</th><th>Maks ms</th><th>Operasjoner / meldinger per sekund</th></tr>{rows}</table>')
+    return '<section id="benchmark-details" class="scroll"><h2>Benchmarkenes arbeidsmengde og råmålinger</h2><p>p95 betyr at 95 % av prøvene var like raske eller raskere. Lavere tid er bedre. Logisk tid er simulert tid; throughput er målt avspillingshastighet. Ingen av disse tallene måler FPS, fysisk USB-latens eller responstid over internett. Rådata fra en ufullført gruppe gir ingen ny skår.</p>' + ''.join(parts) + '</section>'
+
+
 def benchmark_files(check):
     return {'platform-capacity': ['platform-benchmark.json'],
             'input-benchmark': ['input-benchmark.json'],
@@ -291,9 +319,11 @@ def render(root):
 {scoring_html(report)}
 <section><h2>FoM-score gjennom iterasjoner</h2>{chart(runs, report_prefix='../')}<p class="muted">Bare samme testgrunnlag, profil og miljø kobles sammen. Manglende målinger gir hull; BLOCKED under aksen er en statusmarkør uten skår.</p><a href="../../history.svg">Åpne graf som SVG</a></section>
 {session_html}
+{coverage_html(report, folder)}
 <section id="unit-tests" class="scroll"><h2>Enhetstester</h2><p>Kontroller av avgrensede deler av webapp, input, backend og firmware. Hver registrert gruppe inngår i F.</p>{check_table(units, folder)}</section>
 <section id="functional-tests" class="scroll"><h2>Øvrige funksjons-, integrasjons- og nettlesertester</h2><p>Kontroller av samspill, brukerforløp og testkjøring. Disse gruppene inngår også i F. Enhetstester alene er derfor ikke hele F-komponenten.</p>{check_table(functions, folder)}</section>
 {benchmark_html(benchmarks, report.get('metrics', []), folder)}
+{benchmark_detail_html(report, folder)}
 <section id="ux"><h2>Brukeropplevelse (UX) og neste iterasjon</h2><p>Ny brukervurdering har to spørsmål: Beskriv brukeropplevelsen med egne ord, og gi en skår fra 1–10. Siste fullførte UX-skår multipliseres med 10 og inngår som U; delvise svar beholdes uten å gi UX-poeng.</p>{reviews}<p><a href="next-iteration.md">Last ned overlevering</a></p>
 <p>Registrer eller korriger gruppens vurdering fra prosjektroten:</p><pre>python3 tests/evaluate.py feedback {report['id']} --score 7 --reviewer "Gruppen" --comment "Hvordan var brukeropplevelsen?"</pre></section>
 <section><h2>Måleomfang</h2><ul>{''.join('<li>'+esc(x)+'</li>' for x in report['limitations'])}</ul><p>Serie: <code>{report['series']}</code>. Nye tester, budsjetter eller målemiljø starter en ny serie.</p></section>'''

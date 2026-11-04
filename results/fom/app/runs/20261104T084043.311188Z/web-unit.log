@@ -1,0 +1,455 @@
+TAP version 13
+# Subtest: API sends same-origin cookies and exact POST header/body; handles 204 and non-JSON proxy errors
+ok 1 - API sends same-origin cookies and exact POST header/body; handles 204 and non-JSON proxy errors
+  ---
+  duration_ms: 109.606629
+  ...
+# Subtest: submission queue retains exact request after lost acknowledgement and blocks another owner
+ok 2 - submission queue retains exact request after lost acknowledgement and blocks another owner
+  ---
+  duration_ms: 2.717743
+  ...
+# Subtest: invalid result identity or contradictory record data never confirms saving
+ok 3 - invalid result identity or contradictory record data never confirms saving
+  ---
+  duration_ms: 1.479336
+  ...
+# Subtest: registry requires exact ID and scoring rules; snake score shows food before steps
+ok 4 - registry requires exact ID and scoring rules; snake score shows food before steps
+  ---
+  duration_ms: 3.197013
+  ...
+# Subtest: snake relative steering accepts only first counted action; tail motion, walls and deterministic food
+ok 5 - snake relative steering accepts only first counted action; tail motion, walls and deterministic food
+  ---
+  duration_ms: 8.826619
+  ...
+# Subtest: viking fixed simulation repeats seeded obstacles independently of rendering; B blocks jump
+ok 6 - viking fixed simulation repeats seeded obstacles independently of rendering; B blocks jump
+  ---
+  duration_ms: 4.60236
+  ...
+# Subtest: every registered game family loads its own playable module
+ok 7 - every registered game family loads its own playable module
+  ---
+  duration_ms: 115.877979
+  ...
+# Subtest: extracted arcade modules retain round limits and completion semantics
+ok 8 - extracted arcade modules retain round limits and completion semantics
+  ---
+  duration_ms: 1.793931
+  ...
+# Subtest: TWEB-01/10: offentlige og beskyttede ruter
+ok 9 - TWEB-01/10: offentlige og beskyttede ruter
+  ---
+  duration_ms: 3.026524
+  ...
+# Subtest: TWEB-02: samtlige startkrav må være oppfylt
+ok 10 - TWEB-02: samtlige startkrav må være oppfylt
+  ---
+  duration_ms: 0.403168
+  ...
+# Subtest: TWEB-02: fornyelse ved fem minutter krever aktivt spill og input i synlig fane
+ok 11 - TWEB-02: fornyelse ved fem minutter krever aktivt spill og input i synlig fane
+  ---
+  duration_ms: 0.358071
+  ...
+# Subtest: TWEB-03: pause ved brudd og eksplisitt fortsett etter gjenoppkobling
+ok 12 - TWEB-03: pause ved brudd og eksplisitt fortsett etter gjenoppkobling
+  ---
+  duration_ms: 0.496773
+  ...
+# Subtest: TWEB-03: delverdier bruker ikke sluttverdigrenser
+ok 13 - TWEB-03: delverdier bruker ikke sluttverdigrenser
+  ---
+  duration_ms: 1.045883
+  ...
+# Subtest: TWEB-04: sluttverdier er sikre heltall innen spillets grenser
+ok 14 - TWEB-04: sluttverdier er sikre heltall innen spillets grenser
+  ---
+  duration_ms: 0.509603
+  ...
+# Subtest: TWEB-05/06: retry beholder eier, ID og eksakt body; annen konto sperres
+ok 15 - TWEB-05/06: retry beholder eier, ID og eksakt body; annen konto sperres
+  ---
+  duration_ms: 2.360167
+  ...
+# Subtest: TWEB-05: ulike forsøk med lik verdi har ulike ID-er
+ok 16 - TWEB-05: ulike forsøk med lik verdi har ulike ID-er
+  ---
+  duration_ms: 0.39073
+  ...
+# Subtest: TWEB-04/05/06: bare 200/201 bekrefter lagring, konflikt beholder data
+ok 17 - TWEB-04/05/06: bare 200/201 bekrefter lagring, konflikt beholder data
+  ---
+  duration_ms: 0.479768
+  ...
+# Subtest: TWEB-09: AI har trimmet spørsmål, kodepunktgrenser og ingen historikk
+ok 18 - TWEB-09: AI har trimmet spørsmål, kodepunktgrenser og ingen historikk
+  ---
+  duration_ms: 0.939909
+  ...
+# Subtest: MR-01/02/16 all 36 variants have stable unique IDs and exact scoring metadata
+ok 19 - MR-01/02/16 all 36 variants have stable unique IDs and exact scoring metadata
+  ---
+  duration_ms: 16.323503
+  ...
+# Subtest: MR-15 race encoding prioritises place, rejects holes and formats without raw score leakage
+ok 20 - MR-15 race encoding prioritises place, rejects holes and formats without raw score leakage
+  ---
+  duration_ms: 1.790421
+  ...
+# Subtest: MR-02/09 tracks are finite, their grids are safe and barriers surround both road edges
+ok 21 - MR-02/09 tracks are finite, their grids are safe and barriers surround both road edges
+  ---
+  duration_ms: 1.326836
+  ...
+# Subtest: MR-03/05 vehicle profiles actually differ and braking takes precedence over throttle
+ok 22 - MR-03/05 vehicle profiles actually differ and braking takes precedence over throttle
+  ---
+  duration_ms: 46.120238
+  ...
+# Subtest: MR-04 tilt has a continuous dead zone, signed saturation and relative turning
+ok 23 - MR-04 tilt has a continuous dead zone, signed saturation and relative turning
+  ---
+  duration_ms: 0.660057
+  ...
+# Subtest: MR-06/17 held controls never arm from countdown, unavailable values or reconnect
+ok 24 - MR-06/17 held controls never arm from countdown, unavailable values or reconnect
+  ---
+  duration_ms: 4.701424
+  ...
+# Subtest: MR-10 ordered finite gates reject backward crossings, false starts and shortcuts
+ok 25 - MR-10 ordered finite gates reject backward crossings, false starts and shortcuts
+  ---
+  duration_ms: 0.782376
+  ...
+# Subtest: MR-12 swept barriers and opposing cars cannot tunnel or generate collision energy
+ok 26 - MR-12 swept barriers and opposing cars cannot tunnel or generate collision energy
+  ---
+  duration_ms: 1.202066
+  ...
+# Subtest: MR-09/14 recovery waits for a clear spawn and consumes exactly two active seconds
+ok 27 - MR-09/14 recovery waits for a clear spawn and consumes exactly two active seconds
+  ---
+  duration_ms: 44.442699
+  ...
+# Subtest: MR-13/14/15 ties, timeout and incomplete attempts obey the contract
+ok 28 - MR-13/14/15 ties, timeout and incomplete attempts obey the contract
+  ---
+  duration_ms: 1.318381
+  ...
+# Subtest: MR-02/08/10 frozen trace: harbor-ring/drift
+ok 29 - MR-02/08/10 frozen trace: harbor-ring/drift
+  ---
+  duration_ms: 98.214988
+  ...
+# Subtest: MR-02/08/10 frozen trace: harbor-ring/race
+ok 30 - MR-02/08/10 frozen trace: harbor-ring/race
+  ---
+  duration_ms: 79.032811
+  ...
+# Subtest: MR-02/08/10 frozen trace: harbor-ring/formula
+ok 31 - MR-02/08/10 frozen trace: harbor-ring/formula
+  ---
+  duration_ms: 30.790664
+  ...
+# Subtest: MR-02/08/10 frozen trace: pine-valley/drift
+ok 32 - MR-02/08/10 frozen trace: pine-valley/drift
+  ---
+  duration_ms: 129.526683
+  ...
+# Subtest: MR-02/08/10 frozen trace: pine-valley/race
+ok 33 - MR-02/08/10 frozen trace: pine-valley/race
+  ---
+  duration_ms: 52.755215
+  ...
+# Subtest: MR-02/08/10 frozen trace: pine-valley/formula
+ok 34 - MR-02/08/10 frozen trace: pine-valley/formula
+  ---
+  duration_ms: 43.64013
+  ...
+# Subtest: MR-02/08/10 frozen trace: neon-docks/drift
+ok 35 - MR-02/08/10 frozen trace: neon-docks/drift
+  ---
+  duration_ms: 101.904219
+  ...
+# Subtest: MR-02/08/10 frozen trace: neon-docks/race
+ok 36 - MR-02/08/10 frozen trace: neon-docks/race
+  ---
+  duration_ms: 51.871613
+  ...
+# Subtest: MR-02/08/10 frozen trace: neon-docks/formula
+ok 37 - MR-02/08/10 frozen trace: neon-docks/formula
+  ---
+  duration_ms: 42.65895
+  ...
+# Subtest: MR-01/11/12 three-lap pack can finish: harbor-ring/drift
+ok 38 - MR-01/11/12 three-lap pack can finish: harbor-ring/drift
+  ---
+  duration_ms: 1027.641258
+  ...
+# Subtest: MR-01/11/12 three-lap pack can finish: harbor-ring/race
+ok 39 - MR-01/11/12 three-lap pack can finish: harbor-ring/race
+  ---
+  duration_ms: 622.770462
+  ...
+# Subtest: MR-01/11/12 three-lap pack can finish: harbor-ring/formula
+ok 40 - MR-01/11/12 three-lap pack can finish: harbor-ring/formula
+  ---
+  duration_ms: 504.137531
+  ...
+# Subtest: MR-01/11/12 three-lap pack can finish: pine-valley/drift
+ok 41 - MR-01/11/12 three-lap pack can finish: pine-valley/drift
+  ---
+  duration_ms: 1144.16161
+  ...
+# Subtest: MR-01/11/12 three-lap pack can finish: pine-valley/race
+ok 42 - MR-01/11/12 three-lap pack can finish: pine-valley/race
+  ---
+  duration_ms: 781.076356
+  ...
+# Subtest: MR-01/11/12 three-lap pack can finish: pine-valley/formula
+ok 43 - MR-01/11/12 three-lap pack can finish: pine-valley/formula
+  ---
+  duration_ms: 649.035305
+  ...
+# Subtest: MR-01/11/12 three-lap pack can finish: neon-docks/drift
+ok 44 - MR-01/11/12 three-lap pack can finish: neon-docks/drift
+  ---
+  duration_ms: 1203.1088
+  ...
+# Subtest: MR-01/11/12 three-lap pack can finish: neon-docks/race
+ok 45 - MR-01/11/12 three-lap pack can finish: neon-docks/race
+  ---
+  duration_ms: 919.426107
+  ...
+# Subtest: MR-01/11/12 three-lap pack can finish: neon-docks/formula
+ok 46 - MR-01/11/12 three-lap pack can finish: neon-docks/formula
+  ---
+  duration_ms: 801.939735
+  ...
+# Subtest: MR-08 rendering cadence does not change a step-based control trace
+ok 47 - MR-08 rendering cadence does not change a step-based control trace
+  ---
+  duration_ms: 165.031674
+  ...
+# Subtest: MR-22/23 motor audio is opt-in, volume-controlled, bounded and released on pause/disposal
+ok 48 - MR-22/23 motor audio is opt-in, volume-controlled, bounded and released on pause/disposal
+  ---
+  duration_ms: 1.289262
+  ...
+# Subtest: MR-22 absent/denied audio cannot interrupt gameplay
+ok 49 - MR-22 absent/denied audio cannot interrupt gameplay
+  ---
+  duration_ms: 0.462631
+  ...
+# Subtest: TLAB-09: start/pause/fortsett/stopp og bekreftelse før overskriving
+ok 50 - TLAB-09: start/pause/fortsett/stopp og bekreftelse før overskriving
+  ---
+  duration_ms: 5.745636
+  ...
+# Subtest: TLAB-10/11: høyst 10 Hz og reelle opphold uten fabrikasjon
+ok 51 - TLAB-10/11: høyst 10 Hz og reelle opphold uten fabrikasjon
+  ---
+  duration_ms: 2.938991
+  ...
+# Subtest: TLAB-11/16: flere omløp beholder siste 3000 målinger og 1000 hendelser
+ok 52 - TLAB-11/16: flere omløp beholder siste 3000 målinger og 1000 hendelser
+  ---
+  duration_ms: 121.44664
+  ...
+# Subtest: TLAB-13: JSON roundtrip og isolasjon mot mutasjon
+ok 53 - TLAB-13: JSON roundtrip og isolasjon mot mutasjon
+  ---
+  duration_ms: 1.113493
+  ...
+# Subtest: TLAB-13: CSV oppgir enheter og tap; null er ikke en målt nullverdi
+ok 54 - TLAB-13: CSV oppgir enheter og tap; null er ikke en målt nullverdi
+  ---
+  duration_ms: 1.084125
+  ...
+# Subtest: TLAB-09/10: avvis bakovergående/ugyldig tid
+ok 55 - TLAB-09/10: avvis bakovergående/ugyldig tid
+  ---
+  duration_ms: 1.275518
+  ...
+# Subtest: TLAB-09/13: nye data etter eksport krever ny bekreftelse; CSV beholder alle sensorer
+ok 56 - TLAB-09/13: nye data etter eksport krever ny bekreftelse; CSV beholder alle sensorer
+  ---
+  duration_ms: 1.108664
+  ...
+# Subtest: TT-14 all eight bars preserve four beats and remain within wire limits at every level
+ok 57 - TT-14 all eight bars preserve four beats and remain within wire limits at every level
+  ---
+  duration_ms: 8.458052
+  ...
+# Subtest: TT-14 ACK starts a duration timer, not the next bar; tempo changes at the following boundary
+ok 58 - TT-14 ACK starts a duration timer, not the next bar; tempo changes at the following boundary
+  ---
+  duration_ms: 9.963363
+  ...
+# Subtest: TT-13 hold images coalesce during writes and obsolete recovery acknowledgements cannot confirm a new image
+ok 59 - TT-13 hold images coalesce during writes and obsolete recovery acknowledgements cannot confirm a new image
+  ---
+  duration_ms: 5.251502
+  ...
+# Subtest: TT-14/16 pause/mute stops promptly, resumes the interrupted bar and fences a late melody ACK
+ok 60 - TT-14/16 pause/mute stops promptly, resumes the interrupted bar and fences a late melody ACK
+  ---
+  duration_ms: 10.365455
+  ...
+# Subtest: TT-19 output failures stop automatic retries, stay bounded and allow explicit recovery
+ok 61 - TT-19 output failures stop automatic retries, stay bounded and allow explicit recovery
+  ---
+  duration_ms: 7.310906
+  ...
+# Subtest: TT-14/20 many loops/holds never exceed one timer or two normal calls; disposal clears ownership
+ok 62 - TT-14/20 many loops/holds never exceed one timer or two normal calls; disposal clears ownership
+  ---
+  duration_ms: 65.446106
+  ...
+# Subtest: TT-15 browser effects are lazy, bounded, independently muted, and isolated across round tokens
+ok 63 - TT-15 browser effects are lazy, bounded, independently muted, and isolated across round tokens
+  ---
+  duration_ms: 10.033675
+  ...
+# Subtest: TT-15 unavailable or denied audio does not throw or create voices
+ok 64 - TT-15 unavailable or denied audio does not throw or create voices
+  ---
+  duration_ms: 5.81422
+  ...
+# Subtest: TT-19 game disposal fences late display/music promises and never mutates a frozen result
+ok 65 - TT-19 game disposal fences late display/music promises and never mutates a frozen result
+  ---
+  duration_ms: 2.174974
+  ...
+# Subtest: TT-01/13/16 hold top-out and explicit round completion clear the display; pause preserves hold
+ok 66 - TT-01/13/16 hold top-out and explicit round completion clear the display; pause preserves hold
+  ---
+  duration_ms: 4.077174
+  ...
+# Subtest: TT-01/02 golden bags, bounds, five previews, ghost and pure snapshots
+ok 67 - TT-01/02 golden bags, bounds, five previews, ghost and pure snapshots
+  ---
+  duration_ms: 16.996583
+  ...
+# Subtest: TT-04 all CW SRS transitions select each reachable kick in order, with golden geometry
+ok 68 - TT-04 all CW SRS transitions select each reachable kick in order, with golden geometry
+  ---
+  duration_ms: 57.68209
+  ...
+# Subtest: TT-05/06 hold consumes next only when empty, resets orientation, and drop locks one piece
+ok 69 - TT-05/06 hold consumes next only when empty, resets orientation, and drop locks one piece
+  ---
+  duration_ms: 2.196084
+  ...
+# Subtest: TT-01 full lock-out, partial hidden lock and hold/spawn collision freeze a single result
+ok 70 - TT-01 full lock-out, partial hidden lock and hold/spawn collision freeze a single result
+  ---
+  duration_ms: 1.799642
+  ...
+# Subtest: TT-07 grounded delay, fifteen resets, O no-op and immediate zero-distance drop
+ok 71 - TT-07 grounded delay, fifteen resets, O no-op and immediate zero-distance drop
+  ---
+  duration_ms: 4.518332
+  ...
+# Subtest: TT-07 non-adjacent rows compact stably and clear phase ignores input for exactly 150 ms
+ok 72 - TT-07 non-adjacent rows compact stably and clear phase ignores input for exactly 150 ms
+  ---
+  duration_ms: 1.026895
+  ...
+# Subtest: TT-08 T-spin full/Mini, front corners, kick 5 and movement-history rules
+ok 73 - TT-08 T-spin full/Mini, front corners, kick 5 and movement-history rules
+  ---
+  duration_ms: 3.711887
+  ...
+# Subtest: TT-09/10 score golden vectors, chain transitions, effect classes and progression
+ok 74 - TT-09/10 score golden vectors, chain transitions, effect classes and progression
+  ---
+  duration_ms: 1.926152
+  ...
+# Subtest: TT-10/18 old level scores the lock, next piece uses new level; overflow is incomplete
+ok 75 - TT-10/18 old level scores the lock, next piece uses new level; overflow is incomplete
+  ---
+  duration_ms: 30.976901
+  ...
+# Subtest: TT-03/05/16 controller neutral arming, hysteresis, DAS and coalesced rotation-before-drop
+ok 76 - TT-03/05/16 controller neutral arming, hysteresis, DAS and coalesced rotation-before-drop
+  ---
+  duration_ms: 5.921976
+  ...
+# Subtest: TT-13 canonical hold images use the specified five-by-five orientation
+ok 77 - TT-13 canonical hold images use the specified five-by-five orientation
+  ---
+  duration_ms: 1.103119
+  ...
+# Subtest: TT-05 simultaneous hold/rotation/drop operates on one incoming piece, without historical extra drops
+ok 78 - TT-05 simultaneous hold/rotation/drop operates on one incoming piece, without historical extra drops
+  ---
+  duration_ms: 1.500884
+  ...
+# Subtest: TT-20 identical fixed-step input at 30/60/144 Hz gives the same board/score
+ok 79 - TT-20 identical fixed-step input at 30/60/144 Hz gives the same board/score
+  ---
+  duration_ms: 37.985014
+  ...
+# Subtest: Viking audio is opt-in and the soundtrack includes melody, bass and percussion over a complete loop
+ok 80 - Viking audio is opt-in and the soundtrack includes melody, bass and percussion over a complete loop
+  ---
+  duration_ms: 30.933218
+  ...
+# Subtest: pause stops scheduled music, resume creates only one scheduler, and mute/dispose releases every source
+ok 81 - pause stops scheduled music, resume creates only one scheduler, and mute/dispose releases every source
+  ---
+  duration_ms: 2.229165
+  ...
+# Subtest: action cues are distinct and collision stops the soundtrack while its ending cue can finish
+ok 82 - action cues are distinct and collision stops the soundtrack while its ending cue can finish
+  ---
+  duration_ms: 4.274901
+  ...
+# Subtest: sound effects remain bounded and an old resume promise cannot restart disposed audio
+ok 83 - sound effects remain bounded and an old resume promise cannot restart disposed audio
+  ---
+  duration_ms: 2.055281
+  ...
+# Subtest: unavailable or denied audio stays disabled without an unhandled resume rejection
+ok 84 - unavailable or denied audio stays disabled without an unhandled resume rejection
+  ---
+  duration_ms: 1.308492
+  ...
+# Subtest: only a new near-landing press buffers a jump; holding or early mid-air presses do not repeat
+ok 85 - only a new near-landing press buffers a jump; holding or early mid-air presses do not repeat
+  ---
+  duration_ms: 5.532335
+  ...
+# Subtest: B cancels a buffered jump and cannot shorten an airborne jump
+ok 86 - B cancels a buffered jump and cannot shorten an airborne jump
+  ---
+  duration_ms: 0.866828
+  ...
+# Subtest: seed streams repeat the complete journey; unlocks, transitions and event gaps follow design
+ok 87 - seed streams repeat the complete journey; unlocks, transitions and event gaps follow design
+  ---
+  duration_ms: 128.746841
+  ...
+# Subtest: faster pacing retains reaction distance and safe action gaps through maximum speed
+ok 88 - faster pacing retains reaction distance and safe action gaps through maximum speed
+  ---
+  duration_ms: 81.065497
+  ...
+# Subtest: public state snapshots cannot mutate the world and stopped simulations keep their result
+ok 89 - public state snapshots cannot mutate the world and stopped simulations keep their result
+  ---
+  duration_ms: 0.72042
+  ...
+1..89
+# tests 89
+# suites 0
+# pass 89
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8991.996451

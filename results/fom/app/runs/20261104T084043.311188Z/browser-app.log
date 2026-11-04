@@ -1,0 +1,47 @@
+[WebServer] (node:5765) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:5777) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 46 tests using 2 workers
+······························F···············
+
+  1) tests/app/browser/local-play.spec.js:33:30 › local tetris starts without an account or backend, using the production input adapter 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.game-toolbar')
+    Expected substring: "SPILLER"
+    Received string:    "0 poeng · Nivå 1 · 0 linjerKLARPauseFullskjerm ⛶"
+    Timeout: 7000ms
+
+    Call log:
+      - Expect "toContainText" locator('.game-toolbar') with timeout 7000ms
+      - waiting for locator('.game-toolbar')
+        18 × locator resolved to <div class="game-toolbar">…</div>
+           - unexpected value "0 poeng · Nivå 1 · 0 linjerKLARPauseFullskjerm ⛶"
+
+
+      20 |   await expect(page.getByRole('button',{name:'Start spill →'})).toBeEnabled();
+      21 |   await page.getByRole('button',{name:'Start spill →'}).click();
+    > 22 |   await expect(page.locator('.game-toolbar')).toContainText('SPILLER',{timeout:7000});
+         |                                               ^
+      23 | }
+      24 | async function assertLocalOnly(page,observed){
+      25 |   const state=await page.evaluate(async()=>{
+        at connectAndStart (/home/hoglar/arcade/mikrobitGames/webapp/tests/app/browser/local-play.spec.js:22:47)
+        at /home/hoglar/arcade/mikrobitGames/webapp/tests/app/browser/local-play.spec.js:40:3
+
+    Error Context: build/app-browser-results/local-play-local-tetris-st-53d0e-he-production-input-adapter/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    build/app-browser-results/local-play-local-tetris-st-53d0e-he-production-input-adapter/trace.zip
+    Usage:
+
+        npx playwright show-trace build/app-browser-results/local-play-local-tetris-st-53d0e-he-production-input-adapter/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/app/browser/local-play.spec.js:33:30 › local tetris starts without an account or backend, using the production input adapter 
+  45 passed (2.1m)

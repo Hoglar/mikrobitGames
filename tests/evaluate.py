@@ -8,7 +8,6 @@ import os
 from pathlib import Path
 import platform
 import re
-import signal
 import subprocess
 import sys
 import time
@@ -20,6 +19,8 @@ sys.path.insert(0, str(ROOT / 'tests/evaluation'))
 from reporting import fmt, load_runs, render, save_json
 from scoring import POLICY, latency_score, summarize, validate_feedback
 from interaction import prompt_review, prompt_session
+from runtime import evaluation_lock, stop_process
+from evidence import SCOPES, cases_from_log
 
 DEFAULT_OUTPUT = ROOT / 'results/fom/app'
 
@@ -69,15 +70,7 @@ def execute(command, cwd, log, env=None, timeout=300):
             try:
                 code = process.wait(timeout=timeout)
             except (subprocess.TimeoutExpired, KeyboardInterrupt) as error:
-                if os.name == 'nt':
-                    # Windows has no killpg; stop children as well as the runner.
-                    subprocess.run(['taskkill', '/PID', str(process.pid), '/T', '/F'],
-                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
-                    if process.poll() is None:
-                        process.kill()
-                else:
-                    os.killpg(process.pid, signal.SIGKILL)
-                process.wait()
+                stop_process(process)
                 if isinstance(error, KeyboardInterrupt):
                     raise
                 status = 'BLOCKED'
@@ -158,7 +151,10 @@ class Evaluation:
         if any(marker in text for marker in ('ModuleNotFoundError:', 'spawnSync git EPERM', 'listen EPERM:', 'ERR_MODULE_NOT_FOUND')):
             status, score = 'BLOCKED', None
         row = dict(result, id=name, category='function', status=status, score=score, counts=counts,
+                   scope=SCOPES.get(name), cases=cases_from_log(self.folder / result['log'], kind),
                    detail=f"{counts['passed']}/{counts['tests']} bestått, {counts['failed']} feil, {counts['skipped']} utelatt")
+        if status == 'BLOCKED' and 'is already used' in text:
+            row['detail'] += '. Testporten er opptatt; en annen lokal server eller en tidligere avbrutt test kan fortsatt kjøre. Se loggen. Ikke gjenbruk en ukjent server.'
         self.checks.append(row)
         print(f'    {status}: {row["detail"]}', flush=True)
         return row
@@ -343,6 +339,8 @@ def automatic_checks(evaluation, report):
     evaluation.step('games-benchmark', lambda: evaluation.benchmark('games-benchmark',
                     [evaluation.node, 'tests/evaluation/benchmark-games.mjs', str(folder / 'games-benchmark.json')],
                     'games-benchmark.json', game_metrics), 'performance')
+    if (ROOT / 'webapp/src/games/micro-racer').is_dir():
+        report['limitations'].append('Micro Racer inngår i web-/nettlesertestene, men har ingen egen profil i det eksisterende CPU-benchmarket for seks spill. Supplerende AI-scoretester under backend/ai-service/tests kjøres separat og gir ingen FoM-poeng.')
     if not args.no_browser:
         evaluation.step('browser-stage', lambda: browser_checks(evaluation, report['environment']))
     if args.backend_full:
@@ -495,7 +493,8 @@ def main(argv=None):
                 args.session = session
             elif not args.label or not args.label.strip():
                 parser.error('--label må oppgis når kjøringen ikke er interaktiv.')
-            return run(args)
+            with evaluation_lock(ROOT / 'webapp/build/evaluation.lock'):
+                return run(args)
         if args.command == 'feedback':
             feedback(args.output, args.run_id, args.score, args.comment, args.reviewer)
         else:

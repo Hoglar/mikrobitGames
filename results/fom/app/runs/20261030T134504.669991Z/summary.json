@@ -2,7 +2,7 @@
   "function": 100.0,
   "performance": 100.0,
   "technical": null,
-  "ux": null,
+  "ux": 50.0,
   "fom": null,
   "status": "BLOCKED"
 }

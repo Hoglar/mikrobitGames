@@ -1,0 +1,81 @@
+[WebServer] (node:4725) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:4737) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 46 tests using 2 workers
+····················
+
+  1) tests/app/browser/arcade.spec.js:151:1 › every game supports native fullscreen without replacing its canvas or clipping controls 
+
+    Test was interrupted.
+
+    Error: locator.click: Test ended.
+    Call log:
+      - waiting for locator('.cartridge-track [data-game="reaction"]')
+        - locator resolved to <button type="button" data-game="reaction" aria-pressed="false" aria-label="Last inn Reaksjonsjakt" class="game-cartridge game-card pink">…</button>
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+
+
+      155 |   await expect(page.getByRole('navigation').getByRole('link',{name:'Testlab',exact:true})).toBeVisible();
+      156 |   for(const {key} of families){
+    > 157 |     await page.locator(`.cartridge-track [data-game="${key}"]`).click();
+          |                                                                 ^
+      158 |     const frame=page.locator('.game-frame'),toggle=frame.getByRole('button',{name:'Fullskjerm ⛶',exact:true});
+      159 |     await expect(frame.locator('canvas')).toHaveAttribute('aria-label',`${families.find(family=>family.key===key).title} spillflate`);
+      160 |     await expect(page.locator('.loading-cartridge')).toHaveCount(0);
+        at /home/hoglar/arcade/mikrobitGames/webapp/tests/app/browser/arcade.spec.js:157:65
+
+    Error Context: build/app-browser-results/arcade-every-game-supports-4d202-canvas-or-clipping-controls/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    build/app-browser-results/arcade-every-game-supports-4d202-canvas-or-clipping-controls/trace.zip
+    Usage:
+
+        npx playwright show-trace build/app-browser-results/arcade-every-game-supports-4d202-canvas-or-clipping-controls/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/app/browser/arcade.spec.js:178:1 › fullscreen preserves an active round and exits cleanly when another game is loaded 
+
+    Test was interrupted.
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.game-toolbar')
+    Expected substring: "SPILLER"
+    Received string:    "0 m · Norsk skogNEDTELLINGMusikk og lyd: avPauseFullskjerm ⛶"
+
+    Call log:
+      - Expect "toContainText" locator('.game-toolbar') with timeout 7000ms
+      - waiting for locator('.game-toolbar')
+        10 × locator resolved to <div class="game-toolbar">…</div>
+           - unexpected value "0 m · Norsk skogNEDTELLINGMusikk og lyd: avPauseFullskjerm ⛶"
+      - Test ended.
+
+
+      180 |   await page.goto('/#/play/viking');await page.locator('#connect').click();
+      181 |   await page.getByRole('button',{name:'Start spill →'}).click();
+    > 182 |   await expect(page.locator('.game-toolbar')).toContainText('SPILLER',{timeout:7000});
+          |                                               ^
+      183 |   await page.getByRole('button',{name:'Fullskjerm ⛶',exact:true}).click();
+      184 |   await expect(page.locator('.game-toolbar')).toContainText('SPILLER');
+      185 |   await page.getByRole('button',{name:'Avslutt fullskjerm ⛶',exact:true}).click();
+        at /home/hoglar/arcade/mikrobitGames/webapp/tests/app/browser/arcade.spec.js:182:47
+
+    Error Context: build/app-browser-results/arcade-fullscreen-preserve-314af-when-another-game-is-loaded/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    build/app-browser-results/arcade-fullscreen-preserve-314af-when-another-game-is-loaded/trace.zip
+    Usage:
+
+        npx playwright show-trace build/app-browser-results/arcade-fullscreen-preserve-314af-when-another-game-is-loaded/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 interrupted
+    tests/app/browser/arcade.spec.js:151:1 › every game supports native fullscreen without replacing its canvas or clipping controls 
+    tests/app/browser/arcade.spec.js:178:1 › fullscreen preserves an active round and exits cleanly when another game is loaded 
+  24 did not run
+  20 passed (39.3s)

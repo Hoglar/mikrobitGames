@@ -1,0 +1,1538 @@
+{
+  "id": "20261104T084043.311188Z",
+  "timestamp": "2026-11-04T08:40:43.469866+00:00",
+  "label": "2026-11-04 – Micro Racer med rettet evalueringsverktøy",
+  "profile": "local-browser",
+  "policy": {
+    "version": 1,
+    "weights": {
+      "function": 0.5,
+      "performance": 0.3,
+      "ux": 0.2
+    },
+    "input_p95_ms": 5.0,
+    "game_workload_p95_ms": 16.666666666666668
+  },
+  "commit": "f77aedeab492f6c5837fd79f86cac2212932ece2",
+  "dirty": true,
+  "source_digest": "6a3ca2e6b85478352d7a34713be15ebe288b487719ae3c404bda3d031d0f8a52",
+  "control_digest": "d748227b01d9c6aab7433f4ebf7f3ff9687ef1f4f2e98625261eb25c16666e65",
+  "environment": {
+    "machine": "parrot",
+    "platform": "Linux-7.0.13+parrot7-amd64-x86_64-with-glibc2.41",
+    "python": "Python 3.13.5",
+    "node": "v20.19.2",
+    "compiler": "c++ (Debian 14.2.0-19) 14.2.0",
+    "cmake": "cmake version 3.31.6",
+    "cpu_count": 12,
+    "library_path": "",
+    "cpu": "Intel(R) Core(TM) i7-5820K CPU @ 3.30GHz",
+    "python_packages": "[[\"PyYAML\", \"6.0.3\"], [\"annotated-doc\", \"0.0.5\"], [\"annotated-types\", \"0.8.0\"], [\"anyio\", \"4.15.1\"], [\"argon2-cffi\", \"25.1.0\"], [\"argon2-cffi-bindings\", \"26.1.0\"], [\"attrs\", \"26.1.0\"], [\"certifi\", \"2026.10.23\"], [\"cffi\", \"2.1.1\"], [\"click\", \"8.5.0\"], [\"fastapi\", \"0.162.0\"], [\"h11\", \"0.16.0\"], [\"httpcore\", \"1.0.9\"], [\"httpx\", \"0.28.1\"], [\"idna\", \"3.20\"], [\"jsonschema\", \"4.25.1\"], [\"jsonschema-specifications\", \"2025.9.1\"], [\"opentelemetry-api\", \"1.45.1\"], [\"pip\", \"25.1.1\"], [\"psycopg\", \"3.2.10\"], [\"psycopg-binary\", \"3.2.10\"], [\"psycopg-pool\", \"3.3.3\"], [\"pycparser\", \"3.12\"], [\"pydantic\", \"2.14.1\"], [\"pydantic_core\", \"2.50.1\"], [\"referencing\", \"0.37.0\"], [\"rpds-py\", \"2026.9.1\"], [\"sqlglot\", \"27.28.1\"], [\"starlette\", \"1.10.0\"], [\"typing-inspection\", \"0.4.4\"], [\"typing_extensions\", \"4.16.0\"], [\"uvicorn\", \"0.54.0\"]]",
+    "browser": "156.0.8078.4"
+  },
+  "checks": [
+    {
+      "returncode": 0,
+      "execution": "DONE",
+      "seconds": 9.186,
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-timeout=10000",
+        "tests/unit/app.test.js",
+        "tests/unit/games.test.js",
+        "tests/unit/platform.test.js",
+        "tests/unit/racing.test.js",
+        "tests/unit/recorder.test.js",
+        "tests/unit/tetris-output.test.js",
+        "tests/unit/tetris.test.js",
+        "tests/unit/viking-audio.test.js",
+        "tests/unit/viking.test.js"
+      ],
+      "log": "web-unit.log",
+      "id": "web-unit",
+      "category": "function",
+      "status": "PASS",
+      "score": 100.0,
+      "counts": {
+        "tests": 89,
+        "passed": 89,
+        "failed": 0,
+        "skipped": 0
+      },
+      "scope": [
+        "Webapp og spillregler",
+        "API-klient, resultatkø og omforsøk, spillregister, spillmotorer og lyd/livssyklus.",
+        "JavaScript i Node; ingen nettleser, levende API eller fysisk micro:bit."
+      ],
+      "cases": [
+        {
+          "name": "API sends same-origin cookies and exact POST header/body; handles 204 and non-JSON proxy errors",
+          "status": "PASS"
+        },
+        {
+          "name": "submission queue retains exact request after lost acknowledgement and blocks another owner",
+          "status": "PASS"
+        },
+        {
+          "name": "invalid result identity or contradictory record data never confirms saving",
+          "status": "PASS"
+        },
+        {
+          "name": "registry requires exact ID and scoring rules; snake score shows food before steps",
+          "status": "PASS"
+        },
+        {
+          "name": "snake relative steering accepts only first counted action; tail motion, walls and deterministic food",
+          "status": "PASS"
+        },
+        {
+          "name": "viking fixed simulation repeats seeded obstacles independently of rendering; B blocks jump",
+          "status": "PASS"
+        },
+        {
+          "name": "every registered game family loads its own playable module",
+          "status": "PASS"
+        },
+        {
+          "name": "extracted arcade modules retain round limits and completion semantics",
+          "status": "PASS"
+        },
+        {
+          "name": "TWEB-01/10: offentlige og beskyttede ruter",
+          "status": "PASS"
+        },
+        {
+          "name": "TWEB-02: samtlige startkrav må være oppfylt",
+          "status": "PASS"
+        },
+        {
+          "name": "TWEB-02: fornyelse ved fem minutter krever aktivt spill og input i synlig fane",
+          "status": "PASS"
+        },
+        {
+          "name": "TWEB-03: pause ved brudd og eksplisitt fortsett etter gjenoppkobling",
+          "status": "PASS"
+        },
+        {
+          "name": "TWEB-03: delverdier bruker ikke sluttverdigrenser",
+          "status": "PASS"
+        },
+        {
+          "name": "TWEB-04: sluttverdier er sikre heltall innen spillets grenser",
+          "status": "PASS"
+        },
+        {
+          "name": "TWEB-05/06: retry beholder eier, ID og eksakt body; annen konto sperres",
+          "status": "PASS"
+        },
+        {
+          "name": "TWEB-05: ulike forsøk med lik verdi har ulike ID-er",
+          "status": "PASS"
+        },
+        {
+          "name": "TWEB-04/05/06: bare 200/201 bekrefter lagring, konflikt beholder data",
+          "status": "PASS"
+        },
+        {
+          "name": "TWEB-09: AI har trimmet spørsmål, kodepunktgrenser og ingen historikk",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-01/02/16 all 36 variants have stable unique IDs and exact scoring metadata",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-15 race encoding prioritises place, rejects holes and formats without raw score leakage",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-02/09 tracks are finite, their grids are safe and barriers surround both road edges",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-03/05 vehicle profiles actually differ and braking takes precedence over throttle",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-04 tilt has a continuous dead zone, signed saturation and relative turning",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-06/17 held controls never arm from countdown, unavailable values or reconnect",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-10 ordered finite gates reject backward crossings, false starts and shortcuts",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-12 swept barriers and opposing cars cannot tunnel or generate collision energy",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-09/14 recovery waits for a clear spawn and consumes exactly two active seconds",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-13/14/15 ties, timeout and incomplete attempts obey the contract",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-02/08/10 frozen trace: harbor-ring/drift",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-02/08/10 frozen trace: harbor-ring/race",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-02/08/10 frozen trace: harbor-ring/formula",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-02/08/10 frozen trace: pine-valley/drift",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-02/08/10 frozen trace: pine-valley/race",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-02/08/10 frozen trace: pine-valley/formula",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-02/08/10 frozen trace: neon-docks/drift",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-02/08/10 frozen trace: neon-docks/race",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-02/08/10 frozen trace: neon-docks/formula",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-01/11/12 three-lap pack can finish: harbor-ring/drift",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-01/11/12 three-lap pack can finish: harbor-ring/race",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-01/11/12 three-lap pack can finish: harbor-ring/formula",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-01/11/12 three-lap pack can finish: pine-valley/drift",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-01/11/12 three-lap pack can finish: pine-valley/race",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-01/11/12 three-lap pack can finish: pine-valley/formula",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-01/11/12 three-lap pack can finish: neon-docks/drift",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-01/11/12 three-lap pack can finish: neon-docks/race",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-01/11/12 three-lap pack can finish: neon-docks/formula",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-08 rendering cadence does not change a step-based control trace",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-22/23 motor audio is opt-in, volume-controlled, bounded and released on pause/disposal",
+          "status": "PASS"
+        },
+        {
+          "name": "MR-22 absent/denied audio cannot interrupt gameplay",
+          "status": "PASS"
+        },
+        {
+          "name": "TLAB-09: start/pause/fortsett/stopp og bekreftelse før overskriving",
+          "status": "PASS"
+        },
+        {
+          "name": "TLAB-10/11: høyst 10 Hz og reelle opphold uten fabrikasjon",
+          "status": "PASS"
+        },
+        {
+          "name": "TLAB-11/16: flere omløp beholder siste 3000 målinger og 1000 hendelser",
+          "status": "PASS"
+        },
+        {
+          "name": "TLAB-13: JSON roundtrip og isolasjon mot mutasjon",
+          "status": "PASS"
+        },
+        {
+          "name": "TLAB-13: CSV oppgir enheter og tap; null er ikke en målt nullverdi",
+          "status": "PASS"
+        },
+        {
+          "name": "TLAB-09/10: avvis bakovergående/ugyldig tid",
+          "status": "PASS"
+        },
+        {
+          "name": "TLAB-09/13: nye data etter eksport krever ny bekreftelse; CSV beholder alle sensorer",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-14 all eight bars preserve four beats and remain within wire limits at every level",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-14 ACK starts a duration timer, not the next bar; tempo changes at the following boundary",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-13 hold images coalesce during writes and obsolete recovery acknowledgements cannot confirm a new image",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-14/16 pause/mute stops promptly, resumes the interrupted bar and fences a late melody ACK",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-19 output failures stop automatic retries, stay bounded and allow explicit recovery",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-14/20 many loops/holds never exceed one timer or two normal calls; disposal clears ownership",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-15 browser effects are lazy, bounded, independently muted, and isolated across round tokens",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-15 unavailable or denied audio does not throw or create voices",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-19 game disposal fences late display/music promises and never mutates a frozen result",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-01/13/16 hold top-out and explicit round completion clear the display; pause preserves hold",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-01/02 golden bags, bounds, five previews, ghost and pure snapshots",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-04 all CW SRS transitions select each reachable kick in order, with golden geometry",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-05/06 hold consumes next only when empty, resets orientation, and drop locks one piece",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-01 full lock-out, partial hidden lock and hold/spawn collision freeze a single result",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-07 grounded delay, fifteen resets, O no-op and immediate zero-distance drop",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-07 non-adjacent rows compact stably and clear phase ignores input for exactly 150 ms",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-08 T-spin full/Mini, front corners, kick 5 and movement-history rules",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-09/10 score golden vectors, chain transitions, effect classes and progression",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-10/18 old level scores the lock, next piece uses new level; overflow is incomplete",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-03/05/16 controller neutral arming, hysteresis, DAS and coalesced rotation-before-drop",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-13 canonical hold images use the specified five-by-five orientation",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-05 simultaneous hold/rotation/drop operates on one incoming piece, without historical extra drops",
+          "status": "PASS"
+        },
+        {
+          "name": "TT-20 identical fixed-step input at 30/60/144 Hz gives the same board/score",
+          "status": "PASS"
+        },
+        {
+          "name": "Viking audio is opt-in and the soundtrack includes melody, bass and percussion over a complete loop",
+          "status": "PASS"
+        },
+        {
+          "name": "pause stops scheduled music, resume creates only one scheduler, and mute/dispose releases every source",
+          "status": "PASS"
+        },
+        {
+          "name": "action cues are distinct and collision stops the soundtrack while its ending cue can finish",
+          "status": "PASS"
+        },
+        {
+          "name": "sound effects remain bounded and an old resume promise cannot restart disposed audio",
+          "status": "PASS"
+        },
+        {
+          "name": "unavailable or denied audio stays disabled without an unhandled resume rejection",
+          "status": "PASS"
+        },
+        {
+          "name": "only a new near-landing press buffers a jump; holding or early mid-air presses do not repeat",
+          "status": "PASS"
+        },
+        {
+          "name": "B cancels a buffered jump and cannot shorten an airborne jump",
+          "status": "PASS"
+        },
+        {
+          "name": "seed streams repeat the complete journey; unlocks, transitions and event gaps follow design",
+          "status": "PASS"
+        },
+        {
+          "name": "faster pacing retains reaction distance and safe action gaps through maximum speed",
+          "status": "PASS"
+        },
+        {
+          "name": "public state snapshots cannot mutate the world and stopped simulations keep their result",
+          "status": "PASS"
+        }
+      ],
+      "detail": "89/89 bestått, 0 feil, 0 utelatt"
+    },
+    {
+      "returncode": 0,
+      "execution": "DONE",
+      "seconds": 3.373,
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-timeout=10000",
+        "tests/microbit-input/lifecycle.test.js",
+        "tests/microbit-input/native-streams.test.js",
+        "tests/microbit-input/protocol.test.js"
+      ],
+      "log": "input-unit.log",
+      "id": "input-unit",
+      "category": "function",
+      "status": "PASS",
+      "score": 100.0,
+      "counts": {
+        "tests": 39,
+        "passed": 39,
+        "failed": 0,
+        "skipped": 0
+      },
+      "scope": [
+        "Inputbibliotek",
+        "Protokoll, meldingsframing, tilstand, knapper, sensorer, sesjoner og reconnect.",
+        "Simulert transport og klokke; ingen USB."
+      ],
+      "cases": [
+        {
+          "name": "GI-01/20 import is inert, unsupported contexts reject, connect is shared and waits for a snapshot",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-16 info without a sample times out at exactly 3000 ms and closes",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-14/16 unsupported board and duplicate-key metadata reject startup and release resources",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-08/09 subscriptions are independent, immutable and state-before-A/B/logo events",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-09/17 unsubscribing/disposal during notification fences remaining callbacks and events",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-10 500 ms freshness ignores results/invalid/duplicate data and attempts one recovery",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-10 background suspension neutralizes before delivering the next game callback",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-10 unexpected metadata, forward-time errors and uncorrelated errors establish fresh barriers",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-11/13 FIFO, bounded waiting queue, owned mutable arguments and cross-command pacing",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-12 result fixtures settle only matching IDs, unknown codes reject as protocol errors",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-12/13 acknowledgement before LF write resolves is retained without a spurious timer",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-13 command timeout never retries the action; recovery repairs a partial outbound line",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-12 ID exhaustion rejects old work and requires a handshake before fresh IDs",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-17 disposal rejects unsent work, drains a written ID, then STOP/CLEAR before switching",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-17 disposal before first write never sends the old command",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-17 cleanup rejection closes the connection and reports failure after releasing resources",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-10/20 physical loss retains the logical facade; reconnect resets baselines",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-17 disposal while physically disconnected resolves locally without cleanup writes",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-20 recoverable read errors recreate the reader before another HELLO; unrecoverable errors close",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-20 canceled chooser is fenced and no second chooser opens until the native one settles",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-20 open/write/close watchdogs bound hung native operations without losing late cleanup",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-20 missing Web Serial/permission errors do not create resources",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-09/10 a blocking callback cannot deliver stale input to subsequent callbacks",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-20 removal during selected-port open rejects immediately without opening another chooser",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-10/20 staleness during reconnect readiness cannot strand or resolve the wrong connect operation",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-20 disconnect after a fatal loss reports outstanding hung resource cleanup",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-07 recorded hand shakes emit the same event individually and batched, with a one-snapshot pulse",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-03/04/08/10/17 accelerated five-minute replay mixes wraps, bad frames, recovery and game switching",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-20 native Streams cancellation releases the reader/writer before port.close",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-20 native open completion after cancellation still closes its own late-acquired writer",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-13/20 native hung write has bounded caller failure and retains locks until abort/drain completes",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-02/03 every fixture at every split, LF/CRLF, overflow, invalid bytes and recovery",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-03 duplicate decoded keys rejected at every nesting level; unknown keys never pollute objects",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-01/05/06/14 all shared metadata and snapshot validation cases",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-04/08 shared wrap/gap/counted-press sequences commit atomically",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-07/19 shared tilt/shake corpus, device-time batching, strength and sound hysteresis",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-07 excursion history expires and slow movement cannot accumulate a shake",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-11 every command action/default encodes golden firmware lines and owns its values",
+          "status": "PASS"
+        },
+        {
+          "name": "GI-12 strict results retain unknown uppercase protocol errors for matching-call rejection",
+          "status": "PASS"
+        }
+      ],
+      "detail": "39/39 bestått, 0 feil, 0 utelatt"
+    },
+    {
+      "returncode": 0,
+      "execution": "DONE",
+      "seconds": 0.466,
+      "command": [
+        "/home/hoglar/arcade/mikrobitGames/.venv/bin/python",
+        "tests/evaluation/python-suite.py",
+        "backend/tests/unit"
+      ],
+      "log": "backend-unit.log",
+      "id": "backend-unit",
+      "category": "function",
+      "status": "PASS",
+      "score": 100.0,
+      "counts": {
+        "tests": 72,
+        "passed": 72,
+        "failed": 0,
+        "skipped": 0
+      },
+      "scope": [
+        "Backendregler",
+        "Innlogging, validering, poeng/rangering, AI-samtale og tillatte databaseoppslag.",
+        "Enhetstester; ingen levende PostgreSQL eller Qwen."
+      ],
+      "cases": [
+        {
+          "name": "test_failed_game_lookup_invalidates_earlier_evidence",
+          "suite": "test_ai_conversation.ConversationChecks.test_failed_game_lookup_invalidates_earlier_evidence",
+          "status": "PASS"
+        },
+        {
+          "name": "test_greeting_does_not_require_database_and_followup_sees_history",
+          "suite": "test_ai_conversation.ConversationChecks.test_greeting_does_not_require_database_and_followup_sees_history",
+          "status": "PASS"
+        },
+        {
+          "name": "test_history_is_session_local_and_clear_removes_it",
+          "suite": "test_ai_conversation.ConversationChecks.test_history_is_session_local_and_clear_removes_it",
+          "status": "PASS"
+        },
+        {
+          "name": "test_history_limit_notifies_and_does_not_keep_tool_data",
+          "suite": "test_ai_conversation.ConversationChecks.test_history_limit_notifies_and_does_not_keep_tool_data",
+          "status": "PASS"
+        },
+        {
+          "name": "test_known_empty_game_is_different_from_unknown_game",
+          "suite": "test_ai_conversation.ConversationChecks.test_known_empty_game_is_different_from_unknown_game",
+          "status": "PASS"
+        },
+        {
+          "name": "test_model_text_is_bound_as_data",
+          "suite": "test_ai_conversation.ConversationChecks.test_model_text_is_bound_as_data",
+          "status": "PASS"
+        },
+        {
+          "name": "test_oversized_current_tool_result_is_not_silently_truncated",
+          "suite": "test_ai_conversation.ConversationChecks.test_oversized_current_tool_result_is_not_silently_truncated",
+          "status": "PASS"
+        },
+        {
+          "name": "test_record_answer_requires_fresh_tool_result_each_turn",
+          "suite": "test_ai_conversation.ConversationChecks.test_record_answer_requires_fresh_tool_result_each_turn",
+          "status": "PASS"
+        },
+        {
+          "name": "test_technical_error_is_not_no_data",
+          "suite": "test_ai_conversation.ConversationChecks.test_technical_error_is_not_no_data",
+          "status": "PASS"
+        },
+        {
+          "name": "test_tool_and_model_budgets",
+          "suite": "test_ai_conversation.ConversationChecks.test_tool_and_model_budgets",
+          "status": "PASS"
+        },
+        {
+          "name": "test_tools_reject_sql_or_extra_identity_arguments_before_database",
+          "suite": "test_ai_conversation.ConversationChecks.test_tools_reject_sql_or_extra_identity_arguments_before_database",
+          "status": "PASS"
+        },
+        {
+          "name": "test_unresolved_game_cannot_support_a_missing_records_claim",
+          "suite": "test_ai_conversation.ConversationChecks.test_unresolved_game_cannot_support_a_missing_records_claim",
+          "status": "PASS"
+        },
+        {
+          "name": "test_capacity_and_ownership",
+          "suite": "test_ai_conversation.SessionLifecycle.test_capacity_and_ownership",
+          "status": "PASS"
+        },
+        {
+          "name": "test_idle_expiry_removes_memory",
+          "suite": "test_ai_conversation.SessionLifecycle.test_idle_expiry_removes_memory",
+          "status": "PASS"
+        },
+        {
+          "name": "test_reset_does_not_claim_success_while_worker_is_active",
+          "suite": "test_ai_conversation.SessionLifecycle.test_reset_does_not_claim_success_while_worker_is_active",
+          "status": "PASS"
+        },
+        {
+          "name": "test_each_required_field",
+          "suite": "test_ai_response.AIResponse.test_each_required_field",
+          "status": "PASS"
+        },
+        {
+          "name": "test_extra_field_rejected",
+          "suite": "test_ai_response.AIResponse.test_extra_field_rejected",
+          "status": "PASS"
+        },
+        {
+          "name": "test_invalid_field_values",
+          "suite": "test_ai_response.AIResponse.test_invalid_field_values",
+          "status": "PASS"
+        },
+        {
+          "name": "test_memory_notices_are_bounded_and_optional",
+          "suite": "test_ai_response.AIResponse.test_memory_notices_are_bounded_and_optional",
+          "status": "PASS"
+        },
+        {
+          "name": "test_non_object_rejected",
+          "suite": "test_ai_response.AIResponse.test_non_object_rejected",
+          "status": "PASS"
+        },
+        {
+          "name": "test_three_success_statuses",
+          "suite": "test_ai_response.AIResponse.test_three_success_statuses",
+          "status": "PASS"
+        },
+        {
+          "name": "test_unicode_codepoint_boundary",
+          "suite": "test_ai_response.AIResponse.test_unicode_codepoint_boundary",
+          "status": "PASS"
+        },
+        {
+          "name": "test_wrong_request_id",
+          "suite": "test_ai_response.AIResponse.test_wrong_request_id",
+          "status": "PASS"
+        },
+        {
+          "name": "test_absolute_boundary",
+          "suite": "test_auth_rules.AuthRules.test_absolute_boundary",
+          "status": "PASS"
+        },
+        {
+          "name": "test_absolute_expiry_caps_renewal",
+          "suite": "test_auth_rules.AuthRules.test_absolute_expiry_caps_renewal",
+          "status": "PASS"
+        },
+        {
+          "name": "test_exact_expiry_boundary",
+          "suite": "test_auth_rules.AuthRules.test_exact_expiry_boundary",
+          "status": "PASS"
+        },
+        {
+          "name": "test_initial_expiry",
+          "suite": "test_auth_rules.AuthRules.test_initial_expiry",
+          "status": "PASS"
+        },
+        {
+          "name": "test_invalid_usernames",
+          "suite": "test_auth_rules.AuthRules.test_invalid_usernames",
+          "status": "PASS"
+        },
+        {
+          "name": "test_username_normalization",
+          "suite": "test_auth_rules.AuthRules.test_username_normalization",
+          "status": "PASS"
+        },
+        {
+          "name": "test_broken_structures_are_not_converted_to_chat",
+          "suite": "test_model_messages.ModelMessages.test_broken_structures_are_not_converted_to_chat",
+          "status": "PASS"
+        },
+        {
+          "name": "test_incomplete_and_oversized_context_do_not_succeed",
+          "suite": "test_model_messages.ModelMessages.test_incomplete_and_oversized_context_do_not_succeed",
+          "status": "PASS"
+        },
+        {
+          "name": "test_plain_and_json_string_greetings",
+          "suite": "test_model_messages.ModelMessages.test_plain_and_json_string_greetings",
+          "status": "PASS"
+        },
+        {
+          "name": "test_structured_tools_remain_strict",
+          "suite": "test_model_messages.ModelMessages.test_structured_tools_remain_strict",
+          "status": "PASS"
+        },
+        {
+          "name": "test_competition_ranking_and_stable_tie_order",
+          "suite": "test_score_rules.ScoreRules.test_competition_ranking_and_stable_tie_order",
+          "status": "PASS"
+        },
+        {
+          "name": "test_completed_attempt_uses_game_bounds",
+          "suite": "test_score_rules.ScoreRules.test_completed_attempt_uses_game_bounds",
+          "status": "PASS"
+        },
+        {
+          "name": "test_empty_ranking",
+          "suite": "test_score_rules.ScoreRules.test_empty_ranking",
+          "status": "PASS"
+        },
+        {
+          "name": "test_first_record_for_both_directions",
+          "suite": "test_score_rules.ScoreRules.test_first_record_for_both_directions",
+          "status": "PASS"
+        },
+        {
+          "name": "test_higher_must_be_strictly_better",
+          "suite": "test_score_rules.ScoreRules.test_higher_must_be_strictly_better",
+          "status": "PASS"
+        },
+        {
+          "name": "test_incomplete_value_is_optional_and_not_a_final_score",
+          "suite": "test_score_rules.ScoreRules.test_incomplete_value_is_optional_and_not_a_final_score",
+          "status": "PASS"
+        },
+        {
+          "name": "test_invalid_scores_rejected",
+          "suite": "test_score_rules.ScoreRules.test_invalid_scores_rejected",
+          "status": "PASS"
+        },
+        {
+          "name": "test_lower_must_be_strictly_better",
+          "suite": "test_score_rules.ScoreRules.test_lower_must_be_strictly_better",
+          "status": "PASS"
+        },
+        {
+          "name": "test_lower_ranking",
+          "suite": "test_score_rules.ScoreRules.test_lower_ranking",
+          "status": "PASS"
+        },
+        {
+          "name": "test_unknown_attempt_status_rejected",
+          "suite": "test_score_rules.ScoreRules.test_unknown_attempt_status_rejected",
+          "status": "PASS"
+        },
+        {
+          "name": "test_unknown_direction_rejected",
+          "suite": "test_score_rules.ScoreRules.test_unknown_direction_rejected",
+          "status": "PASS"
+        },
+        {
+          "name": "test_valid_inclusive_bounds",
+          "suite": "test_score_rules.ScoreRules.test_valid_inclusive_bounds",
+          "status": "PASS"
+        }
+      ],
+      "detail": "72/72 bestått, 0 feil, 0 utelatt"
+    },
+    {
+      "returncode": 0,
+      "execution": "DONE",
+      "seconds": 0.215,
+      "command": [
+        "ctest",
+        "--test-dir",
+        "/home/hoglar/arcade/mikrobitGames/microbit/build/evaluation",
+        "--output-on-failure",
+        "--output-junit",
+        "/home/hoglar/arcade/mikrobitGames/results/fom/app/runs/20261104T084043.311188Z/firmware.xml"
+      ],
+      "log": "firmware.log",
+      "id": "firmware",
+      "category": "function",
+      "status": "PASS",
+      "score": 100.0,
+      "counts": {
+        "tests": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      },
+      "scope": [
+        "Firmware på vertsmaskinen",
+        "C++-kjerne, protokollfixtures og serialharness gjennom CTest.",
+        "Simulert maskinvare; ingen fysisk micro:bit."
+      ],
+      "cases": [
+        {
+          "name": "firmware_core",
+          "suite": "firmware_core",
+          "status": "PASS",
+          "seconds": "0.00523033"
+        },
+        {
+          "name": "shared_fixtures",
+          "suite": "shared_fixtures",
+          "status": "PASS",
+          "seconds": "0.117213"
+        },
+        {
+          "name": "serial_harness",
+          "suite": "serial_harness",
+          "status": "PASS",
+          "seconds": "0.0623184"
+        }
+      ],
+      "detail": "3/3 bestått, 0 feil, 0 utelatt"
+    },
+    {
+      "returncode": 0,
+      "execution": "DONE",
+      "seconds": 0.516,
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "tests/integration/components.test.mjs"
+      ],
+      "log": "cross-component.log",
+      "id": "cross-component",
+      "category": "function",
+      "status": "PASS",
+      "score": 100.0,
+      "counts": {
+        "tests": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      },
+      "scope": [
+        "Koblinger mellom komponenter",
+        "C++-meldinger gjennom ekte webapp-parser, kommando/kvittering og spillgrenser mot Python-validering.",
+        "Vertssimulator og testdata; ingen fysisk USB eller produksjonsdatabase."
+      ],
+      "cases": [
+        {
+          "name": "SYS: firmware metadata and snapshot bytes become webapp state and counted input",
+          "status": "PASS"
+        },
+        {
+          "name": "SYS: webapp output encoders execute in firmware and acknowledgements parse back",
+          "status": "PASS"
+        },
+        {
+          "name": "SYS: every registered game has matching frontend/backend result boundaries",
+          "status": "PASS"
+        }
+      ],
+      "detail": "3/3 bestått, 0 feil, 0 utelatt"
+    },
+    {
+      "returncode": 0,
+      "execution": "DONE",
+      "seconds": 1.368,
+      "command": [
+        "node",
+        "verification/benchmark.js"
+      ],
+      "log": "platform-benchmark.log",
+      "id": "platform-capacity",
+      "category": "function",
+      "status": "PASS",
+      "score": 100,
+      "detail": "50/500 Hz opptak, fast bufferkapasitet og eksport; tidsmålinger i platform-benchmark.json."
+    },
+    {
+      "returncode": 0,
+      "execution": "DONE",
+      "seconds": 14.804,
+      "command": [
+        "node",
+        "verification/benchmark-input.js"
+      ],
+      "log": "input-benchmark.log",
+      "id": "input-benchmark",
+      "category": "performance",
+      "status": "PASS",
+      "score": 100.0,
+      "detail": "4 målte profiler; rådata: input-benchmark.json"
+    },
+    {
+      "returncode": 0,
+      "execution": "DONE",
+      "seconds": 0.416,
+      "command": [
+        "node",
+        "tests/evaluation/benchmark-games.mjs",
+        "/home/hoglar/arcade/mikrobitGames/results/fom/app/runs/20261104T084043.311188Z/games-benchmark.json"
+      ],
+      "log": "games-benchmark.log",
+      "id": "games-benchmark",
+      "category": "performance",
+      "status": "PASS",
+      "score": 100.0,
+      "detail": "6 målte profiler; rådata: games-benchmark.json"
+    },
+    {
+      "returncode": 1,
+      "execution": "DONE",
+      "seconds": 126.276,
+      "command": [
+        "node",
+        "/home/hoglar/arcade/mikrobitGames/webapp/node_modules/@playwright/test/cli.js",
+        "test",
+        "--config",
+        "playwright.app.config.js",
+        "--reporter=junit"
+      ],
+      "log": "browser-app.log",
+      "id": "browser-app",
+      "category": "function",
+      "status": "FAIL",
+      "score": 97.82608695652173,
+      "counts": {
+        "tests": 46,
+        "passed": 45,
+        "failed": 1,
+        "skipped": 0
+      },
+      "scope": [
+        "Brukerforløp i nettleseren",
+        "Spillstart, pause/reconnect, poenginnsending, konto, Dashboard, topplister, AI-visning og mobiloppsett.",
+        "Chromium med simulerte API-svar og Web Serial; verifiserer ikke produksjonsinnlogging eller AI-svarkvalitet."
+      ],
+      "cases": [
+        {
+          "name": "launcher loads all bundled games; public Testlab works during API failure and never renews or saves",
+          "suite": "app.spec.js",
+          "status": "PASS",
+          "seconds": "17.156"
+        },
+        {
+          "name": "Testlab receives sensors, counts recovered presses, edits without sending, sends image and resets",
+          "suite": "app.spec.js",
+          "status": "PASS",
+          "seconds": "16.223"
+        },
+        {
+          "name": "game start requires connection and renew; physical loss freezes, recovery requires continuation and exit keeps attempt",
+          "suite": "app.spec.js",
+          "status": "PASS",
+          "seconds": "1.244"
+        },
+        {
+          "name": "protected routes require login; registration does not log in; AI renders text and reset calls backend",
+          "suite": "app.spec.js",
+          "status": "PASS",
+          "seconds": "2.353"
+        },
+        {
+          "name": "mobile layout stays within viewport and all assets load from this build",
+          "suite": "app.spec.js",
+          "status": "PASS",
+          "seconds": "0.715"
+        },
+        {
+          "name": "snake completes exactly once, shows decoded score, confirms record and restarts without replay",
+          "suite": "app.spec.js",
+          "status": "PASS",
+          "seconds": "5.881"
+        },
+        {
+          "name": "dashboard separates private incomplete attempts and public records, and highlights exact attempt",
+          "suite": "app.spec.js",
+          "status": "PASS",
+          "seconds": "0.41"
+        },
+        {
+          "name": "profile changes password with exact fields and returns to login without retaining password",
+          "suite": "app.spec.js",
+          "status": "PASS",
+          "seconds": "1.33"
+        },
+        {
+          "name": "each bundled game opens in the same frame and custom seed practice never submits results",
+          "suite": "app.spec.js",
+          "status": "PASS",
+          "seconds": "3.601"
+        },
+        {
+          "name": "pending backend requests cannot delay access to local Testlab",
+          "suite": "app.spec.js",
+          "status": "PASS",
+          "seconds": "0.352"
+        },
+        {
+          "name": "public top list formats snake food and steps and opens player record history without login",
+          "suite": "app.spec.js",
+          "status": "PASS",
+          "seconds": "1.281"
+        },
+        {
+          "name": "top lists are discoverable without login and include every Snake variant",
+          "suite": "app.spec.js",
+          "status": "PASS",
+          "seconds": "1.468"
+        },
+        {
+          "name": "game top list follows the selected Snake variant",
+          "suite": "app.spec.js",
+          "status": "PASS",
+          "seconds": "0.357"
+        },
+        {
+          "name": "cartridges switch inside the same cabinet and preserve the chat draft",
+          "suite": "arcade.spec.js",
+          "status": "PASS",
+          "seconds": "3.489"
+        },
+        {
+          "name": "the selected cartridge loads with an animation and desktop leaderboard sits beside the game",
+          "suite": "arcade.spec.js",
+          "status": "PASS",
+          "seconds": "1.895"
+        },
+        {
+          "name": "Snake leaderboard follows mode selection and ignores a late response for an older mode",
+          "suite": "arcade.spec.js",
+          "status": "PASS",
+          "seconds": "0.622"
+        },
+        {
+          "name": "mobile rack scrolls horizontally without overflowing the page and reduced motion skips loading flight",
+          "suite": "arcade.spec.js",
+          "status": "PASS",
+          "seconds": "0.639"
+        },
+        {
+          "name": "public arcade shows the leaderboard and explains sign-in inside the bottom chat",
+          "suite": "arcade.spec.js",
+          "status": "PASS",
+          "seconds": "0.415"
+        },
+        {
+          "name": "the micro:bit mode selector updates the same leaderboard and chat navigation retains the game",
+          "suite": "arcade.spec.js",
+          "status": "PASS",
+          "seconds": "0.964"
+        },
+        {
+          "name": "logout pauses the mounted round and the same account can restore it without losing the game",
+          "suite": "arcade.spec.js",
+          "status": "PASS",
+          "seconds": "1.695"
+        },
+        {
+          "name": "every game supports native fullscreen without replacing its canvas or clipping controls",
+          "suite": "arcade.spec.js",
+          "status": "PASS",
+          "seconds": "9.964"
+        },
+        {
+          "name": "fullscreen preserves an active round and exits cleanly when another game is loaded",
+          "suite": "arcade.spec.js",
+          "status": "PASS",
+          "seconds": "4.312"
+        },
+        {
+          "name": "a rejected fullscreen request shows a recoverable message inside the frame",
+          "suite": "arcade.spec.js",
+          "status": "PASS",
+          "seconds": "0.398"
+        },
+        {
+          "name": "fullscreen fits mobile Tetris and Viking menus and keeps the exit control visible",
+          "suite": "arcade.spec.js",
+          "status": "PASS",
+          "seconds": "2.584"
+        },
+        {
+          "name": "local snake starts without an account or backend, using the production input adapter",
+          "suite": "local-play.spec.js",
+          "status": "PASS",
+          "seconds": "4.177"
+        },
+        {
+          "name": "local viking starts without an account or backend, using the production input adapter",
+          "suite": "local-play.spec.js",
+          "status": "PASS",
+          "seconds": "4.143"
+        },
+        {
+          "name": "local stars starts without an account or backend, using the production input adapter",
+          "suite": "local-play.spec.js",
+          "status": "PASS",
+          "seconds": "4.037"
+        },
+        {
+          "name": "local reaction starts without an account or backend, using the production input adapter",
+          "suite": "local-play.spec.js",
+          "status": "PASS",
+          "seconds": "4.123"
+        },
+        {
+          "name": "local balance starts without an account or backend, using the production input adapter",
+          "suite": "local-play.spec.js",
+          "status": "PASS",
+          "seconds": "4.066"
+        },
+        {
+          "name": "local tetris starts without an account or backend, using the production input adapter",
+          "suite": "local-play.spec.js",
+          "status": "FAIL",
+          "seconds": "10.107"
+        },
+        {
+          "name": "local racing starts without an account or backend, using the production input adapter",
+          "suite": "local-play.spec.js",
+          "status": "PASS",
+          "seconds": "4.29"
+        },
+        {
+          "name": "local Tetris processes inputs/output, reconnects, resumes and restarts without saving",
+          "suite": "local-play.spec.js",
+          "status": "PASS",
+          "seconds": "8.509"
+        },
+        {
+          "name": "local completed round shows its score and can restart without account/results links",
+          "suite": "local-play.spec.js",
+          "status": "PASS",
+          "seconds": "14.134"
+        },
+        {
+          "name": "local account, database and AI routes are blocked in the UI, API client and server",
+          "suite": "local-play.spec.js",
+          "status": "PASS",
+          "seconds": "0.709"
+        },
+        {
+          "name": "MR-02/16 all four choices update the preview and exact mode leaderboard",
+          "suite": "racing.spec.js",
+          "status": "PASS",
+          "seconds": "1.42"
+        },
+        {
+          "name": "MR-05/06/17 local real-adapter controls arm safely, steer, brake and freeze on reconnect",
+          "suite": "racing.spec.js",
+          "status": "PASS",
+          "seconds": "8.282"
+        },
+        {
+          "name": "MR-19 a ranked restart stores exactly one DNF with null instead of a false record time",
+          "suite": "racing.spec.js",
+          "status": "PASS",
+          "seconds": "4.526"
+        },
+        {
+          "name": "MR-09/21 recovery, mobile presentation, sound and fullscreen remain inside the arcade",
+          "suite": "racing.spec.js",
+          "status": "PASS",
+          "seconds": "10.272"
+        },
+        {
+          "name": "MR-10/14/19 a full driven lap through Web Serial submits a real completed result once",
+          "suite": "racing.spec.js",
+          "status": "PASS",
+          "seconds": "43.153"
+        },
+        {
+          "name": "TT-03/06/13/15/17 Tetris practice accepts real adapter inputs, displays hold and plays separate audio",
+          "suite": "tetris.spec.js",
+          "status": "PASS",
+          "seconds": "4.577"
+        },
+        {
+          "name": "TT-14/16 pause, mute, physical reconnect and mobile layout preserve the game and its hold",
+          "suite": "tetris.spec.js",
+          "status": "PASS",
+          "seconds": "8.436"
+        },
+        {
+          "name": "TT-18 ranked top-out submits exactly one completed result; restart reuses the page audio context",
+          "suite": "tetris.spec.js",
+          "status": "PASS",
+          "seconds": "5.923"
+        },
+        {
+          "name": "TT-09/11/12 render gallery shows a normal clear and a perfect-clear celebration without changing simulation",
+          "suite": "tetris.spec.js",
+          "status": "PASS",
+          "seconds": "0.436"
+        },
+        {
+          "name": "Viking HUD is drawn at native display resolution with readable text on desktop and mobile",
+          "suite": "viking-resolution.spec.js",
+          "status": "PASS",
+          "seconds": "0.799"
+        },
+        {
+          "name": "Viking Dash draws five distinct environments and every event without changing the simulation",
+          "suite": "viking.spec.js",
+          "status": "PASS",
+          "seconds": "0.932"
+        },
+        {
+          "name": "Viking stage keeps its scenery visible and supports optional sound through start and pause",
+          "suite": "viking.spec.js",
+          "status": "PASS",
+          "seconds": "6.14"
+        }
+      ],
+      "detail": "45/46 bestått, 1 feil, 0 utelatt"
+    },
+    {
+      "returncode": 0,
+      "execution": "DONE",
+      "seconds": 24.727,
+      "command": [
+        "node",
+        "/home/hoglar/arcade/mikrobitGames/webapp/node_modules/@playwright/test/cli.js",
+        "test",
+        "--config",
+        "playwright.config.js",
+        "--reporter=junit"
+      ],
+      "log": "browser-input.log",
+      "id": "browser-input",
+      "category": "function",
+      "status": "PASS",
+      "score": 100.0,
+      "counts": {
+        "tests": 10,
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0
+      },
+      "scope": [
+        "Input i nettleseren",
+        "Produksjonsadapter, native Streams, sesjoner, feil/opprydding og input-replay.",
+        "Chromium med simulert Web Serial; ingen fysisk USB."
+      ],
+      "cases": [
+        {
+          "name": "GI benchmark browser propagation at 50/500 Hz with one/four subscribers",
+          "suite": "benchmark.spec.js",
+          "status": "PASS",
+          "seconds": "11.257"
+        },
+        {
+          "name": "GI-01/17/20 real browser streams, two games, output encoding and unlocked cleanup",
+          "suite": "input.spec.js",
+          "status": "PASS",
+          "seconds": "16.923"
+        },
+        {
+          "name": "GI-10/16 silence neutralizes controls, recovery retains game and waits for explicit continuation",
+          "suite": "input.spec.js",
+          "status": "PASS",
+          "seconds": "4.222"
+        },
+        {
+          "name": "GI-10/20 physical reconnect uses the same game facade and does not replay old counts",
+          "suite": "input.spec.js",
+          "status": "PASS",
+          "seconds": "0.759"
+        },
+        {
+          "name": "GI-20 a native readable stream replacement recovers without another chooser",
+          "suite": "input.spec.js",
+          "status": "PASS",
+          "seconds": "0.45"
+        },
+        {
+          "name": "GI-14/20 unsupported board and denied chooser produce a usable error and no game",
+          "suite": "input.spec.js",
+          "status": "PASS",
+          "seconds": "0.359"
+        },
+        {
+          "name": "sensor checks retain a one-snapshot shake and distinguish zero light from unavailable input",
+          "suite": "input.spec.js",
+          "status": "PASS",
+          "seconds": "3.022"
+        },
+        {
+          "name": "image editor paints locally, sends row-major brightness values and keeps draft separate from board clear",
+          "suite": "input.spec.js",
+          "status": "PASS",
+          "seconds": "2.271"
+        },
+        {
+          "name": "piano and tone controls send selected frequencies, octave, duration and volume",
+          "suite": "input.spec.js",
+          "status": "PASS",
+          "seconds": "0.979"
+        },
+        {
+          "name": "melodies and advertised sounds can be selected; invalid settings never send commands",
+          "suite": "input.spec.js",
+          "status": "PASS",
+          "seconds": "1.316"
+        }
+      ],
+      "detail": "10/10 bestått, 0 feil, 0 utelatt"
+    },
+    {
+      "id": "browser-performance",
+      "category": "performance",
+      "status": "PASS",
+      "score": 100.0,
+      "detail": "Native Streams i Chromium; 50/500 Hz og 1/4 abonnenter.",
+      "log": "browser-input.log"
+    }
+  ],
+  "metrics": [
+    {
+      "name": "input-50Hz-1-abonnenter",
+      "value": 0.026478999999994812,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "input-50Hz-4-abonnenter",
+      "value": 0.021668999999974403,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "input-500Hz-1-abonnenter",
+      "value": 0.02054299999963405,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "input-500Hz-4-abonnenter",
+      "value": 0.020738999999593943,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "snake",
+      "value": 0.03746899999998732,
+      "budget": 16.666666666666668,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "viking",
+      "value": 0.053387999999984004,
+      "budget": 16.666666666666668,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "stars",
+      "value": 0.053736999999983937,
+      "budget": 16.666666666666668,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "reaction",
+      "value": 0.004925999999954911,
+      "budget": 16.666666666666668,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "balance",
+      "value": 0.01681199999995897,
+      "budget": 16.666666666666668,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "tetris",
+      "value": 0.10144999999999982,
+      "budget": 16.666666666666668,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "browser-input-50Hz-1-abonnenter",
+      "value": 0.10000000009313226,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "browser-input-50Hz-4-abonnenter",
+      "value": 0.10000000009313226,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "browser-input-500Hz-1-abonnenter",
+      "value": 0.10000000009313226,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    },
+    {
+      "name": "browser-input-500Hz-4-abonnenter",
+      "value": 0.10000000009313226,
+      "budget": 5.0,
+      "unit": "ms",
+      "score": 100.0
+    }
+  ],
+  "selftest": "PASS",
+  "limitations": [
+    "Firmware kjøres på vertsmaskinen med simulert maskinvare; USB, fysisk knapp-til-piksel-latens og tillatelsesdialog er ikke målt.",
+    "Nettlesertester bruker mockede API-svar og Web Serial. Lokal backendkontroll tester reglene, ikke database eller AI-runtime.",
+    "Benchmark måler input-replay og spillenes simulering; FPS, tegning/GPU og nettverkslatens inngår ikke.",
+    "Maskinlast kan påvirke ytelsen. Kjør på samme maskin uten andre tunge oppgaver.",
+    "Micro Racer inngår i web-/nettlesertestene, men har ingen egen profil i det eksisterende CPU-benchmarket for seks spill. Supplerende AI-scoretester under backend/ai-service/tests kjøres separat og gir ingen FoM-poeng.",
+    "Levende API, PostgreSQL og lokal AI er ikke kjørt. Bruk --backend-full i konfigurert backend-testmiljø for en egen utvidet serie."
+  ],
+  "selftest_log": "evaluation-selftest.log",
+  "selftest_counts": {
+    "tests": 57,
+    "passed": 57,
+    "failed": 0,
+    "skipped": 0
+  },
+  "selftest_detail": "57/57 bestått, 0 feil, 0 utelatt",
+  "series": "a8a78ef6f9ea",
+  "finished_at": "2026-11-04T08:43:47.039574+00:00"
+}

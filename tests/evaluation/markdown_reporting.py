@@ -2,6 +2,7 @@
 import html
 import re
 from urllib.parse import quote
+from evidence import scope, cases, benchmark_details
 
 
 def text(value):
@@ -38,6 +39,43 @@ def checks_table(checks):
         log = f"[Logg]({quote(check['log'])})" if check.get('log') else ''
         lines.append(f"| {text(check['id'])} | {text(check['status'])} | {number(check.get('score'))} | {contribution} | {text(check.get('detail', ''))} {log} |")
     return lines + ['']
+
+
+def coverage_lines(report, folder):
+    live = next((c['status'] for c in report['checks'] if c['id'] == 'backend-full'), 'IKKE KJØRT')
+    lines = ['## Hva ble faktisk testet?', '', f'Levende API, PostgreSQL og Qwen i backend-testmiljø: **{live}**. '
+             'Standardkjøringen bruker simulerte API-svar og Web Serial. Fysisk USB og produksjonsnettverk er ikke målt.', '',
+             '| Område | Status | Hva kontrolleres? | Testmiljø og avgrensning |', '| --- | --- | --- | --- |']
+    for check in report['checks']:
+        title, purpose, environment = scope(check)
+        lines.append(f'| {text(title)} ({text(check["id"])}) | {text(check["status"])} | {text(purpose)} | {text(environment)} |')
+    lines += ['', '### Individuelle testnavn fra lagrede resultater', '',
+              'Åpne gruppene nedenfor. Avbrutte kjøringer kan ha ufullstendige logger. Testlisten endrer ingen skår og er ikke et mål på kravdekning.', '']
+    for check in report['checks']:
+        recorded = cases(check, folder)
+        if not recorded:
+            continue
+        lines += ['<details>', f'<summary>{html.escape(scope(check)[0])}: {len(recorded)} registrerte testtilfeller</summary>', '',
+                  '| Fil / suite | Testnavn | Resultat |', '| --- | --- | --- |']
+        lines += [f'| {text(c.get("suite", ""))} | {text(c["name"])} | {text(c["status"])} |' for c in recorded]
+        lines += ['', '</details>', '']
+    return lines
+
+
+def benchmark_detail_lines(report, folder):
+    lines = ['### Arbeidsmengde og råmålinger', '',
+             'p95 betyr at 95 % av prøvene var like raske eller raskere. Logisk tid er simulert tid; throughput er målt '
+             'avspillingshastighet. Dette måler ikke FPS, fysisk USB eller internett. Rådata fra ufullførte grupper gir ingen ny skår.', '']
+    def value(v):
+        return '—' if v is None else f'{v:.4f}' if isinstance(v, float) else text(v)
+    for item in benchmark_details(report, folder):
+        lines += [f'#### {text(item["title"])} · {text(item["status"])}', '', f'Lagret metode: {text(item["method"])}', '',
+                  f'[Rådata]({item["filename"]})', '',
+                  '| Profil | Prøver / meldinger | Logisk tid (s) | p50 ms | p95 ms | p99 ms | Maks ms | Operasjoner / meldinger per sekund |',
+                  '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |']
+        lines += ['| ' + ' | '.join(value(row[k]) for k in ('name', 'count', 'logical_seconds', 'p50', 'p95', 'p99', 'maximum', 'throughput')) + ' |' for row in item['rows']]
+        lines.append('')
+    return lines
 
 
 def review_lines(review):
@@ -114,6 +152,7 @@ def render_markdown(root, runs):
         if session:
             lines += ['## Testøkt', '', f"Vurderer / gruppe: {text(session.get('reviewer', ''))}.", '', block(session.get('context', '')), '']
         lines += score_lines(report)
+        lines += coverage_lines(report, folder)
         selftest_log = report.get('selftest_log', 'evaluation-selftest.log')
         lines += ['## Måleverktøyets egenkontroll', '', f"Status: {text(report.get('selftest', 'BLOCKED'))}. "
                   + (f'[Logg]({quote(selftest_log)}).' if (folder / selftest_log).is_file() else 'Ingen logg tilgjengelig.'), '']
@@ -130,6 +169,7 @@ def render_markdown(root, runs):
         if (folder / 'backend-full.json').is_file():
             raw.append(folder / 'backend-full.json')
         lines += [f'- [{text(path.name)}]({quote(path.name)})' for path in raw] or ['Ingen rådatafiler; se status og logger ovenfor.']
+        lines += ['', *benchmark_detail_lines(report, folder)]
         lines += ['', '## Brukeropplevelse (UX)', '',
                   'Ny brukervurdering har to spørsmål: Beskriv brukeropplevelsen med egne ord, og gi en skår fra 1–10. '
                   'Delvise svar beholdes uten å gi UX-poeng.', '']

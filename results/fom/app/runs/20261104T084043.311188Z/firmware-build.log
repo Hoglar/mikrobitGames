@@ -1,0 +1,3 @@
+[ 50%] Built target mikrobit_core
+[ 75%] Built target firmware_tests
+[100%] Built target firmware_simulator

@@ -67,6 +67,47 @@ kjør igjen med `--label "02 – tydeligere pause"`, og vurder samme brukerforl�
 Minst tre **reelle** målepunkter (baseline og to bestilte forbedringsrunder) gir
 en nyttig utviklingskurve. Verktøyet lager ingen kunstige historikkpunkter.
 
+## Les rapporten
+
+«Hva ble faktisk testet?» viser hvert testområde, miljøet og avgrensningene.
+Åpne en testgruppe for navn og resultat per test. Standardprofilen bruker
+simulerte API-svar og Web Serial: bestått AI-visning betyr at chatgrensesnittet
+virker med testdata, ikke at Qwen gir korrekte svar. Levende backend står som
+«IKKE KJØRT» når `--backend-full` ikke var valgt eller ikke ble gjennomført.
+
+Benchmarkdelen viser både skår mot lagret budsjett og rå ytelse: metode,
+prøveantall, logisk varighet, p50/p95/p99, maksimum og throughput der det er målt.
+p95 betyr at 95 % av prøvene var like raske eller raskere. Throughput beskriver
+avspillingshastigheten i testen; det er ikke kapasiteten til internettserveren.
+Råfiler fra en avbrutt gruppe kan finnes selv om gruppen aldri fikk en skår.
+De vises som «IKKE FULLFØRT» og endrer ikke resultatet.
+
+Kjør `python3 tests/evaluate.py report` for å oppdatere lesbare rapporter fra
+bevarte resultater. Det kjører ingen tester og endrer ikke rårapporter, logger,
+benchmarks, UX-svar eller skårformel.
+
+## Avbrudd og opptatte testporter
+
+Kjør bare én evaluering per arbeidsmappe. Verktøyet låser kjøringen og avviser
+en ny evaluering mens den første pågår. Låsen frigjøres automatisk når prosessen
+avsluttes. På Linux/macOS får nettlesertestene ved Ctrl+C eller tidsavbrudd tid
+til å stoppe lokalserverne før eventuell tvungen avslutning. På Windows stoppes
+prosesstreet med `taskkill /T`. Vent til terminalen er tilbake
+før du starter igjen.
+
+Meldingen `http://127.0.0.1:4176 is already used` betyr at en lokal testport er
+opptatt, for eksempel av en tidligere avbrutt kjøring. Testene bruker 4175/4176
+for appen og 4173 for inputbiblioteket, uavhengig av den publiserte nettsiden.
+På Linux kan du undersøke dem med:
+
+```bash
+ss -ltnp '( sport = :4173 or sport = :4175 or sport = :4176 )'
+```
+
+Avslutt en gjenkjennelig testserver i terminalen den ble startet fra. Ikke sett
+`reuseExistingServer=true` for å omgå feilen: en fremmed eller gammel server kan
+teste feil versjon. Tidligere blokkerte kjøringer beholdes i historikken.
+
 ## Engangsoppsett
 
 Bruk Node-versjonen i `webapp/.nvmrc` (24.22.1), Python 3.10 eller nyere

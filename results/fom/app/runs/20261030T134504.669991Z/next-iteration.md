@@ -13,7 +13,8 @@ Vurderer / gruppe: Martin
 
 ## Brukeropplevelse og prioriteringer
 
-Venter på gruppens UX-skår og kommentar.
+2026-11-04T08:52:18.470118+00:00 · Martin · 5.0/10
+Forrige versjon vurderes til 5/10. Den nye nettsiden er visuelt mye finere enn denne versjonen.
 
 ## Feil og manglende målinger
 

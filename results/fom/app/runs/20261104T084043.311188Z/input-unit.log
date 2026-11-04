@@ -1,0 +1,205 @@
+TAP version 13
+# Subtest: GI-01/20 import is inert, unsupported contexts reject, connect is shared and waits for a snapshot
+ok 1 - GI-01/20 import is inert, unsupported contexts reject, connect is shared and waits for a snapshot
+  ---
+  duration_ms: 26.169586
+  ...
+# Subtest: GI-16 info without a sample times out at exactly 3000 ms and closes
+ok 2 - GI-16 info without a sample times out at exactly 3000 ms and closes
+  ---
+  duration_ms: 2.019197
+  ...
+# Subtest: GI-14/16 unsupported board and duplicate-key metadata reject startup and release resources
+ok 3 - GI-14/16 unsupported board and duplicate-key metadata reject startup and release resources
+  ---
+  duration_ms: 4.96804
+  ...
+# Subtest: GI-08/09 subscriptions are independent, immutable and state-before-A/B/logo events
+ok 4 - GI-08/09 subscriptions are independent, immutable and state-before-A/B/logo events
+  ---
+  duration_ms: 9.440449
+  ...
+# Subtest: GI-09/17 unsubscribing/disposal during notification fences remaining callbacks and events
+ok 5 - GI-09/17 unsubscribing/disposal during notification fences remaining callbacks and events
+  ---
+  duration_ms: 4.154007
+  ...
+# Subtest: GI-10 500 ms freshness ignores results/invalid/duplicate data and attempts one recovery
+ok 6 - GI-10 500 ms freshness ignores results/invalid/duplicate data and attempts one recovery
+  ---
+  duration_ms: 4.740895
+  ...
+# Subtest: GI-10 background suspension neutralizes before delivering the next game callback
+ok 7 - GI-10 background suspension neutralizes before delivering the next game callback
+  ---
+  duration_ms: 4.544288
+  ...
+# Subtest: GI-10 unexpected metadata, forward-time errors and uncorrelated errors establish fresh barriers
+ok 8 - GI-10 unexpected metadata, forward-time errors and uncorrelated errors establish fresh barriers
+  ---
+  duration_ms: 5.233145
+  ...
+# Subtest: GI-11/13 FIFO, bounded waiting queue, owned mutable arguments and cross-command pacing
+ok 9 - GI-11/13 FIFO, bounded waiting queue, owned mutable arguments and cross-command pacing
+  ---
+  duration_ms: 15.657658
+  ...
+# Subtest: GI-12 result fixtures settle only matching IDs, unknown codes reject as protocol errors
+ok 10 - GI-12 result fixtures settle only matching IDs, unknown codes reject as protocol errors
+  ---
+  duration_ms: 39.601672
+  ...
+# Subtest: GI-12/13 acknowledgement before LF write resolves is retained without a spurious timer
+ok 11 - GI-12/13 acknowledgement before LF write resolves is retained without a spurious timer
+  ---
+  duration_ms: 1.545113
+  ...
+# Subtest: GI-13 command timeout never retries the action; recovery repairs a partial outbound line
+ok 12 - GI-13 command timeout never retries the action; recovery repairs a partial outbound line
+  ---
+  duration_ms: 9.518314
+  ...
+# Subtest: GI-12 ID exhaustion rejects old work and requires a handshake before fresh IDs
+ok 13 - GI-12 ID exhaustion rejects old work and requires a handshake before fresh IDs
+  ---
+  duration_ms: 4.291616
+  ...
+# Subtest: GI-17 disposal rejects unsent work, drains a written ID, then STOP/CLEAR before switching
+ok 14 - GI-17 disposal rejects unsent work, drains a written ID, then STOP/CLEAR before switching
+  ---
+  duration_ms: 9.155187
+  ...
+# Subtest: GI-17 disposal before first write never sends the old command
+ok 15 - GI-17 disposal before first write never sends the old command
+  ---
+  duration_ms: 1.380376
+  ...
+# Subtest: GI-17 cleanup rejection closes the connection and reports failure after releasing resources
+ok 16 - GI-17 cleanup rejection closes the connection and reports failure after releasing resources
+  ---
+  duration_ms: 1.105127
+  ...
+# Subtest: GI-10/20 physical loss retains the logical facade; reconnect resets baselines
+ok 17 - GI-10/20 physical loss retains the logical facade; reconnect resets baselines
+  ---
+  duration_ms: 2.143826
+  ...
+# Subtest: GI-17 disposal while physically disconnected resolves locally without cleanup writes
+ok 18 - GI-17 disposal while physically disconnected resolves locally without cleanup writes
+  ---
+  duration_ms: 0.997734
+  ...
+# Subtest: GI-20 recoverable read errors recreate the reader before another HELLO; unrecoverable errors close
+ok 19 - GI-20 recoverable read errors recreate the reader before another HELLO; unrecoverable errors close
+  ---
+  duration_ms: 2.200018
+  ...
+# Subtest: GI-20 canceled chooser is fenced and no second chooser opens until the native one settles
+ok 20 - GI-20 canceled chooser is fenced and no second chooser opens until the native one settles
+  ---
+  duration_ms: 0.514183
+  ...
+# Subtest: GI-20 open/write/close watchdogs bound hung native operations without losing late cleanup
+ok 21 - GI-20 open/write/close watchdogs bound hung native operations without losing late cleanup
+  ---
+  duration_ms: 19.844276
+  ...
+# Subtest: GI-20 missing Web Serial/permission errors do not create resources
+ok 22 - GI-20 missing Web Serial/permission errors do not create resources
+  ---
+  duration_ms: 0.59017
+  ...
+# Subtest: GI-09/10 a blocking callback cannot deliver stale input to subsequent callbacks
+ok 23 - GI-09/10 a blocking callback cannot deliver stale input to subsequent callbacks
+  ---
+  duration_ms: 1.59847
+  ...
+# Subtest: GI-20 removal during selected-port open rejects immediately without opening another chooser
+ok 24 - GI-20 removal during selected-port open rejects immediately without opening another chooser
+  ---
+  duration_ms: 0.486846
+  ...
+# Subtest: GI-10/20 staleness during reconnect readiness cannot strand or resolve the wrong connect operation
+ok 25 - GI-10/20 staleness during reconnect readiness cannot strand or resolve the wrong connect operation
+  ---
+  duration_ms: 1.697753
+  ...
+# Subtest: GI-20 disconnect after a fatal loss reports outstanding hung resource cleanup
+ok 26 - GI-20 disconnect after a fatal loss reports outstanding hung resource cleanup
+  ---
+  duration_ms: 1.010149
+  ...
+# Subtest: GI-07 recorded hand shakes emit the same event individually and batched, with a one-snapshot pulse
+ok 27 - GI-07 recorded hand shakes emit the same event individually and batched, with a one-snapshot pulse
+  ---
+  duration_ms: 11.791994
+  ...
+# Subtest: GI-03/04/08/10/17 accelerated five-minute replay mixes wraps, bad frames, recovery and game switching
+ok 28 - GI-03/04/08/10/17 accelerated five-minute replay mixes wraps, bad frames, recovery and game switching
+  ---
+  duration_ms: 2746.060444
+  ...
+# Subtest: GI-20 native Streams cancellation releases the reader/writer before port.close
+ok 29 - GI-20 native Streams cancellation releases the reader/writer before port.close
+  ---
+  duration_ms: 33.711975
+  ...
+# Subtest: GI-20 native open completion after cancellation still closes its own late-acquired writer
+ok 30 - GI-20 native open completion after cancellation still closes its own late-acquired writer
+  ---
+  duration_ms: 12.070911
+  ...
+# Subtest: GI-13/20 native hung write has bounded caller failure and retains locks until abort/drain completes
+ok 31 - GI-13/20 native hung write has bounded caller failure and retains locks until abort/drain completes
+  ---
+  duration_ms: 50.33806
+  ...
+# Subtest: GI-02/03 every fixture at every split, LF/CRLF, overflow, invalid bytes and recovery
+ok 32 - GI-02/03 every fixture at every split, LF/CRLF, overflow, invalid bytes and recovery
+  ---
+  duration_ms: 101.019677
+  ...
+# Subtest: GI-03 duplicate decoded keys rejected at every nesting level; unknown keys never pollute objects
+ok 33 - GI-03 duplicate decoded keys rejected at every nesting level; unknown keys never pollute objects
+  ---
+  duration_ms: 2.203489
+  ...
+# Subtest: GI-01/05/06/14 all shared metadata and snapshot validation cases
+ok 34 - GI-01/05/06/14 all shared metadata and snapshot validation cases
+  ---
+  duration_ms: 2.455975
+  ...
+# Subtest: GI-04/08 shared wrap/gap/counted-press sequences commit atomically
+ok 35 - GI-04/08 shared wrap/gap/counted-press sequences commit atomically
+  ---
+  duration_ms: 1.921484
+  ...
+# Subtest: GI-07/19 shared tilt/shake corpus, device-time batching, strength and sound hysteresis
+ok 36 - GI-07/19 shared tilt/shake corpus, device-time batching, strength and sound hysteresis
+  ---
+  duration_ms: 2.449489
+  ...
+# Subtest: GI-07 excursion history expires and slow movement cannot accumulate a shake
+ok 37 - GI-07 excursion history expires and slow movement cannot accumulate a shake
+  ---
+  duration_ms: 3.168107
+  ...
+# Subtest: GI-11 every command action/default encodes golden firmware lines and owns its values
+ok 38 - GI-11 every command action/default encodes golden firmware lines and owns its values
+  ---
+  duration_ms: 1.506134
+  ...
+# Subtest: GI-12 strict results retain unknown uppercase protocol errors for matching-call rejection
+ok 39 - GI-12 strict results retain unknown uppercase protocol errors for matching-call rejection
+  ---
+  duration_ms: 1.068634
+  ...
+1..39
+# tests 39
+# suites 0
+# pass 39
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3165.767816

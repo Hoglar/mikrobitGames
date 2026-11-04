@@ -74,6 +74,7 @@ class GuidedCommandTests(unittest.TestCase):
         for terminal, flags in ((True, []), (False, ['--interactive'])):
             with self.subTest(terminal=terminal), patch('sys.stdin.isatty', return_value=terminal), \
                     patch.object(evaluate, 'prompt_session', return_value=dict(label='Baseline', reviewer='Team', context='USB')) as prompt, \
+                    patch.object(evaluate, 'evaluation_lock', return_value=contextlib.nullcontext()), \
                     patch.object(evaluate, 'run', return_value=0) as runner:
                 self.assertEqual(evaluate.main(['run', *flags]), 0)
                 prompt.assert_called_once_with(None)
@@ -85,6 +86,7 @@ class GuidedCommandTests(unittest.TestCase):
     def test_noninteractive_and_redirected_input_never_prompt(self):
         for terminal, flags in ((True, ['--non-interactive']), (False, [])):
             with self.subTest(terminal=terminal), patch('sys.stdin.isatty', return_value=terminal), \
+                    patch.object(evaluate, 'evaluation_lock', return_value=contextlib.nullcontext()), \
                     patch.object(evaluate, 'prompt_session') as prompt, patch.object(evaluate, 'run', return_value=0) as runner:
                 self.assertEqual(evaluate.main(['run', '--label', 'Baseline', *flags]), 0)
                 prompt.assert_not_called()
