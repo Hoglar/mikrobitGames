@@ -23,6 +23,22 @@ def measured(run_id='one'):
 
 
 class TrendTests(unittest.TestCase):
+    def test_publication_checks_do_not_become_fom_or_unit_measurements(self):
+        current = measured()
+        original = copy.deepcopy(current)
+        with tempfile.TemporaryDirectory() as directory, patch('trend_plots.plots', return_value=set()):
+            root = Path(directory)
+            publication = dict(date='2026-11-04', commit='abc12345',
+                checks=[dict(area='Browser', result='45/46', detail='One retained failure')],
+                deviation='Known failure approved', limitations='No new FoM', report='deployment.md')
+            (root / 'publication.json').write_text(json.dumps(publication))
+            document = overview(root, [current])
+            self.assertIn('separat fra FoM', document)
+            self.assertIn('45/46', document)
+            self.assertIn('Known failure approved', (root / 'overview.md').read_text())
+            self.assertEqual(current, original)
+            self.assertEqual(build_overview([current])['latest']['summary']['fom'], 96)
+
     def test_archived_baseline_is_reference_not_an_extra_fom_point(self):
         current, archive = measured(), measured('archive')
         archive['environment'] = {'cpu': 'Different machine'}

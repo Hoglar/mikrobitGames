@@ -1,0 +1,73 @@
+{
+  "status": "PASS",
+  "transport_retries": 0,
+  "earlier_probe_interrupted_tls": true,
+  "source_commit": "2c209f27bbc840b19c2218c3c9ebd0b63264b67d",
+  "health": "ok",
+  "public_files_sha256_verified": 119,
+  "packages": 7,
+  "catalog_games": 47,
+  "api_games": 49,
+  "sdk_metadata_verified": true,
+  "services_active": [
+    "mbg-db",
+    "mbg-api",
+    "mbg-ai",
+    "mbg-model",
+    "mbg-web",
+    "tailscaled"
+  ],
+  "backend_release": "/opt/mikrobit-games/releases/20261104T174028332774Z-2c209f27",
+  "web_release": "/var/www/mikrobit-games/releases/20261104T174046514278Z",
+  "model_answers_tested": false,
+  "physical_usb_tested": false,
+  "browser": {
+    "status": "PASS",
+    "public_cartridges": 7,
+    "online_leaderboards": 47,
+    "firmware_link": true,
+    "all_covers_loaded": true,
+    "javascript_errors": 0,
+    "mobile_overflow": false,
+    "production_writes": false
+  },
+  "migration": {
+    "status": "PASS",
+    "checks": [
+      "Migrering 001 -> 002 og katalogsynk bevarer eksisterende ID-er, forsøk og rekorder",
+      "Gjentatt katalogsynk er logisk idempotent",
+      "Regelkonflikt ruller tilbake hele synkroniseringstransaksjonen",
+      "Ekte API + backend_app: katalog, konto, innlogging, lagring, replay og avvist kodingshull",
+      "AI-leserollen henter SDK-metadata og dekoder eksisterende rekorder",
+      "AI-rollen kan fortsatt verken lese private forsøk eller skrive rekorder"
+    ],
+    "postgresql": 17,
+    "tcp_listener": false,
+    "data": "synthetic disposable database",
+    "production_touched": false
+  },
+  "validation": {
+    "frontend_unit": {
+      "pass": 134,
+      "fail": 0
+    },
+    "backend_unit": {
+      "pass": 76,
+      "fail": 0
+    },
+    "ai_score_presentation": {
+      "pass": 6,
+      "fail": 0
+    },
+    "browser_app": {
+      "pass": 45,
+      "fail": 1
+    },
+    "browser_cartridges": {
+      "pass": 13,
+      "fail": 0
+    },
+    "isolated_viking_recheck": "FAIL"
+  },
+  "accepted_deviation": "User explicitly chose publication with the known Viking audio test failure."
+}

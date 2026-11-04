@@ -19,4 +19,4 @@ Hvis siden ikke åpner, prøv [helseendepunktet](https://parrot.tail106c62.ts.ne
 
 [Oppdateringen med Tetris og Viking Dash rev. 3](../results/verification/games-update-publication-2026-10-29.md) er publisert fra `852e43d`. Oppdater siden etter en avsluttet spillrunde for å laste den nye versjonen.
 
-[Nyeste publisering, 4. november](../results/verification/racing-publication-2026-11-04.md): nytt sidedesign og Micro Racer, frontend/backend fra `177131d`. Avslutt pågående runde før du oppdaterer siden.
+[Nyeste publisering, 4. november](../results/verification/sdk-publication-2026-11-04.md): isolerte spillvinduer, lokale rekorder og automatisk spillkatalog, frontend/backend fra `2c209f2`. Ett kjent Viking-lydtestavvik er dokumentert og godkjent før publisering. Avslutt pågående runde før du oppdaterer siden.

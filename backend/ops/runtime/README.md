@@ -67,7 +67,7 @@ Dette siste steget gjør nettsiden/API-et offentlig. Følg eventuell lenke for �
 
 Åpne den viste HTTPS-adressen og `/api/v1/health` fra mobilnett eller en annen PC uten Tailscale. Ingen sertifikatadvarsel skal godtas. Gjennomfør [frontendens integrasjonsflyt](../../../spec/contracts/webapp-backend/quickstart.md). Lokal oppstart alene beviser ikke ekstern tilgjengelighet eller femminuttersmålet etter fysisk reboot.
 
-Ved første backendoppsett vises en velkomstside. Gjeldende frontend/backend er fra commit `177131d`, publisert 2026-11-04. Alle 47 spillvarianter er registrert med frontendens eksakte ID-er og regler. Se [publiseringskontrollen](../../../results/verification/racing-publication-2026-11-04.md).
+Ved første backendoppsett vises en velkomstside. Gjeldende frontend/backend er fra commit `2c209f2`, publisert 2026-11-04. Alle 47 spillvarianter er registrert med frontendens eksakte ID-er og regler. Se [publiseringskontrollen](../../../results/verification/sdk-publication-2026-11-04.md).
 
 ## 4. Publiser frontendpakken
 
@@ -75,22 +75,32 @@ Frontendgruppen leverer én komplett statisk pakke med `index.html`, spill og re
 
 ```bash
 npm --prefix webapp run build
-npm --prefix webapp run catalog:commands
 ```
 
-Første kommando lager `webapp/dist/` med SHA-256-filoversikt. Den andre skriver vedlikeholdskommandoer for spillregisteret, uten å kjøre dem. Kontroller eksisterende spill mot registeret før du registrerer manglende ID-er. Ikke kjør `create` på ID-er som allerede finnes, og ikke endre regler for spill med historikk. På Parrot kjøres hver gjennomgåtte `create`-kommando med eksisterende administrasjonsverktøy og lokal vedlikeholdsrolle, slik (erstatt argumentene med den genererte kommandoens verdier):
+Bygget lager `webapp/dist/`, SHA-256-filoversikt og en validert `catalog.json`.
+Etter SDK-utrullingen fra `2c209f2` er migrering 002 installert, og de 47
+spillvariantene er synkronisert. Publiser med det **installerte** verktøyet:
 
 ```bash
-sudo -u mbg-db env MBG_ADMIN_DSN='host=/run/mbg-db port=5433 dbname=mikrobit_games user=mbg-db' /opt/mikrobit-games/current/.venv/bin/python /opt/mikrobit-games/current/backend/database/manage-game.py create --id UUID --name NAVN --unit ENHET --direction RETNING --min MIN --max MAX
+sudo /usr/bin/python3 /opt/mikrobit-games/current/backend/ops/runtime/publish-web.py webapp/dist
 ```
 
-Alle 47 variantene i `177131d` er allerede registrert. Ved samme register trengs bare ny publisering av det ferdige bygget:
+Det installerte verktøyet gjør at databasebrukeren kan lese sin kode uten
+rettigheter i utviklerens hjemmemappe. Ved senere backendendringer må ny
+backendkode og nødvendige migreringer kontrolleres og installeres først.
+Ta privat databasebackup før migrering; se vedlikeholdsavsnittet.
 
-```bash
-sudo /usr/bin/python3 backend/ops/runtime/publish-web.py webapp/dist
-```
+Skriptet kopierer bygget til en ny mappe, synkroniserer hele katalogen i én
+transaksjon og aktiverer deretter webpakken atomisk. Ikke kjør manuelle
+`create`-kommandoer for SDK-spill som katalogflyten allerede håndterer.
+Katalogsynk beholder eksisterende rekorder og deaktiverer ikke manglende spill.
+Regelkonflikter stopper publiseringen før webpakken aktiveres.
 
-Skriptet kontrollerer byggmappen, kopierer til en ny mappe og bytter `current` atomisk. Forrige bygg ligger i `/var/www/mikrobit-games/previous`. Ved feil i den lokale HTTP-kontrollen byttes lenken tilbake. Skjulte filer og symlinker tillates ikke i webpakken. Kildekode, `.git`, serverkonfigurasjon og database skal aldri være webroot.
+Forrige webbygg ligger i `/var/www/mikrobit-games/previous`. Ved feil i den
+lokale HTTP-kontrollen byttes weblenken tilbake; katalogmetadata som allerede
+er synkronisert beholdes. Ingen automatisk database-restore utføres. Skjulte
+filer og symlinker tillates ikke i webpakken. `.git`, serverkonfigurasjon og
+database skal aldri være webroot.
 
 Frontend kaller relative `/api/v1/...`-stier fra den samme HTTPS-adressen. Ikke åpne generell CORS eller fjern cookie-/CSRF-kravene for å få en annen utviklingsadresse til å fungere.
 

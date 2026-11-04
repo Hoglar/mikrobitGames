@@ -15,7 +15,7 @@ spillrammen og avslutter en eventuell aktiv spilløkt på vanlig måte. Åpne Te
 fra hovedmenyen. Knappen «Fullskjerm» i spillverktøylinjen fyller skjermen med
 spillet og kontrollene; bruk «Avslutt fullskjerm» eller Escape for å gå tilbake.
 
-**Publisert 2026-11-04:** https://parrot.tail106c62.ts.net, frontend/backend fra `177131d` og 47 registrerte spillvarianter. Se [spill fra skolen](../docs/play-at-school.md) og [publiseringskontrollen](../results/verification/racing-publication-2026-11-04.md). Fysisk spillrunde med micro:bit fra skolen gjenstår å dokumentere.
+**Publisert 2026-11-04:** https://parrot.tail106c62.ts.net, frontend/backend fra `2c209f2`, migrering 002 og 47 synkroniserte spillvarianter. Se [spill fra skolen](../docs/play-at-school.md) og [publiseringskontrollen med kjent Viking-testavvik](../results/verification/sdk-publication-2026-11-04.md). Fysisk spillrunde med micro:bit fra skolen gjenstår å dokumentere.
 
 ## Kjør lokalt og bygg
 

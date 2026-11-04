@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-04",
+  "commit": "2c209f27bbc840b19c2218c3c9ebd0b63264b67d",
+  "report": "../../verification/sdk-publication-2026-11-04.md",
+  "checks": [
+    {
+      "area": "Enhetstester / input",
+      "result": "134/134 frontend; 76/76 backend",
+      "detail": "Bestått. Rene AI-scorekontroller: 6/6."
+    },
+    {
+      "area": "Nettleser",
+      "result": "45/46 bestått",
+      "detail": "Én Viking-lydtest feiler, også ved isolert omkjøring."
+    },
+    {
+      "area": "SDK og spillisolasjon",
+      "result": "13/13 bestått",
+      "detail": "Spillvinduer, lokale rekorder og resultatflyt."
+    },
+    {
+      "area": "Database og lagring",
+      "result": "Bestått i separat testdatabase",
+      "detail": "Migrering, bevaring, replay, regelkonflikt og AI-rettigheter."
+    },
+    {
+      "area": "Publisert nettside",
+      "result": "119 filer; 7 spill; 47 topplister",
+      "detail": "SHA-256, HTTPS, metadata, mobilvisning og seks aktive tjenester kontrollert."
+    }
+  ],
+  "deviation": "Publisert med brukerens uttrykkelige godkjenning av Viking-avviket. Runden var avsluttet ved lydkontrollen; feilen er beholdt uten endrede testforventninger.",
+  "limitations": "Ingen ny FoM eller lang benchmarkkjøring. Fysisk USB, spilling fra skolen og ekte AI-svar er ikke målt her. Full evaluering og brukerskår gjenstår."
+}

@@ -69,6 +69,24 @@ Klikk på en profil for grafen. * Fullført delmåling i ufullstendig kjøring. 
 
 Micro Racer har foreløpig ingen CPU-benchmarkprofil.
 
+## Nyeste publiseringskontroll – separat fra FoM
+
+2026-11-04: versjon 2c209f27 er publisert. Dette er avgrensede kontroller før og etter utrulling, ikke en ny full evaluering. FoM-grafen endres først etter ny evaluering og brukervurdering.
+
+| Kontroll | Resultat | Forklaring |
+| --- | --- | --- |
+| Enhetstester / input | 134/134 frontend; 76/76 backend | Bestått. Rene AI-scorekontroller: 6/6. |
+| Nettleser | 45/46 bestått | Én Viking-lydtest feiler, også ved isolert omkjøring. |
+| SDK og spillisolasjon | 13/13 bestått | Spillvinduer, lokale rekorder og resultatflyt. |
+| Database og lagring | Bestått i separat testdatabase | Migrering, bevaring, replay, regelkonflikt og AI-rettigheter. |
+| Publisert nettside | 119 filer; 7 spill; 47 topplister | SHA-256, HTTPS, metadata, mobilvisning og seks aktive tjenester kontrollert. |
+
+Publisert med brukerens uttrykkelige godkjenning av Viking-avviket. Runden var avsluttet ved lydkontrollen; feilen er beholdt uten endrede testforventninger.
+
+Ingen ny FoM eller lang benchmarkkjøring. Fysisk USB, spilling fra skolen og ekte AI-svar er ikke målt her. Full evaluering og brukerskår gjenstår.
+
+[Full utrullingsrapport](../../verification/sdk-publication-2026-11-04.md)
+
 ## Kjøringer og sammenlignbarhet
 
 - **K1 · 2026-10-30 13:41 UTC**: [02 test fførste iterasjon](runs/20261030T134157.523334Z/report.md), commit `0658e3e2`, serie `dd4fe64446c1`. Ufullstendig kjøring.

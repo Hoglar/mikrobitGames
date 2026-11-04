@@ -1,6 +1,6 @@
 # Spillkassetter og felles spillbibliotek
 
-**Status:** Implementert lokalt 2026-11-04 med automatisk mappeoppdaging, SDK/sandbox og lokale rekorder. Backendkode og migrering 002 er levert; faktisk databaseutrulling og fysisk Micro:bit-akseptanse er ikke utført her. Se [valideringsrapporten](../../results/cartridges-validation.md).
+**Status:** Publisert fra `2c209f2` 2026-11-04 med automatisk mappeoppdaging, SDK/sandbox, lokale rekorder og migrering 002. Se [lokal validering](../../results/cartridges-validation.md) og [utrullingskontrollen med kjent Viking-testavvik](../../../results/verification/sdk-publication-2026-11-04.md). Fysisk Micro:bit-akseptanse gjenstår.
 
 Målet er at en utvikler lager én spillmappe, tester den, og deler den som ZIP. Mottakeren pakker den ut i spillmappen. Plattformen skal oppdage spillet, vise omslaget, håndtere Micro:bit, pause/fullskjerm og rekorder uten at utvikleren endrer launcheren, registeret, CSS-importer eller backendkode. Biblioteket heter foreløpig **Micro:bit Games SDK**, med importnavnet `@microbit-games/sdk`.
 

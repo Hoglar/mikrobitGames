@@ -227,6 +227,23 @@ def overview(root, runs):
     md.extend(['Klikk på en profil for grafen. * Fullført delmåling i ufullstendig kjøring. † Uverifisert, ikke et grafpunkt. — Ikke målt.', '',
                'Micro Racer har foreløpig ingen CPU-benchmarkprofil.', ''])
 
+    publication_path = root / 'publication.json'
+    if publication_path.is_file():
+        publication = json.loads(publication_path.read_text(encoding='utf-8'))
+        heading = 'Nyeste publiseringskontroll – separat fra FoM'
+        note = (f'{publication["date"]}: versjon {publication["commit"][:8]} er publisert. '
+                'Dette er avgrensede kontroller før og etter utrulling, ikke en ny full evaluering. '
+                'FoM-grafen endres først etter ny evaluering og brukervurdering.')
+        values = [[item['area'], item['result'], item['detail']] for item in publication['checks']]
+        body += (f'<section id="publication"><h2>{heading}</h2><p>{esc(note)}</p>'
+                 + table(['Kontroll', 'Resultat', 'Forklaring'], [[esc(v) for v in row] for row in values])
+                 + f'<p>{esc(publication["deviation"])}</p><p>{esc(publication["limitations"])}</p>'
+                 + f'<p><a href="{esc(publication["report"])}">Full utrullingsrapport</a></p></section>')
+        md.extend(['## ' + heading, '', note, ''])
+        md_table(['Kontroll', 'Resultat', 'Forklaring'], values)
+        md.extend([publication['deviation'], '', publication['limitations'], '',
+                   f'[Full utrullingsrapport]({publication["report"]})', ''])
+
     key_rows = []
     md.extend(['## Kjøringer og sammenlignbarhet', ''])
     for row in data['rows']:
