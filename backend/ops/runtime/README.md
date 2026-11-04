@@ -67,7 +67,7 @@ Dette siste steget gjør nettsiden/API-et offentlig. Følg eventuell lenke for �
 
 Åpne den viste HTTPS-adressen og `/api/v1/health` fra mobilnett eller en annen PC uten Tailscale. Ingen sertifikatadvarsel skal godtas. Gjennomfør [frontendens integrasjonsflyt](../../../spec/contracts/webapp-backend/quickstart.md). Lokal oppstart alene beviser ikke ekstern tilgjengelighet eller femminuttersmålet etter fysisk reboot.
 
-Ved første backendoppsett vises en velkomstside. Den er nå erstattet av frontend fra commit `fdfdbca`, publisert 2026-10-29. Ti spillvarianter er registrert med frontendens eksakte ID-er og regler. Se [publiseringskontrollen](../../../results/verification/frontend-publication-2026-10-29.md).
+Ved første backendoppsett vises en velkomstside. Gjeldende frontend/backend er fra commit `177131d`, publisert 2026-11-04. Alle 47 spillvarianter er registrert med frontendens eksakte ID-er og regler. Se [publiseringskontrollen](../../../results/verification/racing-publication-2026-11-04.md).
 
 ## 4. Publiser frontendpakken
 
@@ -84,7 +84,7 @@ Første kommando lager `webapp/dist/` med SHA-256-filoversikt. Den andre skriver
 sudo -u mbg-db env MBG_ADMIN_DSN='host=/run/mbg-db port=5433 dbname=mikrobit_games user=mbg-db' /opt/mikrobit-games/current/.venv/bin/python /opt/mikrobit-games/current/backend/database/manage-game.py create --id UUID --name NAVN --unit ENHET --direction RETNING --min MIN --max MAX
 ```
 
-De ti variantene i `fdfdbca` er allerede registrert. Ved samme register trengs bare ny publisering av det ferdige bygget:
+Alle 47 variantene i `177131d` er allerede registrert. Ved samme register trengs bare ny publisering av det ferdige bygget:
 
 ```bash
 sudo /usr/bin/python3 backend/ops/runtime/publish-web.py webapp/dist

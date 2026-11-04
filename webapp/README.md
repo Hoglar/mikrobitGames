@@ -15,7 +15,7 @@ spillrammen og avslutter en eventuell aktiv spilløkt på vanlig måte. Åpne Te
 fra hovedmenyen. Knappen «Fullskjerm» i spillverktøylinjen fyller skjermen med
 spillet og kontrollene; bruk «Avslutt fullskjerm» eller Escape for å gå tilbake.
 
-**Publisert 2026-10-29:** https://parrot.tail106c62.ts.net, frontend fra `852e43d` og elleve registrerte spillvarianter. Se [spill fra skolen](../docs/play-at-school.md) og [publiseringskontrollen](../results/verification/games-update-publication-2026-10-29.md). Fysisk spillrunde med micro:bit fra skolen gjenstår å dokumentere.
+**Publisert 2026-11-04:** https://parrot.tail106c62.ts.net, frontend/backend fra `177131d` og 47 registrerte spillvarianter. Se [spill fra skolen](../docs/play-at-school.md) og [publiseringskontrollen](../results/verification/racing-publication-2026-11-04.md). Fysisk spillrunde med micro:bit fra skolen gjenstår å dokumentere.
 
 ## Kjør lokalt og bygg
 
@@ -76,13 +76,9 @@ Dette **skriver bare kommandoene** for eksisterende
 `backend/database/manage-game.py`; det kontakter ikke serveren eller databasen.
 Kommandoene kjøres fra repo-roten på backendverten med vedlikeholdsrollens
 `MBG_ADMIN_DSN`. Kontroller eksisterende spill før kjøring; ved ukjent utfall
-kontrolleres databasen før omforsøk. Alle ti variantene i `fdfdbca` er nå registrert;
-ikke kjør de samme `create`-kommandoene på nytt.
-
-Tetris er den ellevte varianten og er implementert lokalt etter denne publiseringen.
-Det krever en ny katalogoppføring og oppdatert frontend før det kan startes på
-det publiserte nettstedet. Lokal øving bruker det innebygde registeret og trenger
-ingen registrering. Den ene nye kommandoen står i [Tetris-veiledningen](src/games/tetris/README.md#catalog-and-deployment).
+kontrolleres databasen før omforsøk. Alle 47 varianter i `177131d`, inkludert
+Tetris og 36 Micro Racer-varianter, er registrert og publisert. Ikke kjør de
+samme `create`-kommandoene på nytt. Lokal øving bruker det innebygde registeret.
 
 Snake viser kodet `snake_rank_v1` som «mat · steg» i spillet, Dashboard og
 rekordlistene. Viking bruker meter. Stjernefangst varer 60 sekunder, gir 100 poeng
