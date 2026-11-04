@@ -1,24 +1,10 @@
 import { el, button, link, field, heading, errorBox, toast } from './dom.js';
-import { families, games, registeredGame, formatScore, loadGame } from '../games/registry.js';
+import { families, games, registeredGame, formatScore } from '../games/registry.js';
 import { validateSession } from './api.js';
 import { questionBody } from '../platform/rules.js';
 const date=s=>new Date(s).toLocaleString('nb-NO');
 export function deviceFigure(){const pixels=[0,1,0,1,0,1,0,1,0,1,1,0,0,0,1,0,1,0,1,0,0,0,1,0,0];return el('div',{class:'microbit','aria-label':'Illustrasjon av micro:bit'},el('span',{class:'logo'},'●'),el('span',{class:'pad'},'A'),el('div',{class:'led-grid'},pixels.map(x=>el('span',{class:x?'on':''}))),el('span',{class:'pad'},'B'));}
 export async function getCatalog(ctx){if(ctx.localPlay){ctx.catalog=games.map(game=>({...game,is_active:true}));return ctx.catalog;}const items=[];for(let page=0;page<100;page++){const data=(await ctx.api(`/games?page=${page}&page_size=100&include_inactive=true`)).data;if(!Array.isArray(data.items)||!Number.isInteger(data.total))throw new Error('Ugyldig spillkatalog.');items.push(...data.items);if(items.length>=data.total||!data.items.length)break;}ctx.catalog=items;return items;}
-export async function launcher({root,ctx,view}){
- const section=el('section',{id:'games'},el('div',{class:'section-head'},el('div',{},el('p',{class:'eyebrow'},'FINN DIN NESTE FAVORITT'),el('h2',{},'Velg ditt neste eventyr.'),el('p',{},'Plugg inn. Velg et spill. Sett din egen rekord.')),el('span',{class:'pill'},`${families.length} SPILL + TESTLAB`)));
- const grid=el('div',{class:'game-grid'}),catalogNotice=el('div',{'aria-live':'polite'});
- root.append(el('section',{class:'hero'},el('div',{},el('p',{class:'eyebrow'},'EN LITEN KONTROLLER. UENDELIGE MULIGHETER.'),el('h1',{},'Mindre skjermtid.',el('br'),'Mer ',el('em',{},'spilletid.')),el('p',{class:'description'},'Gjør micro:bit til din egen spillkontroller. Vipp, trykk og utforsk en spillhall full av små utfordringer.'),el('div',{class:'actions'},button('Utforsk spillene ↘',()=>document.getElementById('games').scrollIntoView({behavior:'smooth'})),link('Åpne Testlab ↗','#/testlab','button secondary')),el('p',{class:'hero-note'},'INGEN NEDLASTING · MICRO:BIT V2 · SPILL I NETTLESEREN')),el('div',{class:'hero-art','aria-hidden':'true'},el('span',{class:'art-chip one'},'↗ Klar for en ny rekord?'),deviceFigure(),el('span',{class:'art-chip two'},'A + B = nye muligheter'))),el('div',{class:'steps-strip'},el('span',{},el('b',{},'01'),'Koble til din micro:bit'),el('i',{},'→'),el('span',{},el('b',{},'02'),'Finn et spill du liker'),el('i',{},'→'),el('span',{},el('b',{},'03'),'Spill. Utforsk. Gjenta.')));
- section.append(catalogNotice,grid);root.append(section);
- const cards=[];
- for(const f of families){const canvas=el('canvas',{width:600,height:330,'aria-hidden':'true'}),foot=el('div',{class:'card-foot'},el('span',{},`${f.control} · MICRO:BIT V2`),link('Se spill →',`#/play/${f.key}`,''));cards.push({f,foot});grid.append(el('article',{class:'game-card'},el('div',{class:`game-art ${f.color}`},canvas,el('span',{class:'art-label'},`${f.number} / ${f.genre}`)),el('div',{class:'card-body'},el('h3',{},f.title),el('p',{},f.description),foot)));
-  if(!ctx.localPlay)foot.insertBefore(link('Toppliste',f.key==='snake'?'#/leaderboard':`#/leaderboard/${games.find(g=>g.key===f.key).id}`,'text-button'),foot.lastChild);
-  const factory=await loadGame(f.key),engine=await factory({config:{mode:'standard',food:'competitive'},seed:'cover'});if(!view.active)return;engine.draw(canvas.getContext('2d'),600,330);
- }
- root.append(el('aside',{class:'lab-banner'},el('div',{class:'lab-icon','aria-hidden':'true'},'⌘'),el('div',{},el('p',{class:'eyebrow'},'FOR DEG SOM ER NYSGJERRIG'),el('h3',{},'Bli kjent med din micro:bit.'),el('p',{},'Utforsk sensorene, tegn med lys og lag din egen lyd. Ingen konto nødvendig.')),link('Prøv Testlab ↗','#/testlab')));
- let alive=true;view.dispose=()=>{alive=false;};
- try{const catalog=await getCatalog(ctx);if(!alive)return;for(const {f,foot}of cards){const available=catalog.filter(g=>g.is_active&&registeredGame(g)?.key===f.key);foot.lastChild.textContent=available.length?'Spill nå →':'Se spill →';}const unknown=catalog.filter(g=>!registeredGame(g));if(unknown.length)catalogNotice.append(el('p',{class:'notice'},`${unknown.length} katalogoppføring(er) har ingen kompatibel spillmodul i dette bygget og kan ikke startes.`));}catch(e){if(alive)catalogNotice.append(errorBox(`Spillkatalogen er utilgjengelig. Testlab er fortsatt klart til bruk. ${e.message}`));}
-}
 export async function authentication({root,ctx,url,parts}){
  const register=parts[0]==='register',message=el('div',{'aria-live':'polite'}),username=el('input',{name:'username',autocomplete:'username',required:true,minlength:3,maxlength:32,pattern:'[A-Za-z0-9_-]+'}),password=el('input',{name:'password',type:'password',autocomplete:register?'new-password':'current-password',required:true,minlength:12,maxlength:256});
  const submit=el('button',{class:'button',type:'submit'},register?'Opprett konto':'Logg inn');

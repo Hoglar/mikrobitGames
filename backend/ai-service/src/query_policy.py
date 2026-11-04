@@ -18,7 +18,7 @@ TYPES = frozenset('BIGINT INT SMALLINT DECIMAL DOUBLE FLOAT TEXT VARCHAR CHAR BO
 SCHEMA = {'ai_read': {
     'players': {'id': 'UUID', 'username': 'TEXT', 'username_key': 'TEXT', 'created_at': 'TIMESTAMPTZ'},
     'games': {'id': 'UUID', 'name': 'TEXT', 'score_unit': 'TEXT', 'ranking_direction': 'TEXT',
-              'min_value': 'BIGINT', 'max_value': 'BIGINT', 'is_active': 'BOOLEAN'},
+              'min_value': 'BIGINT', 'max_value': 'BIGINT', 'is_active': 'BOOLEAN', 'sdk_metadata': 'JSONB'},
     'records': {'id': 'UUID', 'player_id': 'UUID', 'game_id': 'UUID', 'value': 'BIGINT', 'created_at': 'TIMESTAMPTZ'},
 }}
 

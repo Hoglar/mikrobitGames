@@ -164,6 +164,8 @@ Dette er faste leveransekrav for implementasjonen, også når AI skriver koden e
 | Avhengighetslister, oppsettsskript og konfigurasjonseksempler med plassholdere | Installerte biblioteker, modellvekter, byggartefakter og maskinspesifikk konfigurasjon |
 | Utvalgte, gjennomgåtte rapporter og FoM-kurver | Løpende logger, råkjøringer og rapporter med hemmeligheter eller ekte brukerdata |
 
+Et avgrenset unntak for byggartefakter er den distribuerte V2-firmwaren i `webapp/src/microbit-input/firmware/`: HEX og tilhørende release-metadata versjoneres slik at brukere kan spille og hoste uten egen firmwareverktøykjede. Mellomfiler og øvrige firmwarebygg ligger fortsatt i ignorerte byggmapper. [Vedlikeholdsrutinen](../webapp/src/microbit-input/firmware/README.md) beskriver kontroll og oppdatering.
+
 Før oppsett skal implementasjonen dokumentere hvor konfigurasjon, database, modellfiler, logger og sikkerhetskopier lagres. Varige driftsdata og driftshemmeligheter skal ligge utenfor repositoryet, med tilgang begrenset til riktige tjenestebrukere. Hemmeligheter leses fra beskyttet serverkonfigurasjon/miljø; de skal ikke hardkodes i kode, migreringer eller eksempelfiler. Lokale utviklingsverdier kan ligge i ignorerte `.env`-filer. `.env.example` og `.env.*.example` skal bare inneholde plassholdere.
 
 [`.gitignore`](../.gitignore) er et ekstra vern mot vanlige lokale filer. Oppdater reglene når nye verktøy eller filplasseringer innføres, før filene opprettes. Ikke ignorer alle `.sql`-filer eller hele `models/`/`results/`: migreringer, designmodeller og utvalgte resultater skal fortsatt kunne versjoneres. Testdata i repositoryet skal være syntetiske.

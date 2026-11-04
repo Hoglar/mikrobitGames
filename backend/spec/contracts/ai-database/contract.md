@@ -17,7 +17,7 @@ AI-en får tilgang gjennom tre **databasevisninger**: navngitte utsnitt av tabel
 | Visning | Kilde | Tilgjengelige felt |
 | --- | --- | --- |
 | `ai_read.players` | `app.players` | `id`, `username`, `username_key`, `created_at` |
-| `ai_read.games` | `app.games` | `id`, `name`, `score_unit`, `ranking_direction`, `min_value`, `max_value`, `is_active` |
+| `ai_read.games` | `app.games` | `id`, `name`, `score_unit`, `ranking_direction`, `min_value`, `max_value`, `is_active`, `sdk_metadata` (valgfri deklarativ SDK-v1-scoremetadata fra migrering 002) |
 | `ai_read.records` | `app.records` | `id`, `player_id`, `game_id`, `value`, `created_at` |
 
 `password_hash`, hele `app.sessions` og hele `app.attempts` er utilgjengelige. Ingen visning av private forsøk tilbys AI, heller ikke for spørsmålsstillerens egne data. Nye databasefelt blir ikke automatisk synlige: visningene definerer kolonnene eksplisitt og endres gjennom en gjennomgått migrering.

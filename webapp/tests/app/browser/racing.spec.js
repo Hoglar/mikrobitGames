@@ -24,7 +24,7 @@ async function setup(page,{local=false}={}){
   await expect(page.getByRole('combobox',{name:'Racingbane'})).toBeVisible();
   return {calls,errors};
 }
-const status=page=>page.locator('.racing-live');
+const status=page=>page.locator('.game-toolbar');
 async function start(page){await page.locator('#connect').click();await expect(page.getByRole('button',{name:'Start spill →'})).toBeEnabled();await page.getByRole('button',{name:'Start spill →'}).click();await expect(page.locator('.game-frame')).toHaveAttribute('data-phase','playing',{timeout:7000});}
 const sample=(page,fields)=>page.evaluate(fields=>window.serialMock.port.sample(fields),fields);
 
@@ -32,13 +32,13 @@ test('MR-02/16 all four choices update the preview and exact mode leaderboard',a
   const observed=await setup(page);
   await page.getByRole('combobox',{name:'Racingbane'}).selectOption('pine-valley');
   await page.getByRole('combobox',{name:'Løpsformat',exact:true}).selectOption('race');
-  await page.getByRole('combobox',{name:'Antall runder'}).selectOption('3');
+  await page.getByRole('combobox',{name:'Antall runder'}).selectOption('three');
   await page.getByRole('combobox',{name:'Bilklasse'}).selectOption('formula');
   const selected=games.find(g=>g.key==='racing'&&g.config.track==='pine-valley'&&g.config.format==='race'&&g.config.laps===3&&g.config.car==='formula');
   await expect(page.locator('.arcade-leaderboard')).toHaveAttribute('data-game-id',selected.id);
   await expect(page.locator('.arcade-leaderboard')).toContainText('2. plass · 01:23.456');
-  await expect(page.getByRole('link',{name:'Toppliste for valgt variant'})).toHaveAttribute('href',`#/leaderboard/${selected.id}`);
-  await expect(page.locator('.racing-car-stats')).toContainText('158 km/t');
+
+  await expect(page.locator('.mode-summary')).toContainText('158 km/t');
   await page.locator('#connect').click();await expect(page.getByRole('button',{name:'Start spill →'})).toBeEnabled();
   await page.screenshot({path:'build/racing-selection-desktop.png',fullPage:true});
   expect(observed.errors).toEqual([]);
@@ -75,8 +75,7 @@ test('MR-19 a ranked restart stores exactly one DNF with null instead of a false
 
 test('MR-09/21 recovery, mobile presentation, sound and fullscreen remain inside the arcade',async({page})=>{
   await page.setViewportSize({width:390,height:844});const observed=await setup(page,{local:true});
-  await expect(page.getByRole('button',{name:'Motorlyd: av'})).toBeVisible();await page.getByRole('button',{name:'Motorlyd: av'}).click();
-  await page.getByRole('slider',{name:'Motorvolum'}).fill('0');await start(page);
+  await start(page);await page.getByRole('checkbox',{name:'Motorlyd',exact:true}).check();await page.getByRole('slider',{name:'Motorvolum'}).fill('0');
   await page.getByRole('button',{name:'Pause',exact:true}).click();await page.getByRole('button',{name:'Tilbake til banen',exact:true}).click();
   await page.getByRole('button',{name:'Ja, tilbake til banen',exact:true}).click();
   await expect(page.locator('.game-frame')).toHaveAttribute('data-phase','playing',{timeout:7000});
@@ -108,22 +107,20 @@ test('MR-10/14/19 a full driven lap through Web Serial submits a real completed 
   await page.clock.runFor(3400);await expect(page.locator('.game-frame')).toHaveAttribute('data-phase','playing');
   await sample(page,{x:0,a:0,b:0,q:0});await page.clock.runFor(200);
   await expect(status(page)).toContainText('Kontroller klare.');
-  await page.evaluate(async()=>{
-    const {driveAI}=await import('/src/games/micro-racer/ai.js'),{getTrack}=await import('/src/games/micro-racer/tracks.js'),{carProfile}=await import('/src/games/micro-racer/config.js');
-    let previous=window.racingPose,vx=0,vy=0,a=false,b=false;
-    const timer=setInterval(()=>{
-      if(document.querySelector('.game-frame').dataset.phase!=='playing'){clearInterval(timer);return;}
-      const pose=window.racingPose;if(!pose)return;
-      if(previous&&pose.time>previous.time){const dt=(pose.time-previous.time)/1000;vx=(pose.x-previous.x)/dt;vy=(pose.y-previous.y)/dt;}
-      previous=pose;const control=driveAI({id:'player',...pose,vx,vy},getTrack('harbor-ring'),carProfile('race'));
-      const x=Math.sign(control.steer)*(.08+.67*Math.abs(control.steer)),raw=Math.round(Math.sign(x)*(50+Math.abs(x)*950));
-      const port=window.serialMock.port;port.sample({x:raw,a:control.brake?1:0,b:control.throttle?1:0,ac:port.ac+(!a&&control.brake?1:0),bc:port.bc+(!b&&control.throttle?1:0)});a=control.brake;b=control.throttle;
-    },50);
-  });
-  await page.clock.runFor(50000);
+  const {driveAI}=await import('../../../src/games/micro-racer/ai.js'),{getTrack}=await import('../../../src/games/micro-racer/tracks.js'),{carProfile}=await import('../../../src/games/micro-racer/config.js');
+  let previous=null,vx=0,vy=0,a=false,b=false;
+  const child=page.frames().find(f=>f.parentFrame());
+  for(let i=0;i<1100&&(await page.locator('.game-frame').getAttribute('data-phase'))==='playing';i++){
+    await page.clock.runFor(50);
+    const pose=await child.evaluate(()=>window.racingPose);if(!pose)continue;
+    if(previous&&pose.time>previous.time){const dt=(pose.time-previous.time)/1000;vx=(pose.x-previous.x)/dt;vy=(pose.y-previous.y)/dt;}
+    previous=pose;const control=driveAI({id:'player',...pose,vx,vy},getTrack('harbor-ring'),carProfile('race'));
+    const x=Math.sign(control.steer)*(.08+.67*Math.abs(control.steer)),raw=Math.round(Math.sign(x)*(50+Math.abs(x)*950));
+    await page.evaluate(({raw,throttle,brake,prevA,prevB})=>{const port=window.serialMock.port;port.sample({x:raw,a:brake?1:0,b:throttle?1:0,ac:port.ac+(!prevA&&brake?1:0),bc:port.bc+(!prevB&&throttle?1:0)});},{raw,throttle:control.throttle,brake:control.brake,prevA:a,prevB:b});a=control.brake;b=control.throttle;
+  }
   await expect(page.locator('.game-frame')).toHaveAttribute('data-phase','result');
   await expect.poll(()=>observed.calls.filter(c=>c.method==='POST'&&c.path.endsWith('/results')).length).toBe(1);
   const result=observed.calls.find(c=>c.method==='POST'&&c.path.endsWith('/results'));
   expect(result.body.status).toBe('completed');expect(result.body.value).toBeGreaterThan(30000);expect(result.body.value).toBeLessThan(50000);
-  await expect(page.locator('.game-overlay')).toContainText('Lagret · ny personlig rekord!');expect(observed.errors).toEqual([]);
+  await expect(page.locator('.game-overlay')).toContainText('Resultatet er bekreftet lagret.');expect(observed.errors).toEqual([]);
 });

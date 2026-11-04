@@ -55,6 +55,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   white-space: nowrap;
 }
 .connection:hover {background: #222d3e;}
+.device-actions {display: flex; align-items: center; gap: 10px; margin-left: auto;}
+.device-actions .connection {margin-left: 0;}
+.firmware-download {padding: 11px 14px; font-size: 12px; font-weight: bold; line-height: normal;}
 .status-dot {background: #788297;}
 .ready .status-dot {background: var(--arcade-mint); box-shadow: 0 0 0 4px #8bf0cf15, 0 0 12px #8bf0cf66;}
 main, body.playing main {max-width: 1560px; padding: 0 40px 64px;}
@@ -314,8 +317,8 @@ tr.highlight {background: #8bf0cf12;}
   .arcade-stage {grid-template-columns: minmax(0, 1fr) 345px; gap: 30px;}
 }
 @media (max-width: 1200px) {
-  .header {gap: 18px; padding-inline: 25px;}
-  .header nav, body.playing .header nav {gap: 12px; font-size: 11px;}
+  .header {gap: 18px; padding-inline: 25px; flex-wrap: wrap;}
+  .header nav, body.playing .header nav {gap: 12px; font-size: 11px; order: 3; width: 100%; overflow-x: auto; white-space: nowrap;}
   main, body.playing main {padding-inline: 25px;}
   .arcade-stage {grid-template-columns: minmax(0, 1fr) 285px; gap: 20px;}
   .arcade-leaderboard {padding: 21px 16px;}
@@ -345,6 +348,7 @@ tr.highlight {background: #8bf0cf12;}
   .header .brand {font-size: 21px;}
   .brand i {font-size: 7px; letter-spacing: .12em;}
   .connection {padding: 9px 10px; font-size: 9px; gap: 7px;}
+  .device-actions {width: 100%; justify-content: flex-end;}
   .header nav, body.playing .header nav {gap: 20px; font-size: 11px; padding-bottom: 4px;}
   main, body.playing main {padding: 0 14px 40px;}
   .arcade-shell {padding-top: 24px;}

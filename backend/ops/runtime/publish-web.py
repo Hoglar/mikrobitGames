@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 import os
 from pathlib import Path
 import shutil
+import subprocess
 import sys
 from urllib.request import urlopen
 
@@ -25,6 +26,14 @@ def main():
     folder=root/'releases'/datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     shutil.copytree(source,folder)
     for path in [folder,*folder.rglob('*')]:path.chmod(0o755 if path.is_dir() else 0o644)
+    # One trusted catalogue operation per deployment; no per-game administration.
+    if (folder/'catalog.json').is_file():
+        checkout=Path(__file__).resolve().parents[3]
+        runtime=Path('/opt/mikrobit-games/current/.venv/bin/python')
+        result=subprocess.run(['/usr/sbin/runuser','-u','mbg-db','--',str(runtime),
+            str(checkout/'backend/database/sync-game-catalog.py'),str(folder/'catalog.json'),'--runtime-local'],
+            stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        if result.returncode:raise RuntimeError('Katalogsynkronisering feilet. Forrige webpakke er fortsatt aktiv; kontroller migrering 002 og driftsmiljø.')
     previous=(root/'current').resolve()
     for name,target in (('previous',previous),('current',folder)):
         temporary=root/(name+'.new')

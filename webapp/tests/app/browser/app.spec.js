@@ -46,7 +46,7 @@ test('mobile layout stays within viewport and all assets load from this build',a
 test('snake completes exactly once, shows decoded score, confirms record and restarts without replay',async({page})=>{
  const calls=await setup(page);const saved=[];
  await page.route('**/api/v1/games/*/results',async route=>{const body=route.request().postDataJSON();saved.push(body);const gameId=new URL(route.request().url()).pathname.split('/')[4],record={id:crypto.randomUUID(),player_id:player.id,game_id:gameId,value:body.value,created_at:'2026-10-29T12:00:00Z'};await route.fulfill({status:201,contentType:'application/json',body:JSON.stringify({attempt:{id:body.attempt_id,player_id:player.id,game_id:gameId,status:body.status,value:body.value,created_at:record.created_at,record_outcome:'created',record_id:record.id},outcome:'created',record,current_record:record})});});
- await page.goto('/#/play/snake');await page.locator('#connect').click();await page.getByRole('button',{name:'Start spill →'}).click();await expect(page.locator('.game-toolbar')).toContainText('SPILLER',{timeout:7000});await expect(page.locator('.game-overlay')).toContainText('Godt spilt!',{timeout:7000});await expect(page.locator('.game-overlay')).toContainText('Lagret · ny personlig rekord!');expect(saved).toHaveLength(1);expect(saved[0].status).toBe('completed');expect(saved[0].value).toBe(999989);await expect.poll(()=>page.evaluate(()=>window.serialMock.commands.some(x=>x.endsWith('D|IMAGE|9000999999099900090009990')))).toBe(true);
+ await page.goto('/#/play/snake');await page.locator('#connect').click();await page.getByRole('button',{name:'Start spill →'}).click();await expect(page.locator('.game-toolbar')).toContainText('SPILLER',{timeout:7000});await expect(page.locator('.game-overlay')).toContainText('Godt spilt!',{timeout:7000});await expect(page.locator('.game-overlay')).toContainText('Resultatet er bekreftet lagret.');expect(saved).toHaveLength(1);expect(saved[0].status).toBe('completed');expect(saved[0].value).toBe(999989);
  await page.getByRole('button',{name:'Spill igjen →'}).click();await expect(page.locator('.game-toolbar')).toContainText('NEDTELLING');expect(saved).toHaveLength(1);expect(calls.filter(c=>c.path==='/auth/renew')).toHaveLength(2);
 });
 test('dashboard separates private incomplete attempts and public records, and highlights exact attempt',async({page})=>{
@@ -60,8 +60,8 @@ test('profile changes password with exact fields and returns to login without re
  expect(await page.evaluate(()=>Object.keys(localStorage))).toEqual([]);await expect(page.getByRole('heading',{name:'Velkommen tilbake.'})).toBeVisible();
 });
 test('each bundled game opens in the same frame and custom seed practice never submits results',async({page})=>{
- const calls=await setup(page);await page.goto('/#/play/stars');await page.locator('#connect').click();for(const key of ['stars','reaction','balance','viking','snake','tetris']){await page.goto(`/#/play/${key}`);await expect(page.locator('.game-frame canvas')).toBeVisible();await expect(page.getByRole('button',{name:'Start spill →'})).toBeEnabled();}
- await page.getByRole('combobox',{name:'Rangert eller øving'}).selectOption('practice');await page.getByRole('textbox',{name:'Seed for øving'}).fill('min-seed');await page.getByRole('button',{name:'Start spill →'}).click();await expect(page.locator('.game-overlay')).toContainText('Øving');await page.getByRole('button',{name:'Pause',exact:true}).click();await page.getByRole('button',{name:'Restart',exact:true}).click();await page.getByRole('button',{name:'Ja, avslutt',exact:false}).click();expect(calls.filter(c=>c.path.endsWith('/results')&&c.method==='POST')).toEqual([]);
+ const calls=await setup(page);await page.goto('/#/play/stars');await page.locator('#connect').click();for(const key of ['stars','reaction','balance','viking','snake','tetris']){await page.goto(`/#/play/${key}`);await expect(page.locator('.cartridge-stage')).toBeVisible();await expect(page.getByRole('button',{name:'Start spill →'})).toBeEnabled();}
+ await page.getByRole('combobox',{name:'Lagring av resultat'}).selectOption('none');await page.getByRole('textbox',{name:'Seed for øving'}).fill('min-seed');await page.getByRole('button',{name:'Start spill →'}).click();await expect(page.locator('.game-toolbar')).toContainText('NEDTELLING');await page.getByRole('button',{name:'Pause',exact:true}).click();await page.getByRole('button',{name:'Restart',exact:true}).click();await page.getByRole('button',{name:'Ja, avslutt',exact:false}).click();expect(calls.filter(c=>c.path.endsWith('/results')&&c.method==='POST')).toEqual([]);
 });
 test('pending backend requests cannot delay access to local Testlab',async({page})=>{
  await setup(page,{signedIn:false});let release;const gate=new Promise(resolve=>{release=resolve;});
@@ -93,9 +93,9 @@ test('top lists are discoverable without login and include every Snake variant',
 test('game top list follows the selected Snake variant',async({page})=>{
  await setup(page);
  await page.goto('/#/play/snake');
- const link=page.getByRole('link',{name:'Toppliste for valgt variant',exact:true});
- await expect(link).toHaveAttribute('href',`#/leaderboard/${games[0].id}`);
+ const link=page.locator('.arcade-leaderboard');
+ await expect(link).toHaveAttribute('data-game-id',games[0].id);
  const alternative=games.find(g=>g.key==='snake'&&g.config.mode==='maze'&&g.config.food==='random');
  await page.getByRole('combobox',{name:'Spillmodus',exact:true}).selectOption(alternative.id);
- await expect(link).toHaveAttribute('href',`#/leaderboard/${alternative.id}`);
+ await expect(link).toHaveAttribute('data-game-id',alternative.id);
 });

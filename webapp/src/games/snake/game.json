@@ -1,0 +1,231 @@
+{
+  "manifestVersion": 1,
+  "sdkVersion": 1,
+  "id": "6a990001-165b-4e1d-8a20-000000000001",
+  "slug": "snake",
+  "version": "1.0.0",
+  "title": "Micro Snake",
+  "description": "En klassiker med en ny vri. Hvor lang kan slangen din bli?",
+  "author": "Mikrobit Games",
+  "license": "Se prosjektets lisens",
+  "entry": "index.js",
+  "cover": "cover.png",
+  "controls": "A: venstre · B: høyre · Logo: pause",
+  "genre": "KLASSIKER",
+  "accent": "green",
+  "order": 0,
+  "defaultMode": "standard-competitive",
+  "viewport": {
+    "width": 960,
+    "height": 660,
+    "minWidth": 280,
+    "minHeight": 280,
+    "fit": "contain"
+  },
+  "modes": [
+    {
+      "id": "standard-competitive",
+      "title": "Standard Competitive",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000001",
+      "legacyScoreUnit": "snake_rank_v1",
+      "config": {
+        "mode": "standard",
+        "food": "competitive"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "food",
+            "label": "Mat",
+            "min": 0,
+            "max": 396,
+            "direction": "higher_is_better",
+            "format": "integer",
+            "unit": "mat"
+          },
+          {
+            "key": "steps",
+            "label": "Steg",
+            "min": 0,
+            "max": 999999,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": "steg",
+            "radix": 1000000
+          }
+        ]
+      }
+    },
+    {
+      "id": "standard-random",
+      "title": "Standard Random",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000002",
+      "legacyScoreUnit": "snake_rank_v1",
+      "config": {
+        "mode": "standard",
+        "food": "random"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "food",
+            "label": "Mat",
+            "min": 0,
+            "max": 396,
+            "direction": "higher_is_better",
+            "format": "integer",
+            "unit": "mat"
+          },
+          {
+            "key": "steps",
+            "label": "Steg",
+            "min": 0,
+            "max": 999999,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": "steg",
+            "radix": 1000000
+          }
+        ]
+      }
+    },
+    {
+      "id": "fast-competitive",
+      "title": "Hurtig Competitive",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000003",
+      "legacyScoreUnit": "snake_rank_v1",
+      "config": {
+        "mode": "fast",
+        "food": "competitive"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "food",
+            "label": "Mat",
+            "min": 0,
+            "max": 396,
+            "direction": "higher_is_better",
+            "format": "integer",
+            "unit": "mat"
+          },
+          {
+            "key": "steps",
+            "label": "Steg",
+            "min": 0,
+            "max": 999999,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": "steg",
+            "radix": 1000000
+          }
+        ]
+      }
+    },
+    {
+      "id": "fast-random",
+      "title": "Hurtig Random",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000004",
+      "legacyScoreUnit": "snake_rank_v1",
+      "config": {
+        "mode": "fast",
+        "food": "random"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "food",
+            "label": "Mat",
+            "min": 0,
+            "max": 396,
+            "direction": "higher_is_better",
+            "format": "integer",
+            "unit": "mat"
+          },
+          {
+            "key": "steps",
+            "label": "Steg",
+            "min": 0,
+            "max": 999999,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": "steg",
+            "radix": 1000000
+          }
+        ]
+      }
+    },
+    {
+      "id": "maze-competitive",
+      "title": "Labyrint Competitive",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000005",
+      "legacyScoreUnit": "snake_rank_v1",
+      "config": {
+        "mode": "maze",
+        "food": "competitive"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "food",
+            "label": "Mat",
+            "min": 0,
+            "max": 380,
+            "direction": "higher_is_better",
+            "format": "integer",
+            "unit": "mat"
+          },
+          {
+            "key": "steps",
+            "label": "Steg",
+            "min": 0,
+            "max": 999999,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": "steg",
+            "radix": 1000000
+          }
+        ]
+      }
+    },
+    {
+      "id": "maze-random",
+      "title": "Labyrint Random",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000006",
+      "legacyScoreUnit": "snake_rank_v1",
+      "config": {
+        "mode": "maze",
+        "food": "random"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "food",
+            "label": "Mat",
+            "min": 0,
+            "max": 380,
+            "direction": "higher_is_better",
+            "format": "integer",
+            "unit": "mat"
+          },
+          {
+            "key": "steps",
+            "label": "Steg",
+            "min": 0,
+            "max": 999999,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": "steg",
+            "radix": 1000000
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -10,7 +10,7 @@ test('Viking HUD is drawn at native display resolution with readable text on des
     const results = [];
     for (const [name, width] of [['desktop', 960], ['mobile', 340]]) {
       const frame = document.createElement('section');
-      frame.id = `viking-native-${name}`; frame.className = 'game-frame viking-theme';
+      frame.id = `viking-native-${name}`; frame.className = 'native-render-gallery';
       frame.style.cssText = `width:${width}px;margin:20px;background:#172b2e`;
       const canvas = document.createElement('canvas');
       canvas.width = width * 2; canvas.height = Math.round(width * 9 / 16 * 2);

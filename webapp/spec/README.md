@@ -1,5 +1,7 @@
 # Krav, modeller og testplan
 
+[Spillkassetter og felles SDK](game-cartridges/README.md) er den nye **lokalt implementerte** utvidelsen fra 2026-11-04: selvstendige spillmapper med manifest/omslag, automatisk oppdaging, sandbox, felles input-/rekord-API og lokale navnebaserte topplister. [Refaktoreringsplanen](game-cartridges/refactoring-plan.md) beskriver migrering og automatisk katalogsynkronisering for hostede spill. ZIP deles ved utpakking til spillmappen; nettsiden skal ikke tilby ZIP-import. Se valideringsrapporten for programvaredekning og gjenstående utrulling/fysisk akseptanse.
+
 [Komponentspesifikasjonen](Komponentspesifikasjon_webapplikasjon_forklart.md) beskriver frontendkrav og ansvar, samordnet med [API 0.2.0](../../spec/contracts/webapp-backend/README.md). [Plattformtestplanen](platform-test-plan.md) dekker konto, private forsøk, offentlige rekorder og AI. En eventuell separat requirements.md skal gjengi disse kravene fremfor å innføre andre regler. [Testplanen](game-input-test-plan.md) beskriver testing og benchmarking av det felles spillinput-biblioteket. Modeller lagres under [models/](models/README.md). Referer til relevante felles kontrakter fremfor å kopiere dem.
 
 [Spillspesifikasjoner](games/README.md) samles i `games/<game-name>/`. Første spill er [Micro:bit Testlab](games/microbit-testlab/README.md).

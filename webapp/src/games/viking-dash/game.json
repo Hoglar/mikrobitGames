@@ -1,0 +1,48 @@
+{
+  "manifestVersion": 1,
+  "sdkVersion": 1,
+  "id": "6a990001-165b-4e1d-8a20-000000000007",
+  "slug": "viking",
+  "version": "1.0.0",
+  "title": "Viking Dash",
+  "description": "Hopp over grøfter, dukk under greiner og finn din indre viking.",
+  "author": "Mikrobit Games",
+  "license": "Se prosjektets lisens",
+  "entry": "index.js",
+  "cover": "cover.png",
+  "controls": "A: hopp · Hold B: dukk",
+  "genre": "EVENTYR",
+  "accent": "purple",
+  "order": 1,
+  "defaultMode": "standard",
+  "viewport": {
+    "width": 960,
+    "height": 600,
+    "minWidth": 280,
+    "minHeight": 280,
+    "fit": "contain"
+  },
+  "modes": [
+    {
+      "id": "standard",
+      "title": "Standard",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000007",
+      "legacyScoreUnit": "meters",
+      "config": {},
+      "score": {
+        "fields": [
+          {
+            "key": "meters",
+            "label": "Resultat",
+            "min": 0,
+            "max": 9007199254740991,
+            "direction": "higher_is_better",
+            "format": "integer",
+            "unit": "m"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -123,12 +123,12 @@ class DataTools:
         if name == 'standings':
             result = self.query('''WITH latest AS (
                 SELECT g.id AS game_id, g.name AS game, g.score_unit AS unit,
-                    g.ranking_direction AS direction, p.username AS player, r.value,
+                    g.ranking_direction AS direction, g.sdk_metadata, p.username AS player, r.value,
                     ROW_NUMBER() OVER (PARTITION BY r.game_id, r.player_id ORDER BY r.created_at DESC, r.id DESC) AS position
                 FROM ai_read.games g LEFT JOIN ai_read.records r ON r.game_id=g.id
                 LEFT JOIN ai_read.players p ON p.id=r.player_id
                 WHERE LOWER(g.name)=LOWER($1) OR CAST(g.id AS TEXT)=$1)
-                SELECT game_id, game, unit, direction, player, value FROM latest WHERE position=1''', [args['game']], deadline)
+                SELECT game_id, game, unit, direction, sdk_metadata, player, value FROM latest WHERE position=1''', [args['game']], deadline)
         else:
             predicate, parameter = self.player(args['player'])
             result = self.query('''WITH selected_records AS (
@@ -136,7 +136,7 @@ class DataTools:
                 FROM ai_read.records r JOIN ai_read.players p ON p.id=r.player_id
                 WHERE ''' + predicate.replace('$1', '$2') + ''')
                 SELECT g.id AS game_id, g.name AS game, g.score_unit AS unit,
-                g.ranking_direction AS direction, r.player, r.value, r.created_at
+                g.ranking_direction AS direction, g.sdk_metadata, r.player, r.value, r.created_at
                 FROM ai_read.games g LEFT JOIN selected_records r ON r.game_id=g.id
                 WHERE LOWER(g.name)=LOWER($1) OR CAST(g.id AS TEXT)=$1
                 ORDER BY r.created_at, r.id''', [args['game'], parameter], deadline)
@@ -146,6 +146,8 @@ class DataTools:
         if len({row['game_id'] for row in rows}) != 1:
             return {'ambiguous_game': True, 'instruction': 'Flere spill har dette navnet. Bruk games og be om spill-ID.'}
         header = {key: rows[0][key] for key in ('game', 'unit', 'direction')}
+        if rows[0].get('sdk_metadata'):
+            header['sdk_metadata'] = rows[0]['sdk_metadata']
         rows = [row for row in rows if row['player'] is not None]
         if not rows:
             return {**header, 'found': False, 'explanation': 'Spillet finnes, men ingen offentlig rekord traff oppgitt spill/spiller. Dette viser ikke om private forsøk finnes.'}

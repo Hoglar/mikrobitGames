@@ -19,6 +19,7 @@ def load_cases():
 
 
 def unit_group(id):
+    if 'test_cartridges' in id:return 'KAPI-2'
     if 'test_ai_conversation' in id:return 'KAI-3'
     if 'test_model_messages' in id:return 'KAI-1'
     if 'test_auth_rules' in id:return 'KAPI-1'

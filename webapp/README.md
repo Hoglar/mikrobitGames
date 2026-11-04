@@ -19,25 +19,32 @@ spillet og kontrollene; bruk «Avslutt fullskjerm» eller Escape for å gå tilb
 
 ## Kjør lokalt og bygg
 
-Node **24.22.1**, npm **11.19.1** og låst Playwright **1.64.1**:
+Node **24.22.1**, npm **11.19.1** og låste utviklingsavhengigheter (Playwright **1.64.1**, esbuild og Ajv):
+
+Nettsidens «Last ned firmware (HEX)» ligger ved tilkoblingsknappen. Ferdigbygd V2-firmware følger med under [`src/microbit-input/firmware/`](src/microbit-input/firmware/README.md); verken lokal spilling eller hosting krever egen firmwarebygging. Webbygget kontrollerer SHA-256 og publiserer HEX-filen uten logger, ELF eller byggmetadata. Utviklingsserveren tilbyr samme nedlasting. Bare vedlikeholdere som endrer firmwaren trenger [firmwareverktøyet](../microbit/README.md#build-and-test), etterfulgt av `npm run firmware:update`. Nettsiden viser ingen instruksjoner for installasjon på enheten.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Åpne `http://127.0.0.1:4174/`. `dev` og `preview` aktiverer **lokalt spill**:
-alle spillfamilier er tilgjengelige som øving uten konto, database eller AI-chat.
-Koble til en fysisk micro:bit V2 og velg Start; input, display og lyd bruker den
-vanlige adapteren. Snake har alle seks modusvariantene. Øvingsseed kan angis for
-Snake, Viking og Tetris. Poeng vises for runden, men lagres ikke og sendes aldri
-til backend. Pause, fortsett, restart og Testlab fungerer lokalt.
+Åpne `http://127.0.0.1:4174/`. `dev` og `preview` tilbyr **lokale rekorder** og øving uten konto eller backend. Koble til en fysisk micro:bit V2 og velg Start. Etter en fullført lokal runde kan spilleren skrive navn og velge «Lagre lokalt», eller hoppe over. Bare bedre score erstatter samme navns gamle rekord; store/små bokstaver og mellomrom i endene påvirker ikke identiteten. Navn er lokale aliaser, ikke kontoer.
 
-Innlogging, registrering, Dashboard, Profil, topplister og AI er deaktivert i
-lokalmodusen. Appen sender ingen API-kall; lokalserveren avviser også direkte
-`/api/`-kall med 403. Det finnes ingen proxy til produksjonsdatabase eller lokal AI.
-Start lokalserveren på nytt og last siden på nytt hvis den allerede kjører med
-eldre kode. Ingen falsk produktinnlogging eller simulerte sensorer er inkludert.
+Lokale rekorder ligger i IndexedDB for denne nettleserprofilen og nettadressen/porten. «Lokale rekorder» i menyen tilbyr eksport, import og sletting. Rekorddata følger ikke med spillpakker og lastes ikke automatisk opp. «Øving · uten lagring» er fortsatt tilgjengelig som eget valg.
+
+Innlogging, online-resultater, Dashboard, Profil og AI er deaktivert i lokalmodus. Appen sender ingen API-kall; lokalserveren avviser `/api/` med 403. Den tilkoblede appen tilbyr online-rekorder for innlogget spiller samt lokale rekorder/øving. Sandboxen eier spillkode, Canvas og nettleserlyd; siden eier én fysisk Micro:bit-forbindelse og lagringen.
+
+## Legg til eller lag et spill
+
+Hvert spill har sin egen mappe under `src/games/` med `game.json`, `cover.png` (eller WebP), `index.js`, README og lokale ressurser. Ingen sentral spillregistrering eller CSS-import er nødvendig. Oppdater spilloversikten etter filkopiering; statisk hosting krever vanlig build/publisering.
+
+```sh
+npm run game:new -- my-game
+npm run game:check -- src/games/my-game
+npm run game:pack -- src/games/my-game
+```
+
+[Spillguiden](spec/game-cartridges/developer-guide.md) viser et komplett eksempel. [SDK-referansen](spec/game-cartridges/sdk-api.md) og editor-typene i `src/game-sdk/index.d.ts` beskriver input/output, resultater og rekorder. Del ZIP-en fra `build/game-packages/`; mottakeren pakker ut spillmappen i sin lokale `src/games/`. Nettstedet har ingen spillopplastings- eller ZIP-importfunksjon.
 
 ```sh
 npm run build
@@ -46,7 +53,7 @@ npm run preview
 
 `dist/` er hele den offentlige leveransen: HTML, CSS, alle spill, Testlab og det
 felles Micro:bit-biblioteket. Bygget rydder bare generert `dist/` og skriver en
-SHA-256-filoversikt. `npm run preview` serverer dette bygget på port 4174.
+SHA-256-filoversikt og automatisk spill-/topplistekatalog. `publish-web.py` synkroniserer katalogen med backend før aktivering; migrering 002 må være innført i driftsmiljøet. Se [katalogdesignet](spec/game-cartridges/online-leaderboards.md). `npm run preview` serverer dette bygget på port 4174.
 Hashruter (`/#/testlab`, `/#/play/snake`, `/#/dashboard`) fungerer ved direkte
 åpning og oppdatering uten SPA-omskriving av API-ruter.
 

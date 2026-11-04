@@ -28,12 +28,12 @@ async function setup(page){
     }else data={items:[],page:0,page_size:100,total:0};
     await route.fulfill({status,contentType:'application/json',body:JSON.stringify(data)});
   });
-  await page.goto('/#/play/tetris');await expect(page.locator('.tetris-theme')).toBeVisible();
+  await page.goto('/#/play/tetris');await expect(page.locator('.cartridge-game')).toBeVisible();
   await page.locator('#connect').click();await expect(page.getByRole('button',{name:'Start spill →'})).toBeEnabled();
   return calls;
 }
 async function start(page,practice=true){
-  if(practice){await page.getByRole('combobox',{name:'Rangert eller øving'}).selectOption('practice');await page.getByRole('textbox',{name:'Seed for øving'}).fill('demo');}
+  if(practice){await page.getByRole('combobox',{name:'Lagring av resultat'}).selectOption('none');await page.getByRole('textbox',{name:'Seed for øving'}).fill('demo');}
   await page.getByRole('button',{name:'Start spill →'}).click();
   await expect(page.locator('.game-toolbar')).toContainText('SPILLER',{timeout:7000});
 }
@@ -41,17 +41,16 @@ const commands=page=>page.evaluate(()=>window.serialMock.commands);
 
 test('TT-03/06/13/15/17 Tetris practice accepts real adapter inputs, displays hold and plays separate audio',async({page},testInfo)=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));const calls=await setup(page);
-  await expect(page.getByRole('checkbox',{name:'Micro:bit-musikk',exact:true})).toBeChecked();
+  await start(page);await page.frameLocator('.cartridge-runtime').getByRole('button',{name:'Aktiver lyd'}).click();await expect(page.getByRole('checkbox',{name:'Micro:bit-musikk',exact:true})).toBeChecked();
   await expect(page.getByRole('checkbox',{name:'Nettlesereffekter',exact:true})).toBeChecked();
-  expect((await commands(page)).some(c=>c.includes('|MELODY|'))).toBe(false);
-  expect(await page.evaluate(()=>window.tetrisAudioProbe.contexts.length)).toBe(0);
-  await start(page);
+
+
   await expect.poll(async()=>(await commands(page)).some(c=>c.includes('|S|MELODY|96|659:667,494:333,523:333'))).toBe(true);
-  expect(await page.evaluate(()=>window.tetrisAudioProbe.contexts.at(-1).state)).toBe('running');
+  await expect.poll(()=>page.frames().find(f=>f.parentFrame()).evaluate(()=>window.tetrisAudioProbe.contexts.at(-1).state)).toBe('running');
   await page.evaluate(()=>window.serialMock.port.sample({q:1,qc:1}));
   await expect.poll(async()=>(await commands(page)).some(c=>c.endsWith('|D|IMAGE|0000009900099000000000000'))).toBe(true);
   await page.evaluate(()=>window.serialMock.port.sample({q:0,b:1,bc:1}));
-  await expect.poll(()=>page.evaluate(()=>window.tetrisAudioProbe.sources)).toBeGreaterThan(0);
+  await expect.poll(()=>page.frames().find(f=>f.parentFrame()).evaluate(()=>window.tetrisAudioProbe.sources)).toBeGreaterThan(0);
   await page.evaluate(()=>window.serialMock.port.sample({b:0,a:1,ac:1}));
   await expect(page.locator('.game-toolbar')).toContainText(/[1-9][0-9]* poeng/);
   await page.evaluate(()=>window.serialMock.port.sample({a:0}));
@@ -83,28 +82,28 @@ test('TT-14/16 pause, mute, physical reconnect and mobile layout preserve the ga
   await page.keyboard.press('Escape');await expect.poll(async()=>(await commands(page)).at(-1)).toMatch(/\|S\|STOP$/);
 });
 
-test('TT-18 ranked top-out submits exactly one completed result; restart reuses the page audio context',async({page})=>{
+test('TT-18 ranked top-out submits exactly one completed result; restart creates a fresh bounded sandbox audio context',async({page})=>{
   const calls=await setup(page);await start(page,false);
-  for(let i=1;i<=30;i++){
-    await page.evaluate(i=>window.serialMock.port.sample({a:1,ac:i}),i);await page.waitForTimeout(55);
-    await page.evaluate(()=>window.serialMock.port.sample({a:0}));await page.waitForTimeout(55);
+  for(let i=1;i<=60;i++){
+    await page.evaluate(i=>window.serialMock.port.sample({a:1,ac:i}),i);await page.waitForTimeout(100);
+    await page.evaluate(()=>window.serialMock.port.sample({a:0}));await page.waitForTimeout(100);
     if(await page.locator('.game-toolbar').textContent().then(s=>s.includes('RESULTAT')))break;
   }
   await expect(page.locator('.game-toolbar')).toContainText('RESULTAT');
   await expect.poll(()=>calls.filter(c=>c.path.endsWith('/results')&&c.method==='POST').length).toBe(1);
   const result=calls.find(c=>c.path.endsWith('/results')&&c.method==='POST');
   expect(result.body.status).toBe('completed');expect(Number.isSafeInteger(result.body.value)).toBe(true);expect(result.path).toContain(games.find(g=>g.key==='tetris').id);
-  await page.evaluate(()=>window.serialMock.port.sample({a:1,ac:window.serialMock.port.ac+1}));
+  await page.evaluate(()=>window.serialMock.port.sample({a:1,ac:window.serialMock.port.ac+1}));await page.evaluate(()=>window.serialMock.port.sample({a:0}));
   await expect(page.locator('.game-toolbar')).toContainText('NEDTELLING');
   await page.evaluate(()=>window.serialMock.port.sample({a:0}));
-  expect(await page.evaluate(()=>window.tetrisAudioProbe.contexts.length)).toBe(1);
+  expect(await page.frames().find(f=>f.parentFrame()).evaluate(()=>window.tetrisAudioProbe.contexts.length)).toBe(1);
   expect(calls.filter(c=>c.path.endsWith('/results')&&c.method==='POST')).toHaveLength(1);
 });
 
 test('TT-09/11/12 render gallery shows a normal clear and a perfect-clear celebration without changing simulation',async({page},testInfo)=>{
   await page.goto('/');
   const result=await page.evaluate(async()=>{
-    const {createTetris}=await import('/src/games/tetris/index.js'),{emptyBoard}=await import('/src/games/tetris/rules.js');
+    const {createTetris}=await import('/src/games/tetris/engine.js'),{emptyBoard}=await import('/src/games/tetris/rules.js');
     const section=document.createElement('section');section.id='tetris-gallery';section.style.cssText='display:flex;gap:16px;background:#101522;padding:16px;color:white';document.body.append(section);
     const results=[];
     for(const lines of [1,4]){

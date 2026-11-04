@@ -12,7 +12,7 @@ async function setup(page,key='tetris'){
   page.on('pageerror',e=>errors.push(e.message));
   await page.addInitScript(installSerialMock,{info:fixture.deviceInfo.v2,snapshot:fixture.snapshots.v2});
   await page.goto(`/#/play/${key}`);
-  await expect(page.locator('#navigation')).toContainText('LOKALT · UTEN LAGRING');
+  await expect(page.locator('#navigation')).toContainText('LOKALT · REKORDER');
   return {requests,errors};
 }
 async function connectAndStart(page){
@@ -32,10 +32,10 @@ async function assertLocalOnly(page,observed){
 
 for(const family of families)test(`local ${family.key} starts without an account or backend, using the production input adapter`,async({page})=>{
   const observed=await setup(page,family.key);
-  await expect(page.locator('.game-frame canvas')).toBeVisible();
+  await expect(page.locator('.cartridge-stage')).toBeVisible();
   await expect(page.getByRole('button',{name:'Start spill →'})).toBeDisabled();
-  const mode=page.getByRole('combobox',{name:'Rangert eller øving'});
-  await expect(mode).toBeDisabled();await expect(mode).toHaveValue('practice');await expect(mode.locator('option')).toHaveCount(1);
+  const mode=page.getByRole('combobox',{name:'Lagring av resultat'});
+  await expect(mode).toBeEnabled();await expect(mode).toHaveValue('local');await expect(mode.locator('option')).toHaveCount(2);
   if(family.key==='snake')await expect(page.getByRole('combobox',{name:'Spillmodus'}).locator('option')).toHaveCount(6);
   await connectAndStart(page);
   await page.getByRole('button',{name:'Pause',exact:true}).click();
@@ -70,10 +70,10 @@ test('local Tetris processes inputs/output, reconnects, resumes and restarts wit
 });
 
 test('local completed round shows its score and can restart without account/results links',async({page})=>{
-  const observed=await setup(page,'snake');await connectAndStart(page);
+  const observed=await setup(page,'snake');await page.getByRole('combobox',{name:'Lagring av resultat'}).selectOption('none');await connectAndStart(page);
   await expect(page.locator('.game-toolbar')).toContainText('RESULTAT',{timeout:7000});
   await expect(page.locator('.game-overlay')).toContainText('Godt spilt!');
-  await expect(page.locator('.game-overlay')).toContainText('Øving · resultatet lagres ikke i backend.');
+  await expect(page.locator('.game-overlay')).toContainText('Øving · resultatet lagres ikke.');
   await expect(page.getByRole('link',{name:'Se Dashboard'})).toHaveCount(0);
   await page.getByRole('button',{name:'Spill igjen →'}).click();
   await expect(page.locator('.game-toolbar')).toContainText('NEDTELLING');

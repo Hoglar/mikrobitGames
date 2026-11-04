@@ -4,6 +4,8 @@ C++11/CODAL firmware implements the shared web-game input protocol on **V2 board
 
 Host tests and the pinned V2 cross-build run successfully. Physical board verification is still required; see [validation results](results/implementation-validation.md). ADR-008 remains Proposed until its hardware acceptance gates pass.
 
+Ferdigbygd V2-firmware følger med i [`webapp/src/microbit-input/firmware/`](../webapp/src/microbit-input/firmware/README.md) og kan lastes ned fra nettsidens firmwareknapp. Brukere og dem som hoster nettsiden trenger ingen egen firmwarebygging. Ved endringer i firmwaren bygger vedlikeholderen som beskrevet nedenfor og kjører deretter `npm run firmware:update` fra `webapp/` for å oppdatere den distribuerte HEX-filen og release-metadataene.
+
 ## Build and Test
 
 Run from the repository root on Linux or WSL. Install Git, Python 3, CMake, a native C++ compiler, Make/Ninja and the GNU Arm embedded compiler with newlib/C++ libraries. For Ubuntu:
@@ -28,7 +30,7 @@ Artifacts are staged in `microbit/build/v2/`:
 - `compile_commands.json` and `codal_extra_definitions.h`: effective application build configuration.
 - `provenance.json`: dependency/submodule pins, tool versions, source/artifact hashes, repository dirty state, size and linker symbols.
 
-The upstream raw BIN includes a large address gap to UICR and is not staged. Generated files are ignored by Git. Preserve provenance beside any image used for verification. Build dependencies are pinned; host tools are recorded rather than supplied in a hermetic image. Different compiler versions or source paths can change artifacts. A native Windows cross-build is not verified; Windows can flash an image built with WSL.
+The upstream raw BIN includes a large address gap to UICR and is not staged. Files in build directories are ignored by Git; the bundled web firmware release is versioned separately. Preserve provenance beside any image used for verification. Build dependencies are pinned; host tools are recorded rather than supplied in a hermetic image. Different compiler versions or source paths can change artifacts. A native Windows cross-build is not verified; Windows can flash an image built with WSL.
 
 To rebuild every object without deleting dependencies, run `cmake --build microbit/.build/codal/build --target clean`, then the wrapper. Dependency upgrades require new software and hardware results.
 

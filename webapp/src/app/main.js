@@ -7,8 +7,14 @@ import { gamePage } from './play.js';
 import { testlabPage } from './testlab.js';
 import { createArcade } from './arcade.js';
 import { families } from '../games/registry.js';
+import { createLocalRecords } from '../leaderboards/local.js';
+import { localRecordsPage } from './records.js';
 const localPlay=['localhost','127.0.0.1','[::1]'].includes(location.hostname)&&document.querySelector('meta[name="microbit-local-play"]')?.content==='true';
 export const context={ microbit, api, localPlay, session:null, sessionError:null, catalog:[], chat:[], aiBusy:false, page:null, sessionReady:null };
+context.notify=toast;
+const recordChannel=typeof BroadcastChannel==='function'?new BroadcastChannel('microbit-games-records'):null;
+context.records=createLocalRecords({notify:()=>{recordChannel?.postMessage('changed');arcade?.board.refresh();}});
+if(recordChannel)recordChannel.onmessage=()=>arcade?.board.refresh();
 context.api=async(...args)=>{if(localPlay)throw new ApiError('Database, konto og AI er deaktivert i lokalt spill.',{code:'LOCAL_PLAY_BLOCKED'});try{return await api(...args);}catch(error){if(error.status===401&&error.code==='AUTH_REQUIRED')context.setSession(null);throw error;}};
 context.queue=createSubmissionQueue({api:(...args)=>context.api(...args),getPlayer:()=>context.session?.player});
 context.setSession=value=>{context.session=value;renderNavigation();void arcade?.refreshChat();};
@@ -25,8 +31,8 @@ const offError=microbit.onError(e=>{if(!['protocol'].includes(e.kind))toast(e.me
 function refreshConnection(){const s=microbit.getState();connect.classList.toggle('ready',s.inputAvailable);document.querySelector('#connection-label').textContent=s.inputAvailable?'Micro:bit er tilkoblet':s.connection==='connecting'?'Kobler til …':'Koble til micro:bit';connect.disabled=s.connection==='connecting';}
 let arcade=null;
 function renderNavigation(){
- if(localPlay){document.querySelector('#navigation').replaceChildren(link('Spill','#/',''),link('Testlab','#/testlab',''),el('span',{class:'pill'},'LOKALT · UTEN LAGRING'));return;}
- const nav=document.querySelector('#navigation');nav.replaceChildren(...[['Spill','#/'],['Testlab','#/testlab'],['Topplister','#/leaderboard'],['Dashboard','#/dashboard'],['AI-chat','#/ai'],['Profil','#/profile']].map(([name,href])=>link(name,href,location.hash===href?'active':'')));
+ if(localPlay){document.querySelector('#navigation').replaceChildren(link('Spill','#/',''),link('Testlab','#/testlab',''),link('Lokale rekorder','#/records',''),el('span',{class:'pill'},'LOKALT · REKORDER'));return;}
+ const nav=document.querySelector('#navigation');nav.replaceChildren(...[['Spill','#/'],['Testlab','#/testlab'],['Lokale rekorder','#/records'],['Topplister','#/leaderboard'],['Dashboard','#/dashboard'],['AI-chat','#/ai'],['Profil','#/profile']].map(([name,href])=>link(name,href,location.hash===href?'active':'')));
  if(context.session)nav.append(button('Logg ut',async()=>{try{await api('/auth/logout',{method:'POST'});context.setSession(null);context.chat=[];location.hash='#/';toast('Du er logget ut.');}catch(e){toast(e.message);}},'text-button'));else nav.append(link('Logg inn','#/login',''));
 }
 let current=null,accountView=null,navigation=Promise.resolve(),selectedKey=null;
@@ -44,10 +50,9 @@ async function mountCabinet(key,hash,{testlab=false,animate=true}={}){
  const container=el('div');arcade.screen.replaceChildren(container);arcade.select(testlab?null:key,animate);selectedKey=testlab?null:key;
  if(testlab){arcade.board.idle();void testlabPage({root:container,ctx:context,view}).catch(e=>{if(view.active)container.append(errorBox(e.message));});return true;}
  container.append(heading('SPILLHALL','Laster kassett …'));
- // Await authentication in this renderer, without holding up navigation to Testlab.
+ // A slow account/backend lookup must not block local play.
  void (async()=>{
-  await context.sessionReady;if(!view.active)return;container.replaceChildren();
-  if(!localPlay&&!context.session){view.locked=true;container.append(el('div',{class:'cabinet-empty'},heading('READY PLAYER ONE','Logg inn for å spille','Velg spill og se topplister fritt. Logg inn for å starte en runde.'),context.sessionError&&errorBox(context.sessionError.message),link('Logg inn',`#/login?next=${encodeURIComponent('/play/'+key)}`,'button light')));return;}
+  if(!view.active)return;container.replaceChildren();
   await gamePage({root:container,ctx:context,parts:['play',key],view,onSelectedGame:game=>{if(view.active)arcade.board.show(game);},onResultSaved:()=>{if(view.active)arcade.board.refresh();}});
  })().catch(e=>{if(view.active)container.replaceChildren(heading('NOE GIKK GALT','Kunne ikke laste spillet.'),errorBox(e.message));});
  return true;
@@ -60,7 +65,7 @@ async function route(){
   if(!await mountCabinet(parts[1]??'testlab',hash,{testlab:name==='testlab',animate:true}))return;
   await closeAccount();return;
  }
- if(name==='launcher'){await closeAccount();if(current?.locked&&context.session)await mountCabinet(selectedKey,current.hash,{animate:false});window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});return;}
+ if(name==='launcher'){await closeAccount();await arcade.refreshGames();window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});return;}
  if(name==='ai'){
   await closeAccount();arcade.focusChat();void context.sessionReady.then(()=>arcade.refreshChat());return;
  }
@@ -71,6 +76,7 @@ async function route(){
  const publicRoute=['login','register','leaderboard','history'].includes(name);
  // Network requests must not serialize navigation. Old renderers own a detached root.
  async function renderView(){
+  if(name==='records'){await localRecordsPage({root:container,ctx:context});return;}
   if(localPlay){
    container.append(heading('LOKALT SPILL','Bare lokalt spill','Database, innlogging, resultathistorikk, topplister og AI er deaktivert i denne lokale versjonen.'),link('Til spillvelgeren','#/','button'));return;
   }
@@ -90,6 +96,6 @@ async function route(){
 window.addEventListener('hashchange',()=>{navigation=navigation.then(route).catch(e=>toast(e.message));});
 context.sessionReady=context.loadSession().then(()=>{renderNavigation();});
 refreshConnection();const poll=setInterval(refreshConnection,150);
-window.addEventListener('pagehide',()=>{offError();clearInterval(poll);void microbit.disconnect().catch(()=>{});},{once:true});
-window.addEventListener('beforeunload',e=>{if(context.queue.list().some(x=>x.state!=='saved')){e.preventDefault();e.returnValue='';}});
+window.addEventListener('pagehide',()=>{offError();clearInterval(poll);recordChannel?.close();void context.records.close();void microbit.disconnect().catch(()=>{});},{once:true});
+window.addEventListener('beforeunload',e=>{if(current?.needsSave?.()||context.queue.list().some(x=>x.state!=='saved')){e.preventDefault();e.returnValue='';}});
 navigation=navigation.then(route);

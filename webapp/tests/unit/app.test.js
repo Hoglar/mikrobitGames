@@ -28,8 +28,8 @@ test('invalid result identity or contradictory record data never confirms saving
  assert.equal(validateResult(saved(),attempt).outcome,'created');
 });
 test('registry requires exact ID and scoring rules; snake score shows food before steps',()=>{
- assert.equal(registeredGame({...games[0],is_active:true}),games[0]);assert.equal(registeredGame({...games[0],max_value:1}),null);assert.equal(registeredGame({...games[0],id:crypto.randomUUID()}),null);
- assert.ok(encodeSnake(12,500)>encodeSnake(11,1));assert.ok(encodeSnake(12,500)>encodeSnake(12,501));assert.equal(formatScore(games[0],encodeSnake(12,500)),'12 mat · 500 steg');
+ assert.equal(registeredGame({...games.find(game=>game.key==='snake'),is_active:true}),games.find(game=>game.key==='snake'));assert.equal(registeredGame({...games.find(game=>game.key==='snake'),max_value:1}),null);assert.equal(registeredGame({...games.find(game=>game.key==='snake'),id:crypto.randomUUID()}),null);
+ assert.ok(encodeSnake(12,500)>encodeSnake(11,1));assert.ok(encodeSnake(12,500)>encodeSnake(12,501));assert.equal(formatScore(games.find(game=>game.key==='snake'),encodeSnake(12,500)),'12 mat · 500 steg');
 });
 test('snake relative steering accepts only first counted action; tail motion, walls and deterministic food',()=>{
  const a=createSnake({config:{mode:'standard',food:'competitive'}}),b=createSnake({config:{mode:'standard',food:'competitive'}});assert.deepEqual(a.state.food,b.state.food);

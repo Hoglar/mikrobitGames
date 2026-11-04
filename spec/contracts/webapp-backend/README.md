@@ -1,5 +1,7 @@
 # Webapp–backend
 
+Lokalt implementert tillegg 2026-11-04: valgfri `Game.sdk_metadata`, deklarativ scorevalidering og automatisk betrodd katalogsynkronisering ved frontendpublisering. Se [kontrakttillegget](contract.md) og [SDK-designet](../../../webapp/spec/game-cartridges/online-leaderboards.md). Den eksisterende publiserte revisjonen nedenfor er ikke endret av lokal implementering.
+
 **Gjeldende revisjon: 0.3.0, 2026-10-28.** Samtaleassistent med avgrenset hukommelse og «ny samtale». Arbeidsgrunnlag for backend etter brukerbestilling, fortsatt et forslag til frontendgruppen.
 
 - [Kom i gang for frontendgruppen](quickstart.md): adresse, kopierbar JavaScript-klient, innlogging, resultater, AI og feilsøking.

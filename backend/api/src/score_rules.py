@@ -9,9 +9,12 @@ def validate_score(value, min_value, max_value):
         raise ValueError('Resultatet er utenfor intervallet.')
 
 
-def validate_attempt(status, value, min_value, max_value):
+def validate_attempt(status, value, min_value, max_value, sdk_metadata=None):
     if status == 'completed':
         validate_score(value, min_value, max_value)
+        if sdk_metadata:
+            from cartridge_rules import decode
+            decode(sdk_metadata['score'], value)
     elif status == 'incomplete':
         if value is not None:
             validate_score(value, 0, MAX_SAFE_INTEGER)

@@ -1,0 +1,2 @@
+# Keep the distributed firmware byte-identical on every host.
+/webapp/src/microbit-input/firmware/*.hex -text

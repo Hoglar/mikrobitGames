@@ -1,0 +1,48 @@
+{
+  "manifestVersion": 1,
+  "sdkVersion": 1,
+  "id": "6a990001-165b-4e1d-8a20-000000000011",
+  "slug": "tetris",
+  "version": "1.0.0",
+  "title": "Micro Tetris",
+  "description": "Bygg, roter og rydd linjer. Hold favorittbrikken mens tempoet stiger.",
+  "author": "Mikrobit Games",
+  "license": "Se prosjektets lisens",
+  "entry": "index.js",
+  "cover": "cover.png",
+  "controls": "Vipp: flytt · B: roter · A: hard drop · Logo: hold",
+  "genre": "PUZZLE",
+  "accent": "purple",
+  "order": 5,
+  "defaultMode": "standard",
+  "viewport": {
+    "width": 960,
+    "height": 600,
+    "minWidth": 280,
+    "minHeight": 440,
+    "fit": "responsive"
+  },
+  "modes": [
+    {
+      "id": "standard",
+      "title": "Standard",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000011",
+      "legacyScoreUnit": "tetris_score_v1",
+      "config": {},
+      "score": {
+        "fields": [
+          {
+            "key": "points",
+            "label": "Resultat",
+            "min": 0,
+            "max": 9007199254740991,
+            "direction": "higher_is_better",
+            "format": "integer",
+            "unit": "poeng"
+          }
+        ]
+      }
+    }
+  ]
+}

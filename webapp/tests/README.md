@@ -23,3 +23,9 @@ Testene bruker eksisterende produksjonsadapter og Web Serial-mock, og kontroller
 spillramme, start/pause/restart, offentlig Testlab, konto, Dashboard, offentlig
 historikk og AI. `tests/unit/app.test.js` tester API-feil, lagringsidentitet og
 spillmotorer uten enhet. Se `results/webapp-validation.md` for kjørte resultater.
+
+## Spillkassetter og lokale rekorder
+
+`npm run test:cartridges` bygger og kjører en separat suite mot utviklingsserveren. Den oppretter en midlertidig, selvstendig spillmappe, verifiserer oppdaging/SDK/sandbox og tester ekte IndexedDB, samtidige faner, navnelagring, eksport/import og uendret online-ID. Spillet fjernes etter testen. `npm run test:app` dekker de migrerte medfølgende spillene og appen fra `dist/`; den separate importtesten inngår ikke i samme config fordi den må oppdage en mappe etter serverstart.
+
+`tests/unit/cartridges.test.js` tester de 47 frosne legacy-ID-ene, deklarativ sammenligning/codec, navnenormalisering og importgrensen. Fysisk Micro:bit og faktisk PostgreSQL/produksjonsutrulling er egne akseptansepunkter. Se [valideringsrapporten](../results/cartridges-validation.md).

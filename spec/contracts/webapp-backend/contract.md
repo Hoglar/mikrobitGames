@@ -1,5 +1,7 @@
 # Frontendguide: Webapp ↔ Backend API
 
+**Additiv SDK-utvidelse 2026-11-04 (implementert lokalt, ikke utrullet):** `Game` kan inneholde nullable `sdk_metadata` med `codecVersion`, pakke-/modus-/regelidentitet, fingeravtrykk, innholdshash og deklarative scorefelt. Resultatbody og eksisterende spill-ID-er beholdes. Serveren dekoder SDK-scorer etter sine egne registrerte regler, også for å avvise kodingshull. Katalogregistrering er en betrodd operasjon ved publisering, ikke et nytt offentlig endepunkt. [Kontraktdetaljer](../../../webapp/spec/game-cartridges/online-leaderboards.md). Lokalspill og lokale navnebaserte rekorder bruker ikke dette API-et; innlogging og fornyelse kreves for online-resultater. Lokal installasjon skjer bare gjennom spillmapper, ikke opplasting i nettleseren.
+
 **Status:** Revisjon **0.3.0**, 2026-10-28. Samtaleassistenten er integrert etter brukerens bestilling. Kontrakten er backendens arbeidsgrunnlag og fortsatt et forslag til frontendgruppen. Backend bestod full testfase 2026-10-28 på commit `3bd5d07`; faktisk frontendintegrasjon gjenstår. Se [endringsoversikten](alignment.md).
 
 **Praktisk start:** Se [hurtigguiden med JavaScript-eksempler](quickstart.md).

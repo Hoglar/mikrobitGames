@@ -2,6 +2,8 @@
 
 Databaseimplementasjonen er en intern del av backend.
 
+SDK-spill bruker `002_game_sdk.sql` og `sync-game-catalog.py`. Etter migrering synkroniserer `publish-web.py` automatisk `dist/catalog.json` før ny webpakke aktiveres. For separat testmiljø: sett `MBG_ADMIN_DSN` på vanlig beskyttet måte og kjør `python backend/database/sync-game-catalog.py webapp/dist/catalog.json`. Hele katalogen behandles atomisk; eksisterende ID-er/rekorder beholdes, og motstridende regler avvises. Ingen klient eller spillpakke får administrator-DSN. Verktøyet sletter/deaktiverer ikke manglende spill automatisk.
+
 - [migrations/](migrations/README.md): versjonerte endringer i skjema, visninger og tilgangsrettigheter.
 - [seeds/](seeds/README.md): syntetiske test- og demodata.
 

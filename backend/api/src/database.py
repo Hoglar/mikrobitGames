@@ -206,7 +206,10 @@ def submit(token, game_id, attempt_id, status, value, validate, improves):
             raise ServiceError('NOT_FOUND', 404)
         if not game['is_active']:
             raise ServiceError('GAME_INACTIVE', 409)
-        validate(status, value, game['min_value'], game['max_value'])
+        if game.get('sdk_metadata'):
+            validate(status, value, game['min_value'], game['max_value'], game['sdk_metadata'])
+        else:
+            validate(status, value, game['min_value'], game['max_value'])
         best = _best(tx, pid, game)
         record, outcome = None, 'not_eligible'
         now = datetime.now(timezone.utc)

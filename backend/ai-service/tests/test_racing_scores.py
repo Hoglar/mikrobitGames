@@ -8,6 +8,23 @@ from score_presentation import describe_racing, racing_details
 
 
 class RacingScores(unittest.TestCase):
+    def test_sdk_racing_metadata_keeps_place_then_time_presentation(self):
+        result=describe_racing({'unit':'racing_rank_v1','sdk_metadata':{'score':{'offset':1,'fields':[
+            {'key':'position','label':'Plass','min':1,'max':4,'direction':'lower_is_better','format':'integer','unit':'. plass'},
+            {'key':'timeMs','label':'Tid','min':1,'max':600000,'radix':1000000,'direction':'lower_is_better','format':'duration-ms'}]}},
+            'records':[{'value':1083456}]})
+        self.assertEqual(result['records'][0]['display_value'],'2. plass · 01:23.456')
+        self.assertEqual(result['records'][0]['score'],{'position':2,'timeMs':83456})
+
+    def test_sdk_metadata_formats_other_games_without_packed_gap_claims(self):
+        result=describe_racing({'unit':'sdk_rank_v1','sdk_metadata':{'score':{'fields':[
+            {'key':'points','label':'Poeng','min':0,'max':100,'direction':'higher_is_better','format':'integer','unit':'poeng'},
+            {'key':'timeMs','label':'Tid','min':0,'max':999,'direction':'lower_is_better','format':'duration-ms'}]}},
+            'records':[{'value':12949,'rank':1,'gap_to_best':10}]})
+        self.assertEqual(result['records'][0]['score'],{'points':12,'timeMs':50})
+        self.assertEqual(result['records'][0]['display_value'],'12 poeng · 00:00.050')
+        self.assertIsNone(result['records'][0]['gap_to_best'])
+
     def test_place_and_time_decode_and_invalid_holes(self):
         self.assertEqual(racing_details(1083456)['display_value'], '2. plass · 01:23.456')
         self.assertEqual(racing_details(3600000)['race_time_ms'], 600000)

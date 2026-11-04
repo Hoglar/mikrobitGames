@@ -14,9 +14,9 @@ Sett eventuelt `INPUT_BENCHMARK_REPORT` eller `INPUT_BROWSER_BENCHMARK_REPORT` t
 
 ## Webapp og samlet leveranse
 
-- `npm run dev`: lokal øving fra kildefilene, port 4174; krever micro:bit, ingen konto/backend/AI.
+- `npm run dev`: lokalspill med navnebaserte rekorder fra oppdagede spillmapper, port 4174; krever micro:bit, ingen konto/backend/AI.
 - `npm run build`: rydder generert `dist/`, kopierer hele den offentlige appen og skriver SHA-256-manifest.
-- `npm run preview`: serverer bare `dist/` med samme lokale øvingsmodus, port 4174.
+- `npm run preview`: serverer bare `dist/` med samme lokale rekord-/øvingsvalg, port 4174.
 - `npm run test:app`: bygger og tester den statiske pakken med mockede eksterne grensesnitt.
 - `npm run catalog:commands`: skriver backendens registreringskommandoer uten å kjøre dem.
 
@@ -34,3 +34,5 @@ UI med mockede API-svar). `--connected` på testserveren utelater lokalmarkøren
 beholder de vanlige startkravene; den oppretter ingen backendforbindelse og gir
 503 på API-kall som ikke er mockede. Begge serverne bruker `--dist` og starter
 uten gjenbruk av andre prosesser. `--port=<nummer>` kan brukes ved portkonflikt.
+
+Spillverktøyene `game:new`, `game:check` og `game:pack` bruker felles manifestvalidator og kompilator i `cartridges.mjs`. `build` genererer `catalog.json` og per-spill-payloads fra gyldige mapper, og `serve-app.js` oppdager nye mapper ved katalogrefresh. Kun validerte publiserbare spillfiler kopieres til `dist/`. Editor-/testfiler, `.env`, `node_modules` og README inngår ikke i publisert spillpayload. ZIP-verktøyet tar med spillets README, men ikke SDK eller lokale rekorder.

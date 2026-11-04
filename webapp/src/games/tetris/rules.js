@@ -1,4 +1,4 @@
-import { randomGenerator } from '../shared/random.js';
+import { randomGenerator } from './lib/shared/random.js';
 
 export const VERSION = 'micro-tetris-v1';
 export const TYPES = Object.freeze(['I', 'J', 'L', 'O', 'S', 'T', 'Z']);

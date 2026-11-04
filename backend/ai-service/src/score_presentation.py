@@ -15,6 +15,8 @@ def racing_details(value):
 
 
 def describe_racing(result):
+    if result.get('sdk_metadata'):
+        return describe_sdk(result)
     if result.get('unit') != 'racing_rank_v1':
         return result
     output = {**result, 'ranking_meaning': 'Lavest løpsplassering først, deretter lavest totaltid. Råverdien er kodet, ikke millisekunder eller poeng.'}
@@ -36,3 +38,37 @@ def describe_racing(result):
         # duration; the explicit decoded history explains the improvement.
         output['improvement'] = None
     return output
+
+
+def describe_sdk(result):
+    definition=result['sdk_metadata']['score']
+    fields=definition['fields']
+    direction=fields[0]['direction']
+    def explain(row):
+        try:
+            value=row['value']
+            if type(value) is not int:raise ValueError()
+            n=value-definition.get('offset',0)
+            decoded={}
+            for i in range(len(fields)-1,-1,-1):
+                f=fields[i]
+                if len(fields)==1:digit=value-f['min']
+                elif i:n,digit=divmod(n,f.get('radix',f['max']-f['min']+1))
+                else:digit=n
+                if not 0<=digit<=f['max']-f['min']:raise ValueError()
+                decoded[f['key']]=(f['min']+digit if f['direction']==direction else f['max']-digit)
+            texts=[]
+            for f in fields:
+                v=decoded[f['key']]
+                if f['format']=='duration-ms':
+                    minutes,rest=divmod(v,60000);seconds,ms=divmod(rest,1000);text=f'{minutes:02}:{seconds:02}.{ms:03}'
+                else:text=str(v)+(('' if f['unit'].startswith('.') else ' ')+f['unit'] if f.get('unit') else '')
+                texts.append(text)
+            return {**row,'score':decoded,'display_value':' · '.join(texts),'result_valid':True,'gap_to_best':None}
+        except (ValueError,KeyError,TypeError):return {**row,'result_valid':False,'gap_to_best':None}
+    out={**result,'ranking_meaning':'Feltene rangeres i oppgitt rekkefølge etter sine retninger. Råverdien kan være kodet; bruk display_value og score.'}
+    out['score_fields']=[{k:f[k] for k in ('key','label','direction','format')} for f in fields]
+    for key in ('records','history'):
+        if key in result:out[key]=[explain(r) for r in result[key]]
+    if 'improvement' in out:out['improvement']=None
+    return out

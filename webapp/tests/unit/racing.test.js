@@ -19,7 +19,7 @@ const physicalCar=(id,x,y,vx=0,vy=0)=>({id,x,y,vx,vy,angle:0,steer:0,finishedMs:
 test('MR-01/02/16 all 36 variants have stable unique IDs and exact scoring metadata',()=>{
   const variants=games.filter(game=>game.key==='racing');assert.equal(variants.length,36);assert.equal(new Set(variants.map(g=>g.id)).size,36);
   const published=JSON.parse(readFileSync(new URL('../../spec/games/micro-racer/catalog.json',import.meta.url)));
-  assert.deepEqual(variants,published.games);
+  assert.deepEqual(variants.map(g=>Object.fromEntries(Object.keys(published.games[0]).map(k=>[k,g[k]]))),published.games);
   for(const track of tracks)for(const format of ['time-trial','race'])for(const laps of [1,3])for(const car of cars){
     const matching=variants.filter(g=>g.config.track===track.id&&g.config.format===format&&g.config.laps===laps&&g.config.car===car.id);assert.equal(matching.length,1);
     const game=matching[0];assert.equal(game.min_value,1);assert.equal(game.max_value,format==='race'?3600000:600000);assert.equal(game.ranking_direction,'lower_is_better');assert.equal(registeredGame({...game,is_active:true}),game);

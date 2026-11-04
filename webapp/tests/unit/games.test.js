@@ -2,8 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { families, loadGame } from '../../src/games/registry.js';
 
-test('every registered game family loads its own playable module', async () => {
-  for (const family of families) {
+test('the bundled legacy engines retain their playable interface after SDK migration', async () => {
+  // Never execute newly installed cartridge code in Node. It belongs in the
+  // browser sandbox; build-time validation only parses and bundles that code.
+  const legacyKeys=new Set(['snake','viking','stars','reaction','balance','tetris','racing']);
+  for (const family of families.filter(f=>legacyKeys.has(f.key))) {
     const create = await loadGame(family.key);
     const game = create({ seed: 'module-loading', config: {} });
     for (const method of ['tick', 'draw', 'press']) assert.equal(typeof game[method], 'function', `${family.key}.${method}`);

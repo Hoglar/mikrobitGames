@@ -1,5 +1,7 @@
 # Komponentspesifikasjon – Webapplikasjon
 
+**Lokalt implementert arkitekturendring 2026-11-04:** [Spillkassett-/SDK-spesifikasjonen](game-cartridges/README.md) beskriver brukerens nye mål for spillintegrasjon og lokale rekorder. Refaktoreringen erstatter manuell modulkobling og «lokalt uten lagring» med manifestoppdaging, sandbox og valgbare lokale/online-topplister. Innloggingskrav beholdes for online-resultater, mens lokalspill er uten konto. Resterende tekst beskriver det tidligere kontraktgrunnlaget; nye API-/databaseendringer er uttrykkelig planlagt i [online-designet](game-cartridges/online-leaderboards.md).
+
 **Status:** Samordnet revisjon 2026-10-27 etter brukerens avklaringer. Implementasjon og produktverifisering gjenstår. [Konflikter og beslutninger](../../spec/contracts/webapp-backend/alignment.md).
 **Formål:** Strukturert input til AI-assistert utvikling og verifisering.
 **Omfang:** Frontendens komponenter (C4 nivå 3) og deres forbindelser til Backend API og fysisk Micro:bit.

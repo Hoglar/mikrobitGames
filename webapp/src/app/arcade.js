@@ -1,5 +1,6 @@
 import { el, button, link, field, errorBox } from './dom.js';
-import { families, games, loadGame, formatScore } from '../games/registry.js';
+import { families, games, refreshCatalog, catalogErrors } from '../games/registry.js';
+import { readLeaderboard } from '../leaderboards/provider.js';
 import { chat } from './pages.js';
 
 // The rack, cabinet and chat stay mounted when a cartridge changes.
@@ -28,13 +29,13 @@ export function createArcade({ root, ctx, selectGame }) {
     el('section', { class: 'game-selector', id: 'games' },
       el('div', { class: 'selector-heading' }, el('div', {}, el('p', { class: 'eyebrow' }, '01 / VELG KASSETT'),
         el('h2', {}, 'Velg ditt neste eventyr.')), el('div', { class: 'actions' },
-        el('span', { class: 'muted rack-hint' }, 'Rull · velg · spill'), previous, next)), track),
+        el('span', { class: 'muted rack-hint' }, 'Rull · velg · spill'), button('Oppdater spill',()=>{void refreshGames();},'text-button'), previous, next)), track),
     el('div', { class: 'arcade-stage', id: 'arcade-stage' }, cabinet, board.root),
     account, chatRoot));
 
   const cards = new Map();
-  for (const family of families) {
-    const canvas = el('canvas', { width: 400, height: 220, 'aria-hidden': 'true' });
+  function renderCards(){track.replaceChildren();cards.clear();for (const family of families) {
+    const canvas = el('img', { src:family.cover,alt:family.title,loading:'lazy' });
     const card = button('', () => selectGame(family.key), `game-cartridge game-card ${family.color}`);
     card.dataset.game = family.key;
     card.setAttribute('aria-label', `Last inn ${family.title}`);
@@ -54,11 +55,9 @@ export function createArcade({ root, ctx, selectGame }) {
     });
     cards.set(family.key, card);
     track.append(card);
-    void loadGame(family.key).then(factory => factory({ config: { mode: 'standard', food: 'competitive' }, seed: 'cover' })).then(engine => {
-      try { engine.draw(canvas.getContext('2d'), canvas.width, canvas.height); } finally { engine.dispose?.(); }
-    }).catch(() => { canvas.hidden = true; });
-  }
-  function move(direction) { track.scrollBy({ left: direction * (cards.values().next().value.offsetWidth + 16), behavior: motion() }); }
+  }}renderCards();
+  async function refreshGames(){try{await refreshCatalog();renderCards();if(catalogErrors.length)ctx.notify?.(catalogErrors.map(e=>e.folder+': '+e.message).join('\n'));}catch(e){ctx.notify?.(e.message);}}
+  function move(direction) { track.scrollBy({ left: direction * ((cards.values().next().value?.offsetWidth??200) + 16), behavior: motion() }); }
   // A vertical wheel over the rack browses horizontally; the rest of the page scrolls normally.
   track.addEventListener('wheel', event => {
     if (event.ctrlKey || Math.abs(event.deltaX) >= Math.abs(event.deltaY) || track.scrollWidth <= track.clientWidth) return;
@@ -89,8 +88,6 @@ export function createArcade({ root, ctx, selectGame }) {
     ghost.removeAttribute('data-game');
     ghost.removeAttribute('aria-label'); ghost.removeAttribute('aria-pressed'); ghost.setAttribute('aria-hidden', 'true');
     ghost.tabIndex = -1; ghost.disabled = true;
-    const source = card.querySelector('canvas'), copy = ghost.querySelector('canvas');
-    copy.getContext('2d').drawImage(source, 0, 0);
     Object.assign(ghost.style, { position: 'fixed', left: `${from.left}px`, top: `${from.top}px`, width: `${from.width}px`, height: `${from.height}px`, margin: '0', zIndex: '80', pointerEvents: 'none' });
     document.body.append(ghost); cabinet.classList.add('loading'); cabinet.setAttribute('aria-busy', 'true');
     const x = to.left + to.width / 2 - (from.left + from.width / 2), y = to.top - from.top - from.height * .65;
@@ -106,7 +103,7 @@ export function createArcade({ root, ctx, selectGame }) {
       el('span', { class: 'standby-pixels', 'aria-hidden': 'true' }, '▟ ▙'),
       el('p', { class: 'eyebrow' }, 'READY PLAYER ONE'), el('h2', {}, 'Sett inn et spill.'),
       el('p', {}, 'Velg en kassett fra spillhyllen over. Koble til micro:bit og gjør deg klar.'),
-      button('Velg et spill ↑', () => { cards.get('snake').focus(); track.scrollIntoView({ block: 'center', behavior: motion() }); }, 'button light')));
+      button('Velg et spill ↑', () => { cards.values().next().value?.focus(); track.scrollIntoView({ block: 'center', behavior: motion() }); }, 'button light')));
   }
   async function refreshChat() {
     const owner = ctx.localPlay ? 'local' : ctx.session?.player.id ?? 'guest';
@@ -130,7 +127,7 @@ export function createArcade({ root, ctx, selectGame }) {
     }
   }
   empty(); void refreshChat();
-  return { screen, account, board, select, empty, refreshChat, cancelFlight,
+  return { screen, account, board, select, empty, refreshChat, refreshGames, cancelFlight,
     focusChat: () => chatRoot.scrollIntoView({ behavior: motion(), block: 'start' }) };
 }
 
@@ -147,31 +144,30 @@ function createLeaderboard(ctx) {
     if (!game) return;
     mode.textContent = game.name;
     root.dataset.gameId = game.id;
-    if (ctx.localPlay) { content.replaceChildren(el('p', { class: 'notice' }, 'Lokal øving · topplister er frakoblet. Resultatene dine lagres ikke.')); return; }
     content.replaceChildren(el('p', { class: 'notice' }, 'Laster rekorder …'));
     try {
-      const data = (await ctx.api(`/games/${game.id}/leaderboard?page=${page}&page_size=10`)).data;
+      const data = await readLeaderboard(ctx,game,{scope:game.scope??(ctx.localPlay?'local':'online'),page,pageSize:10});
       if (version !== generation) return;
       if (!Array.isArray(data.items)) throw new Error('Ugyldig toppliste.');
       if (!data.items.length) content.replaceChildren(el('div', { class: 'leaderboard-empty' }, el('span', { 'aria-hidden': 'true' }, '---'), el('p', {}, 'Ingen rekorder ennå.'), el('p', { class: 'muted' }, 'Bli den første på listen.')));
       else content.replaceChildren(el('div', { class: 'table-wrap' }, el('table', {},
         el('thead', {}, el('tr', {}, ['#', 'Spiller', 'Resultat'].map(label => el('th', {}, label)))),
-        el('tbody', {}, data.items.map(row => el('tr', { class: row.player.id === ctx.session?.player.id ? 'highlight' : '' },
+        el('tbody', {}, data.items.map(row => el('tr', { class: row.isCurrentPlayer ? 'highlight' : '' },
           el('td', { class: 'leaderboard-rank' }, String(row.rank).padStart(2, '0')),
-          el('td', {}, link(row.player.username, `#/history/${game.id}?player=${encodeURIComponent(row.player.id)}`, 'text-button')),
-          el('td', {}, formatScore(game, row.record.value))))))));
+          el('td', {}, row.playerId?link(row.name, `#/history/${game.id}?player=${encodeURIComponent(row.playerId)}`, 'text-button'):row.name),
+          el('td', {}, row.formattedScore)))))));
       if (page > 0 || (page + 1) * 10 < data.total) {
         const prev = button('←', () => { page--; void load(); }, 'rack-arrow'), next = button('→', () => { page++; void load(); }, 'rack-arrow');
         prev.disabled = page === 0; next.disabled = (page + 1) * 10 >= data.total;
         prev.setAttribute('aria-label', 'Forrige rekordside'); next.setAttribute('aria-label', 'Neste rekordside');
         content.append(el('div', { class: 'pagination' }, prev, el('span', {}, `SIDE ${page + 1}`), next));
       }
-      content.append(button('Oppdater rekorder ↻', () => { void load(); }, 'text-button'));
+      content.append(el('p',{class:'muted'},data.scope==='local'?'Lokale rekorder · denne nettleseren':'Online-rekorder'),button('Oppdater rekorder ↻', () => { void load(); }, 'text-button'));
     } catch (error) {
       if (version !== generation) return;
       content.replaceChildren(errorBox(`Topplisten er utilgjengelig. ${error.message}`), button('Prøv igjen', () => { void load(); }, 'button secondary'));
     }
   }
   idle();
-  return { root, idle, show(game) { if (selected?.id === game.id) return; selected = game; page = 0; void load(); }, refresh() { if (selected) void load(); } };
+  return { root, idle, show(game) { if (selected?.id === game.id&&selected?.scope===game.scope) return; selected = game; page = 0; void load(); }, refresh() { if (selected) void load(); } };
 }

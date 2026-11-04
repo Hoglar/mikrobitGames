@@ -1,0 +1,47 @@
+{
+  "manifestVersion": 1,
+  "sdkVersion": 1,
+  "id": "6a990001-165b-4e1d-8a20-000000000010",
+  "slug": "balance",
+  "version": "1.0.0",
+  "title": "Balanseløypa",
+  "description": "Finn balansen og før kula trygt gjennom alle kontrollpunktene.",
+  "author": "Mikrobit Games",
+  "license": "Se prosjektets lisens",
+  "entry": "index.js",
+  "cover": "cover.png",
+  "controls": "Vipp for å styre",
+  "genre": "PRESISJON",
+  "accent": "blue",
+  "order": 4,
+  "defaultMode": "standard",
+  "viewport": {
+    "width": 960,
+    "height": 600,
+    "minWidth": 280,
+    "minHeight": 280,
+    "fit": "contain"
+  },
+  "modes": [
+    {
+      "id": "standard",
+      "title": "Standard",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000010",
+      "legacyScoreUnit": "milliseconds",
+      "config": {},
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 0,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      }
+    }
+  ]
+}

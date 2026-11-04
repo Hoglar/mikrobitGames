@@ -1,0 +1,47 @@
+{
+  "manifestVersion": 1,
+  "sdkVersion": 1,
+  "id": "6a990001-165b-4e1d-8a20-000000000009",
+  "slug": "reaction",
+  "version": "1.0.0",
+  "title": "Reaksjonsjakt",
+  "description": "Følg signalet. Fem runder. Hvor rask er du egentlig?",
+  "author": "Mikrobit Games",
+  "license": "Se prosjektets lisens",
+  "entry": "index.js",
+  "cover": "cover.png",
+  "controls": "Trykk A eller B når signalet vises",
+  "genre": "REAKSJON",
+  "accent": "pink",
+  "order": 3,
+  "defaultMode": "standard",
+  "viewport": {
+    "width": 960,
+    "height": 600,
+    "minWidth": 280,
+    "minHeight": 280,
+    "fit": "contain"
+  },
+  "modes": [
+    {
+      "id": "standard",
+      "title": "Standard",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000009",
+      "legacyScoreUnit": "milliseconds",
+      "config": {},
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 0,
+            "max": 100000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -4,6 +4,8 @@ JavaScript ES modules for **micro:bit V2** with this project's firmware (protoco
 
 [Quick start](#quick-start) · [Page API](#page-api) · [Inputs](#reading-inputs) · [Outputs](#sending-outputs) · [Lifecycle](#recovery-and-game-lifecycle) · [Errors](#handling-errors) · [Example](#example-and-verification)
 
+Ferdigbygd V2-firmware følger med i [`firmware/`](firmware/README.md). Samme HEX kan brukes på alle støttede V2-enheter uten egen bygging på maskinen som spiller eller hoster nettsiden.
+
 ## Quick start
 
 Serve the complete `microbit-input/` directory as JavaScript modules over HTTPS or localhost; use `<script type="module">` or import it from your application. Opening an HTML file directly is insufficient. The browser must expose `navigator.serial` in a secure context, and the board needs a USB data cable. Importing the module does not prompt or open a port. Node/npm are only development tools.

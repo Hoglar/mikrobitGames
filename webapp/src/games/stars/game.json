@@ -1,0 +1,48 @@
+{
+  "manifestVersion": 1,
+  "sdkVersion": 1,
+  "id": "6a990001-165b-4e1d-8a20-000000000008",
+  "slug": "stars",
+  "version": "1.0.0",
+  "title": "Stjernefangst",
+  "description": "Sikt mot stjernene. Fang lyspunktene og styr unna det røde.",
+  "author": "Mikrobit Games",
+  "license": "Se prosjektets lisens",
+  "entry": "index.js",
+  "cover": "cover.png",
+  "controls": "Vipp for å styre",
+  "genre": "ARKADE",
+  "accent": "yellow",
+  "order": 2,
+  "defaultMode": "standard",
+  "viewport": {
+    "width": 960,
+    "height": 600,
+    "minWidth": 280,
+    "minHeight": 280,
+    "fit": "contain"
+  },
+  "modes": [
+    {
+      "id": "standard",
+      "title": "Standard",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000008",
+      "legacyScoreUnit": "points",
+      "config": {},
+      "score": {
+        "fields": [
+          {
+            "key": "points",
+            "label": "Resultat",
+            "min": 0,
+            "max": 100000,
+            "direction": "higher_is_better",
+            "format": "integer",
+            "unit": "poeng"
+          }
+        ]
+      }
+    }
+  ]
+}

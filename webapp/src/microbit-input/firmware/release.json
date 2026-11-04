@@ -1,0 +1,72 @@
+{
+  "board": "microbit-v2",
+  "protocolVersion": 1,
+  "file": "microbit-v2.hex",
+  "sha256": "271db4417f9246a2462dc65ac20bd680eaf3e5ee04588ebd0897576662dfa9c9",
+  "bytes": 279749,
+  "builtAt": "2026-10-27T15:12:52.979642+00:00",
+  "projectCommit": "6d969a5a460eb9c894da8b0a52256523aead3ab6",
+  "dependencies": {
+    "bootstrap": {
+      "url": "https://github.com/lancaster-university/microbit-v2-samples.git",
+      "commit": "04b7089d82af24534f3dcd460a9c343850b60b5d"
+    },
+    "libraries": {
+      "codal-microbit-v2": {
+        "url": "https://github.com/lancaster-university/codal-microbit-v2.git",
+        "commit": "f5d1682fc3882022d3d5a7facb1fddb4b0ea7b52"
+      },
+      "codal-core": {
+        "url": "https://github.com/lancaster-university/codal-core.git",
+        "commit": "e6b061f2a6d8977811e3025da387d3007e5796f2"
+      },
+      "codal-nrf52": {
+        "url": "https://github.com/lancaster-university/codal-nrf52.git",
+        "commit": "1fbb7240290fe36a55c61378f5cdeb7640f3ec4a"
+      },
+      "codal-microbit-nrf5sdk": {
+        "url": "https://github.com/microbit-foundation/codal-microbit-nrf5sdk.git",
+        "commit": "4b8abc690f6c9fca6132e6db5ee13a795a263f88"
+      }
+    },
+    "submodules": {
+      "codal-nrf52/nrfx": "281cc2e178fd9a470d844b3afdea9eb322a0b0e8"
+    }
+  },
+  "configuration": {
+    "target": {
+      "name": "codal-microbit-v2",
+      "url": "https://github.com/lancaster-university/codal-microbit-v2.git",
+      "branch": "f5d1682fc3882022d3d5a7facb1fddb4b0ea7b52",
+      "type": "git"
+    },
+    "application": "../../src",
+    "config": {
+      "DEVICE_BLE": 0,
+      "MICROBIT_BLE_ENABLED": 0,
+      "MICROBIT_BLE_PAIRING_MODE": 0,
+      "CODAL_DEBUG": "CODAL_DEBUG_DISABLED",
+      "DMESG_SERIAL_DEBUG": 0,
+      "SCHEDULER_TICK_PERIOD_US": 1000
+    }
+  },
+  "compiler": "arm-none-eabi-g++ (15:14.2.rel1-1) 14.2.1 20241119\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+  "sourceSha256": {
+    "src/app.cpp": "c2e89e745cff5a1f8afee8af20ba31de35fe45978b59d56ec2b512ad9eec2e32",
+    "src/core/firmware.cpp": "17d9e3e6f3bb8d41ed52504500b6eda222eec7714a83aa5427f77dee6b199edc",
+    "src/core/outputs.cpp": "de723c3aa7a4d26b559cbf42ecdd685eeb756d2eb9c5a57ee41d26204367ec5a",
+    "src/core/protocol.cpp": "25d33ef89b0d94f7a712b926d1ac281fbda83f77c54ff9fb6329611d680e9158",
+    "src/main.cpp": "835f4b687114c0db5b94954c741bc0ec1174ca3c328072d877754d579cf0103b",
+    "src/platform/codal/board.cpp": "6df9134abc1e196c81f3854af4abb538c69e51abda6a8eed12beaafff6823716",
+    "src/app.h": "2a95c16d5b6ef1efb01c5b11bbd3c479bc0883aadf381020a2427e281878ab3a",
+    "src/core/firmware.h": "6d01cb7762ec90d2d8718b1e0d107dbc40aa539a7da8396b4cfbe655e0d8ea2f",
+    "src/core/outputs.h": "b292c377dbab42e777cfac4bd621fb710aae2337aad0e8a628b301004cacd260",
+    "src/core/protocol.h": "2561aad57d5529008131916f999dfbf77eb9ee83c30552503d7ec04da63affaf",
+    "src/core/ring-buffer.h": "90dcc4bf6fbf7e54408f17c90a8cbfb6e7945ce94f68af1162daece6cd1f35c6",
+    "src/platform/codal/board.h": "6c484f887eb6f520e02ff0437bf2df20d65c269ed9ec539ccb644536935f45cd",
+    "toolchain/application.cmake": "be84b1a18e3fb76b8b83164451e9c77c320e14820aa443165aea52d2a293ae27",
+    "toolchain/build.py": "46890b2d6726e878ca640ce2ba55ab23d1cb834f091266864b72321a2b745a21",
+    "toolchain/compiler-compat.cmake": "6d6fbbce8b9a0995a8f2c4e3d2949bccdcfeed6548e7bc1bb4ca77f916322cca",
+    "toolchain/lock.json": "66130c4b07c218e34edb69ab4d1ddd524ca866ddd52b964939a50bede53b2ff4"
+  }
+}

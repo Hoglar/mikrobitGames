@@ -1,49 +1,21 @@
-# Spillkode
+# Spillmapper
 
-Hvert spill har en egen mappe med `index.js` som inngang. Spillspesifikke filer,
-som grafikk og lyd, ligger sammen med spillmotoren.
+Alle spill oppdages fra undermapper med `game.json`. Et spill har `index.js`, `cover.png` eller `cover.webp`, README og egne ressurser. `index.js` eksporterer `defineGame(...)` fra `@microbit-games/sdk`. Plattformen kompilerer pakken og gir den en isolert spillramme med input/output, pause/fullskjerm og rekorder.
 
 ```text
-games/
-├── registry.js
-├── shared/
-│   ├── random.js
-│   └── canvas.js
-├── viking-dash/
-│   ├── index.js
-│   ├── scene.js
-│   ├── audio.js
-│   └── style.css
-├── tetris/
-│   ├── index.js
-│   ├── rules.js
-│   ├── model.js
-│   ├── scene.js
-│   ├── audio.js
-│   ├── device-output.js
-│   └── style.css
-├── micro-racer/
-│   ├── index.js
-│   ├── model.js
-│   ├── physics.js
-│   ├── tracks.js
-│   ├── ai.js
-│   └── scene.js
-├── snake/index.js
-├── stars/index.js
-├── reaction/index.js
-└── balance/index.js
+my-game/
+├── game.json
+├── cover.png
+├── index.js
+├── README.md
+├── assets/       # valgfritt
+└── lib/          # valgfritt
 ```
 
-`registry.js` kobler stabile katalog-ID-er og spillnøkler til riktig modul.
-`shared/` inneholder hjelpefunksjoner som flere spill bruker. Spillmotorer følger
-det felles grensesnittet beskrevet i [implementasjonsnotatet](../../spec/webapp-implementation.md).
-Spillets CSS ligger også i spillmappen og importeres fra appens stilark.
-Spesifikasjoner ligger under [spec/games](../../spec/games/README.md), og tester
-under `webapp/tests/`.
+[Spillguiden](../../spec/game-cartridges/developer-guide.md) viser oppretting, validering og deling. [SDK-referansen](../../spec/game-cartridges/sdk-api.md) beskriver den offentlige importflaten. Kjør `npm run game:new -- my-game` fra `webapp/`. Nytt spill skal ikke kreve endringer i register, router, globale stiler eller backendkode.
 
-[Micro Tetris-veiledningen](tetris/README.md) beskriver styring, modulansvar,
-hold-/musikkoutput, katalogregistrering og kjørbare tester.
+De syv medfølgende spillene beholder tidligere spillregler i `engine.js`, med en liten SDK-inngang i `index.js`. Felles eldre hjelpefunksjoner er kopiert inn i de spillmappene som trenger dem, slik at pakken ikke importerer andre spillmapper. `registry.js` er en generell kompatibilitetsfasade over den genererte katalogen, ikke en manuelt vedlikeholdt liste. `shared/` er eldre hjelpefiler og er ikke del av den nye portable importkontrakten.
 
-[Micro Racer-veiledningen](micro-racer/README.md) beskriver bilfysikk, baner,
-36 konkurransevarianter, lokale AI-biler og verifikasjon.
+Hver modus og regelutgave har egen toppliste. `game.json` bevarer de 47 eksisterende backend-ID-ene gjennom legacyfelter; nye spill får deterministiske ID-er automatisk. Lokalspill tilbyr frivillig navn og IndexedDB-rekorder. Hosted online-katalog synkroniseres ved vanlig publisering etter nødvendig backendmigrering.
+
+Ingen ZIP lastes opp gjennom nettstedet. Mottakeren pakker ut en delt spillmappe i sin egen `src/games/` og oppdaterer katalogen. Se [valideringen](../../results/cartridges-validation.md) for gjennomførte kontroller og gjenstående fysisk/driftsmessig akseptanse.

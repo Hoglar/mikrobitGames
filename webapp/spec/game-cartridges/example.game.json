@@ -1,0 +1,44 @@
+{
+  "manifestVersion": 1,
+  "sdkVersion": 1,
+  "id": "2b93cb97-8ac0-426f-a2ad-6bfa7299be40",
+  "slug": "tilt-target",
+  "version": "1.0.0",
+  "title": "Tilt Target",
+  "description": "Treff midten med tilt og trykk B for å avslutte.",
+  "author": "Eksempelutvikler",
+  "license": "MIT",
+  "entry": "index.js",
+  "cover": "cover.png",
+  "controls": "Vipp for å sikte. B avslutter med poeng for presisjon.",
+  "genre": "PRESISJON",
+  "accent": "yellow",
+  "viewport": {
+    "width": 960,
+    "height": 600,
+    "minWidth": 280,
+    "minHeight": 280,
+    "fit": "contain"
+  },
+  "modes": [
+    {
+      "id": "standard",
+      "title": "Standard",
+      "rulesVersion": 1,
+      "config": {},
+      "score": {
+        "fields": [
+          {
+            "key": "points",
+            "label": "Poeng",
+            "min": 0,
+            "max": 1000,
+            "direction": "higher_is_better",
+            "format": "integer",
+            "unit": "poeng"
+          }
+        ]
+      }
+    }
+  ]
+}

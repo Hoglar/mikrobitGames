@@ -1,5 +1,7 @@
 # Implementasjonsplan for webapplikasjonen
 
+**Lokalt implementert SDK-utvidelse 2026-11-04:** [Refaktorering til spillkassetter og SDK](game-cartridges/refactoring-plan.md) beskriver neste arkitekturarbeid: automatisk oppdagede spillmapper, generisk host, sandbox, lokale rekorder og synkronisert online-katalog. Den er implementert lokalt; status/baseline nedenfor er historisk.
+
 **Oppdatert 2026-10-29:** Frontend, felles spillramme, fem spillfamilier, Testlab,
 API 0.3.0-klient og statisk bygg er implementert. Se
 [implementasjonsnotatet](webapp-implementation.md) og

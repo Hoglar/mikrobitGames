@@ -45,7 +45,8 @@
         "ranking_direction": "varchar(16)",
         "min_value": "bigint",
         "max_value": "bigint",
-        "is_active": "boolean"
+        "is_active": "boolean",
+        "sdk_metadata": "jsonb"
       },
       "not_null_columns": ["id", "name", "score_unit", "ranking_direction", "min_value", "max_value", "is_active"],
       "generated_columns": {},
@@ -137,7 +138,7 @@
     },
     "ai_read.games": {
       "source": "app.games",
-      "columns": ["id", "name", "score_unit", "ranking_direction", "min_value", "max_value", "is_active"],
+      "columns": ["id", "name", "score_unit", "ranking_direction", "min_value", "max_value", "is_active", "sdk_metadata"],
       "row_filter": null
     },
     "ai_read.records": {

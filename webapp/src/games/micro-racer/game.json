@@ -1,0 +1,1515 @@
+{
+  "manifestVersion": 1,
+  "sdkVersion": 1,
+  "id": "6a990001-165b-4e1d-8a20-000000000012",
+  "slug": "racing",
+  "version": "1.0.0",
+  "title": "Micro Racer",
+  "description": "Finn bremsepunktet. Velg bane og bil, kjør mot klokka eller møt tre rivaler.",
+  "author": "Mikrobit Games",
+  "license": "Se prosjektets lisens",
+  "entry": "index.js",
+  "cover": "cover.png",
+  "controls": "Vipp: ratt · Hold B: gass · Hold A: brems · Logo: pause",
+  "genre": "RACING",
+  "accent": "yellow",
+  "order": 6,
+  "defaultMode": "harbor-ring-time-trial-1-race",
+  "viewport": {
+    "width": 960,
+    "height": 600,
+    "minWidth": 280,
+    "minHeight": 280,
+    "fit": "responsive"
+  },
+  "selectors": [
+    {
+      "key": "track",
+      "label": "Racingbane",
+      "options": [
+        {
+          "value": "harbor-ring",
+          "label": "Havneringen"
+        },
+        {
+          "value": "pine-valley",
+          "label": "Furudalen"
+        },
+        {
+          "value": "neon-docks",
+          "label": "Neonhavna"
+        }
+      ]
+    },
+    {
+      "key": "format",
+      "label": "Løpsformat",
+      "options": [
+        {
+          "value": "time-trial",
+          "label": "Tidskjøring"
+        },
+        {
+          "value": "race",
+          "label": "AI-løp"
+        }
+      ]
+    },
+    {
+      "key": "laps",
+      "label": "Antall runder",
+      "options": [
+        {
+          "value": "one",
+          "label": "1 runde"
+        },
+        {
+          "value": "three",
+          "label": "3 runder"
+        }
+      ]
+    },
+    {
+      "key": "car",
+      "label": "Bilklasse",
+      "options": [
+        {
+          "value": "drift",
+          "label": "Driftbil"
+        },
+        {
+          "value": "race",
+          "label": "Racerbil"
+        },
+        {
+          "value": "formula",
+          "label": "Formelbil"
+        }
+      ]
+    }
+  ],
+  "modes": [
+    {
+      "id": "harbor-ring-time-trial-1-drift",
+      "title": "Havneringen · Tidskjøring · 1 runde · Driftbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000012",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "harbor-ring",
+        "format": "time-trial",
+        "laps": "one",
+        "car": "drift"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 4 · Akselerasjon: 8 m/s² · Toppfart: 108 km/t"
+    },
+    {
+      "id": "harbor-ring-time-trial-1-race",
+      "title": "Havneringen · Tidskjøring · 1 runde · Racerbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000013",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "harbor-ring",
+        "format": "time-trial",
+        "laps": "one",
+        "car": "race"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 8 · Akselerasjon: 10 m/s² · Toppfart: 130 km/t"
+    },
+    {
+      "id": "harbor-ring-time-trial-1-formula",
+      "title": "Havneringen · Tidskjøring · 1 runde · Formelbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000014",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "harbor-ring",
+        "format": "time-trial",
+        "laps": "one",
+        "car": "formula"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 12 · Akselerasjon: 13 m/s² · Toppfart: 158 km/t"
+    },
+    {
+      "id": "harbor-ring-time-trial-3-drift",
+      "title": "Havneringen · Tidskjøring · 3 runder · Driftbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000015",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "harbor-ring",
+        "format": "time-trial",
+        "laps": "three",
+        "car": "drift"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 4 · Akselerasjon: 8 m/s² · Toppfart: 108 km/t"
+    },
+    {
+      "id": "harbor-ring-time-trial-3-race",
+      "title": "Havneringen · Tidskjøring · 3 runder · Racerbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000016",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "harbor-ring",
+        "format": "time-trial",
+        "laps": "three",
+        "car": "race"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 8 · Akselerasjon: 10 m/s² · Toppfart: 130 km/t"
+    },
+    {
+      "id": "harbor-ring-time-trial-3-formula",
+      "title": "Havneringen · Tidskjøring · 3 runder · Formelbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000017",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "harbor-ring",
+        "format": "time-trial",
+        "laps": "three",
+        "car": "formula"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 12 · Akselerasjon: 13 m/s² · Toppfart: 158 km/t"
+    },
+    {
+      "id": "harbor-ring-race-1-drift",
+      "title": "Havneringen · AI-løp · 1 runde · Driftbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000018",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "harbor-ring",
+        "format": "race",
+        "laps": "one",
+        "car": "drift"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 4 · Akselerasjon: 8 m/s² · Toppfart: 108 km/t"
+    },
+    {
+      "id": "harbor-ring-race-1-race",
+      "title": "Havneringen · AI-løp · 1 runde · Racerbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000019",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "harbor-ring",
+        "format": "race",
+        "laps": "one",
+        "car": "race"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 8 · Akselerasjon: 10 m/s² · Toppfart: 130 km/t"
+    },
+    {
+      "id": "harbor-ring-race-1-formula",
+      "title": "Havneringen · AI-løp · 1 runde · Formelbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000020",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "harbor-ring",
+        "format": "race",
+        "laps": "one",
+        "car": "formula"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 12 · Akselerasjon: 13 m/s² · Toppfart: 158 km/t"
+    },
+    {
+      "id": "harbor-ring-race-3-drift",
+      "title": "Havneringen · AI-løp · 3 runder · Driftbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000021",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "harbor-ring",
+        "format": "race",
+        "laps": "three",
+        "car": "drift"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 4 · Akselerasjon: 8 m/s² · Toppfart: 108 km/t"
+    },
+    {
+      "id": "harbor-ring-race-3-race",
+      "title": "Havneringen · AI-løp · 3 runder · Racerbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000022",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "harbor-ring",
+        "format": "race",
+        "laps": "three",
+        "car": "race"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 8 · Akselerasjon: 10 m/s² · Toppfart: 130 km/t"
+    },
+    {
+      "id": "harbor-ring-race-3-formula",
+      "title": "Havneringen · AI-løp · 3 runder · Formelbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000023",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "harbor-ring",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "harbor-ring",
+        "format": "race",
+        "laps": "three",
+        "car": "formula"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 12 · Akselerasjon: 13 m/s² · Toppfart: 158 km/t"
+    },
+    {
+      "id": "pine-valley-time-trial-1-drift",
+      "title": "Furudalen · Tidskjøring · 1 runde · Driftbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000024",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "pine-valley",
+        "format": "time-trial",
+        "laps": "one",
+        "car": "drift"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 4 · Akselerasjon: 8 m/s² · Toppfart: 108 km/t"
+    },
+    {
+      "id": "pine-valley-time-trial-1-race",
+      "title": "Furudalen · Tidskjøring · 1 runde · Racerbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000025",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "pine-valley",
+        "format": "time-trial",
+        "laps": "one",
+        "car": "race"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 8 · Akselerasjon: 10 m/s² · Toppfart: 130 km/t"
+    },
+    {
+      "id": "pine-valley-time-trial-1-formula",
+      "title": "Furudalen · Tidskjøring · 1 runde · Formelbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000026",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "pine-valley",
+        "format": "time-trial",
+        "laps": "one",
+        "car": "formula"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 12 · Akselerasjon: 13 m/s² · Toppfart: 158 km/t"
+    },
+    {
+      "id": "pine-valley-time-trial-3-drift",
+      "title": "Furudalen · Tidskjøring · 3 runder · Driftbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000027",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "pine-valley",
+        "format": "time-trial",
+        "laps": "three",
+        "car": "drift"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 4 · Akselerasjon: 8 m/s² · Toppfart: 108 km/t"
+    },
+    {
+      "id": "pine-valley-time-trial-3-race",
+      "title": "Furudalen · Tidskjøring · 3 runder · Racerbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000028",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "pine-valley",
+        "format": "time-trial",
+        "laps": "three",
+        "car": "race"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 8 · Akselerasjon: 10 m/s² · Toppfart: 130 km/t"
+    },
+    {
+      "id": "pine-valley-time-trial-3-formula",
+      "title": "Furudalen · Tidskjøring · 3 runder · Formelbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000029",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "pine-valley",
+        "format": "time-trial",
+        "laps": "three",
+        "car": "formula"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 12 · Akselerasjon: 13 m/s² · Toppfart: 158 km/t"
+    },
+    {
+      "id": "pine-valley-race-1-drift",
+      "title": "Furudalen · AI-løp · 1 runde · Driftbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000030",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "pine-valley",
+        "format": "race",
+        "laps": "one",
+        "car": "drift"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 4 · Akselerasjon: 8 m/s² · Toppfart: 108 km/t"
+    },
+    {
+      "id": "pine-valley-race-1-race",
+      "title": "Furudalen · AI-løp · 1 runde · Racerbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000031",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "pine-valley",
+        "format": "race",
+        "laps": "one",
+        "car": "race"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 8 · Akselerasjon: 10 m/s² · Toppfart: 130 km/t"
+    },
+    {
+      "id": "pine-valley-race-1-formula",
+      "title": "Furudalen · AI-løp · 1 runde · Formelbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000032",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "pine-valley",
+        "format": "race",
+        "laps": "one",
+        "car": "formula"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 12 · Akselerasjon: 13 m/s² · Toppfart: 158 km/t"
+    },
+    {
+      "id": "pine-valley-race-3-drift",
+      "title": "Furudalen · AI-løp · 3 runder · Driftbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000033",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "pine-valley",
+        "format": "race",
+        "laps": "three",
+        "car": "drift"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 4 · Akselerasjon: 8 m/s² · Toppfart: 108 km/t"
+    },
+    {
+      "id": "pine-valley-race-3-race",
+      "title": "Furudalen · AI-løp · 3 runder · Racerbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000034",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "pine-valley",
+        "format": "race",
+        "laps": "three",
+        "car": "race"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 8 · Akselerasjon: 10 m/s² · Toppfart: 130 km/t"
+    },
+    {
+      "id": "pine-valley-race-3-formula",
+      "title": "Furudalen · AI-løp · 3 runder · Formelbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000035",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "pine-valley",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "pine-valley",
+        "format": "race",
+        "laps": "three",
+        "car": "formula"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 12 · Akselerasjon: 13 m/s² · Toppfart: 158 km/t"
+    },
+    {
+      "id": "neon-docks-time-trial-1-drift",
+      "title": "Neonhavna · Tidskjøring · 1 runde · Driftbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000036",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "neon-docks",
+        "format": "time-trial",
+        "laps": "one",
+        "car": "drift"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 4 · Akselerasjon: 8 m/s² · Toppfart: 108 km/t"
+    },
+    {
+      "id": "neon-docks-time-trial-1-race",
+      "title": "Neonhavna · Tidskjøring · 1 runde · Racerbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000037",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "neon-docks",
+        "format": "time-trial",
+        "laps": "one",
+        "car": "race"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 8 · Akselerasjon: 10 m/s² · Toppfart: 130 km/t"
+    },
+    {
+      "id": "neon-docks-time-trial-1-formula",
+      "title": "Neonhavna · Tidskjøring · 1 runde · Formelbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000038",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 1,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "neon-docks",
+        "format": "time-trial",
+        "laps": "one",
+        "car": "formula"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 12 · Akselerasjon: 13 m/s² · Toppfart: 158 km/t"
+    },
+    {
+      "id": "neon-docks-time-trial-3-drift",
+      "title": "Neonhavna · Tidskjøring · 3 runder · Driftbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000039",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "neon-docks",
+        "format": "time-trial",
+        "laps": "three",
+        "car": "drift"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 4 · Akselerasjon: 8 m/s² · Toppfart: 108 km/t"
+    },
+    {
+      "id": "neon-docks-time-trial-3-race",
+      "title": "Neonhavna · Tidskjøring · 3 runder · Racerbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000040",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "neon-docks",
+        "format": "time-trial",
+        "laps": "three",
+        "car": "race"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 8 · Akselerasjon: 10 m/s² · Toppfart: 130 km/t"
+    },
+    {
+      "id": "neon-docks-time-trial-3-formula",
+      "title": "Neonhavna · Tidskjøring · 3 runder · Formelbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000041",
+      "legacyScoreUnit": "milliseconds",
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "time-trial",
+        "laps": 3,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "neon-docks",
+        "format": "time-trial",
+        "laps": "three",
+        "car": "formula"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "timeMs",
+            "label": "Resultat",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms"
+          }
+        ]
+      },
+      "summary": "Grep: 12 · Akselerasjon: 13 m/s² · Toppfart: 158 km/t"
+    },
+    {
+      "id": "neon-docks-race-1-drift",
+      "title": "Neonhavna · AI-løp · 1 runde · Driftbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000042",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "neon-docks",
+        "format": "race",
+        "laps": "one",
+        "car": "drift"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 4 · Akselerasjon: 8 m/s² · Toppfart: 108 km/t"
+    },
+    {
+      "id": "neon-docks-race-1-race",
+      "title": "Neonhavna · AI-løp · 1 runde · Racerbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000043",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "neon-docks",
+        "format": "race",
+        "laps": "one",
+        "car": "race"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 8 · Akselerasjon: 10 m/s² · Toppfart: 130 km/t"
+    },
+    {
+      "id": "neon-docks-race-1-formula",
+      "title": "Neonhavna · AI-løp · 1 runde · Formelbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000044",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 1,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "neon-docks",
+        "format": "race",
+        "laps": "one",
+        "car": "formula"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 12 · Akselerasjon: 13 m/s² · Toppfart: 158 km/t"
+    },
+    {
+      "id": "neon-docks-race-3-drift",
+      "title": "Neonhavna · AI-løp · 3 runder · Driftbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000045",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "drift",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "neon-docks",
+        "format": "race",
+        "laps": "three",
+        "car": "drift"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 4 · Akselerasjon: 8 m/s² · Toppfart: 108 km/t"
+    },
+    {
+      "id": "neon-docks-race-3-race",
+      "title": "Neonhavna · AI-løp · 3 runder · Racerbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000046",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "race",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "neon-docks",
+        "format": "race",
+        "laps": "three",
+        "car": "race"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 8 · Akselerasjon: 10 m/s² · Toppfart: 130 km/t"
+    },
+    {
+      "id": "neon-docks-race-3-formula",
+      "title": "Neonhavna · AI-løp · 3 runder · Formelbil",
+      "rulesVersion": 1,
+      "legacyGameId": "6a990001-165b-4e1d-8a20-000000000047",
+      "legacyScoreUnit": "racing_rank_v1",
+      "config": {
+        "track": "neon-docks",
+        "trackVersion": 1,
+        "format": "race",
+        "laps": 3,
+        "car": "formula",
+        "profile": "micro-racer-v1"
+      },
+      "selection": {
+        "track": "neon-docks",
+        "format": "race",
+        "laps": "three",
+        "car": "formula"
+      },
+      "score": {
+        "fields": [
+          {
+            "key": "position",
+            "label": "Plassering",
+            "min": 1,
+            "max": 4,
+            "direction": "lower_is_better",
+            "format": "integer",
+            "unit": ". plass"
+          },
+          {
+            "key": "timeMs",
+            "label": "Tid",
+            "min": 1,
+            "max": 600000,
+            "direction": "lower_is_better",
+            "format": "duration-ms",
+            "radix": 1000000
+          }
+        ],
+        "offset": 1
+      },
+      "summary": "Grep: 12 · Akselerasjon: 13 m/s² · Toppfart: 158 km/t"
+    }
+  ]
+}

@@ -47,8 +47,11 @@ Tokenets råverdi anbefales generert fra 32 kryptografisk tilfeldige byte. Bare 
 | `min_value` | `bigint` | Minste tillatte resultat, minst 0. |
 | `max_value` | `bigint` | Største tillatte resultat, minst `min_value` og høyst 9 007 199 254 740 991. |
 | `is_active` | `boolean` | Om nye resultater kan registreres. |
+| `sdk_metadata` | `jsonb`, nullable | Deklarativ SDK-v1-identitet, scorefelt/codec, regelfingeravtrykk og innholds-hash. Migrering 002; null for gamle katalogoppføringer under overgangen. |
 
 Resultatgrensen holder heltall innenfor eksakt representasjon i vanlige JavaScript-tall. Spillutvikleren velger enhet og konkrete grenser ved opprettelse. Desimaltid skaleres til heltall i millisekunder. Navn og aktiv-status kan endres. Enhet, retning og intervall kan ikke endres etter første forsøk; administrasjonsoperasjonen låser spillraden og kontrollerer både forsøk og rekordhistorikk før endring. Dette er en operasjonsregel, ikke en radlokal `CHECK` på `games`.
+
+SDK-identiteten `(packageId, modeId, rulesVersion)` har unik indeks når metadata finnes. Den betrodde katalogsynkroniseringen oppretter manglende oppføringer i én transaksjon og avviser endret regelkontrakt under eksisterende ID. Kosmetiske oppdateringer beholder rekorder; ny regelutgave får ny spill-ID. Se [SDK-katalogdesignet](../../../webapp/spec/game-cartridges/online-leaderboards.md). Resultatkolonnen forblir heltall; serveren dekoder SDK-resultater og avviser kodingshull før nytt forsøk lagres.
 
 ## `records`
 

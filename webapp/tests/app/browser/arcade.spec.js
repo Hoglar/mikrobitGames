@@ -38,8 +38,8 @@ test('cartridges switch inside the same cabinet and preserve the chat draft',asy
   for(const key of ['viking','tetris']){
     await page.locator(`.game-cartridge[data-game="${key}"]`).click();
     await expect(page.locator(`.game-cartridge[data-game="${key}"]`)).toHaveAttribute('aria-pressed','true');
-    await expect(page.locator('.cabinet-screen .game-frame canvas')).toBeVisible();
-    await expect(page.locator('.cabinet-screen .game-frame canvas')).toHaveAttribute('aria-label',`${families.find(family=>family.key===key).title} spillflate`);
+    await expect(page.locator('.cabinet-screen .cartridge-stage')).toBeVisible();
+    await expect(page.locator('.cabinet-screen .cartridge-stage')).toHaveAttribute('aria-label',`${families.find(family=>family.key===key).title} spillflate`);
     await expect(page.locator('.loading-cartridge')).toHaveCount(0);
     await expect(page.locator('.arcade-shell')).toHaveAttribute('data-persistent-check','same-shell');
     await expect(page.locator('.arcade-chat textarea')).toHaveValue('Hvem har rekorden?');
@@ -132,10 +132,10 @@ test('logout pauses the mounted round and the same account can restore it withou
   const calls=await setup(page);await page.addInitScript(installSerialMock,{info:fixture.deviceInfo.v2,snapshot:fixture.snapshots.v2});await page.goto('/#/play/snake');
   await page.locator('#connect').click();await page.getByRole('button',{name:'Start spill →'}).click();
   await expect(page.locator('.game-toolbar')).toContainText('NEDTELLING');
-  await page.locator('.game-frame canvas').evaluate(node=>{node.dataset.persistentCheck='same-round';});
+  await page.locator('.cartridge-stage').evaluate(node=>{node.dataset.persistentCheck='same-round';});
   await page.getByRole('navigation').getByRole('button',{name:'Logg ut',exact:true}).click();
   await expect(page.locator('.game-toolbar')).toContainText('PAUSE');
-  await expect(page.locator('.game-frame canvas')).toHaveAttribute('data-persistent-check','same-round');
+  await expect(page.locator('.cartridge-stage')).toHaveAttribute('data-persistent-check','same-round');
   await expect(page.locator('.arcade-chat textarea')).toBeDisabled();
   await page.getByRole('textbox',{name:'Brukernavn for å fortsette'}).fill(player.username);
   await page.getByRole('textbox',{name:'Passord for å fortsette'}).fill('langtnokpassord123');
@@ -144,7 +144,7 @@ test('logout pauses the mounted round and the same account can restore it withou
   await expect(page.locator('.game-toolbar')).toContainText('PAUSE');
   await page.getByRole('button',{name:'→ Fortsett',exact:true}).click();
   await expect(page.locator('.game-toolbar')).toContainText('NEDTELLING');
-  await expect(page.locator('.game-frame canvas')).toHaveAttribute('data-persistent-check','same-round');
+  await expect(page.locator('.cartridge-stage')).toHaveAttribute('data-persistent-check','same-round');
   expect(calls.filter(path=>path.endsWith('/results'))).toEqual([]);
 });
 
@@ -156,22 +156,22 @@ test('every game supports native fullscreen without replacing its canvas or clip
   for(const {key} of families){
     await page.locator(`.cartridge-track [data-game="${key}"]`).click();
     const frame=page.locator('.game-frame'),toggle=frame.getByRole('button',{name:'Fullskjerm ⛶',exact:true});
-    await expect(frame.locator('canvas')).toHaveAttribute('aria-label',`${families.find(family=>family.key===key).title} spillflate`);
+    await expect(frame.locator('.cartridge-stage')).toHaveAttribute('aria-label',`${families.find(family=>family.key===key).title} spillflate`);
     await expect(page.locator('.loading-cartridge')).toHaveCount(0);
-    await frame.locator('canvas').evaluate(canvas=>{canvas.dataset.persistentCheck='same-canvas';});
+    await frame.locator('.cartridge-stage').evaluate(canvas=>{canvas.dataset.persistentCheck='same-canvas';});
     await expect(page.locator('.cabinet-screen').getByRole('link',{name:'← Spillvelgeren',exact:true})).toHaveCount(0);
     await toggle.click();
     await expect(frame.getByRole('button',{name:'Avslutt fullskjerm ⛶',exact:true})).toHaveAttribute('aria-pressed','true');
     expect(await frame.evaluate(node=>document.fullscreenElement===node)).toBe(true);
     const fits=await frame.evaluate(node=>{
-      const bounds=node.getBoundingClientRect(),canvas=node.querySelector('canvas').getBoundingClientRect(),start=[...node.querySelectorAll('button')].find(button=>button.textContent==='Start spill →').getBoundingClientRect();
+      const bounds=node.getBoundingClientRect(),canvas=node.querySelector('.cartridge-stage').getBoundingClientRect(),start=[...node.querySelectorAll('button')].find(button=>button.textContent==='Start spill →').getBoundingClientRect();
       return {full:Math.abs(bounds.width-innerWidth)<2&&Math.abs(bounds.height-innerHeight)<2,canvas:canvas.width>0&&canvas.height>0,start:start.top>=0&&start.bottom<=innerHeight};
     });
     expect(fits).toEqual({full:true,canvas:true,start:true});
     if(key==='snake')await page.evaluate(()=>document.exitFullscreen());
     else await frame.getByRole('button',{name:'Avslutt fullskjerm ⛶',exact:true}).click();
     await expect(toggle).toHaveAttribute('aria-pressed','false');
-    await expect(frame.locator('canvas')).toHaveAttribute('data-persistent-check','same-canvas');
+    await expect(frame.locator('.cartridge-stage')).toHaveAttribute('data-persistent-check','same-canvas');
   }
 });
 
@@ -189,7 +189,7 @@ test('fullscreen preserves an active round and exits cleanly when another game i
   await page.getByRole('button',{name:'Fullskjerm ⛶',exact:true}).click();
   page.once('dialog',dialog=>dialog.accept());
   await page.evaluate(()=>{location.hash='#/play/stars';});
-  await expect(page.locator('.game-frame canvas')).toHaveAttribute('aria-label','Stjernefangst spillflate');
+  await expect(page.locator('.cartridge-stage')).toHaveAttribute('aria-label','Stjernefangst spillflate');
   expect(await page.evaluate(()=>document.fullscreenElement)).toBe(null);
 });
 
@@ -206,7 +206,7 @@ test('fullscreen fits mobile Tetris and Viking menus and keeps the exit control 
   await page.setViewportSize({width:390,height:844});await setup(page);await page.goto('/');
   for(const key of ['tetris','viking']){
     await page.locator(`.cartridge-track [data-game="${key}"]`).click();
-    await expect(page.locator('.game-frame canvas')).toHaveAttribute('aria-label',`${families.find(family=>family.key===key).title} spillflate`);
+    await expect(page.locator('.cartridge-stage')).toHaveAttribute('aria-label',`${families.find(family=>family.key===key).title} spillflate`);
     await expect(page.locator('.loading-cartridge')).toHaveCount(0);
     await page.getByRole('button',{name:'Fullskjerm ⛶',exact:true}).click();
     const exit=page.getByRole('button',{name:'Avslutt fullskjerm ⛶',exact:true});

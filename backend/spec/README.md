@@ -1,5 +1,7 @@
 # Start her: grunnlaget for backend-implementeringen
 
+**Lokalt implementert SDK-utvidelse 2026-11-04:** Webappens [spillkassett-/SDK-plan](../../webapp/spec/game-cartridges/README.md) krever [automatisk katalogsynkronisering og deklarativ scoremetadata](../../webapp/spec/game-cartridges/online-leaderboards.md). Koden og et valgfritt metadatafelt er levert lokalt; migrering og utrulling er ikke utført. Eksisterende spill-ID-er, rekorder og resultatbody skal bevares.
+
 **Status 2026-10-28:** Database, API og AI er implementert. Brukeren har bestilt integrasjon av samtaleassistenten med opptil 20 utvekslinger og navngitte dataverktøy. API 0.3.0 er backendens arbeidsgrunnlag, fortsatt et forslag til frontendgruppen. Se [ADR-009](../../spec/decisions/adr-009-conversational-ai.md). Ny full måling kjøres av brukeren.
 
 Mappen `spec/` samler både spesifikasjon, teknisk design og planer. Dokumentenes rolle, ikke mappenavnet, avgjør hvordan de skal brukes. Denne siden er en leseveiledning; den definerer ingen nye funksjonskrav.
