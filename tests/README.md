@@ -16,7 +16,9 @@ Svarene samles med deltester og benchmarks i én rapport med FoM-graf.
 Skriv `senere` under brukervurderingen for å utsette den; registrerte svar og
 automatiske resultater beholdes.
 
-Åpne `results/fom/app/index.html` for historikken, eller
+Åpne `results/fom/app/index.html` for utviklingen i FoM, enhetstester og
+benchmarks, med valgbare benchmarkgrafer. I GitHub starter dere med
+[den korte utviklingsoversikten](../results/fom/app/overview.md). Åpne
 `results/fom/app/runs/<kjørings-ID>/report.html` for én samlet rapport med graf.
 I GitHub kan dere lese [historikken og Markdown-rapportene](../results/fom/app/history.md).
 FoM krever både komplette automatiske målinger og en faktisk UX-vurdering.

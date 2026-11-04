@@ -1,0 +1,2 @@
+# Optional: only needed to regenerate the portable history plots.
+matplotlib==3.10.1

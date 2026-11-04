@@ -1,5 +1,17 @@
 # Samlet appevaluering gjennom iterasjoner
 
+**Start her:** [Resultatutvikling – FoM, enhetstester og benchmarks](overview.md).
+Åpne `results/fom/app/index.html` i nettleseren for samme oversikt med en
+grafvelger for benchmarkene. Den virker direkte fra disk.
+
+Oversikten skiller mellom første komplette FoM-måling (baseline), fullførte
+delmålinger i avbrutte kjøringer og uverifiserte resultater. Enhetstester vises
+som bestått / antall, mens benchmarks viser faktisk p95-tid i millisekunder.
+En større testpakke er ikke i seg selv bevis for bedre kode eller høyere dekning.
+Det eldre tekniske baseline-sammendraget er med som egen referanse og en
+kolonne i benchmarktabellen. Det mangler UX og ble målt på en annen maskin;
+det settes ikke inn som en ny kjøring eller et samlet FoM-punkt.
+
 [Første lokale verifisering og målesammendrag, 30. oktober 2026](validation-2026-10-30.md).
 
 Kjør fra prosjektroten i en terminal:
@@ -85,6 +97,13 @@ De vises som «IKKE FULLFØRT» og endrer ikke resultatet.
 Kjør `python3 tests/evaluate.py report` for å oppdatere lesbare rapporter fra
 bevarte resultater. Det kjører ingen tester og endrer ikke rårapporter, logger,
 benchmarks, UX-svar eller skårformel.
+
+Utviklingsgrafene lages med Matplotlib, som allerede er tilgjengelig på Parrot.
+På andre maskiner kan dette valgfrie rapporttillegget installeres med
+`python3 -m pip install -r tests/evaluation/requirements-report.txt` i et virtuelt
+Python-miljø. Uten Matplotlib virker tabellene og de opprinnelige FoM-grafene;
+rapporten lenker da ikke til gamle utviklingsgrafer. Ferdige SVG-filer kan
+åpnes og deles uten Python eller Matplotlib.
 
 ## Avbrudd og opptatte testporter
 
@@ -285,6 +304,9 @@ brukersvar lagres som `user-input-*.json`. Ingen av dem endrer den opprinnelige
 
 ## Graf og resultater i GitHub
 
+Den enkleste inngangen er [utviklingsoversikten](overview.md). Den inkluderer
+FoM-baseline, testantall og benchmarktabeller med lenker til egne grafer.
+
 ![FoM-score gjennom registrerte iterasjoner](history.svg)
 
 [Les historikk og rapporter direkte i GitHub](history.md) eller [åpne grafen som SVG](history.svg). Den viser bare reelle, komplette målinger;
@@ -296,9 +318,11 @@ innsjekking sammen med kildekoden:
 
 | Fil eller mappe | Innhold |
 | --- | --- |
+| `overview.md` | Kort hovedrapport med FoM, enhetstester og benchmarkutvikling, lesbar i GitHub. |
+| `fom-development.svg`, `unit-development.svg`, `benchmark-*.svg` | Delbare utviklingsgrafer, generert fra bevarte resultater. |
 | `history.svg` | Grafen som også vises direkte i denne README-en på GitHub. |
 | `history.md` | Historikk med delskårer og lenker til rapporter som kan leses direkte i GitHub. |
-| `index.html` | Samlet historikk med lenker til kjøringsrapportene. |
+| `index.html` | Hovedrapport med grafvelger, utviklingstabeller og lenker til kjøringsrapportene. |
 | `runs/<kjørings-ID>/report.md` | Rapport med separate testkategorier, skårberegning, graf og feillogger som vises direkte i GitHub. |
 | `runs/<kjørings-ID>/report.html` | Samlet rapport med tester, feil, benchmarks, UX og FoM-graf. |
 | `runs/<kjørings-ID>/report.json` | Opprinnelige automatiske testresultater, miljø og målegrunnlag. |

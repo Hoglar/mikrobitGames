@@ -134,7 +134,7 @@ def score_lines(report):
 
 def render_markdown(root, runs):
     history = ['# Appens FoM-historikk', '', '![FoM-score gjennom iterasjoner](history.svg)', '',
-               '[HTML-oversikt](index.html) · [Kjøreguide og skårformel](README.md)', '',
+               '[Kort utviklingsoversikt](overview.md) · [HTML-oversikt](index.html) · [Kjøreguide og skårformel](README.md)', '',
                'F = funksjonstester, P = benchmarkytelse, U = brukeropplevelse (alle 0–100). '
                'Vektene står i hver rapport. Bare sammenlignbare målinger kobles i grafen.', '',
                '| # | Iterasjon / rapport | Tid (UTC) | F | P | U | FoM | Status |',

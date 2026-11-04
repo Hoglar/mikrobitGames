@@ -68,7 +68,7 @@ def chart(runs, report_prefix='runs/'):
     return ''.join(out)
 
 
-STYLE = '''body{font:16px system-ui,sans-serif;color:#14263b;background:#f4f7fb;max-width:1160px;margin:40px auto;padding:0 24px}h1{font-size:32px}h2{font-size:23px}a{color:#1459a6}section,.card{background:white;border:1px solid #d9e2ed;border-radius:12px;padding:24px;margin:20px 0}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:12px 8px;border-bottom:1px solid #d9e2ed;text-align:left;vertical-align:top}pre{white-space:pre-wrap;overflow-wrap:anywhere}svg{width:100%;height:auto}.scroll{overflow:auto}.score{font-size:28px;font-weight:700}.muted{color:#526174}code{overflow-wrap:anywhere}input{font:inherit;padding:9px;width:min(100%,440px)}.FAIL,.BLOCKED{color:#a12222}.PASS{color:#086143}'''
+STYLE = '''*{box-sizing:border-box}.trend-plot{width:100%;height:auto}figure{margin:20px 0}.trend-nav{display:flex;gap:16px;flex-wrap:wrap}.lead{font-size:21px;line-height:1.6}select{max-width:100%;padding:10px;font:inherit}summary{cursor:pointer;font-weight:600}body{font:16px system-ui,sans-serif;color:#14263b;background:#f4f7fb;max-width:1160px;margin:40px auto;padding:0 24px}h1{font-size:32px}h2{font-size:23px}a{color:#1459a6}section,.card{background:white;border:1px solid #d9e2ed;border-radius:12px;padding:24px;margin:20px 0}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:12px 8px;border-bottom:1px solid #d9e2ed;text-align:left;vertical-align:top}pre{white-space:pre-wrap;overflow-wrap:anywhere}svg{width:100%;height:auto}.scroll{overflow:auto}.score{font-size:28px;font-weight:700}.muted{color:#526174}code{overflow-wrap:anywhere}input{font:inherit;padding:9px;width:min(100%,440px)}.FAIL,.BLOCKED{color:#a12222}.PASS{color:#086143}'''
 
 
 def page(title, body):
@@ -339,10 +339,9 @@ def render(root):
         handoff += ['', '## Avgrensning', '', *['- '+x for x in report['limitations']], '']
         (folder / 'next-iteration.md').write_text('\n'.join(handoff), encoding='utf-8')
         save_json(folder / 'summary.json', s)
-    body = f'''<h1>Appens utvikling gjennom iterasjoner</h1><p>FoM kombinerer F – funksjonelle tester, P – ytelsesbenchmarks og U – brukeropplevelse. Hver kjøring bruker sine lagrede vekter, vist som F/P/U nedenfor.</p>
-<p>F er gjennomsnitt av funksjonsgruppene: enhetstester, integrasjon, nettleserforløp og kapasitetskorrekthet. P er gjennomsnitt av ytelsesgruppene. U er siste fullførte UX-skår × 10. Alle har skala 0–100. Klikk på rapporten for inndata, vekter og bidrag til FoM. Ved blokkering kan F og P være delgjennomsnitt; samlet FoM holdes tilbake.</p>
-<section>{svg}<p class="muted">Bare samme testgrunnlag, profil og miljø kobles sammen. Manglende målinger gir hull. Åpne punkter er tekniske resultater før UX-vurdering. BLOCKED er en statusmarkør uten skår; feil og blokkeringer beholdes i historikken.</p><a href="history.svg">Åpne graf som SVG</a> · <a href="history.md">GitHub / Markdown</a></section>
-<section><h2>Historikk og kommentarer</h2><label>Filtrer navn eller tilbakemelding <input id="filter" type="search"></label><div class="scroll"><table><thead><tr><th>#</th><th>Iterasjon</th><th>Profil / serie / vekter</th><th>F / 100</th><th>P / 100</th><th>U / 100</th><th>Teknisk</th><th>FoM</th><th>Status, feil og kommentar</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div></section>
+    from trends import overview
+    body = overview(root, runs) + f'''<section><details><summary>Teknisk historikk og alle kommentarer</summary>
+<label>Filtrer navn eller tilbakemelding <input id="filter" type="search"></label><div class="scroll"><table><thead><tr><th>#</th><th>Iterasjon</th><th>Profil / serie / vekter</th><th>F / 100</th><th>P / 100</th><th>U / 100</th><th>Teknisk</th><th>FoM</th><th>Status, feil og kommentar</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div></details></section>
 <script>document.getElementById('filter').addEventListener('input', e => {{for (const row of document.querySelectorAll('tr[data-search]')) row.hidden = !row.dataset.search.includes(e.target.value.toLowerCase());}});</script>'''
     (root / 'index.html').write_text(page('App-FoM', body), encoding='utf-8')
     from markdown_reporting import render_markdown

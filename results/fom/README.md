@@ -1,6 +1,9 @@
 # Testresultater og Figure of Merit
 
-**Ny felles appevaluering:** [App-FoM, benchmarks, graf og UX-tilbakemelding](app/README.md).
+**Start med [utviklingsoversikten: FoM, enhetstester og benchmarks](app/overview.md).**
+Åpne `results/fom/app/index.html` i nettleseren for rapporten med valgbare grafer.
+
+**Felles appevaluering:** [Kjøreguide, skårformel og UX-tilbakemelding](app/README.md).
 Kjør `python3 tests/evaluate.py run --label "01 – baseline"` fra prosjektroten.
 Appmålingen har egen formel og historikk; backendarkivet nedenfor er bevart.
 
