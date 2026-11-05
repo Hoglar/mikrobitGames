@@ -22,34 +22,37 @@ Musikkens sendefrister bruker monoton hosttid når playing er sann, ikke opptjen
 
 Bruk `input(state)` for X-tilt og ferske holdte A/B/logo-nivåer. Bruk `press({input,count})` for A/B/logo-handlinger. Den offentlige API-en gir ikke rå `u`/`n` eller fysisk trykktid; spillkontrolleren påstår ikke at det kan rekonstruere dem.
 
-Tilt har følgende faste startprofil i begge moduser/nivåer:
+Tilt har følgende faste profil i begge moduser/nivåer (justert 2026-11-05):
 
 | Parameter | Verdi |
 | --- | --- |
-| Engasjer venstre/høyre | `tilt.x <= -0.22` / `>= +0.22` |
-| Slipp venstre/høyre | X kommer tilbake til `>= -0.12` / `<= +0.12` |
-| Retningsbytte | Krysses motsatt engasjeringsgrense, bytt straks og nullstill repetisjonsklokken. |
-| Første flytting | Én rute ved engasjering/ny spawn med beholdt tiltretning. |
-| DAS | 170 ms før første gjentatte flytting. |
-| Videre repetisjon | Én rute per 70 ms. Også blokkerte forsøk forbruker intervallet. |
-| Armering etter start/fortsett | 100 ms fersk nøytral tilt (`abs(x) <= 0.12`) og slupne A/B/logo. |
+| Engasjer venstre/høyre | `tilt.x <= -0.32` / `>= +0.32` |
+| Slipp venstre/høyre | X kommer tilbake til `>= -0.20` / `<= +0.20`; gjentakelser stopper straks. |
+| Retningsbytte | Stopp gammel retning straks; krev 60 ms sammenhengende tilt over motsatt engasjeringsgrense. |
+| Første flytting | Én rute etter 60 ms sammenhengende tilt over engasjeringsgrensen. Korte rykk forkastes. |
+| DAS | 300 ms fra første flytting til første gjentakelse. |
+| Videre repetisjon | Én rute per minst 120 ms. Også blokkerte forsøk forbruker intervallet. |
+| Armering etter start/fortsett | 100 ms fersk nøytral tilt (`abs(x) <= 0.18`) og slupne A/B/logo. |
+| A/drop | Ingen sideflytting i drop-steget eller mens A holdes. Minst 120 ms etter drop før ny tilt kan begynne å stabiliseres. |
 
-Inne i hystereseområdet beholdes retningen bare så lenge dens slippgrense ikke er krysset. En jump fra venstre til svakt positiv tilt skal stoppe venstreflytting, ikke fortsette den. Ved veggen akkumuleres ingen kø av flyttinger. Etter vanlig spawn/hold resettes DAS; kontrollene behøver ikke ny nøytralstilling midt i aktiv spilling.
+Inne i hystereseområdet beholdes bare en allerede etablert retning, så lenge dens slippgrense ikke er krysset. En kort terskelkryssing etterfulgt av svakere tilt skal ikke bli en forsinket flytting. Et hopp fra venstre til svakt positiv tilt stopper venstreflytting straks. Ved veggen akkumuleres ingen kø av flyttinger. Etter vanlig spawn/gyldig hold nullstilles retning, stabilisering og DAS; ny brikke krever ny stabilisering, men ingen ny nøytralstilling. Gyldig hold undertrykker sideflytting i selve hold-steget.
 
-Motta høyst ett ventende flagg hver for hold, rotasjon og drop per simuleringssteg. Flere meldinger/count>1 koalesceres for samme handling; de skal aldri bli en kø som dropper eller holder fremtidige brikker. Antall manglende fysiske trykktidspunkter kan ikke rekonstrueres. Plattformen sender bare press til motoren under playing; motoren forkaster i tillegg handlinger i clearing, inaktiv fase eller før armering.
+A-nivået fryser sideflytting selv om state-meldingen kommer et steg før press-hendelsen gjennom sandboxen. Drop forkaster ventende sideflytting og starter en kort sperre for neste brikke. Etter slipp og utløpt sperre begynner stabilisering på nytt; ingen gamle repetisjoner tas igjen. Profilen tilhører Tetris-kontrolleren og endrer ikke det delte inputbiblioteket eller andre spill.
+
+Motta høyst ett ventende flagg hver for hold, rotasjon og drop per simuleringssteg. Logo-press behandles i neste simuleringssteg uten ekstra tidskrav for berøring eller slipp. Telleren bevarer også raske berøringer som allerede er avsluttet når snapshot mottas. Flere meldinger/count>1 koalesceres for samme handling; de skal aldri bli en kø som dropper eller holder fremtidige brikker. Antall manglende fysiske trykktidspunkter kan ikke rekonstrueres. Plattformen sender bare press til motoren under playing; motoren forkaster i tillegg handlinger i clearing, inaktiv fase eller før armering.
 
 Rekkefølgen i et falling-steg er:
 
 1. Bruk nyeste gyldige kontrolltilstand og avgjør om kontrollene er armert.
 2. Eventuell hold; dersom den er ulovlig, ignoreres den uten andre endringer. Spawn-kollisjon avslutter straks.
-3. Eventuell B-rotasjon, så eventuell tidsstyrt horisontal flytting.
+3. Eventuell B-rotasjon, så eventuell tidsstyrt horisontal flytting hvis steget ikke inneholder drop, gyldig hold, holdt A eller drop-sperre.
 4. Eventuell A-hard-drop og umiddelbar låsing. Dette forbruker hele handlingssettet; ingenting går til neste brikke.
 5. Ellers: gravitasjon, grounded/lock-reset-regler og eventuell naturlig låsing.
 6. Ved låsing: T-spin før fjerning, rader/komprimering, combo/B2B/perfect clear, atomisk score/nivå, lock-out, så clearing/spawn. Ett immutable `lockResult` beskriver poeng/bonuser/effektklasse.
 
 Dette overstyrer ikke adapterens state→A→B→logo-varsling; motorens lille handlingssett gjør samtidighet entydig. B+A kan dermed rotere før drop selv om adapteren varslet A først. Logo+B+A holder først og roterer/dropper den innkommende brikken; alle operasjonene tilhører samme falling-steg. Feilaktig ny hold kan ikke låse opp hold-grensen.
 
-`releaseControls()` tømmer handlingssett, DAS og armering. Bare faktiske ferske inputverdier kan etablere slipp/nøytralitet, aldri adapterens utilgjengelige nullverdier. Under nedtelling kan kontrolleren observere fersk nøytralitet uten å bufre handlinger; ved `setPlaying(true)` brukes den hvis siste gyldige input er høyst 100 ms gammel. Ellers venter armeringen på nye gyldige samples. Påvirkning fra menytrykk og restart-A forbrukes før gameplay.
+`releaseControls()` tømmer handlingssett, stabilisering, DAS, drop-sperre og armering. Bare faktiske ferske inputverdier kan etablere slipp/nøytralitet, aldri adapterens utilgjengelige nullverdier. Under nedtelling kan kontrolleren observere fersk nøytralitet uten å bufre handlinger; ved `setPlaying(true)` brukes den hvis siste gyldige input er høyst 100 ms gammel. Ellers venter armeringen på nye gyldige samples. Påvirkning fra menytrykk og restart-A forbrukes før gameplay.
 
 ## Output og musikkplanlegging
 

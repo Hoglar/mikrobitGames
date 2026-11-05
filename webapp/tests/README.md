@@ -28,6 +28,10 @@ spillmotorer uten enhet. Se `results/webapp-validation.md` for kjørte resultate
 
 Se [valideringen av canvas-resize](../results/tetris-canvas-resize-validation-2026-11-05.md) for reproduksjon og resultat før/etter rettingen.
 
+Tetris-testene dekker også tiltestabilisering, roligere repetisjon og beskyttelse
+mot sideflytting ved drop. Browser-testen kontrollerer faktisk landingskolonne
+gjennom sandbox og Web Serial-adapter. Se [tiltvalideringen](../results/tetris-tilt-validation-2026-11-05.md).
+
 ## Spillkassetter og lokale rekorder
 
 `npm run test:cartridges` bygger og kjører en separat suite mot utviklingsserveren. Den oppretter en midlertidig, selvstendig spillmappe, verifiserer oppdaging/SDK/sandbox og tester ekte IndexedDB, samtidige faner, navnelagring, eksport/import og uendret online-ID. Spillet fjernes etter testen. `npm run test:app` dekker de migrerte medfølgende spillene og appen fra `dist/`; den separate importtesten inngår ikke i samme config fordi den må oppdage en mappe etter serverstart.

@@ -11,10 +11,80 @@ const baseInput={inputAvailable:true,tilt:{x:0,y:0},buttons:{aPressed:false,bPre
 function controller(options={}) {
   let time=0;const game=createTetris({...options,clock:{now:()=>time}});
   const input=(set={})=>game.input({...baseInput,...set});
-  const tick=(seconds)=>{time+=seconds*1000;input();game.tick(seconds);};
+  const tick=(seconds,set={})=>{time+=seconds*1000;input(set);game.tick(seconds);};
   input();time=100;input();game.setPlaying(true);
   return {game,input,tick,setTime:n=>{time=n;}};
 }
+function steer(c,x,ms,buttons={aPressed:false,bPressed:false}){
+  for(let elapsed=0;elapsed<ms-1e-7;elapsed+=1000/120)c.tick(1/120,{tilt:{x,y:0},buttons});
+}
+
+test('TT-03 precision tilt ignores small angles and short button-like jolts',()=>{
+  const c=controller();
+  steer(c,.27,200);steer(c,-.27,200);assert.equal(c.game.state.active.x,3);
+  steer(c,.8,25);steer(c,0,25);steer(c,-.8,25);steer(c,0,25);
+  assert.equal(c.game.state.active.x,3);
+  steer(c,.8,25);steer(c,.25,100);assert.equal(c.game.state.active.x,3,'a brief jolt does not latch a pending direction');
+  steer(c,.8,50);assert.equal(c.game.state.active.x,3);
+  steer(c,.8,35);assert.equal(c.game.state.active.x,4);
+  steer(c,.19,400);assert.equal(c.game.state.active.x,4,'easing the tilt stops repeats immediately');
+  steer(c,-.8,50);assert.equal(c.game.state.active.x,4);
+  steer(c,-.8,35);assert.equal(c.game.state.active.x,3);
+  c.game.dispose();
+});
+
+test('TT-03 held tilt gives a deliberate first repeat and slower, evenly spaced steps',()=>{
+  const c=controller({initial:{active:active('O',0,8)}}),moves=[];let previous=c.game.state.active.x;
+  for(let elapsed=0;elapsed<1000;elapsed+=1000/120){
+    c.tick(1/120,{tilt:{x:.8,y:0}});const state=c.game.state;
+    if(state.active.x!==previous){moves.push(state.time);assert.equal(state.active.x,previous+1);previous=state.active.x;}
+  }
+  assert.equal(moves.length,7);assert.ok(moves[0]>=60);
+  assert.ok(moves[1]-moves[0]>=300-1e-6);
+  for(let i=2;i<moves.length;i++)assert.ok(moves[i]-moves[i-1]>=120-1e-6);
+  c.game.dispose();
+});
+
+test('TT-03/05 pressing drop during tilt locks the displayed column and holds off movement of the next piece',()=>{
+  const c=controller({initial:{active:active('O',3,8)}});
+  steer(c,.8,400);const landing=c.game.state.ghost;
+  c.input({tilt:{x:-.9,y:0},buttons:{aPressed:true,bPressed:false}});
+  c.game.tick(1/120); // State can arrive a frame before its counted press over the sandbox bridge.
+  c.game.press({input:'a'});c.game.tick(1/120);
+  const locked=[];c.game.state.board.forEach((row,y)=>row.forEach((type,x)=>{if(type)locked.push([x,y-20]);}));
+  assert.deepEqual(locked.sort(),cellsOf(landing).sort());
+  steer(c,-.9,250,{aPressed:true,bPressed:false});assert.equal(c.game.state.active.x,3);
+  steer(c,-.9,40);assert.equal(c.game.state.active.x,3);
+  steer(c,-.9,50);assert.equal(c.game.state.active.x,2);
+  c.game.dispose();
+});
+
+test('TT-03/05 a new tilt and a drop in the same step do not add a lateral move',()=>{
+  const c=controller({initial:{active:active('O',3,8)}}),landing=c.game.state.ghost;
+  c.input({tilt:{x:.9,y:0}});c.game.press({input:'a'});c.game.tick(1/120);
+  const locked=[];c.game.state.board.forEach((row,y)=>row.forEach((type,x)=>{if(type)locked.push([x,y-20]);}));
+  assert.deepEqual(locked.sort(),cellsOf(landing).sort());
+  c.game.dispose();
+});
+
+test('TT-03/05 drop takes priority over a due horizontal repeat',()=>{
+  for(const ms of [370,490,615]){
+    const c=controller({initial:{active:active('O',3,8)}});
+    steer(c,.8,ms);const landing=c.game.state.ghost;
+    c.game.press({input:'a'});c.game.tick(1/120);
+    const locked=[];c.game.state.board.forEach((row,y)=>row.forEach((type,x)=>{if(type)locked.push([x,y-20]);}));
+    assert.deepEqual(locked.sort(),cellsOf(landing).sort(),`drop after ${ms} ms`);
+    c.game.dispose();
+  }
+});
+
+test('TT-03/05 a quick A release still gives the next piece a short drop guard and fresh tilt delay',()=>{
+  const c=controller();
+  c.game.press({input:'a'});c.game.tick(1/120);
+  steer(c,.8,160);assert.equal(c.game.state.active.x,3);
+  steer(c,.8,40);assert.equal(c.game.state.active.x,4);
+  c.game.dispose();
+});
 
 test('TT-01/02 golden bags, bounds, five previews, ghost and pure snapshots',()=>{
   for(const [seed,expected] of [['demo','O Z J L S I T J I S Z L T O Z L J S T O I'],['practice-1','L Z S I O J T T I J Z S L O T L Z I J S O']]){
@@ -153,11 +223,11 @@ test('TT-10/18 old level scores the lock, next piece uses new level; overflow is
 
 test('TT-03/05/16 controller neutral arming, hysteresis, DAS and coalesced rotation-before-drop',()=>{
   const c=controller({seed:'demo'});assert.equal(c.game.state.armed,true);
-  c.input({tilt:{x:.22,y:0}});c.game.tick(1/120);assert.equal(c.game.state.active.x,4);
-  for(let i=0;i<19;i++)c.game.tick(1/120);assert.equal(c.game.state.active.x,4);
-  c.game.tick(2/120);assert.equal(c.game.state.active.x,5);
-  c.input({tilt:{x:-.15,y:0}});c.game.tick(1/120);assert.equal(c.game.state.active.x,5);
-  c.input({tilt:{x:-.22,y:0}});c.game.tick(1/120);assert.equal(c.game.state.active.x,4);
+  steer(c,.32,85);assert.equal(c.game.state.active.x,4);
+  steer(c,.25,275);assert.equal(c.game.state.active.x,4);
+  steer(c,.25,25);assert.equal(c.game.state.active.x,5,'a settled tilt keeps repeating above the release threshold');
+  steer(c,-.15,25);assert.equal(c.game.state.active.x,5);
+  steer(c,-.32,85);assert.equal(c.game.state.active.x,4);
   c.game.press({input:'a',count:99});c.game.press({input:'b',count:99});c.game.press({input:'a'});c.game.tick(1/120);
   assert.equal(c.game.state.lastResult.id,1);
   const frozen=c.game.state;c.game.setPlaying(false);c.game.tick(.25);assert.deepEqual(c.game.state.board,frozen.board);

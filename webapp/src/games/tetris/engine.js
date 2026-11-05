@@ -4,19 +4,33 @@ import { createDeviceOutput } from './device-output.js';
 import { drawTetris } from './scene.js';
 
 const STEP=1000/120;
+const TILT={engage:.32,release:.20,neutral:.18,settleMs:60,repeatDelayMs:300,repeatMs:120,dropGuardMs:120};
 export function createTetris({ seed='tetris', outputs, browserAudio, reportOutputError=()=>{}, clock={now:()=>performance.now()},
   outputClock, reducedMotion=()=>globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches??false, initial }={}) {
   const model=new TetrisModel({seed,initial}),device=createDeviceOutput({outputs,clock:outputClock,report:reportOutputError});
   const effects=browserAudio?.beginRound();
   let playing=false,disposed=false,finished=false,remainder=0,pending={},latest=null,lastInput=-Infinity,neutralSince=null,armed=false;
-  let direction=0,nextMove=0,pieceId=model.pieceId,particles=[];
+  let direction=0,candidate=0,candidateSince=0,nextMove=0,dropGuardUntil=0,pieceId=model.pieceId,particles=[];
   const report=e=>{try{reportOutputError(e);}catch{}};
-  function release(){pending={};armed=false;direction=0;nextMove=0;}
+  function resetTilt(){direction=0;candidate=0;candidateSince=0;nextMove=0;}
+  function release(){pending={};armed=false;resetTilt();dropGuardUntil=0;}
   function finishRound(){if(finished||disposed)return;finished=true;playing=false;release();effects?.stop();device.end();}
   function arm(){if(!armed && latest && clock.now()-lastInput<=100 && neutralSince!==null && clock.now()-neutralSince>=100)armed=true;}
-  function moveDirection(x){
-    if(direction<0 && x>=-.12 || direction>0 && x<=.12)direction=0;
-    if(x<=-.22)return -1;if(x>=.22)return 1;return direction;
+  function tiltMove(x){
+    // Only an established direction has hysteresis. A brief jolt must not
+    // become a move after the board has already eased below the engage angle.
+    const desired=x<=-TILT.engage?-1:x>=TILT.engage?1:
+      direction<0 && x<-TILT.release?-1:direction>0 && x>TILT.release?1:0;
+    if(!desired){resetTilt();return 0;}
+    if(desired===direction){
+      if(model.time+1e-7<nextMove)return 0;
+      nextMove=model.time+TILT.repeatMs;return direction;
+    }
+    direction=0;nextMove=0;
+    if(candidate!==desired){candidate=desired;candidateSince=model.time;}
+    if(model.time-candidateSince+1e-7<TILT.settleMs)return 0;
+    direction=desired;candidate=0;nextMove=model.time+TILT.repeatDelayMs;
+    return direction;
   }
   function consume(events){
     for(const event of events){
@@ -46,7 +60,7 @@ export function createTetris({ seed='tetris', outputs, browserAudio, reportOutpu
       if(!state.inputAvailable){latest=null;neutralSince=null;release();return;}
       if(now-lastInput>100)neutralSince=null;
       latest=state;lastInput=now;
-      const neutral=Math.abs(state.tilt.x)<=.12 && !state.buttons.aPressed && !state.buttons.bPressed && !state.touch.logoPressed;
+      const neutral=Math.abs(state.tilt.x)<=TILT.neutral && !state.buttons.aPressed && !state.buttons.bPressed && !state.touch.logoPressed;
       if(!neutral)neutralSince=null;else neutralSince??=now;
       if(playing)arm();
     },
@@ -67,13 +81,18 @@ export function createTetris({ seed='tetris', outputs, browserAudio, reportOutpu
       remainder+=seconds*1000;
       while(remainder+1e-7>=STEP && !model.ended){
         remainder-=STEP;arm();
-        if(pieceId!==model.pieceId || pending.hold && !model.holdUsed){pieceId=model.pieceId;direction=0;nextMove=0;}
+        const holding=pending.hold && !model.holdUsed;
+        if(pieceId!==model.pieceId || holding){pieceId=model.pieceId;resetTilt();}
         const actions=pending;pending={};
-        if(!armed || model.phase!=='falling'){actions.hold=actions.rotate=actions.drop=false;direction=0;}
+        if(!armed || model.phase!=='falling'){actions.hold=actions.rotate=actions.drop=false;resetTilt();}
+        // The physical A state can arrive before its counted press. Freeze
+        // lateral input in both cases, then let the next piece settle afresh.
+        else if(actions.drop || latest?.buttons.aPressed){
+          resetTilt();if(actions.drop)dropGuardUntil=model.time+TILT.dropGuardMs;
+        }
+        else if(holding || model.time+1e-7<dropGuardUntil)resetTilt();
         else {
-          const oldDirection=direction,desired=moveDirection(latest?.tilt.x??0);
-          if(desired!==oldDirection){direction=desired;if(desired){actions.move=direction;nextMove=model.time+170;}}
-          else if(desired && model.time+1e-7>=nextMove){actions.move=desired;nextMove+=70;}
+          actions.move=tiltMove(latest?.tilt.x??0);
         }
         consume(model.step(STEP,actions));
         particles=particles.filter(p=>model.time-p.at<p.life);

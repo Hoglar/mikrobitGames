@@ -24,6 +24,12 @@ and logo neutral during the countdown.
 | Gold logo | Hold/swap once per locked piece. |
 | Pause button / Escape | Pause; click Continue for a new countdown. |
 
+Tiltstyringen krever en kort, jevn vipp før første flytting. Små vinkler og korte
+rykk ignoreres; et kort vipp gir én rute, mens et vedvarende vipp gjentar langsommere.
+Rett brettet litt opp for å stoppe. A fryser sideflyttingen under drop og mens
+knappen holdes, med en kort sperre før neste brikke kan flyttes. Eksakte grenser
+og tider står i [implementasjonsdesignet](../../../spec/games/tetris/implementation-design.md#input-og-simuleringsrekkefølge).
+
 Seven-bag pieces, five next previews, ghost, T-spins/Mini, combos, back-to-back
 and perfect clears use the exact score tables in the design. Every 5,000 points
 increases gravity and music tempo, capped at level 15 (50 ms/row, 180 BPM).

@@ -39,6 +39,30 @@ async function start(page,practice=true){
 }
 const commands=page=>page.evaluate(()=>window.serialMock.commands);
 
+test('TT-03/05 sandbox input ignores small tilts and an A-button jolt preserves the landing column',async({page})=>{
+  await page.clock.install();await setup(page);await start(page);
+  await page.clock.pauseAt(await page.evaluate(()=>Date.now()+100));
+  const columns=color=>page.frameLocator('.cartridge-runtime').locator('canvas').evaluate((canvas,color)=>{
+    const w=canvas.width,h=canvas.height,portrait=w/h<1,base=portrait?360:960,scale=w/base,H=h/scale;
+    const cell=Math.min(portrait?24:30,(H-(portrait?178:76))/20),ox=portrait?14:(base-cell*10)/2,oy=portrait?128:38;
+    const ctx=canvas.getContext('2d'),found=new Set();
+    for(let row=0;row<20;row++)for(let col=0;col<10;col++){
+      const [r,g,b]=ctx.getImageData(Math.floor((ox+(col+.5)*cell)*scale),Math.floor((oy+(row+.5)*cell)*scale),1,1).data;
+      if((r<<16|g<<8|b)===color)found.add(col);
+    }
+    return [...found].sort((a,b)=>a-b);
+  },color);
+  // Raw 300 mg is above the old engage angle, below the new one.
+  await page.evaluate(()=>window.serialMock.port.sample({x:300}));await page.clock.runFor(500);
+  await page.evaluate(()=>window.serialMock.port.sample({x:900,a:1,ac:1}));
+  await expect.poll(async()=>{await page.clock.runFor(40);return columns(0xf6db4d);}).toEqual([4,5]);
+  await expect(page.locator('.game-toolbar')).toContainText(/[1-9][0-9]* poeng/);
+  await page.clock.runFor(500);
+  expect(await columns(0xf6db4d)).toEqual([4,5]);
+  expect(await columns(0xf26b6b)).toEqual([4,5]); // Next Z stays put while A is held.
+  await expect(page.locator('.game-frame')).toHaveAttribute('data-phase','playing');
+});
+
 test('TT-03/06/13/15/17 Tetris practice accepts real adapter inputs, displays hold and plays separate audio',async({page},testInfo)=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));const calls=await setup(page);
   await start(page);await page.getByRole('button',{name:'Lyd: av',exact:true}).click();
