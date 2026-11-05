@@ -1,0 +1,22 @@
+[WebServer] (node:8778) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:8790) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 13 tests using 1 worker
+
+  ✓   1 tests/app/browser/cartridges.spec.js:13:30 › Micro Snake runs in the same opaque SDK host and pauses on physical removal (4.9s)
+  ✓   2 tests/app/browser/cartridges.spec.js:13:30 › Viking Dash runs in the same opaque SDK host and pauses on physical removal (4.5s)
+  ✓   3 tests/app/browser/cartridges.spec.js:13:30 › Stjernefangst runs in the same opaque SDK host and pauses on physical removal (4.5s)
+  ✓   4 tests/app/browser/cartridges.spec.js:13:30 › Reaksjonsjakt runs in the same opaque SDK host and pauses on physical removal (4.3s)
+  ✓   5 tests/app/browser/cartridges.spec.js:13:30 › Balanseløypa runs in the same opaque SDK host and pauses on physical removal (4.3s)
+  ✓   6 tests/app/browser/cartridges.spec.js:13:30 › Micro Tetris runs in the same opaque SDK host and pauses on physical removal (4.5s)
+  ✓   7 tests/app/browser/cartridges.spec.js:13:30 › Micro Racer runs in the same opaque SDK host and pauses on physical removal (4.4s)
+  ✓   8 tests/app/browser/cartridges.spec.js:15:1 › a newly dropped game appears and uses SDK device output and isolated input/score API (4.9s)
+  ✓   9 tests/app/browser/cartridges.spec.js:17:1 › local records keep best score atomically across tabs, rank ties, export and import (1.2s)
+  ✓  10 tests/app/browser/cartridges.spec.js:19:1 › fullscreen includes sandbox and local save form; skip saves nothing (4.4s)
+  ✓  11 tests/app/browser/cartridges.spec.js:21:1 › sandbox CSP blocks direct backend fetch and forged window messages cannot save scores (4.2s)
+  ✓  12 tests/app/browser/cartridges.spec.js:23:1 › a stalled backend never blocks local play on the hosted UI (4.0s)
+  ✓  13 tests/app/browser/cartridges.spec.js:25:1 › online Snake submits one confirmed result with its unchanged game ID (5.8s)
+
+  13 passed (59.5s)

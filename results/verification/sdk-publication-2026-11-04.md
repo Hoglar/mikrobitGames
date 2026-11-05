@@ -97,3 +97,34 @@ Martin ga 9/10 med kommentaren «Nå er alt nesten helt bra, funksjonalitet virk
 som planlagt». Samlet FoM er **97,86/100**. Dette er et separat målepunkt,
 ikke en omberegning av publiseringskontrollen. Kontrollgrunnlaget er endret
 siden forrige komplette måling, så punktene har ulike serier.
+
+## Viking-avviket rettet 5. november
+
+Den gamle lydtesten lot spillet løpe i sanntid mens nettleseren aktiverte lyd.
+På Parrot traff vikingen første hinder før kontrollen av `AudioContext`.
+Runden var da avsluttet, og lydkonteksten korrekt lukket. Testen forventet
+fortsatt lyd fra en aktiv runde.
+
+`webapp/tests/app/browser/viking.spec.js` styrer nå spillklokken eksplisitt,
+inkludert opprydding ved oppstart og nedtelling. Den bruker fortsatt ekte
+nettleserlyd og kontrollerer at spillet er aktivt når lyden sjekkes, at lyd
+stopper ved pause, og at lokal øving ikke sender resultater. Spillkode,
+testkrav og skårformel er uendret. Den isolerte testen bestod, og deretter
+bestod den i hele testpakken.
+
+[Ny måling: 20261105T113906.475080Z](../fom/app/runs/20261105T113906.475080Z/report.md)
+viser 210/210 enhetstester, 46/46 app-/nettlesertester, 10/10 input-/nettlesertester,
+3/3 firmwaretester og 3/3 komponentkoblingstester. Måleverktøyets egenkontroll
+bestod 64/64. Alle 14 benchmarkprofiler var innenfor budsjettene.
+Den separate [SDK-kontrollen](../fom/app/runs/20261105T113906.475080Z/sdk-additional.log)
+bestod også 13/13; disse gir ikke ekstra FoM-poeng.
+
+Brukeren bekreftet Martins tidligere 9/10 og samme begrunnelse for denne
+målingen. Funksjon og ytelse er begge 100/100, teknisk skår er 100/100 og
+**samlet FoM er 98,00/100**. Tidligere resultater beholdes. Testrettelsen gir
+ny kontrollserie; produktkodens lagrede fingeravtrykk er identisk med forrige
+måling. Kjøringen skjedde fra `f673068` med den lokale testrettelsen, før commit.
+
+Dette var den lokale appprofilen med simulert API og Web Serial, ikke en ny
+kjøring av `./backend/check`, fysisk USB eller ekte Qwen. Ingen ny publisering
+var nødvendig, siden produktkoden ikke ble endret.

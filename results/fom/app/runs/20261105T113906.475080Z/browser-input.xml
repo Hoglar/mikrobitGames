@@ -1,0 +1,26 @@
+<testsuites id="" name="" tests="10" failures="0" skipped="0" errors="0" time="14.376912">
+<testsuite name="benchmark.spec.js" timestamp="2026-11-05T11:41:30.710Z" hostname="" tests="1" failures="0" skipped="0" time="12.316" errors="0">
+<testcase name="GI benchmark browser propagation at 50/500 Hz with one/four subscribers" classname="benchmark.spec.js" time="12.316">
+</testcase>
+</testsuite>
+<testsuite name="input.spec.js" timestamp="2026-11-05T11:41:30.710Z" hostname="" tests="9" failures="0" skipped="0" time="11.276" errors="0">
+<testcase name="GI-01/17/20 real browser streams, two games, output encoding and unlocked cleanup" classname="input.spec.js" time="1.113">
+</testcase>
+<testcase name="GI-10/16 silence neutralizes controls, recovery retains game and waits for explicit continuation" classname="input.spec.js" time="1.381">
+</testcase>
+<testcase name="GI-10/20 physical reconnect uses the same game facade and does not replay old counts" classname="input.spec.js" time="0.744">
+</testcase>
+<testcase name="GI-20 a native readable stream replacement recovers without another chooser" classname="input.spec.js" time="0.415">
+</testcase>
+<testcase name="GI-14/20 unsupported board and denied chooser produce a usable error and no game" classname="input.spec.js" time="0.36">
+</testcase>
+<testcase name="sensor checks retain a one-snapshot shake and distinguish zero light from unavailable input" classname="input.spec.js" time="3.078">
+</testcase>
+<testcase name="image editor paints locally, sends row-major brightness values and keeps draft separate from board clear" classname="input.spec.js" time="1.909">
+</testcase>
+<testcase name="piano and tone controls send selected frequencies, octave, duration and volume" classname="input.spec.js" time="1.007">
+</testcase>
+<testcase name="melodies and advertised sounds can be selected; invalid settings never send commands" classname="input.spec.js" time="1.269">
+</testcase>
+</testsuite>
+</testsuites>

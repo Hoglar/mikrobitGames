@@ -44,6 +44,9 @@ test('Viking Dash draws five distinct environments and every event without chang
 
 test('Viking stage keeps its scenery visible and supports optional sound through start and pause', async ({ page }) => {
   const errors = [], requests = []; page.on('pageerror', error => errors.push(error.message));
+  // UI/audio setup can take longer than the run to the first obstacle on a
+  // slower host. Control game time, but keep the real browser AudioContext.
+  await page.clock.install({ time: new Date('2026-10-30T12:00:00Z') });
   await page.addInitScript(() => {
     const NativeAudio = globalThis.AudioContext;
     globalThis.vikingAudioProbe = { sources: 0, contexts: [] };
@@ -74,17 +77,31 @@ test('Viking stage keeps its scenery visible and supports optional sound through
   await page.getByRole('textbox', { name: 'Seed for øving' }).fill('midgard');
   await page.locator('.game-frame').screenshot({ path: 'build/viking-ready.png' });
 
+  await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
   await page.getByRole('button', { name: 'Start spill →' }).click();
-  await expect(page.locator('.game-toolbar')).toContainText('SPILLER', { timeout: 6000 });await page.getByRole('checkbox',{name:'Musikk og lyd',exact:true}).check();await page.frameLocator('.cartridge-runtime').getByRole('button',{name:'Aktiver lyd'}).click();
-  await expect.poll(() => page.frames().find(f=>f.parentFrame()).evaluate(() => globalThis.vikingAudioProbe.sources)).toBeGreaterThan(5);
-  expect(await page.frames().find(f=>f.parentFrame()).evaluate(() => globalThis.vikingAudioProbe.contexts.at(-1).state)).toBe('running');
+  // Disposing the preview and mounting the round also uses timers.
+  for (let i = 0; i < 20 && (await page.locator('.game-frame').getAttribute('data-phase')) !== 'countdown'; i++) {
+    await page.clock.runFor(100);
+  }
+  await expect(page.locator('.game-frame')).toHaveAttribute('data-phase', 'countdown');
+  await page.clock.runFor(3100);
+  await expect(page.locator('.game-frame')).toHaveAttribute('data-phase', 'playing');
+  const child = page.frames().find(f => f.parentFrame());
+  const sourceCount = () => child.evaluate(() => globalThis.vikingAudioProbe.sources);
+  const audioState = () => child.evaluate(() => globalThis.vikingAudioProbe.contexts.at(-1)?.state);
+  await page.getByRole('checkbox', { name: 'Musikk og lyd', exact: true }).check();
+  await page.frameLocator('.cartridge-runtime').getByRole('button', { name: 'Aktiver lyd' }).click();
+  await expect.poll(async () => { await page.clock.runFor(60); return sourceCount(); }).toBeGreaterThan(5);
+  await expect(page.locator('.game-frame')).toHaveAttribute('data-phase', 'playing');
+  expect(await audioState()).toBe('running');
   await page.evaluate(() => window.serialMock.port.sample({ a: 1, ac: 1 }));
-  await page.waitForTimeout(150);
+  await page.clock.runFor(150);
   await page.getByRole('button', { name: 'Pause', exact: true }).click();
   await expect(page.locator('.game-toolbar')).toContainText('PAUSE');
-  const pausedSources = await page.frames().find(f=>f.parentFrame()).evaluate(() => globalThis.vikingAudioProbe.sources);
-  await page.waitForTimeout(300);
-  expect(await page.frames().find(f=>f.parentFrame()).evaluate(() => globalThis.vikingAudioProbe.sources)).toBe(pausedSources);
+  await expect.poll(audioState).toBe('closed');
+  const pausedSources = await sourceCount();
+  await page.clock.runFor(300);
+  expect(await sourceCount()).toBe(pausedSources);
   await page.locator('.game-frame').screenshot({ path: 'build/viking-gameplay.png' });
   await page.getByRole('checkbox',{name:'Musikk og lyd',exact:true}).uncheck();await expect(page.getByRole('checkbox',{name:'Musikk og lyd',exact:true})).not.toBeChecked();
   await page.getByRole('button', { name: '→ Fortsett', exact: true }).click();
