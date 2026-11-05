@@ -79,9 +79,21 @@ test('Viking stage keeps its scenery visible and supports optional sound through
 
   await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
   await page.getByRole('button', { name: 'Start spill →' }).click();
-  await expect(page.locator('.game-toolbar')).toContainText('SPILLER', { timeout: 6000 });await page.getByRole('button',{name:'Lyd: av',exact:true}).click();
-  await expect.poll(() => page.frames().find(f=>f.parentFrame()).evaluate(() => globalThis.vikingAudioProbe.sources)).toBeGreaterThan(5);
-  expect(await page.frames().find(f=>f.parentFrame()).evaluate(() => globalThis.vikingAudioProbe.contexts.at(-1).state)).toBe('running');
+  // Serial cleanup and countdown also use the controlled clock. Advance them
+  // explicitly; polling a frozen timer cannot start the round.
+  await expect.poll(async () => {
+    await page.clock.runFor(100);
+    return page.locator('.game-frame').getAttribute('data-phase');
+  }, { intervals: [50] }).toBe('countdown');
+  await page.clock.runFor(3100);
+  await expect(page.locator('.game-frame')).toHaveAttribute('data-phase', 'playing');
+  const child = page.frames().find(f => f.parentFrame());
+  const sourceCount = () => child.evaluate(() => globalThis.vikingAudioProbe.sources);
+  const audioState = () => child.evaluate(() => globalThis.vikingAudioProbe.contexts.at(-1)?.state);
+  await page.getByRole('button',{name:'Lyd: av',exact:true}).click();
+  await expect.poll(async () => { await page.clock.runFor(60); return sourceCount(); }).toBeGreaterThan(5);
+  await expect(page.locator('.game-frame')).toHaveAttribute('data-phase', 'playing');
+  expect(await audioState()).toBe('running');
   await page.evaluate(() => window.serialMock.port.sample({ a: 1, ac: 1 }));
   await page.clock.runFor(150);
   await page.getByRole('button', { name: 'Pause', exact: true }).click();

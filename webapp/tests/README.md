@@ -24,6 +24,10 @@ spillramme, start/pause/restart, offentlig Testlab, konto, Dashboard, offentlig
 historikk og AI. `tests/unit/app.test.js` tester API-feil, lagringsidentitet og
 spillmotorer uten enhet. Se `results/webapp-validation.md` for kjørte resultater.
 
+`tests/app/browser/canvas-resize.spec.js` kontrollerer at Tetris faktisk har synlige canvas-piksler etter størrelsesendring under langsom modullasting, gjentatte bytter mellom aktive spill og tapte resize-varsler. Den første regresjonen holder modulimporten igjen mens iframe-layout går fra 0 × 0 til normal størrelse; testen bruker den faktiske SDK-runtime og trenger ikke fullskjerm for å få bildet tilbake. Kjør målrettet med `npm run test:app -- canvas-resize.spec.js`.
+
+Se [valideringen av canvas-resize](../results/tetris-canvas-resize-validation-2026-11-05.md) for reproduksjon og resultat før/etter rettingen.
+
 ## Spillkassetter og lokale rekorder
 
 `npm run test:cartridges` bygger og kjører en separat suite mot utviklingsserveren. Den oppretter en midlertidig, selvstendig spillmappe, verifiserer oppdaging/SDK/sandbox og tester ekte IndexedDB, samtidige faner, navnelagring, eksport/import og uendret online-ID. Spillet fjernes etter testen. `npm run test:app` dekker de migrerte medfølgende spillene og appen fra `dist/`; den separate importtesten inngår ikke i samme config fordi den må oppdage en mappe etter serverstart.

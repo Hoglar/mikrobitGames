@@ -27,17 +27,32 @@ function context(canvas,mode){return {
   audio:{getSettings:()=>audioSettings,subscribe:cb=>subscribe('audio',cb,audioSettings),onUnlock:cb=>subscribe('unlock',cb),async unlock(){emit('unlock');document.dispatchEvent(new Event('game-audio-unlock'));},registerCleanup:cb=>{cleanups.add(cb);return ()=>cleanups.delete(cb);}},random:{next:seeded(roundInfo.seed)}
 };}
 function setPhase(next){const old=phase;phase=next;remainder=0;last=performance.now();if(next==='playing'&&old!==next)controller?.onResume?.();else if(old==='playing'&&next!==old){controller?.onPause?.(next);for(const cb of cleanups)try{cb();}catch(e){report(e);}}emit('phase',next);}
-let viewport={width:960,height:600,pixelRatio:1};
-function resize(canvas,manifest){const dpr=Math.min(2,devicePixelRatio||1),w=innerWidth,h=innerHeight,aspect=manifest.viewport.width/manifest.viewport.height;let width=w,height=h;if(manifest.viewport.fit==='contain'){width=Math.min(w,h*aspect);height=width/aspect;}canvas.style.width=width+'px';canvas.style.height=height+'px';canvas.width=Math.max(1,Math.round(width*dpr));canvas.height=Math.max(1,Math.round(height*dpr));viewport={width,height,pixelRatio:dpr};controller?.onResize?.(viewport);}
+let viewport=null;
+function resize(canvas,manifest,notify=false){
+  const dpr=Math.min(2,devicePixelRatio||1),w=innerWidth,h=innerHeight,aspect=manifest.viewport.width/manifest.viewport.height;
+  if(w<=0||h<=0)return false; // A newly mounted or temporarily hidden iframe has no drawable viewport yet.
+  let width=w,height=h;if(manifest.viewport.fit==='contain'){width=Math.min(w,h*aspect);height=width/aspect;}
+  const pixelsWide=Math.max(1,Math.round(width*dpr)),pixelsHigh=Math.max(1,Math.round(height*dpr));
+  const changed=!viewport||viewport.width!==width||viewport.height!==height||viewport.pixelRatio!==dpr||canvas.width!==pixelsWide||canvas.height!==pixelsHigh;
+  if(changed){
+    canvas.style.width=width+'px';canvas.style.height=height+'px';
+    // Assigning either backing dimension clears the canvas, even if unchanged.
+    if(canvas.width!==pixelsWide)canvas.width=pixelsWide;if(canvas.height!==pixelsHigh)canvas.height=pixelsHigh;
+    viewport={width,height,pixelRatio:dpr};
+  }
+  if(changed||notify)controller?.onResize?.(viewport);
+  return true;
+}
 async function dispose(){if(disposed)return;setPhase('closed');disposed=true;cancelAnimationFrame(frameId);try{await controller?.dispose?.();}catch(e){report(e);}for(const cb of cleanups)try{cb();}catch{}for(const url of urls)URL.revokeObjectURL(url);for(const p of pending.values()){clearTimeout(p.timer);p.reject(new Error('DISPOSED'));}pending.clear();Object.values(listeners).forEach(s=>s.clear());port?.postMessage({epoch,type:'disposed'});port?.close();}
 let frameId;
 window.addEventListener('message',async function boot(event){if(port||event.source!==parent||event.data?.type!=='cartridge-init'||event.ports.length!==1)return;window.removeEventListener('message',boot);port=event.ports[0];const init=event.data;epoch=init.epoch;roundInfo=init.round;deviceCaps=init.capabilities;assets=init.payload.assets;setAudio(init.audio);
   port.onmessage=async({data})=>{if(disposed||data?.epoch!==epoch)return;try{if(data.type==='reply'){const p=pending.get(data.id);if(!p)return;clearTimeout(p.timer);pending.delete(data.id);if(data.error)p.reject(Object.assign(new Error(data.error.message),data.error));else p.resolve(data.value);}else if(data.type==='state'){input=freeze(data.value);emit('state',input);}else if(data.type==='press'&&phase==='playing')emit('press',data.value);else if(data.type==='gesture'&&phase==='playing')emit('gesture',data.value);else if(data.type==='phase')setPhase(data.value);else if(data.type==='scores'){saveState=freeze(data.value);emit('scores',saveState);}else if(data.type==='audio')setAudio(data.value);else if(data.type==='setting')settings.get(data.id)?.(data.value);else if(data.type==='action'){await actions.get(data.id)?.();tell('actionDone',{id:data.id});}else if(data.type==='dispose')await dispose();}catch(e){report(e);}};
   try{const sdkUrl=URL.createObjectURL(new Blob([init.sdk],{type:'text/javascript'}));urls.add(sdkUrl);const map=document.createElement('script');map.type='importmap';map.nonce=init.nonce;map.textContent=JSON.stringify({imports:{'@microbit-games/sdk':sdkUrl}});document.head.append(map);
-    const style=document.createElement('style');style.textContent=init.payload.css;document.head.append(style);const canvas=document.querySelector('canvas');canvas.setAttribute('aria-label',init.manifest.title+' spillflate');resize(canvas,init.manifest);
+    const style=document.createElement('style');style.textContent=init.payload.css;document.head.append(style);const canvas=document.querySelector('canvas');canvas.setAttribute('aria-label',init.manifest.title+' spillflate');
+    addEventListener('resize',()=>resize(canvas,init.manifest));resize(canvas,init.manifest);
     const moduleUrl=URL.createObjectURL(new Blob([init.payload.bundle],{type:'text/javascript'}));urls.add(moduleUrl);definition=(await import(moduleUrl)).default;if(typeof definition?.factory!=='function'||![30,60,120].includes(definition.stepHz))throw new Error('Spillet mangler en gyldig defineGame-standardeksport.');controller=await definition.factory(context(canvas,init.mode));if(typeof controller?.update!=='function'||typeof controller?.render!=='function')throw new Error('Spillet mangler update/render.');
-    addEventListener('resize',()=>resize(canvas,init.manifest));addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();tell('pause');}});const c=canvas.getContext('2d');
-    function render(now){if(disposed)return;try{const dt=Math.min(.25,Math.max(0,(now-last)/1000));last=now;if(phase==='playing'){remainder+=dt;let steps=0;while(remainder+1e-9>=1/definition.stepHz&&steps++<30&&phase==='playing'){controller.update(1/definition.stepHz);elapsedMs+=1000/definition.stepHz;remainder-=1/definition.stepHz;}}c.setTransform(viewport.pixelRatio,0,0,viewport.pixelRatio,0,0);controller.render(c,viewport);}catch(e){setPhase('paused');report(e);}frameId=requestAnimationFrame(render);}frameId=requestAnimationFrame(render);tell('ready');
+    resize(canvas,init.manifest,true);addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();tell('pause');}});const c=canvas.getContext('2d');
+    function render(now){if(disposed)return;try{if(!resize(canvas,init.manifest)){last=now;remainder=0;frameId=requestAnimationFrame(render);return;}const dt=Math.min(.25,Math.max(0,(now-last)/1000));last=now;if(phase==='playing'){remainder+=dt;let steps=0;while(remainder+1e-9>=1/definition.stepHz&&steps++<30&&phase==='playing'){controller.update(1/definition.stepHz);elapsedMs+=1000/definition.stepHz;remainder-=1/definition.stepHz;}}c.setTransform(viewport.pixelRatio,0,0,viewport.pixelRatio,0,0);controller.render(c,viewport);}catch(e){setPhase('paused');report(e);}frameId=requestAnimationFrame(render);}frameId=requestAnimationFrame(render);tell('ready');
   }catch(e){report(e);}
 });
 parent.postMessage({type:'cartridge-ready'},'*');
