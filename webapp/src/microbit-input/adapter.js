@@ -56,8 +56,12 @@ class Adapter {
   }
   ensureFresh() {
     const ctx = this.context;
-    if (this.ready(ctx) && !this.disconnecting && this.clock.now() - ctx.lastAccepted >= LIMITS.freshnessMs)
-      this.recover(ctx, error('timeout', 'Sensor input became stale'));
+    if (this.ready(ctx) && !this.disconnecting) {
+      const age = this.clock.now() - ctx.lastAccepted;
+      if (age >= LIMITS.freshnessMs) this.recover(ctx, error('timeout', 'Sensor input became stale', {
+        snapshotAgeMs: age, freshnessOverrunMs: age - LIMITS.freshnessMs
+      }));
+    }
   }
   connect() {
     this.ensureFresh();
@@ -130,7 +134,7 @@ class Adapter {
   handshake(ctx, recovery) {
     if (!this.current(ctx)) return;
     ctx.phase = 'awaiting-info'; ctx.framer.reset();
-    const h = { recovery, listen: false, info: false, written: false, latest: null, timer: null, done: deferred() };
+    const h = { recovery, openingBoundary: ctx.writer.firstHello, listen: false, info: false, written: false, latest: null, timer: null, done: deferred() };
     h.done.promise.catch(() => {}); // Recovery may have no connect/dispose caller waiting on it.
     ctx.handshake = h;
     const valid = () => this.current(ctx) && ctx.handshake === h && !this.disconnecting;
@@ -143,7 +147,9 @@ class Adapter {
           if (!valid() || this.ready(ctx)) return;
           const left = LIMITS.handshakeMs - (this.clock.now() - h.completedAt);
           if (left > 0) h.timer = this.clock.setTimeout(tick, left);
-          else this.lose(ctx, error('timeout', 'deviceInfo and first snapshot did not arrive before the handshake deadline'));
+          else this.lose(ctx, error('timeout', 'deviceInfo and first snapshot did not arrive before the handshake deadline', {
+            handshakeStage: h.info ? 'snapshot' : 'deviceInfo', recovery: h.recovery
+          }));
         };
         h.timer = this.clock.setTimeout(tick, LIMITS.handshakeMs);
       }
@@ -197,6 +203,12 @@ class Adapter {
       if (line.startsWith('ERR|')) {
         const protocolCode = line.slice(4);
         if (!/^[A-Z][A-Z0-9_]*$/.test(protocolCode)) throw error('protocol', 'Malformed device error');
+        if (ctx.handshake?.openingBoundary && !ctx.handshake.info && ['MALFORMED_COMMAND', 'LINE_TOO_LONG'].includes(protocolCode)) {
+          // The initial LF may terminate a previous page's incomplete command.
+          // Only its expected framing errors are discarded before new metadata.
+          ctx.handshake.openingBoundary = false;
+          this.note('pre-barrier-error', { protocolCode }); return;
+        }
         const failure = error('protocol', `Uncorrelated device error: ${protocolCode}`, { protocolCode });
         if (this.ready(ctx) && !this.disconnecting) this.recover(ctx, failure);
         else if (ctx.handshake?.recovery && !ctx.handshake.info && protocolCode !== 'UNSUPPORTED_VERSION') this.report(failure);
@@ -204,6 +216,18 @@ class Adapter {
         return;
       }
       if (this.disconnecting) return; // Only outstanding results participate in explicit cleanup.
+      if (!this.ready(ctx) && !ctx.handshake?.info) {
+        // Opening a streaming port, or resetting framing during recovery, can
+        // leave the tail of an old snapshot in the next read. It belongs to the
+        // discarded session, not the new JSON stream. Synchronize on metadata;
+        // then apply the full strict parser/validator below, including duplicate keys.
+        let candidate;
+        if (ctx.handshake?.listen) try { candidate = JSON.parse(line); } catch { /* Old partial record. */ }
+        if (candidate?.type !== 'deviceInfo') {
+          this.note('pre-barrier-line', { bytes: line.length });
+          return;
+        }
+      }
       const obj = parseObject(line);
       if (obj.type === 'deviceInfo') {
         if (this.ready(ctx)) { this.recover(ctx, error('protocol', 'Unexpected deviceInfo session barrier')); return; }
@@ -233,6 +257,7 @@ class Adapter {
       else { ctx.handshake.latest = result; if (ctx.handshake.written) this.becomeReady(ctx, ctx.handshake); }
     } catch (cause) {
       const failure = asError(cause, 'protocol');
+      failure.lineBytes = line.length; failure.connectionPhase = ctx.phase;
       let info = false;
       try { info = JSON.parse(line)?.type === 'deviceInfo'; } catch { /* Diagnostic classification only. */ }
       if (!this.ready(ctx) && ctx.handshake?.listen && info) this.lose(ctx, failure);

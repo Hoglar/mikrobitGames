@@ -41,8 +41,8 @@ const commands=page=>page.evaluate(()=>window.serialMock.commands);
 
 test('TT-03/06/13/15/17 Tetris practice accepts real adapter inputs, displays hold and plays separate audio',async({page},testInfo)=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));const calls=await setup(page);
-  await start(page);await page.frameLocator('.cartridge-runtime').getByRole('button',{name:'Aktiver lyd'}).click();await expect(page.getByRole('checkbox',{name:'Micro:bit-musikk',exact:true})).toBeChecked();
-  await expect(page.getByRole('checkbox',{name:'Nettlesereffekter',exact:true})).toBeChecked();
+  await start(page);await page.getByRole('button',{name:'Lyd: av',exact:true}).click();
+  await expect(page.getByRole('button',{name:'Lyd: på',exact:true})).toHaveAttribute('aria-pressed','true');
 
 
   await expect.poll(async()=>(await commands(page)).some(c=>c.includes('|S|MELODY|96|659:667,494:333,523:333'))).toBe(true);
@@ -60,20 +60,20 @@ test('TT-03/06/13/15/17 Tetris practice accepts real adapter inputs, displays ho
 });
 
 test('TT-14/16 pause, mute, physical reconnect and mobile layout preserve the game and its hold',async({page},testInfo)=>{
-  await setup(page);await start(page);
+  await setup(page);await start(page);await page.getByRole('button',{name:'Lyd: av',exact:true}).click();
   await page.evaluate(()=>window.serialMock.port.sample({q:1,qc:1}));
   await expect.poll(async()=>(await commands(page)).some(c=>c.endsWith('|D|IMAGE|0000009900099000000000000'))).toBe(true);
   await page.evaluate(()=>{window.serialMock.port.sample({q:0});window.serialMock.port.remove();});
   await expect(page.locator('.game-toolbar')).toContainText('PAUSE');
   await page.locator('#connect').click();await expect(page.locator('#connection-label')).toHaveText('Micro:bit er tilkoblet');
   await expect(page.locator('.game-toolbar')).toContainText('PAUSE');
-  await page.getByRole('checkbox',{name:'Micro:bit-musikk',exact:true}).uncheck();
+  await page.getByRole('button',{name:'Lyd: på',exact:true}).click();
   const melodyCount=(await commands(page)).filter(c=>c.includes('|MELODY|')).length;
   await page.getByRole('button',{name:'→ Fortsett',exact:true}).click();
   await expect(page.locator('.game-toolbar')).toContainText('SPILLER',{timeout:7000});
   expect((await commands(page)).filter(c=>c.includes('|MELODY|')).length).toBe(melodyCount);
   await expect.poll(async()=>(await commands(page)).filter(c=>c.endsWith('|D|IMAGE|0000009900099000000000000')).length).toBeGreaterThan(1);
-  await page.getByRole('checkbox',{name:'Micro:bit-musikk',exact:true}).check();
+  await page.getByRole('button',{name:'Lyd: av',exact:true}).click();
   await expect.poll(async()=>(await commands(page)).filter(c=>c.includes('|MELODY|')).length).toBeGreaterThan(melodyCount);
   await page.setViewportSize({width:390,height:844});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -83,7 +83,7 @@ test('TT-14/16 pause, mute, physical reconnect and mobile layout preserve the ga
 });
 
 test('TT-18 ranked top-out submits exactly one completed result; restart creates a fresh bounded sandbox audio context',async({page})=>{
-  const calls=await setup(page);await start(page,false);
+  const calls=await setup(page);await start(page,false);await page.getByRole('button',{name:'Lyd: av',exact:true}).click();
   for(let i=1;i<=60;i++){
     await page.evaluate(i=>window.serialMock.port.sample({a:1,ac:i}),i);await page.waitForTimeout(100);
     await page.evaluate(()=>window.serialMock.port.sample({a:0}));await page.waitForTimeout(100);
@@ -96,6 +96,7 @@ test('TT-18 ranked top-out submits exactly one completed result; restart creates
   await page.evaluate(()=>window.serialMock.port.sample({a:1,ac:window.serialMock.port.ac+1}));await page.evaluate(()=>window.serialMock.port.sample({a:0}));
   await expect(page.locator('.game-toolbar')).toContainText('NEDTELLING');
   await page.evaluate(()=>window.serialMock.port.sample({a:0}));
+  await expect(page.locator('.game-frame')).toHaveAttribute('data-phase','playing',{timeout:7000});
   expect(await page.frames().find(f=>f.parentFrame()).evaluate(()=>window.tetrisAudioProbe.contexts.length)).toBe(1);
   expect(calls.filter(c=>c.path.endsWith('/results')&&c.method==='POST')).toHaveLength(1);
 });

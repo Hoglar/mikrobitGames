@@ -23,10 +23,18 @@ test('GI-01/20 import is inert, unsupported contexts reject, connect is shared a
 
 test('GI-16 info without a sample times out at exactly 3000 ms and closes', async () => {
   const h = harness({ infoOnly: true }); const connecting = h.adapter.connect();
-  const failure = assert.rejects(connecting, { kind: 'timeout' });
+  const failure = assert.rejects(connecting, { kind: 'timeout',handshakeStage:'snapshot',recovery:false });
   await h.clock.tick(2999); assert.equal(h.adapter.getState().connection, 'connecting');
   await h.clock.tick(1); await failure;
   assert.equal(h.adapter.getState().connection, 'disconnected'); assert.equal(h.transport.closeCalls, 1); assert.equal(h.clock.jobs.size, 0);
+});
+
+test('GI-16 absent metadata is distinguishable from absent first snapshot without changing the deadline', async () => {
+  const h=harness({silent:true});
+  const failed=assert.rejects(h.adapter.connect(),{kind:'timeout',handshakeStage:'deviceInfo',recovery:false});
+  await h.clock.tick(2999);assert.equal(h.adapter.getState().connection,'connecting');
+  await h.clock.tick(1);await failed;
+  assert.equal(h.adapter.getState().connection,'disconnected');
 });
 
 test('GI-14/16 unsupported board and duplicate-key metadata reject startup and release resources', async () => {
@@ -37,6 +45,69 @@ test('GI-14/16 unsupported board and duplicate-key metadata reject startup and r
   const h = harness({ beforeInfo: t => t.push(JSON.stringify(corpus.deviceInfo.v2).slice(0, -1) + ',"board":"microbit-v2"}\n') });
   const rejected = assert.rejects(h.adapter.connect(), { kind: 'protocol' }); await h.clock.tick(0); await rejected;
   assert.equal(h.transport.closed, true);
+});
+
+test('GI-16 connecting to an already-streaming device discards an old JSON tail before deviceInfo', async () => {
+  const old=JSON.stringify({...corpus.snapshots.v2,n:40,u:800});
+  const h=harness({beforeInfo:t=>t.push(old.slice(80)+'\n')});
+  await h.start();
+  assert.equal(h.adapter.getState().inputAvailable,true);
+  assert.equal(h.transport.helloCount,1);
+  assert.deepEqual(h.errors.map(e=>e.message),[]);
+  assert.ok(h.diagnostics.some(entry=>entry.name==='pre-barrier-line'));
+  await h.stop();
+});
+
+test('GI-13/16 first connection repairs a previous page output boundary before HELLO', async () => {
+  for(const initialWire of ['C|1|17|D|TEXT|HEL','unfinished bytes']){
+    const h=harness({initialWire,errorsOnRepair:true});await h.start();
+    assert.equal(h.adapter.getState().inputAvailable,true);
+    assert.equal(h.transport.helloCount,1);
+    assert.equal(String.fromCharCode(...h.transport.writes[0].bytes),'\nHELLO|1\n');
+    assert.deepEqual(h.errors,[]);
+    if(initialWire==='unfinished bytes')assert.ok(h.diagnostics.some(e=>e.name==='pre-barrier-error'));
+    await h.stop();
+  }
+});
+
+test('GI-16 opening boundary repair does not hide unsupported protocol or firmware errors', async () => {
+  for(const code of ['UNSUPPORTED_VERSION','INTERNAL_ERROR']){
+    const h=harness({beforeInfo:t=>t.push(`ERR|${code}\n`)});
+    const failed=assert.rejects(h.adapter.connect(),{protocolCode:code});
+    await h.clock.tick(0);await failed;
+    assert.equal(h.adapter.getState().connection,'disconnected');
+  }
+  const h=harness({beforeInfo:t=>t.push('ERR|MALFORMED_COMMAND\nERR|MALFORMED_COMMAND\n')});
+  const failed=assert.rejects(h.adapter.connect(),{protocolCode:'MALFORMED_COMMAND'});
+  await h.clock.tick(0);await failed;
+  assert.equal(h.diagnostics.filter(e=>e.name==='pre-barrier-error').length,1);
+});
+
+test('GI-10 recovery after a browser stall discards a split old snapshot without a false JSON error or historical presses', async () => {
+  const h=harness();await h.start();const game=h.adapter.createGameSession(),presses=[];
+  game.inputs.onPress(value=>presses.push(value));
+  const old=JSON.stringify({...corpus.snapshots.v2,n:1,u:20,a:1,ac:40})+'\n';
+  h.transport.push(old.slice(0,80));await flush();
+  h.clock.jump(600);h.transport.push(old.slice(80));await flush(150);
+  assert.equal(h.transport.helloCount,2);
+  assert.equal(h.adapter.getState().inputAvailable,true);
+  assert.deepEqual(h.errors.map(e=>e.message),['Sensor input became stale']);
+  assert.equal(h.errors[0].snapshotAgeMs,600);
+  assert.equal(h.errors[0].freshnessOverrunMs,100);
+  assert.deepEqual(presses,[]);
+  await h.stop();
+});
+
+test('GI-10/14 malformed JSON after the deviceInfo barrier still reports a protocol error and cannot refresh input', async () => {
+  const h=harness();await h.start();h.transport.options.silent=true;
+  const before=h.adapter.context.lastAccepted;
+  h.transport.push('"a":1,"ac":40}\n');await flush();
+  assert.ok(h.errors.some(e=>e.kind==='protocol'&&e.message==='Malformed JSON'));
+  assert.equal(h.errors.at(-1).lineBytes,'"a":1,"ac":40}'.length);
+  assert.equal(h.errors.at(-1).connectionPhase,'ready');
+  assert.equal(h.adapter.context.lastAccepted,before);
+  await h.clock.tick(500);assert.equal(h.adapter.getState().connection,'connecting');
+  await h.stop();
 });
 
 test('GI-08/09 subscriptions are independent, immutable and state-before-A/B/logo events', async () => {

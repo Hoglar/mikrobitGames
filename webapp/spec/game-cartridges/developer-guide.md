@@ -126,4 +126,4 @@ Når du deler en oppdatering, behold spill-ID/modus-ID. Endre `version`, og øk 
 | Import utenfor pakken | Flytt hjelpefilen inn i spillet eller bruk dokumentert SDK-funksjon. `../shared/` er ikke del av den portable kontrakten. |
 | Score avvises | Send et objekt med nøyaktig de deklarerte feltene og heltall innen min/maks. Ikke pakk tid/plassering manuelt. |
 | Online er ikke klar | Nettstedets utrullingsjobb må ha synkronisert katalogen med en tilgjengelig backend. Lokalspill fungerer uten dette. |
-| Lyd er stille | Bruk valgfri lydaktivering i spillrammen og håndter autoplay-/outputfeil. Spillet skal fungere uten lyd. |
+| Lyd er stille | Bruk den felles lydknappen og volumvalget i spillrammens topplinje. Koble nettleserlyd til `audio.subscribe`/`audio.onUnlock`, og håndter autoplay-/outputfeil. Ikke lag egne lydkontroller; spillet skal fungere uten lyd. |

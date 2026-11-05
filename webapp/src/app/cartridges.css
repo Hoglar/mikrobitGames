@@ -1,6 +1,18 @@
 .cartridge-cover img{display:block;width:100%;height:100%;object-fit:cover;image-rendering:auto}
 .cartridge-game{position:relative;overflow:hidden;color:#e8f2e5;display:grid;grid-template:'toolbar' auto 'audio' auto 'stage' minmax(0,1fr) 'controls' auto / minmax(0,1fr)}
 .cartridge-game .game-toolbar{grid-area:toolbar;z-index:4}.cartridge-game .game-settings{grid-area:audio;z-index:4}.cartridge-game .cartridge-stage{grid-area:stage}.cartridge-game .controls-hint{grid-area:controls}
+.cartridge-game .game-toolbar{gap:10px;flex-wrap:wrap}
+.cartridge-game .game-status{flex:1 1 180px;min-width:0;overflow-wrap:anywhere}
+.game-audio{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.game-audio .audio-toggle{min-width:80px}
+.game-audio .audio-volume{display:flex;align-items:center;gap:7px;white-space:nowrap;font-size:11px}
+.cartridge-game .game-audio input[type=range]{width:85px;padding:0;accent-color:#8bf0cf;cursor:pointer}
+.audio-volume-value{min-width:4ch;text-align:right}
+.confirmation-dialog{position:fixed;inset:0;margin:auto;width:min(440px,calc(100vw - 32px));max-height:calc(100dvh - 32px);padding:28px;color:#e8f2e5;background:#172233;border:1px solid #8bf0cf;border-radius:12px;box-shadow:0 20px 80px #0009;overflow:auto;font-size:14px}
+.confirmation-dialog[open]{display:grid;gap:20px}
+.confirmation-dialog::backdrop{background:#060c18c9}
+.confirmation-dialog h2{font-size:27px}
+.confirmation-dialog .actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px}
 .cartridge-stage{width:100%;height:clamp(440px,50vw,650px);background:#101426;position:relative;display:grid;place-items:center;overflow:hidden}
 .cartridge-runtime{border:0;width:100%;height:100%;display:block;min-height:0;min-width:0}
 .game-preview{width:100%;height:100%;object-fit:cover;opacity:.3}
@@ -20,3 +32,4 @@
 .cartridge-game:fullscreen .game-settings{grid-area:audio}
 .cartridge-game .controls-hint{font-size:11px;padding:10px;text-align:center}
 @media(max-width:620px){.cartridge-game .game-overlay{inset:auto;padding:16px;justify-content:flex-start}.cartridge-stage{height:600px}.cartridge-game[data-phase=playing] .cartridge-stage{height:max(480px,65svh)}.cartridge-game:fullscreen .cartridge-stage{height:100%}.game-settings{gap:8px}.game-settings .field{font-size:10px}}
+@media(max-width:620px){.cartridge-game .game-toolbar{padding:12px;gap:10px}.cartridge-game .game-status{flex-basis:calc(100% - 65px)}.game-audio{width:100%;justify-content:space-between}.cartridge-game .game-audio input[type=range]{width:90px}}

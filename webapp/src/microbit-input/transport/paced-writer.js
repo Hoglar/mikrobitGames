@@ -5,7 +5,7 @@ import { asError, error, within } from '../errors.js';
 export class PacedWriter {
   constructor(transport, clock) {
     this.transport = transport; this.clock = clock; this.tail = Promise.resolve();
-    this.nextStart = 0; this.partial = false;
+    this.nextStart = 0; this.partial = false; this.firstHello = true;
   }
   enqueue(work) {
     const result = this.tail.then(work);
@@ -41,8 +41,11 @@ export class PacedWriter {
   }
   hello(valid, onStart) {
     return this.enqueue(async () => {
-      if (this.partial) await this.bytes('\n', valid);
-      await this.bytes('HELLO|1\n', valid, onStart);
+      // A newly opened browser port may inherit an unfinished command from a
+      // closed page. The board's RX buffer is not a JavaScript-page resource.
+      // Both LF + HELLO fit in one bounded chunk; a clean board ignores the LF.
+      await this.bytes((this.firstHello || this.partial ? '\n' : '') + 'HELLO|1\n', valid, onStart);
+      this.firstHello = false;
     });
   }
 }

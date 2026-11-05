@@ -187,8 +187,13 @@ test('fullscreen preserves an active round and exits cleanly when another game i
   expect(calls.filter(path=>path.endsWith('/results'))).toEqual([]);
   await page.getByRole('button',{name:'Pause',exact:true}).click();
   await page.getByRole('button',{name:'Fullskjerm ⛶',exact:true}).click();
-  page.once('dialog',dialog=>dialog.accept());
   await page.evaluate(()=>{location.hash='#/play/stars';});
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.getByRole('dialog')).toBeInViewport();
+  await expect(page.getByRole('dialog').getByRole('button',{name:'Avbryt',exact:true})).toBeFocused();
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  await page.screenshot({path:'build/switch-confirmation-fullscreen.png'});
+  await page.getByRole('dialog').getByRole('button',{name:'Ja, fortsett',exact:true}).click();
   await expect(page.locator('.cartridge-stage')).toHaveAttribute('aria-label','Stjernefangst spillflate');
   expect(await page.evaluate(()=>document.fullscreenElement)).toBe(null);
 });

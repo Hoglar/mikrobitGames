@@ -190,6 +190,12 @@ try {
 
 `message` is always present; `protocolCode` and `commandId` are optional. Device codes: `LINE_TOO_LONG`, `DUPLICATE_ID`, `UNSUPPORTED_VERSION`, `MALFORMED_COMMAND`, `UNSUPPORTED_ACTION`, `UNSUPPORTED_OUTPUT`, `OUT_OF_RANGE`, `INVALID_TEXT`, `UNSUPPORTED_SOUND`, `INTERNAL_ERROR`; meanings are in the [serial contract](../../../spec/contracts/microbit-webapp/microbit-serial-protocol.md#output-scheduling-and-results). A rejected call may also reach `onError`; handle rejections for individual calls and use `onError` for page-wide diagnostics. Synchronous session creation/subscription argument errors must be caught directly.
 
+Ved tilkobling/gjenoppretting forkastes gamle JSON-fragmenter før den nye `deviceInfo`-barrieren. Etter barrieren valideres alle meldinger strengt som før. En 500 ms friskhetstimeout inneholder `snapshotAgeMs` og `freshnessOverrunMs`; parserfeil inneholder `lineBytes` og `connectionPhase`. Testlabs eksisterende JSON-eksport tar med disse feltene, pluss eventuell kommando-ID, protokollkode, sekvensgap og underliggende feiltype. Stor tidsoverskridelse kan passe med en blokkert nettlesertråd, men beviser ikke alene årsaken. Se [undersøkelsen av sandbox/serial](../../results/serial-sandbox-investigation-2026-11-05.md).
+
+Første `HELLO` på en ny port får også et innledende LF. Dette avslutter eventuelle kommandobytes etterlatt av en lukket side før ny handshake. Én forventet gammel framingfeil kan forkastes før metadata; feil protokollversjon og firmwarefeil avvises fortsatt. Handshakefristen er uendret: 3000 ms etter fullført `HELLO`-skriving.
+
+Ved handshake-timeout angir `handshakeStage` om `deviceInfo` eller det første gyldige snapshotet manglet, og `recovery` skiller første tilkobling fra gjenoppretting. Testlabs JSON-opptak tar med begge feltene.
+
 ## Example and verification
 
 From `webapp/`, run `npm ci` and `npm run dev:input`, then open `http://127.0.0.1:4173/examples/microbit-input/`. Start either game to activate its subscriptions/outputs. The example includes a 5×5 brightness editor with explicit Send image, a clickable piano, tone/melody/named-sound controls, light range and persistent shake count. Edits stay local until sent; changing the draft and clearing the device are separate actions.

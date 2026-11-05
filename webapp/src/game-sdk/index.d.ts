@@ -63,6 +63,7 @@ export interface GameContext {
     addPauseAction(action: {id: string; label: string; confirmText?: string; resumeAfter?: boolean}, handler: () => void | Promise<void>): Unsubscribe;
   };
   readonly audio: {
+    /** Shared toolbar preference. Browser audio applies volume; device volume is scaled by the host. */
     getSettings(): Readonly<{enabled: boolean; volume: number}>;
     subscribe(callback: (settings: Readonly<{enabled: boolean; volume: number}>) => void): Unsubscribe;
     onUnlock(callback: () => void): Unsubscribe;

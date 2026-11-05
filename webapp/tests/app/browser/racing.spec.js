@@ -75,7 +75,7 @@ test('MR-19 a ranked restart stores exactly one DNF with null instead of a false
 
 test('MR-09/21 recovery, mobile presentation, sound and fullscreen remain inside the arcade',async({page})=>{
   await page.setViewportSize({width:390,height:844});const observed=await setup(page,{local:true});
-  await start(page);await page.getByRole('checkbox',{name:'Motorlyd',exact:true}).check();await page.getByRole('slider',{name:'Motorvolum'}).fill('0');
+  await start(page);await page.getByRole('button',{name:'Lyd: av',exact:true}).click();await page.getByRole('slider',{name:'Spillvolum'}).fill('0');
   await page.getByRole('button',{name:'Pause',exact:true}).click();await page.getByRole('button',{name:'Tilbake til banen',exact:true}).click();
   await page.getByRole('button',{name:'Ja, tilbake til banen',exact:true}).click();
   await expect(page.locator('.game-frame')).toHaveAttribute('data-phase','playing',{timeout:7000});

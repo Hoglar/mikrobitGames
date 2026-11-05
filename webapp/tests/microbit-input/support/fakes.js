@@ -27,7 +27,7 @@ export class FakeClock {
 export class FakeTransport {
   constructor(clock, options = {}) {
     this.clock = clock; this.options = options; this.buffer = []; this.pending = null;
-    this.writes = []; this.commands = []; this.wire = ''; this.removers = new Set();
+    this.writes = []; this.commands = []; this.wire = options.initialWire ?? ''; this.removers = new Set();
     this.n = 0; this.u = 0; this.ac = 0; this.bc = 0; this.qc = 0;
     this.helloCount = 0; this.closed = false; this.closeCalls = 0;
     this.autoAck = options.autoAck !== false; this.connected = true;

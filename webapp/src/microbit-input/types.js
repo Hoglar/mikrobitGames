@@ -16,6 +16,8 @@
  * @typedef {{frequencyHz:number,durationMs:number}} Note
  * @typedef {{now:()=>number,setTimeout:(callback:()=>void,ms:number)=>unknown,
  *   clearTimeout:(id:unknown)=>void}} Clock
- * @typedef {{kind:string,message:string,protocolCode?:string,commandId?:number}} InputError
+ * @typedef {{kind:string,message:string,protocolCode?:string,commandId?:number,
+ *   lineBytes?:number,connectionPhase?:string,snapshotAgeMs?:number,freshnessOverrunMs?:number,
+ *   handshakeStage?:'deviceInfo'|'snapshot',recovery?:boolean}} InputError
  */
 export {};

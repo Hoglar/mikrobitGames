@@ -28,8 +28,8 @@ Seven-bag pieces, five next previews, ghost, T-spins/Mini, combos, back-to-back
 and perfect clears use the exact score tables in the design. Every 5,000 points
 increases gravity and music tempo, capped at level 15 (50 ms/row, 180 BPM).
 The 5×5 display shows the held piece. Micro:bit Korobeiniki music and local browser
-effects have separate toggles and volumes, enabled by default. Settings survive
-restart within the page. Click a sound control if the browser blocks Web Audio.
+effects use the shared sound button and volume slider in the game's top toolbar.
+Sound is off by default; the preference survives restarts and game changes.
 Pause stops sound and retains hold; ending the round clears hold. Input loss
 pauses the game and requires explicit Continue after reconnecting.
 

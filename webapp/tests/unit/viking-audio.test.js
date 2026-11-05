@@ -12,10 +12,10 @@ function audioHarness() {
   });
   function createContext() {
     const context = {
-      currentTime: 0, sampleRate: 8000, state: 'suspended', sources: [], destination: {}, closes: 0,
+      currentTime: 0, sampleRate: 8000, state: 'suspended', sources: [], gains: [], destination: {}, closes: 0,
       resume() { this.state = 'running'; this.onstatechange?.(); return Promise.resolve(); },
       close() { this.state = 'closed'; this.closes++; return Promise.resolve(); },
-      createGain() { return { gain: parameter(), connect() {}, disconnect() {} }; },
+      createGain() { const node={ gain: parameter(), connect() {}, disconnect() {} };this.gains.push(node);return node; },
       createBiquadFilter() { return { frequency: parameter(), connect() {}, disconnect() {} }; },
       createBuffer(channels, length) { return { getChannelData: () => new Float32Array(length) }; },
       source(kind) {
@@ -56,6 +56,16 @@ function audioHarness() {
   }
   return { audio, contexts, timers, advance, createContext };
 }
+
+test('Viking master volume scales music and effects, including settings applied before sound activation', () => {
+  const h=audioHarness();h.audio.setVolume(.25);h.audio.setEnabled(true);
+  const master=h.contexts[0].gains[0].gain;
+  assert.equal(master.value,.7*.25);
+  h.audio.setVolume(.5);assert.equal(master.value,.7*.5);
+  h.audio.setVolume(0);assert.equal(master.value,0);
+  h.audio.setVolume(NaN);assert.equal(master.value,0);
+  h.audio.dispose();
+});
 
 test('Viking audio is opt-in and the soundtrack includes melody, bass and percussion over a complete loop', () => {
   const h = audioHarness();

@@ -43,7 +43,7 @@ arcade=createArcade({root:main,ctx:context,selectGame:key=>{
 async function closeAccount(){if(accountView){accountView.active=false;await accountView.dispose?.();accountView=null;}arcade.account.hidden=true;arcade.account.replaceChildren();}
 async function mountCabinet(key,hash,{testlab=false,animate=true}={}){
  if(current?.key===key&&current?.testlab===testlab&&(!current.locked||!context.session))return true;
- if(current?.canLeave&&!current.canLeave()){history.replaceState(null,'',current.hash);return false;}
+ if(current?.canLeave&&!await current.canLeave()){history.replaceState(null,'',current.hash);return false;}
  if(current){current.active=false;try{await current.dispose?.();}catch(e){toast(`Opprydding: ${e.message}`);}}
  document.body.classList.remove('playing');
  const view={hash,key,testlab,active:true,dispose:null,canLeave:null};current=view;

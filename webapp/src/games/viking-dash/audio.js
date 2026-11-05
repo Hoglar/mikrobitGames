@@ -18,7 +18,7 @@ export function createVikingAudio({
   scheduleInterval = (callback, ms) => globalThis.setInterval(callback, ms),
   cancelInterval = timer => globalThis.clearInterval(timer)
 } = {}) {
-  let context = null, enabled = false, playing = false, timer = null;
+  let context = null, enabled = false, playing = false, timer = null, volume = 1;
   let master = null, musicBus = null, effectsBus = null, noiseBuffer = null;
   let nextNoteTime = 0, step = 0, generation = 0;
   const voices = new Set();
@@ -118,13 +118,18 @@ export function createVikingAudio({
   }
 
   return {
+    setVolume(value) {
+      if (!Number.isFinite(value)) return;
+      volume = Math.max(0, Math.min(1, value));
+      if (master) master.gain.value = .7 * volume;
+    },
     setEnabled(value) {
       if (!value) { enabled = false; closeContext(); return false; }
       try {
         if (!context) {
           context = createContext();
           if (!context) return false;
-          master = context.createGain(); master.gain.value = .7; master.connect(context.destination);
+          master = context.createGain(); master.gain.value = .7 * volume; master.connect(context.destination);
           musicBus = context.createGain(); musicBus.gain.value = .36; musicBus.connect(master);
           effectsBus = context.createGain(); effectsBus.gain.value = .72; effectsBus.connect(master);
           context.onstatechange = () => { if (context?.state === 'running' && timer !== null) scheduleMusic(); };

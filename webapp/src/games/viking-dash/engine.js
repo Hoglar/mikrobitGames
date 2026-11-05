@@ -135,6 +135,7 @@ export function createViking({ seed = VIKING_VERSION } = {}) {
       }
     },
     setSoundEnabled(enabled) { return audio.setEnabled(enabled); },
+    setSoundVolume(volume) { audio.setVolume(volume); },
     setPlaying(active) { playing = active && !ended; audio.setPlaying(playing); },
     dispose() { audio.dispose(); },
     get ended() { return ended; },

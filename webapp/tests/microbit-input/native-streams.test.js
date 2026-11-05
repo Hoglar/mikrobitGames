@@ -15,8 +15,9 @@ function nativeHarness() {
       this.writable = new WritableStream({ write: async data => {
         this.records.push(String.fromCharCode(...data));
         pending += String.fromCharCode(...data);
-        if (pending.includes('\n')) {
-          const line = pending.slice(0, pending.indexOf('\n')); pending = '';
+        while (pending.includes('\n')) {
+          const end=pending.indexOf('\n'),line=pending.slice(0,end);pending=pending.slice(end+1);
+          if (!line) continue;
           if (line === 'HELLO|1') { this.object(corpus.deviceInfo.v2); this.sample(); }
           else if (!this.writeWait) this.send(`R|1|${line.split('|')[2]}|OK\n`);
         }

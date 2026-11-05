@@ -36,6 +36,8 @@ Innlogging, online-resultater, Dashboard, Profil og AI er deaktivert i lokalmodu
 
 ## Legg til eller lag et spill
 
+Alle spill bruker samme lydknapp og volumvalg i spillrammens topplinje, uten kontroller over spillflaten. Valget gjelder nettleserlyd og micro:bit-høyttaleren, følger med ved spillbytte/restart og huskes i nettleseren. Lyd er av til spilleren aktiverer den. Spillutviklere følger `audio`-delen av [SDK-referansen](spec/game-cartridges/sdk-api.md#lyd-og-fokus) og lager ikke egne mute-/volumkontroller.
+
 Hvert spill har sin egen mappe under `src/games/` med `game.json`, `cover.png` (eller WebP), `index.js`, README og lokale ressurser. Ingen sentral spillregistrering eller CSS-import er nødvendig. Oppdater spilloversikten etter filkopiering; statisk hosting krever vanlig build/publisering.
 
 ```sh

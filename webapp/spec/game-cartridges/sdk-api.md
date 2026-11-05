@@ -39,7 +39,7 @@ Vertens tilstander er `ready → loading → countdown → playing → paused/re
 | `scores` | Avslutning, bekreftelsesstatus og lesetilgang til den **allerede valgte** topplisten; se nedenfor. |
 | `assets` | `url(path) → Promise<string>`, `readText(path) → Promise<string>`, `readJson(path) → Promise<JSON>`. Bare normaliserte pakkestier. URL gjelder til disposal. |
 | `ui` | `setStatus(text)`, `setHelp(text)`, `requestFullscreen() → Promise<void>`. Alt tekst behandles som ren tekst. Fullskjerm kan kreve brukerklikk; vertens knapp er alltid tilgjengelig når støttet. |
-| `audio` | `getSettings()`, `subscribe(callback)`, `onUnlock(callback)`, `unlock() → Promise<void>`, `registerCleanup(callback)`. Master mute/volum og opprydding for nettleserlyd; valgfri lyd må ikke stoppe spillet hvis nettleseren avviser den. |
+| `audio` | `getSettings()`, `subscribe(callback)`, `onUnlock(callback)`, `unlock() → Promise<void>`, `registerCleanup(callback)`. Felles mute/volum fra spillrammens topplinje og opprydding for nettleserlyd; valgfri lyd må ikke stoppe spillet hvis nettleseren avviser den. |
 | `random` | `next() → number` i `[0,1)`, deterministisk fra rundens seed. Samme algoritme/versjon testes; ingen seedendring under runden. |
 
 Bibliotekets deklarasjonsfil gir editoren typer for context, kontroller, input/output og rekorder. Det finnes ingen direkte HTTP-klient, generell RPC, kontoprofil eller privat forsøkshistorikk i context. `round.config` og snapshots er dypt frosne lokale kopier.
@@ -48,9 +48,9 @@ Bibliotekets deklarasjonsfil gir editoren typer for context, kontroller, input/o
 
 ### Generiske tilleggskontroller
 
-For å bevare blant annet Tetris-lydvalg og Racers recovery uten grener i verten tilbyr `ui` også:
+For spillspesifikke presentasjonsvalg og blant annet Racers recovery uten grener i verten tilbyr `ui` også:
 
-- `addSetting({id, label, type, defaultValue, min?, max?, step?}, onChange) → unsubscribe`. Type er `toggle` eller `range`. Runtime registrerer høyst åtte validerte kontroller i vertens innstillingsområde; callbacks lever i spillet og mottar validerte verdier, ikke DOM-elementer. Range krever endelige min/maks/step og verdi innen intervallet. Innstillinger er lyd/presentasjon; konkurranseregler hører hjemme i låst modus/config.
+- `addSetting({id, label, type, defaultValue, min?, max?, step?}, onChange) → unsubscribe`. Type er `toggle` eller `range`. Runtime registrerer høyst åtte validerte kontroller i vertens innstillingsområde; callbacks lever i spillet og mottar validerte verdier, ikke DOM-elementer. Range krever endelige min/maks/step og verdi innen intervallet. Innstillinger er spillspesifikke presentasjonsvalg; bruk felles `audio` for lyd, og legg konkurranseregler i låst modus/config.
 - `addPauseAction({id, label, confirmText?, resumeAfter?}, handler) → unsubscribe`. Høyst fire handlinger. Vertens pausemeny viser knappen og eventuell bekreftelse. Handler kalles i sandboxen mens simuleringen fortsatt er pauset; ved vellykket svar kan `resumeAfter` starte vanlig kontrollert nedtelling. Alle start-/inputkrav sjekkes igjen. Dette lar Racer flytte bilen til siste sikre punkt uten at verten kjenner `requestRecovery`.
 
 ID-er er lokale for aktiv runtime; tekst er ren tekst med maksimum 120 tegn per etikett og 300 per bekreftelse. Disposisjon fjerner kontroller og callbacks. Feil beholder pause og vises i verten. Ingen handler serialiseres som kode til verten; SDK-et formidler registrering/aktivering gjennom sin bundne port. Spesialmenyer tegnet inne i spilldokumentet er også tillatt, men grunnleggende pause/fullskjerm og navnelagring lever alltid hos verten.
@@ -105,8 +105,12 @@ Broen aksepterer bare kjente operasjoner med validerte størrelser. Rekordlesing
 
 ## Lyd og fokus
 
-Spillets nettleserlyd kjører i sandboxdokumentet. `audio.unlock()` skal kalles fra et reelt brukerklikk i spillrammen hvis nettleserens autoplayregler krever det; et Promise-kall over broen overfører ikke automatisk brukeraktivering. Runtime viser i så fall en liten «Aktiver lyd»-handling i rammen. Micro:bit-output går alltid gjennom verten. Pause, mute og disposal skal stoppe aktive stemmer/output; lyd er aldri eneste feedback.
+Spillets nettleserlyd kjører i sandboxdokumentet. Spillrammens topplinje har én felles lydknapp og ett volumvalg for alle spill, også i fullskjerm. Valget lagres i nettleseren og beholdes ved restart og spillbytte; standard er lyd av og volum 1. Spill skal bruke `audio.subscribe` fremfor å lage egne mute-/volumkontroller eller legge kontroller over spillflaten. Sandboxen får autoplay-tillatelse fra verten; lydaktivering i topplinjen varsler spillets `audio.onUnlock`-callbacks. Hvis nettleseren likevel avviser lyd, skal spillet fortsette uten lyd.
 
-`audio.onUnlock(callback)` kalles inne i brukerklikkets kallstakk, slik at spillet kan gjenoppta sin egen AudioContext. `audio.subscribe` gir master mute/volum (standard på/1); spillet bruker verdiene på sine gain-noder og registrerer stopp av egne stemmer med `registerCleanup`. Runtime har volum-/lydvalg inne i rammen og delegerer lydavspilling, men ingen konto-/lagringsrettigheter, til sandboxen. Se [nettleserens autoplayregler](https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay).
+`audio.subscribe` gir `{enabled, volume}` ved abonnement og endringer; bruk `enabled` til å slå lyd av/på og `volume` (0–1) på spillets gain-noder. `audio.onUnlock(callback)` og `audio.unlock()` lar spillet forsøke å gjenoppta sin AudioContext; meldinger over broen overfører ikke brukeraktivering. Registrer stopp av egne stemmer med `registerCleanup`, og stans lyd ved pause/disposal. Ved gjenopptakelse brukes de samme felles innstillingene. Lyd er aldri eneste feedback.
+
+Micro:bit-output går alltid gjennom verten, som blokkerer speaker-avspilling ved mute/volum 0 og skalerer `playTone`/`playMelody` automatisk. Spill skal derfor ikke også multiplisere micro:bit-volumet med hovedvolumet. Pågående enhetslyd stoppes når volumet endres; neste avspilling bruker nytt volum. `playBuiltInSound` følger mute, men har ikke variabelt volum i protokoll v1.
 
 Verten eier Escape/pause og fokusering ved start/fullskjerm. Logo kan være spillhandling som hold i Tetris; plattformen må ikke globalt reservere alle logotrykk. Kontrollregler deklareres/implementeres inne i spillet, mens en tilgjengelig Pause-knapp alltid finnes utenfor rammen.
+
+Spillbytte og tap av ulagrede resultater bekreftes i en asynkron dialog i spillrammen, også i fullskjerm. Dialogen pauser en aktiv runde, men lar sidens serial-lesing fortsette. Avbryt/Escape beholder runden pauset og bevarer navnefeltet for en eventuell lokal rekord; Fortsett krever fortsatt et eksplisitt valg. Native `confirm()` skal ikke brukes i tilkoblet spillflyt, siden den blokkerer serial-behandling og kan utløse friskhetsgjenoppretting mens spilleren tenker.

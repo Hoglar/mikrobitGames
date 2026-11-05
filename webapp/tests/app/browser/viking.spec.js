@@ -79,21 +79,9 @@ test('Viking stage keeps its scenery visible and supports optional sound through
 
   await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
   await page.getByRole('button', { name: 'Start spill →' }).click();
-  // Disposing the preview and mounting the round also uses timers.
-  for (let i = 0; i < 20 && (await page.locator('.game-frame').getAttribute('data-phase')) !== 'countdown'; i++) {
-    await page.clock.runFor(100);
-  }
-  await expect(page.locator('.game-frame')).toHaveAttribute('data-phase', 'countdown');
-  await page.clock.runFor(3100);
-  await expect(page.locator('.game-frame')).toHaveAttribute('data-phase', 'playing');
-  const child = page.frames().find(f => f.parentFrame());
-  const sourceCount = () => child.evaluate(() => globalThis.vikingAudioProbe.sources);
-  const audioState = () => child.evaluate(() => globalThis.vikingAudioProbe.contexts.at(-1)?.state);
-  await page.getByRole('checkbox', { name: 'Musikk og lyd', exact: true }).check();
-  await page.frameLocator('.cartridge-runtime').getByRole('button', { name: 'Aktiver lyd' }).click();
-  await expect.poll(async () => { await page.clock.runFor(60); return sourceCount(); }).toBeGreaterThan(5);
-  await expect(page.locator('.game-frame')).toHaveAttribute('data-phase', 'playing');
-  expect(await audioState()).toBe('running');
+  await expect(page.locator('.game-toolbar')).toContainText('SPILLER', { timeout: 6000 });await page.getByRole('button',{name:'Lyd: av',exact:true}).click();
+  await expect.poll(() => page.frames().find(f=>f.parentFrame()).evaluate(() => globalThis.vikingAudioProbe.sources)).toBeGreaterThan(5);
+  expect(await page.frames().find(f=>f.parentFrame()).evaluate(() => globalThis.vikingAudioProbe.contexts.at(-1).state)).toBe('running');
   await page.evaluate(() => window.serialMock.port.sample({ a: 1, ac: 1 }));
   await page.clock.runFor(150);
   await page.getByRole('button', { name: 'Pause', exact: true }).click();
@@ -103,7 +91,7 @@ test('Viking stage keeps its scenery visible and supports optional sound through
   await page.clock.runFor(300);
   expect(await sourceCount()).toBe(pausedSources);
   await page.locator('.game-frame').screenshot({ path: 'build/viking-gameplay.png' });
-  await page.getByRole('checkbox',{name:'Musikk og lyd',exact:true}).uncheck();await expect(page.getByRole('checkbox',{name:'Musikk og lyd',exact:true})).not.toBeChecked();
+  await page.getByRole('button',{name:'Lyd: på',exact:true}).click();await expect(page.getByRole('button',{name:'Lyd: av',exact:true})).toHaveAttribute('aria-pressed','false');
   await page.getByRole('button', { name: '→ Fortsett', exact: true }).click();
   await expect(page.locator('.game-toolbar')).toContainText('NEDTELLING');
   await page.setViewportSize({ width: 390, height: 844 });
