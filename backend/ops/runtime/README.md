@@ -67,7 +67,7 @@ Dette siste steget gjør nettsiden/API-et offentlig. Følg eventuell lenke for �
 
 Åpne den viste HTTPS-adressen og `/api/v1/health` fra mobilnett eller en annen PC uten Tailscale. Ingen sertifikatadvarsel skal godtas. Gjennomfør [frontendens integrasjonsflyt](../../../spec/contracts/webapp-backend/quickstart.md). Lokal oppstart alene beviser ikke ekstern tilgjengelighet eller femminuttersmålet etter fysisk reboot.
 
-Ved første backendoppsett vises en velkomstside. Gjeldende frontend/backend er fra commit `2c209f2`, publisert 2026-11-04. Alle 47 spillvarianter er registrert med frontendens eksakte ID-er og regler. Se [publiseringskontrollen](../../../results/verification/sdk-publication-2026-11-04.md).
+Ved første backendoppsett vises en velkomstside. Gjeldende frontend er fra commit `d54d012`, publisert 2026-11-05; backend er fortsatt fra `2c209f2`, publisert 2026-11-04. Alle 47 spillvarianter er registrert med frontendens eksakte ID-er og regler. Se [nyeste publiseringskontroll](../../../results/verification/frontend-publication-2026-11-05.md) og [SDK-utrullingen](../../../results/verification/sdk-publication-2026-11-04.md).
 
 ## 4. Publiser frontendpakken
 

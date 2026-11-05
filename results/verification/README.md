@@ -2,6 +2,8 @@
 
 Lagre utvalgte resultater fra integrasjons- og ende-til-ende-tester. Oppgi dato, commit, krav eller kontrakt, metode, testmiljø, forventet og faktisk resultat samt avvik og oppfølging. Behold tidligere målinger; midlertidige logger skal ikke versjoneres.
 
+- [Tetris, spillflate og tilkobling publisert 2026-11-05](frontend-publication-2026-11-05.md): 223/223 enhetstester, 62/62 app-/nettlesertester, 13/13 separate SDK-tester og 120 kontrollerte offentlige filer. Komplett appevaluering med FoM 100,00.
+
 - [Spillisolasjon og SDK publisert 2026-11-04](sdk-publication-2026-11-04.md): migrering, katalogsynk, 119 offentlige filer og publisering med ett uttrykkelig godkjent Viking-testavvik. Ingen ny FoM.
 
 - [Evalueringsverktøy, rapport og ny test 2026-11-04](evaluation-repair-2026-11-04.md): opprydding etter avbrudd, tydeligere test-/benchmarkvisning og ny måling etter Micro Racer-oppdateringen; én bevart Tetris-feil.

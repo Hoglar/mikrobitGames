@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "timestamp": "2026-11-05T19:28:49.021Z",
+  "revision": "d54d01239620c0210b2ae0c2df298750c42669b9",
+  "sourceHashes": {
+    "src/platform/rules.js": "33a6af2284a266d5616a480e002a4d889df0f90f4c1ab5c4944260802dcf1685",
+    "src/testlab/recorder.js": "91f5e28abf2068ad46433108b6e36937f9ade0e9067104249b8b154583c89a05",
+    "verification/benchmark.js": "401ed9e44ef29d763c7a6a8e8cf22d499cce78510741262d3fd1b726884cc426"
+  },
+  "environment": {
+    "node": "v20.19.2",
+    "platform": "linux",
+    "release": "7.0.13+parrot7-amd64",
+    "arch": "x64",
+    "cpu": "Intel(R) Core(TM) i7-5820K CPU @ 3.30GHz"
+  },
+  "method": "Node performance.now; nearest-rank percentiles; 1000 warmup operations; accelerated logical time; assertions included; no forced GC",
+  "status": "MEASURED",
+  "correctness": "PASS",
+  "measurements": [
+    {
+      "name": "platform-start-and-retry",
+      "count": 50000,
+      "elapsedMs": 148.536558,
+      "operationsPerSecond": 336617.4676001311,
+      "cpuUsPerOperation": 3.81716,
+      "latencyMs": {
+        "p50": 0.002692999999993617,
+        "p95": 0.003630000000015343,
+        "p99": 0.004406999999986283,
+        "max": 0.8347740000000101
+      }
+    },
+    {
+      "name": "recorder-50Hz-600s-logical-time",
+      "count": 30000,
+      "elapsedMs": 94.68712099999999,
+      "operationsPerSecond": 316832.9513366448,
+      "cpuUsPerOperation": 5.1712,
+      "latencyMs": {
+        "p50": 0.0021449999999845204,
+        "p95": 0.0059410000000070795,
+        "p99": 0.007549999999980628,
+        "max": 0.9944220000000428
+      }
+    },
+    {
+      "name": "export-50Hz",
+      "elapsedMs": 35.099117999999976,
+      "jsonBytes": 736275,
+      "csvBytes": 240218,
+      "retainedSamples": 3000,
+      "retainedEvents": 1000,
+      "dropped": {
+        "samples": 3200,
+        "events": 30000
+      }
+    },
+    {
+      "name": "recorder-500Hz-600s-logical-time",
+      "count": 300000,
+      "elapsedMs": 645.9023950000001,
+      "operationsPerSecond": 464466.4616857474,
+      "cpuUsPerOperation": 2.4270366666666665,
+      "latencyMs": {
+        "p50": 0.0019509999999627325,
+        "p95": 0.0022099999999909414,
+        "p99": 0.005405999999993583,
+        "max": 1.3245900000000574
+      }
+    },
+    {
+      "name": "export-500Hz",
+      "elapsedMs": 25.26033099999995,
+      "jsonBytes": 736276,
+      "csvBytes": 240218,
+      "retainedSamples": 3000,
+      "retainedEvents": 1000,
+      "dropped": {
+        "samples": 3020,
+        "events": 300000
+      }
+    }
+  ],
+  "limitations": [
+    "No latency threshold is specified for these pure platform/recorder helpers; measurements are baselines only.",
+    "No serial parsing, callbacks, browser rendering, real-time soak or heap trend measured.",
+    "GI propagation budget p95 <=5ms at 50Hz for 1/4 subscribers remains BLOCKED until adapter exists.",
+    "Physical input budget p95 <=100ms over >=20 instrumented trials remains BLOCKED without V2/instrumentation."
+  ]
+}

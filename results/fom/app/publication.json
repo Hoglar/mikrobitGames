@@ -1,34 +1,34 @@
 {
-  "date": "2026-11-04",
-  "commit": "2c209f27bbc840b19c2218c3c9ebd0b63264b67d",
-  "report": "../../verification/sdk-publication-2026-11-04.md",
+  "date": "2026-11-05",
+  "commit": "d54d01239620c0210b2ae0c2df298750c42669b9",
+  "report": "../../verification/frontend-publication-2026-11-05.md",
   "checks": [
     {
       "area": "Enhetstester / input",
-      "result": "134/134 frontend; 76/76 backend",
-      "detail": "Bestått. Rene AI-scorekontroller: 6/6."
+      "result": "223/223 bestått",
+      "detail": "102 webapp, 45 inputbibliotek og 76 backend."
     },
     {
       "area": "Nettleser",
-      "result": "45/46 bestått",
-      "detail": "Én Viking-lydtest feiler, også ved isolert omkjøring."
+      "result": "62/62 app; 10/10 input",
+      "detail": "Tetris-styring, canvas, lyd, tilkobling og øvrige brukerforløp."
     },
     {
       "area": "SDK og spillisolasjon",
       "result": "13/13 bestått",
-      "detail": "Spillvinduer, lokale rekorder og resultatflyt."
+      "detail": "Separat kontroll; ingen ekstra FoM-poeng."
     },
     {
-      "area": "Database og lagring",
-      "result": "Bestått i separat testdatabase",
-      "detail": "Migrering, bevaring, replay, regelkonflikt og AI-rettigheter."
+      "area": "Spillkatalog",
+      "result": "47 varianter bevart og synkronisert",
+      "detail": "Samme ID-er og poengregler; nye innholdshasher kontrollert i API-et."
     },
     {
       "area": "Publisert nettside",
-      "result": "119 filer; 7 spill; 47 topplister",
-      "detail": "SHA-256, HTTPS, metadata, mobilvisning og seks aktive tjenester kontrollert."
+      "result": "120 filer; 7 spill; 47 topplister",
+      "detail": "SHA-256, HTTPS, mobilvisning, bilder og seks tjenester kontrollert."
     }
   ],
-  "deviation": "Publisert med brukerens uttrykkelige godkjenning av Viking-avviket. Runden var avsluttet ved lydkontrollen; feilen er beholdt uten endrede testforventninger.",
-  "limitations": "Selve publiseringskontrollen målte ikke fysisk USB, spilling fra skolen eller ekte AI-svar. En etterfølgende komplett lokal appevaluering er nå lagret som 20261104T190015.637939Z og vises separat i FoM-historikken."
+  "deviation": "Ingen produktavvik påvist. Første offentlige nettleserprobe leste bildestatus før innlasting; kontroll med eksplisitt venting bestod. Første feil og oppfølging er dokumentert.",
+  "limitations": "Fysisk USB, ekte Qwen og lang backendprofil ble ikke kjørt på nytt. Komplett lokal appevaluering 20261105T192832.581524Z har FoM 100,00 med Martins nye brukerskår 10/10; den vises separat i historikken."
 }

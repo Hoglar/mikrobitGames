@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "checked_at": "2026-11-05T19:36:26.982546+00:00",
+  "source_commit": "d54d01239620c0210b2ae0c2df298750c42669b9",
+  "origin": "https://parrot.tail106c62.ts.net",
+  "health": "ok",
+  "web_release": "/var/www/mikrobit-games/releases/20261105T193535179131Z",
+  "backend_release": "/opt/mikrobit-games/releases/20261104T174028332774Z-2c209f27",
+  "public_files_sha256_verified": 120,
+  "packages": 7,
+  "catalog_games": 47,
+  "api_games": 49,
+  "sdk_metadata_verified": true,
+  "services_active": [
+    "mbg-db",
+    "mbg-api",
+    "mbg-ai",
+    "mbg-model",
+    "mbg-web",
+    "tailscaled"
+  ],
+  "physical_usb_tested": false,
+  "real_ai_tested": false,
+  "production_writes": false,
+  "browser": {
+    "status": "PASS",
+    "public_cartridges": 7,
+    "online_leaderboards": 47,
+    "firmware_link": true,
+    "all_covers_loaded": true,
+    "javascript_errors": 0,
+    "mobile_overflow": false,
+    "production_writes": false
+  },
+  "initial_browser_probe": {
+    "status": "FAIL",
+    "reason": "Image readiness checked before load completed; 8 pending/broken reported.",
+    "followup": "Explicit image-load wait; all covers completed at 512 px, full public browser check PASS."
+  },
+  "evaluation_run": "20261105T192832.581524Z",
+  "previous_web_release": "/var/www/mikrobit-games/releases/20261104T174046514278Z"
+}

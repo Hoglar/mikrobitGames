@@ -14,3 +14,4 @@ F = funksjonstester, P = benchmarkytelse, U = brukeropplevelse (alle 0–100). V
 | 4 | [2026-11-04 – Micro Racer med rettet evalueringsverktøy](runs/20261104T084043.311188Z/report.md) | 2026-11-04T08:40:43.469866+00:00 | 99.73 | 100.00 | 80.00 | 95.86 | COMPLETE |
 | 5 | [02 – spillisolasjon og SDK](runs/20261104T190015.637939Z/report.md) | 2026-11-04T19:00:15.800529+00:00 | 99.73 | 100.00 | 90.00 | 97.86 | COMPLETE |
 | 6 | [03 – kontrollert tidspunkt i Viking-lydtesten](runs/20261105T113906.475080Z/report.md) | 2026-11-05T11:39:06.749273+00:00 | 100.00 | 100.00 | 90.00 | 98.00 | COMPLETE |
+| 7 | [04 – Tetris-styring, spillflate og tilkobling](runs/20261105T192832.581524Z/report.md) | 2026-11-05T19:28:32.754704+00:00 | 100.00 | 100.00 | 100.00 | 100.00 | COMPLETE |
